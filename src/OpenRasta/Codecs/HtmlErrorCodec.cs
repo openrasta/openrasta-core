@@ -31,7 +31,7 @@ namespace OpenRasta.Codecs
             var errors = entity as IList<Error>;
             if (errors == null)
                 return;
-
+            response.ContentType = MediaType.Html;
             using (var streamWriter = new StreamWriter(response.Stream))
             {
                 var writer = new XhtmlNodeWriter();
