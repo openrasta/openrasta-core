@@ -1,0 +1,16 @@
+﻿/* layout */
+* { padding: 5px; }
+html { border-left: 30px solid #FF7100; padding: 0px; margin: 0px; }
+body {padding: 10px; margin-left: 40px;  }
+
+
+/* colors */
+pre { background-color: #FFB173; border: solid 1px ff5600; }
+h1 { color: #ff5600 }
+body { background-color: White; }
+
+
+/* fonts */
+* { font-family: arial, Sans-Serif; }
+body { font-size: 10pt; }
+pre { font-family: Consolas, Courrier, Monospace, Courier; font-size: 10pt; overflow-x: scroll; }

@@ -244,6 +244,11 @@
     <Compile Include="Reflection\PropertyPathForType.cs" />
     <Compile Include="Reflection\PropertyPathVisitor.cs" />
     <Compile Include="Reflection\ScopedDictionary.cs" />
+    <Compile Include="Resources\Files.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Files.resx</DependentUpon>
+    </Compile>
     <Compile Include="Security\Credentials.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -566,6 +571,16 @@
       <ProductName>Windows Installer 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\error.css" />
+    <EmbeddedResource Include="Resources\Files.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Files.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Resources\error-test.htm" />
   </ItemGroup>
   <Import Project="..\..\build\common.project.properties" />
   <Import Project="..\..\wraps\openwrap\build\OpenWrap.CSharp.targets" />
