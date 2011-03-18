@@ -427,13 +427,14 @@ namespace OpenRasta.TypeSystem.ReflectionBased
 
             if (type.IsPrimitive)
             {
-                try
-                {
-                    return Convert.ChangeType(propertyValue, type);
-                }
-                catch
-                {
-                }
+				try
+				{
+					if (type.IsValueType && propertyValue.IsNullOrEmpty())
+						propertyValue = type.CreateInstance().ToString();
+
+					return Convert.ChangeType(propertyValue, type);
+				} catch(FormatException)
+				{}
             }
 
             recursionDefender = recursionDefender ?? new Stack<Type>();

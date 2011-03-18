@@ -28,6 +28,27 @@ namespace Extensions_Specification
                 .ShouldContain(1);
         }
 
+		[Test]
+		public void null_ints_are_parsed()
+		{
+			typeof(int).CreateInstanceFrom("")
+				.ShouldBeOfType<int>().ShouldBe(0);
+		}
+
+		[Test]
+		public void null_bools_are_parsed()
+		{
+			typeof(bool).CreateInstanceFrom("")
+				.ShouldBeOfType<bool>().ShouldBe(false);
+		}
+
+		[Test]
+		public void null_longs_are_parsed()
+		{
+			typeof(long).CreateInstanceFrom("")
+				.ShouldBeOfType<long>().ShouldBe(0);
+		}
+
         [Test]
         public void arrays_of_strings_return_the_provided_values()
         {
