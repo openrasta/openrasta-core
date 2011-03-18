@@ -434,7 +434,8 @@ namespace OpenRasta.TypeSystem.ReflectionBased
 
 					return Convert.ChangeType(propertyValue, type);
 				} catch(FormatException)
-				{}
+				{
+				}
             }
 
             recursionDefender = recursionDefender ?? new Stack<Type>();
