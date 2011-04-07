@@ -18,7 +18,7 @@ using OpenRasta.Web;
 
 namespace OpenRasta.Codecs
 {
-    [MediaType("application/xml;q=0.4", ".xml")]
+    [MediaType("application/xml;q=0.4", "xml")]
     public class XmlSerializerCodec : XmlCodec
     {
         public override object ReadFrom(IHttpEntity request, IType destinationType, string parameterName)
