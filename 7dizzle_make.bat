@@ -1,3 +1,3 @@
 @echo off
 
-o build-wrap
+c:\TeamCityBuildTools\openwrap\o -shellinstall none build-wrap
