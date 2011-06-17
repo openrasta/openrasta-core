@@ -30,7 +30,6 @@ namespace JsonpDataContractCodec_Specification
             stub.Entity.Stream.Position
                 .ShouldNotBe(0);
         }
-        public class Customer { public string Name { get; set; } }
     }
 
     public class when_writing_a_json_representation : context
@@ -45,9 +44,9 @@ namespace JsonpDataContractCodec_Specification
             stub.Entity.Stream.Position
                 .ShouldNotBe(0);
         }
-        public class Customer { public string Name { get; set; } }
     }
 
+    public class Customer { public string Name { get; set; } }
     internal class DummyRequest : IRequest
     {
         readonly Uri _uriToReturn;
