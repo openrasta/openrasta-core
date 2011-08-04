@@ -11,6 +11,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using OpenRasta.Collections;
 
 namespace OpenRasta.Web
@@ -54,8 +55,29 @@ namespace OpenRasta.Web
         {
             context.Response.StatusCode = StatusCode;
             if (RedirectLocation != null)
+            {
+                if (!RedirectLocation.IsAbsoluteUri)
+                {
+                    var applicationBaseUri = context.ApplicationBaseUri;
+                    var basePath = applicationBaseUri.AbsolutePath;
+                    var redirectLocation = RedirectLocation.ToString();
+                    bool doubleDelimiter;
+                    if ((doubleDelimiter = basePath.EndsWith("/")) == redirectLocation.StartsWith("/"))
+                    {
+                        if (doubleDelimiter)
+                        {
+                            basePath = basePath.TrimEnd('/');
+                        }
+                        else
+                        {
+                            basePath += "/";
+                        }
+                    }
+                    redirectLocation = basePath + redirectLocation;
+                    RedirectLocation = new Uri(context.ApplicationBaseUri, redirectLocation);
+                }
                 context.Response.Headers["Location"] = RedirectLocation.AbsoluteUri;
-
+            }
             OnExecute(context);
         }
 
