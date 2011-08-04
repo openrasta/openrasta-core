@@ -41,7 +41,10 @@ namespace OpenRasta.Pipeline.Contributors
                 return PipelineContinuation.Continue;
             }
 
-            string acceptHeader = context.Request.Headers[HEADER_ACCEPT];
+            string acceptHeader =
+                context.Response.Entity.ContentType == null ?
+                context.Request.Headers[HEADER_ACCEPT] :
+                context.Response.Entity.ContentType.MediaType;
 
             IEnumerable<MediaType> acceptedContentTypes =
                 MediaType.Parse(string.IsNullOrEmpty(acceptHeader) ? "*/*" : acceptHeader);
