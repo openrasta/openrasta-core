@@ -24,8 +24,13 @@ namespace OpenRasta.Handlers
             if (resourceKey == null) throw new ArgumentNullException("resourceKey");
             if (resourceKey is Type) throw new ArgumentException("Cannot register a type as the key. Use an IType instead.", "resourceKey");
             var list = GetOrCreate(resourceKey);
-            if (list.Contains(handlerType))
-                throw new ArgumentException("The provided handler is already registered.", "handlerType");
+            
+            // Relaxing rules on handler registration
+            // TODO: Add a warning when multiple registrations share the same handler in diagnostics
+
+
+            //if (list.Contains(handlerType))
+            //    throw new ArgumentException("The provided handler is already registered.", "handlerType");
             list.Add(handlerType);
         }
 
