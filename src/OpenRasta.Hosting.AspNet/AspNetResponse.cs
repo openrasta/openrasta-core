@@ -9,6 +9,7 @@
 #endregion
 
 using System;
+using System.Linq;
 using System.Web;
 using OpenRasta.DI;
 using OpenRasta.Diagnostics;
@@ -54,7 +55,7 @@ namespace OpenRasta.Hosting.AspNet
         {
             if (HeadersSent)
                 throw new InvalidOperationException("The headers have already been sent.");
-            foreach (var header in Headers)
+            foreach (var header in Headers.Where(h => h.Key != "Content-Type"))
             {
                 try
                 {
@@ -69,6 +70,11 @@ namespace OpenRasta.Hosting.AspNet
                 }
             }
             HeadersSent = true;
+            if (Headers.ContentType != null)
+            {
+              Log.WriteDebug("Writing http header Content-Type:{0}", Headers.ContentType.MediaType);
+              NativeContext.Response.AppendHeader("Content-Type", Headers.ContentType.MediaType);
+            }
         }
     }
 }
