@@ -1,7 +1,8 @@
 JAAAAAAAAAAAAAAAMONERO
 JAMONERO
 JAMO
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using OpenRasta.Configuration.MetaModel.Handlers;
@@ -11,14 +12,14 @@ namespace OpenRasta.Configuration.MetaModel
 {
     public class MetaModelRepository : IMetaModelRepository
     {
-        readonly IMetaModelHandler[] _handlers;
+        readonly Func<IEnumerable<IMetaModelHandler>> _handlers;
 
         // TODO: Remove when impelemntation of array injection in containers is complete
-        public MetaModelRepository(IDependencyResolver resolver) : this(resolver.ResolveAll<IMetaModelHandler>().ToArray())
+        public MetaModelRepository(IDependencyResolver resolver) : this(resolver.ResolveAll<IMetaModelHandler>)
         {
         }
 
-        public MetaModelRepository(IMetaModelHandler[] handlers)
+        public MetaModelRepository(Func<IEnumerable<IMetaModelHandler>> handlers)
         {
             _handlers = handlers;
             ResourceRegistrations = new List<ResourceModel>();
@@ -30,8 +31,9 @@ namespace OpenRasta.Configuration.MetaModel
 
         public void Process()
         {
-            foreach (var handler in _handlers) handler.PreProcess(this);
-            foreach (var handler in _handlers) handler.Process(this);
+            var handlers = _handlers().ToList();
+            foreach (var handler in handlers) handler.PreProcess(this);
+            foreach (var handler in handlers) handler.Process(this);
         }
     }
 }
