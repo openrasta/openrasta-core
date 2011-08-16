@@ -8,7 +8,7 @@ using OpenRasta.Binding;
 
 namespace OpenRasta.TypeSystem.Surrogated
 {
-    [DebuggerDisplay("Name={_wrappedType.Name}, FullName={_wrappedType.TargetType.ToString()}")]
+    
     public class TypeWithSurrogates : MemberWithSurrogates, IType
     {
         readonly IType _wrappedType;
@@ -17,6 +17,11 @@ namespace OpenRasta.TypeSystem.Surrogated
             : base(wrappedType, alienTypes)
         {
             _wrappedType = wrappedType;
+        }
+
+        public override string ToString()
+        {
+            return "CLR Type (surrogated): " + _wrappedType.Name;
         }
 
         public override IType Type
