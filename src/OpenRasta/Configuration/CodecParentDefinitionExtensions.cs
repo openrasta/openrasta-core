@@ -4,6 +4,7 @@ JAMO
 using System;
 using OpenRasta.Codecs;
 using OpenRasta.Configuration.Fluent;
+using ICodec = OpenRasta.Codecs.ICodec;
 
 namespace OpenRasta.Configuration
 {

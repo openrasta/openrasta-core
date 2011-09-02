@@ -18,7 +18,7 @@ namespace OpenRasta.Configuration.MetaModel.Handlers
         {
             foreach (var resource in repository.ResourceRegistrations)
                 foreach (var handler in resource.Handlers)
-                    _repository.AddResourceHandler(resource.ResourceKey, handler);
+                    _repository.AddResourceHandler(resource.ResourceKey, handler.Type);
         }
     }
 }

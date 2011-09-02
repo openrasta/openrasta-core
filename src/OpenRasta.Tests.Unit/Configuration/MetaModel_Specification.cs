@@ -204,7 +204,7 @@ namespace Configuration_Specification
             ResourceSpaceHas.ResourcesOfType<Frodo>().AtUri("/theshrine")
                 .HandledBy<CustomerHandler>();
 
-            FirstRegistration.Handlers[0].Name.ShouldBe("CustomerHandler");
+            FirstRegistration.Handlers[0].Type.Name.ShouldBe("CustomerHandler");
         }
 
         [Test]
@@ -212,7 +212,7 @@ namespace Configuration_Specification
         {
             ResourceSpaceHas.ResourcesOfType(typeof(Frodo)).AtUri("/theshrine")
                 .HandledBy(TypeSystems.Default.FromClr(typeof(CustomerHandler)));
-            FirstRegistration.Handlers[0].Name.ShouldBe("CustomerHandler");
+            FirstRegistration.Handlers[0].Type.Name.ShouldBe("CustomerHandler");
         }
 
         [Test]
@@ -220,7 +220,7 @@ namespace Configuration_Specification
         {
             ResourceSpaceHas.ResourcesOfType(typeof(Frodo)).AtUri("/theshrine")
                 .HandledBy(typeof(CustomerHandler));
-            FirstRegistration.Handlers[0].Name.ShouldBe("CustomerHandler");
+            FirstRegistration.Handlers[0].Type.Name.ShouldBe("CustomerHandler");
         }
 
         [Test]
@@ -240,8 +240,8 @@ namespace Configuration_Specification
                 .And
                 .HandledBy<object>();
 
-            FirstRegistration.Handlers[0].Name.ShouldBe("CustomerHandler");
-            FirstRegistration.Handlers[1].Name.ShouldBe("Object");
+            FirstRegistration.Handlers[0].Type.Name.ShouldBe("CustomerHandler");
+            FirstRegistration.Handlers[1].Type.Name.ShouldBe("Object");
         }
     }
     public class when_registering_uri_decorators : configuration_context

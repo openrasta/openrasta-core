@@ -153,8 +153,8 @@ namespace MetaModelHandler_Specification
                 ResourceKey = typeSystem.FromClr(typeof(Customer)),
                 Handlers =
                     {
-                        typeSystem.FromClr(typeof(CustomerHandler)),
-                        typeSystem.FromClr(typeof(object))
+                        new HandlerModel(typeSystem.FromClr(typeof(CustomerHandler))),
+                        new HandlerModel(typeSystem.FromClr(typeof(object)))
                     }
             });
         }

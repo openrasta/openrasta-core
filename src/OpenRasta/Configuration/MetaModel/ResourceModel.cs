@@ -1,27 +1,28 @@
 JAAAAAAAAAAAAAAAMONERO
 JAMONERO
 JAMO
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
-using OpenRasta.TypeSystem;
 
 namespace OpenRasta.Configuration.MetaModel
 {
-    public class ResourceModel
+    public class ResourceModel : ConfigurationModel
     {
         public ResourceModel()
         {
             Uris = new List<UriModel>();
-            Handlers = new List<IType>();
+            Handlers = new List<HandlerModel>();
             Codecs = new List<CodecModel>();
         }
 
         public IList<CodecModel> Codecs { get; private set; }
-        public IList<IType> Handlers { get; private set; }
+        public IList<HandlerModel> Handlers { get; private set; }
 
         public bool IsStrictRegistration { get; set; }
         public object ResourceKey { get; set; }
         public IList<UriModel> Uris { get; private set; }
+
 
         public override string ToString()
         {

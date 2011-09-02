@@ -13,6 +13,8 @@ JAMO
 #endregion
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace OpenRasta
@@ -27,7 +29,9 @@ namespace OpenRasta
         {
             return target == string.Empty;
         }
-
+        public static string JoinString(this IEnumerable<string> strings, string separator){
+            return string.Join(separator, strings.ToArray());
+        }
         public static bool IsNullOrEmpty(this string target)
         {
             return string.IsNullOrEmpty(target);

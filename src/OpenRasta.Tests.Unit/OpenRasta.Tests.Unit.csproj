@@ -84,6 +84,7 @@
     <Compile Include="CodeDom.Compiler\ExtensibleCompiler_Specification.cs" />
     <Compile Include="Collections\ObservableIterator_Specification.cs" />
     <Compile Include="Collections\ResumableIterator_Specification.cs" />
+    <Compile Include="Configuration\extensions\extending_resource.cs" />
     <Compile Include="Configuration\MetaModelHandler_Specification.cs" />
     <Compile Include="Configuration\MetaModel_Specification.cs" />
     <Compile Include="Diagnostics\LogSource_Specification.cs" />
