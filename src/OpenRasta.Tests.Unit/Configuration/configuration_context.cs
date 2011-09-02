@@ -59,6 +59,10 @@ namespace OpenRasta.Tests.Unit.Configuration
         protected class Customer { }
         protected class CustomerHandler { }
 
+        protected void when_has(Action<IHas> has)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
 
