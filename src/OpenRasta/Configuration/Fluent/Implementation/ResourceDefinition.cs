@@ -3,20 +3,26 @@ JAMONERO
 JAMO
 using System;
 using OpenRasta.Codecs;
+using OpenRasta.Configuration.Fluent.Extensions;
 using OpenRasta.Configuration.MetaModel;
 using OpenRasta.TypeSystem;
 
 namespace OpenRasta.Configuration.Fluent.Implementation
 {
-    public class ResourceDefinition : IResourceDefinition, 
+    public class ResourceDefinition : IResourceDefinition,
+                                      IResourceTarget,
                                       IHandlerParentDefinition, 
-                                      IHandlerForResourceWithUriDefinition
+                                      IHandlerForResourceWithUriDefinition,
+                                      IHandlerTarget
     {
+        readonly IFluentTarget _rootTarget;
         readonly ITypeSystem _typeSystem;
+        HandlerModel _lastHandlerModel;
 
-        public ResourceDefinition(ITypeSystem typeSystem, ResourceModel resourceRegistration)
+        public ResourceDefinition(IFluentTarget rootTarget, ITypeSystem typeSystem, ResourceModel resourceRegistration)
         {
-            Registration = resourceRegistration;
+            Resource = resourceRegistration;
+            _rootTarget = rootTarget;
             _typeSystem = typeSystem;
         }
 
@@ -25,28 +31,28 @@ namespace OpenRasta.Configuration.Fluent.Implementation
             get { return this; }
         }
 
-        public ResourceModel Registration { get; private set; }
 
         /// <exception cref="InvalidOperationException">Cannot make a resource URI-less if a URI is already registered.</exception>
         public ICodecParentDefinition WithoutUri
         {
             get
             {
-                if (Registration.Uris.Count > 0)
+                // TODO: remove the restriction
+                if (Resource.Uris.Count > 0)
                     throw new InvalidOperationException(
                         "Cannot make a resource URI-less if a URI is already registered.");
                 return new CodecParentDefinition(this);
             }
         }
 
-        public ICodecDefinition TranscodedBy<TCodec>(object configuration) where TCodec : ICodec
+        public ICodecDefinition TranscodedBy<TCodec>(object configuration) where TCodec : Codecs.ICodec
         {
-            return new CodecDefinition(this, typeof(TCodec), configuration);
+            return new CodecDefinition(_rootTarget, this, typeof(TCodec), configuration);
         }
 
         public ICodecDefinition TranscodedBy(Type codecType, object configuration)
         {
-            return new CodecDefinition(this, codecType, configuration);
+            return new CodecDefinition(_rootTarget, this, codecType, configuration);
         }
 
         public IHandlerForResourceWithUriDefinition HandledBy<T>()
@@ -62,7 +68,7 @@ namespace OpenRasta.Configuration.Fluent.Implementation
         public IHandlerForResourceWithUriDefinition HandledBy(IType type)
         {
             if (type == null) throw new ArgumentNullException("type");
-            Registration.Handlers.Add(type);
+            Resource.Handlers.Add(_lastHandlerModel = new HandlerModel(type));
             return this;
         }
 
@@ -70,7 +76,24 @@ namespace OpenRasta.Configuration.Fluent.Implementation
         public IUriDefinition AtUri(string uri)
         {
             if (uri == null) throw new ArgumentNullException("uri");
-            return new UriDefinition(this, uri);
+            return new UriDefinition(_rootTarget, this, uri);
+        }
+
+        public IMetaModelRepository Repository
+        {
+            get { return _rootTarget.Repository; }
+        }
+
+        public ITypeSystem TypeSystem
+        {
+            get { return _rootTarget.TypeSystem; }
+        }
+
+        public ResourceModel Resource { get; private set; }
+
+        public HandlerModel Handler
+        {
+            get { return _lastHandlerModel; }
         }
     }
 }

@@ -15,7 +15,7 @@ namespace OpenRasta.Configuration.Fluent.Implementation
             _resourceDefinition = registration;
         }
 
-        public ICodecDefinition TranscodedBy<TCodec>(object configuration) where TCodec : ICodec
+        public ICodecDefinition TranscodedBy<TCodec>(object configuration) where TCodec : Codecs.ICodec
         {
             return _resourceDefinition.TranscodedBy<TCodec>(configuration);
         }

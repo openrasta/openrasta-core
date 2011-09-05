@@ -2,14 +2,13 @@ JAAAAAAAAAAAAAAAMONERO
 JAMONERO
 JAMO
 using System;
-using OpenRasta.Codecs;
 
 namespace OpenRasta.Configuration.Fluent
 {
     public interface ICodecParentDefinition :INoIzObject
     {
         ICodecDefinition TranscodedBy<TCodec>(object configuration)
-            where TCodec : ICodec;
+            where TCodec : Codecs.ICodec;
 
         ICodecDefinition TranscodedBy(Type type, object configuration);
     }

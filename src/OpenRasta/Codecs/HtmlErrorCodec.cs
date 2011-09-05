@@ -22,8 +22,8 @@ namespace OpenRasta.Codecs
     /// <summary>
     /// Codec rendering error messages collected during the processing of a request.
     /// </summary>
-    [MediaType("application/xhtml+xml;q=0.9")]
-    [MediaType("text/html")]
+    [MediaType("application/xhtml+xml;q=0.4")]
+    [MediaType("text/html;q=0.5")]
     [SupportedType(typeof(IList<Error>))]
     public class HtmlErrorCodec : IMediaTypeWriter
     {

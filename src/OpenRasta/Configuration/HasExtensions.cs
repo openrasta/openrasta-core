@@ -2,6 +2,7 @@ JAAAAAAAAAAAAAAAMONERO
 JAMONERO
 JAMO
 using System;
+using System.ComponentModel;
 using OpenRasta.Codecs;
 using OpenRasta.Configuration.Fluent;
 using OpenRasta.Configuration.Fluent.Implementation;
@@ -16,7 +17,7 @@ namespace OpenRasta.Configuration
         {
             return has.ResourcesWithKey(name);
         }
-
+        [Obsolete, EditorBrowsable(EditorBrowsableState.Never)]
         public static IResourceDefinition ResourcesOfType<T>(this IHas has)
         {
             return has.ResourcesWithKey(typeof(T));
@@ -53,7 +54,7 @@ namespace OpenRasta.Configuration
 
             var hasBuilder = (IFluentTarget)has;
             hasBuilder.Repository.ResourceRegistrations.Add(registration);
-            return new ResourceDefinition(hasBuilder.TypeSystem, registration);
+            return new ResourceDefinition(hasBuilder, hasBuilder.TypeSystem, registration);
         }
     }
 }

@@ -2,20 +2,24 @@ JAAAAAAAAAAAAAAAMONERO
 JAMONERO
 JAMO
 using System;
+using OpenRasta.Configuration.Fluent.Extensions;
 using OpenRasta.Configuration.MetaModel;
+using OpenRasta.TypeSystem;
 using OpenRasta.Web;
 
 namespace OpenRasta.Configuration.Fluent.Implementation
 {
-    public class CodecDefinition : ICodecDefinition
+    public class CodecDefinition : ICodecDefinition, ICodecTarget
     {
+        readonly IFluentTarget _rootTarget;
         readonly CodecModel _codecRegistration;
 
-        public CodecDefinition(ResourceDefinition resourceDefinition, Type codecType, object configuration)
+        public CodecDefinition(IFluentTarget rootTarget, ResourceDefinition resourceDefinition, Type codecType, object configuration)
         {
+            _rootTarget = rootTarget;
             ResourceDefinition = resourceDefinition;
             _codecRegistration = new CodecModel(codecType, configuration);
-            ResourceDefinition.Registration.Codecs.Add(_codecRegistration);
+            ResourceDefinition.Resource.Codecs.Add(_codecRegistration);
         }
 
         public ICodecParentDefinition And
@@ -31,6 +35,26 @@ namespace OpenRasta.Configuration.Fluent.Implementation
             _codecRegistration.MediaTypes.Add(model);
 
             return new CodecMediaTypeDefinition(this, model);
+        }
+
+        public IMetaModelRepository Repository
+        {
+            get { return _rootTarget.Repository; }
+        }
+
+        public ITypeSystem TypeSystem
+        {
+            get { return _rootTarget.TypeSystem; }
+        }
+
+        public ResourceModel Resource
+        {
+            get { return ResourceDefinition.Resource; }
+        }
+
+        public CodecModel Codec
+        {
+            get { return _codecRegistration; }
         }
     }
 }

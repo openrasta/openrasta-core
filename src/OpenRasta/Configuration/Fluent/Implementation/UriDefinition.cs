@@ -3,21 +3,24 @@ JAMONERO
 JAMO
 using System;
 using System.Globalization;
+using OpenRasta.Configuration.Fluent.Extensions;
 using OpenRasta.Configuration.MetaModel;
 using OpenRasta.TypeSystem;
 
 namespace OpenRasta.Configuration.Fluent.Implementation
 {
-    public class UriDefinition : IUriDefinition
+    public class UriDefinition : IUriDefinition, IUriTarget
     {
+        readonly IFluentTarget _rootTarget;
         readonly ResourceDefinition _resourceDefinition;
         readonly UriModel _uriModel;
 
-        public UriDefinition(ResourceDefinition resourceDefinition, string uri)
+        public UriDefinition(IFluentTarget rootTarget, ResourceDefinition resourceDefinition, string uri)
         {
+            _rootTarget = rootTarget;
             _resourceDefinition = resourceDefinition;
             _uriModel = new UriModel { Uri = uri };
-            _resourceDefinition.Registration.Uris.Add(_uriModel);
+            _resourceDefinition.Resource.Uris.Add(_uriModel);
         }
 
         public IResourceDefinition And
@@ -52,6 +55,26 @@ namespace OpenRasta.Configuration.Fluent.Implementation
         {
             _uriModel.Name = uriName;
             return this;
+        }
+
+        public IMetaModelRepository Repository
+        {
+            get { return _rootTarget.Repository; }
+        }
+
+        public ITypeSystem TypeSystem
+        {
+            get { return _rootTarget.TypeSystem; }
+        }
+
+        public ResourceModel Resource
+        {
+            get { return _resourceDefinition.Resource; }
+        }
+
+        public UriModel Uri
+        {
+            get { return _uriModel; }
         }
     }
 }
