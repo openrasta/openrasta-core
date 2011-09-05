@@ -21,6 +21,7 @@ namespace OpenRasta.Hosting.HttpListener
             _context = context;
             _nativeResponse = response;
             Headers = new HttpHeaderDictionary();
+            // TODO: Wrap stream and send chunked when needed if write starts before sending response
             Entity = new HttpEntity(Headers, _tempStream);
             _nativeResponse.SendChunked = false;
         }
@@ -54,6 +55,8 @@ namespace OpenRasta.Hosting.HttpListener
             }
             HeadersSent = true;
             _nativeResponse.ContentLength64 = Headers.ContentLength.GetValueOrDefault();
+            // TODO: Enable streaming straight back to native response output sting
+
 
             // Guard against a possible HttpListenerException : The specified network name is no longer available
             try
