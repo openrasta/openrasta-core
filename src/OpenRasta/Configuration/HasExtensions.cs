@@ -17,7 +17,7 @@ namespace OpenRasta.Configuration
         {
             return has.ResourcesWithKey(name);
         }
-        [Obsolete, EditorBrowsable(EditorBrowsableState.Never)]
+        
         public static IResourceDefinition ResourcesOfType<T>(this IHas has)
         {
             return has.ResourcesWithKey(typeof(T));
