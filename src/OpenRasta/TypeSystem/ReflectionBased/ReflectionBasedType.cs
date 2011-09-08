@@ -19,14 +19,16 @@ namespace OpenRasta.TypeSystem.ReflectionBased
     /// <summary>
     /// Represents a CLR-based type.
     /// </summary>
-    [DebuggerDisplay("Name={TargetType.Name}, FullName={TargetType.ToString()}")]
     public class ReflectionBasedType : ReflectionBasedMember<ITypeBuilder>, IResolverAwareType
     {
         public ReflectionBasedType(ITypeSystem typeSystem, Type type)
             : base(typeSystem, type)
         {
         }
-
+        public override string ToString()
+        {
+            return "CLR Type: " + TargetType.Name;
+        }
         public override IType Type
         {
             get { return this; }

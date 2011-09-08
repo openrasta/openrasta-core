@@ -61,6 +61,8 @@ namespace OpenRasta.Pipeline.Contributors
                 }
                 else
                 {
+                    // TODO: Reorder header writing / body writing
+
                     Log.WriteDebug("Codec {0} selected.", codecInstance.GetType().Name);
                     if (context.PipelineData.ResponseCodec != null &&
                         context.PipelineData.ResponseCodec.Configuration != null)

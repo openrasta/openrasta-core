@@ -5,7 +5,7 @@ using OpenRasta.TypeSystem.ReflectionBased;
 
 namespace OpenRasta.Configuration.MetaModel
 {
-    public class CodecModel
+    public class CodecModel : ConfigurationModel
     {
         public CodecModel(Type codecType) : this(codecType, null)
         {
@@ -20,7 +20,7 @@ namespace OpenRasta.Configuration.MetaModel
 
             CodecType = codecType;
             Configuration = configuration;
-            MediaTypes = new List<MediaTypeModel>();
+            MediaTypes = new List<MediaTypeModel>(); 
         }
 
         public Type CodecType { get; set; }

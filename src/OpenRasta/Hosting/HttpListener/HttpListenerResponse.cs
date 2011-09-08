@@ -51,6 +51,7 @@ namespace OpenRasta.Hosting.HttpListener
             }
             HeadersSent = true;
             _nativeResponse.ContentLength64 = Headers.ContentLength.GetValueOrDefault();
+            // TODO: Enable streaming straight back to native response output sting
             if (Headers.ContentType != null)
             {
                 _nativeResponse.ContentType = Headers.ContentType.MediaType;
