@@ -64,7 +64,7 @@ namespace OpenRasta.Tests.Unit.Configuration
 
         protected void when_has(Action<IHas> has)
         {
-            throw new NotImplementedException();
+            // TODO: finish writing that test...
         }
     }
 }

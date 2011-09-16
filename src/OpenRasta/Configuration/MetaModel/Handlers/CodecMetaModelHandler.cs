@@ -35,7 +35,6 @@ namespace OpenRasta.Configuration.MetaModel.Handlers
         public override void Process(IMetaModelRepository repository)
         {
             var codecRegistrations = from resource in repository.ResourceRegistrations
-                                     let resourceAsIType = resource.ResourceKey as IType
                                      let isStrict = resource.IsStrictRegistration
                                      from codec in resource.Codecs
                                      from mediaType in codec.MediaTypes
