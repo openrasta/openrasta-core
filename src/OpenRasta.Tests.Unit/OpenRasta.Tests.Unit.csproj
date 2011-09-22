@@ -84,7 +84,11 @@
     <Compile Include="CodeDom.Compiler\ExtensibleCompiler_Specification.cs" />
     <Compile Include="Collections\ObservableIterator_Specification.cs" />
     <Compile Include="Collections\ResumableIterator_Specification.cs" />
-    <Compile Include="Configuration\extensions\extending_resource.cs" />
+    <Compile Include="Configuration\contexts\configuration.cs" />
+    <Compile Include="Configuration\extensions\extending_untyped_resource.cs" />
+    <Compile Include="Configuration\legacy\handlers.cs" />
+    <Compile Include="Configuration\legacy\when_adding_uris_to_a_resource.cs" />
+    <Compile Include="Configuration\legacy\when_configuring_codecs.cs" />
     <Compile Include="Configuration\MetaModelHandler_Specification.cs" />
     <Compile Include="Configuration\MetaModel_Specification.cs" />
     <Compile Include="Diagnostics\LogSource_Specification.cs" />
@@ -98,7 +102,6 @@
     <Compile Include="Codecs\MultipartFormDataCodec_Specification.cs" />
     <Compile Include="Collections\CollectionExtensions_Specification.cs" />
     <Compile Include="Configuration\configuration_context.cs" />
-    <Compile Include="Configuration\LegacyManualConfiguration_Specification.cs" />
     <Compile Include="DI\DependencyManager_Specification.cs" />
     <Compile Include="DI\dependency_resolver_context.cs" />
     <Compile Include="DI\InternalDependencyResolver_Specification.cs" />

@@ -4,4 +4,9 @@ namespace OpenRasta.Configuration.Fluent
     {
         ICodecWithMediaTypeDefinition ForExtension(string extension);
     }
+    public interface ICodecWithMediaTypeDefinition<TResource,TCodec> 
+        : ICodecWithMediaTypeDefinition, IMediaType<TResource,TCodec>
+    {
+        new ICodecWithMediaTypeDefinition<TResource,TCodec> ForExtension(string extension);
+    }
 }

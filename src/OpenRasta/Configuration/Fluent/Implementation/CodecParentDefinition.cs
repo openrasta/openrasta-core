@@ -22,4 +22,18 @@ namespace OpenRasta.Configuration.Fluent.Implementation
             return _resourceDefinition.TranscodedBy(type, configuration);
         }
     }
+    public class CodecParentDefinition<TResource> : CodecParentDefinition, ICodecParentDefinition<TResource>
+    {
+        readonly ResourceDefinition<TResource> _registration;
+
+        public CodecParentDefinition(ResourceDefinition<TResource> registration) : base(registration)
+        {
+            _registration = registration;
+        }
+
+        public ICodecDefinition<TResource, TCodec> TranscodedBy<TCodec>(object configuration) where TCodec : Codecs.ICodec
+        {
+            return _registration.TranscodedBy<TCodec>(configuration);
+        }
+    }
 }

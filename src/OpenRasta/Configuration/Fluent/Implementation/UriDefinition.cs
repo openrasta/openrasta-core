@@ -6,6 +6,26 @@ using OpenRasta.TypeSystem;
 
 namespace OpenRasta.Configuration.Fluent.Implementation
 {
+    public class UriDefinition<TResource> : UriDefinition, IUriDefinition<TResource>
+    {
+        readonly ResourceDefinition<TResource> _resourceDefinition;
+
+        public UriDefinition(IFluentTarget rootTarget, ResourceDefinition<TResource> resourceDefinition, string uri) : base(rootTarget, resourceDefinition, uri)
+        {
+            _resourceDefinition = resourceDefinition;
+        }
+
+
+        IResourceDefinition<TResource> IUriDefinition<TResource>.And
+        {
+            get { return _resourceDefinition; }
+        }
+
+        public new IHandlerForResourceWithUriDefinition<TResource, THandler> HandledBy<THandler>()
+        {
+            return _resourceDefinition.HandledBy<THandler>();
+        }
+    }
     public class UriDefinition : IUriDefinition, IUriTarget
     {
         readonly IFluentTarget _rootTarget;

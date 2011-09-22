@@ -9,6 +9,7 @@
 #endregion
 using System;
 using OpenRasta.Configuration.Fluent;
+using OpenRasta.Configuration.MetaModel;
 using OpenRasta.Hosting;
 using OpenRasta.Hosting.InMemory;
 using OpenRasta.Testing;
@@ -49,7 +50,7 @@ namespace OpenRasta.Tests.Unit.Configuration
             }
         }
 
-        public IUriDefinition GivenAResourceRegistrationFor<TResource>(string uri)
+        public IUriDefinition given_resource<TResource>(string uri)
         {
 
             var resourcetype = ResourceSpace.Has.ResourcesOfType<TResource>();
@@ -61,8 +62,9 @@ namespace OpenRasta.Tests.Unit.Configuration
 
         protected void when_has(Action<IHas> has)
         {
-            throw new NotImplementedException();
+            has(ResourceSpace.Has);
         }
+        protected IMetaModelRepository Configuration { get { return DependencyManager.GetService<IMetaModelRepository>();}}
     }
 }
 

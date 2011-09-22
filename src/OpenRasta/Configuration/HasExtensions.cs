@@ -15,9 +15,17 @@ namespace OpenRasta.Configuration
             return has.ResourcesWithKey(name);
         }
         
-        public static IResourceDefinition ResourcesOfType<T>(this IHas has)
+        public static IResourceDefinition<T> ResourcesOfType<T>(this IHas has)
         {
-            return has.ResourcesWithKey(typeof(T));
+            if (has == null) throw new ArgumentNullException("has");
+            
+
+            ResourceModel registration = CreateResourceModel(typeof(T));
+
+            var hasBuilder = (IFluentTarget)has;
+            hasBuilder.Repository.ResourceRegistrations.Add(registration);
+            return new ResourceDefinition<T>(hasBuilder, hasBuilder.TypeSystem, registration);
+      
         }
 
         public static IResourceDefinition ResourcesOfType(this IHas has, Type clrType)
@@ -36,6 +44,16 @@ namespace OpenRasta.Configuration
             if (has == null) throw new ArgumentNullException("has");
             if (resourceKey == null) throw new ArgumentNullException("resourceKey");
 
+            ResourceModel registration = CreateResourceModel(resourceKey);
+
+            var hasBuilder = (IFluentTarget)has;
+            hasBuilder.Repository.ResourceRegistrations.Add(registration);
+            return new ResourceDefinition(hasBuilder, hasBuilder.TypeSystem, registration);
+        }
+        
+
+        static ResourceModel CreateResourceModel(object resourceKey)
+        {
             var resourceKeyAsType = resourceKey as Type;
             bool isStrictRegistration = false;
             if (resourceKeyAsType != null && CodecRegistration.IsStrictRegistration(resourceKeyAsType))
@@ -43,15 +61,11 @@ namespace OpenRasta.Configuration
                 resourceKey = CodecRegistration.GetStrictType(resourceKeyAsType);
                 isStrictRegistration = true;
             }
-            var registration = new ResourceModel
+            return new ResourceModel
             {
-                ResourceKey = resourceKey, 
-                IsStrictRegistration = isStrictRegistration
+                    ResourceKey = resourceKey, 
+                    IsStrictRegistration = isStrictRegistration
             };
-
-            var hasBuilder = (IFluentTarget)has;
-            hasBuilder.Repository.ResourceRegistrations.Add(registration);
-            return new ResourceDefinition(hasBuilder, hasBuilder.TypeSystem, registration);
         }
     }
 }

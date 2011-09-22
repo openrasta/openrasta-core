@@ -9,4 +9,9 @@ namespace OpenRasta.Configuration.Fluent
 
         ICodecDefinition TranscodedBy(Type type, object configuration);
     }
+    public interface ICodecParentDefinition<TResource> : ICodecParentDefinition
+    {
+        new ICodecDefinition<TResource,TCodec> TranscodedBy<TCodec>(object configuration)
+            where TCodec : Codecs.ICodec;
+    }
 }

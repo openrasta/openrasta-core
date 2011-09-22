@@ -122,11 +122,13 @@
     <Compile Include="Configuration\CodecDefinitionExtensions.cs" />
     <Compile Include="Configuration\CodecParentDefinitionExtensions.cs" />
     <Compile Include="Configuration\Fluent\Extensions\ICodecTarget.cs" />
+    <Compile Include="Configuration\Fluent\Extensions\IHandlerTarget.cs" />
     <Compile Include="Configuration\Fluent\Extensions\IMediaTypeTarget.cs" />
     <Compile Include="Configuration\Fluent\Extensions\IResourceTarget.cs" />
     <Compile Include="Configuration\Fluent\Extensions\IUriTarget.cs" />
     <Compile Include="Configuration\Fluent\ICodec.cs" />
     <Compile Include="Configuration\Fluent\IMediaType.cs" />
+    <Compile Include="Configuration\Fluent\Implementation\HandlerDefinition.cs" />
     <Compile Include="Configuration\Fluent\INoIzObject.cs" />
     <Compile Include="Configuration\Fluent\IResource.cs" />
     <Compile Include="Configuration\Fluent\IUri.cs" />
