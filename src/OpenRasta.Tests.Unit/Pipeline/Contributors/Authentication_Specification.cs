@@ -80,10 +80,10 @@ namespace Authentication_Specification
 
             var mockScheme = new Mock<IAuthenticationScheme>();
 
-            mockScheme.ExpectGet(s => s.Name).Returns("BASIC");
+            mockScheme.SetupGet(s => s.Name).Returns("BASIC");
 
             mockScheme
-                .Expect(s => s.Authenticate(It.IsAny<IRequest>()))
+                .Setup(s => s.Authenticate(It.IsAny<IRequest>()))
                 .Returns(new AuthenticationResult.MalformedCredentials());
 
             given_dependency(mockScheme.Object);
@@ -107,10 +107,10 @@ namespace Authentication_Specification
 
             var mockScheme = new Mock<IAuthenticationScheme>();
 
-            mockScheme.ExpectGet(s => s.Name).Returns("BASIC");
+            mockScheme.SetupGet(s => s.Name).Returns("BASIC");
 
             mockScheme
-                .Expect(s => s.Authenticate(It.IsAny<IRequest>()))
+                .Setup(s => s.Authenticate(It.IsAny<IRequest>()))
                 .Returns(new AuthenticationResult.Failed());
 
             given_dependency(mockScheme.Object);
@@ -133,13 +133,13 @@ namespace Authentication_Specification
 
             var mockScheme = new Mock<IAuthenticationScheme>();
 
-            mockScheme.ExpectGet(s => s.Name).Returns("BASIC");
+            mockScheme.SetupGet(s => s.Name).Returns("BASIC");
 
             var username = "someUsername";
             var roles = new[] { "role1", "role2" };
 
             mockScheme
-                .Expect(s => s.Authenticate(It.IsAny<IRequest>()))
+                .Setup(s => s.Authenticate(It.IsAny<IRequest>()))
                 .Returns(new AuthenticationResult.Success(username, roles));
 
             given_dependency(mockScheme.Object);

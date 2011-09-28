@@ -2,8 +2,8 @@
 
 namespace OpenRasta.Configuration.Fluent.Extensions
 {
-    public interface IMediaTypeTarget : ICodecTarget
+    public interface IHandlerTarget : IResourceTarget
     {
-        MediaTypeModel MediaType { get; }
+        HandlerModel Handler { get; }
     }
 }

@@ -5,4 +5,8 @@ namespace OpenRasta.Configuration.Fluent
         ICodecParentDefinition WithoutUri { get; }
         IUriDefinition AtUri(string uri);
     }
+    public interface IResourceDefinition<T> : IResourceDefinition, IResource<T>
+    {
+        new IUriDefinition<T> AtUri(string uri);
+    }
 }

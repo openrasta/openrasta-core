@@ -52,5 +52,10 @@ namespace OpenRasta.Configuration.Fluent.Implementation
         {
             get { return _model; }
         }
+
+        public CodecModel Codec
+        {
+            get { return _parent.Codec; }
+        }
     }
 }

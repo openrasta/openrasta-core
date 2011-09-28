@@ -9,7 +9,7 @@
     <ProjectGuid>{562EC958-6078-4DBD-B536-6E9FE1228867}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>OpenRasta.Tests.Unit</RootNamespace>
+    <RootNamespace>Tests</RootNamespace>
     <AssemblyName>OpenRasta.Tests.Unit</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <SccProjectName>
@@ -84,7 +84,10 @@
     <Compile Include="CodeDom.Compiler\ExtensibleCompiler_Specification.cs" />
     <Compile Include="Collections\ObservableIterator_Specification.cs" />
     <Compile Include="Collections\ResumableIterator_Specification.cs" />
-    <Compile Include="Configuration\extensions\extending_resource.cs" />
+    <Compile Include="Configuration\contexts\configuration.cs" />
+    <Compile Include="Configuration\fluent_extensions\ResourceExtension.cs" />
+    <Compile Include="Configuration\fluent_extensions\untyped_resource.cs" />
+    <Compile Include="Configuration\fluent_extensions\untyped_resource_continuation_handler.cs" />
     <Compile Include="Configuration\MetaModelHandler_Specification.cs" />
     <Compile Include="Configuration\MetaModel_Specification.cs" />
     <Compile Include="Diagnostics\LogSource_Specification.cs" />

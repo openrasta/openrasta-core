@@ -6,8 +6,4 @@ namespace OpenRasta.Configuration.Fluent.Extensions
     {
         UriModel Uri { get; }
     }
-    public interface IHandlerTarget : IResourceTarget
-    {
-        HandlerModel Handler { get; }
-    }
 }

@@ -15,9 +15,16 @@ namespace OpenRasta.Configuration
             return has.ResourcesWithKey(name);
         }
         
-        public static IResourceDefinition ResourcesOfType<T>(this IHas has)
+        public static IResourceDefinition<TResource> ResourcesOfType<TResource>(this IHas has)
         {
-            return has.ResourcesWithKey(typeof(T));
+
+            if (has == null) throw new ArgumentNullException("has");
+
+            var hasBuilder = (IFluentTarget)has;
+
+            ResourceModel registration = RegisterResourceModel(hasBuilder, typeof(TResource));
+
+            return new ResourceDefinition<TResource>(hasBuilder, hasBuilder.TypeSystem, registration);
         }
 
         public static IResourceDefinition ResourcesOfType(this IHas has, Type clrType)
@@ -36,6 +43,15 @@ namespace OpenRasta.Configuration
             if (has == null) throw new ArgumentNullException("has");
             if (resourceKey == null) throw new ArgumentNullException("resourceKey");
 
+            var hasBuilder = (IFluentTarget)has;
+
+            ResourceModel registration = RegisterResourceModel(hasBuilder, resourceKey);
+
+            return new ResourceDefinition(hasBuilder, hasBuilder.TypeSystem, registration);
+        }
+
+        static ResourceModel RegisterResourceModel(IFluentTarget has, object resourceKey)
+        {
             var resourceKeyAsType = resourceKey as Type;
             bool isStrictRegistration = false;
             if (resourceKeyAsType != null && CodecRegistration.IsStrictRegistration(resourceKeyAsType))
@@ -45,13 +61,11 @@ namespace OpenRasta.Configuration
             }
             var registration = new ResourceModel
             {
-                ResourceKey = resourceKey, 
-                IsStrictRegistration = isStrictRegistration
+                    ResourceKey = resourceKey, 
+                    IsStrictRegistration = isStrictRegistration
             };
-
-            var hasBuilder = (IFluentTarget)has;
-            hasBuilder.Repository.ResourceRegistrations.Add(registration);
-            return new ResourceDefinition(hasBuilder, hasBuilder.TypeSystem, registration);
+            has.Repository.ResourceRegistrations.Add(registration);
+            return registration;
         }
     }
 }

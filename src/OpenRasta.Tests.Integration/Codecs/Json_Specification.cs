@@ -28,7 +28,7 @@ namespace Json_Specification
             ConfigureServer(() => ResourceSpace.Has.ResourcesOfType<Customer>()
                                       .AtUri("/customer/{id}")
                                       .HandledBy<CustomerHandler>()
-                                      .AndTranscodedBy<JsonDataContractCodec>(null));
+                                      .TranscodedBy<JsonDataContractCodec>(null));
         }
 
         [Test]

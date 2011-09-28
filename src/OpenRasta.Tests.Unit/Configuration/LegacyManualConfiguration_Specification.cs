@@ -22,6 +22,7 @@ using OpenRasta.Tests.Unit.Configuration;
 using OpenRasta.TypeSystem;
 using OpenRasta.Web;
 
+#pragma warning disable 612,618
 namespace LegacyManualConfiguration_Specification
 {
     public class when_adding_uris_to_a_resource : configuration_context
@@ -193,6 +194,8 @@ namespace LegacyManualConfiguration_Specification
         }
     }
 }
+#pragma warning restore 612,618
+
 
 #region Full license
 

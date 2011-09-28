@@ -27,8 +27,6 @@ namespace OpenRasta.Pipeline.Contributors
         public void Initialize(IPipeline pipeline)
         {
             pipeline.Notify(WriteResponse).After<KnownStages.ICodecResponseSelection>();
-            //.And
-            //.Before<KnownStages.IEnd>();
         }
 
         public PipelineContinuation WriteResponse(ICommunicationContext context)
