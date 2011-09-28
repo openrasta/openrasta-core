@@ -61,11 +61,6 @@ namespace OpenRasta.Tests.Unit.Configuration
 
         protected class Customer { }
         protected class CustomerHandler { }
-
-        protected void when_has(Action<IHas> has)
-        {
-            // TODO: finish writing that test...
-        }
     }
 }
 

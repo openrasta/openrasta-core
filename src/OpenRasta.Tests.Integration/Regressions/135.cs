@@ -16,8 +16,6 @@ namespace OpenRasta.Tests.Integration.Regressions
 {
     public class when_pipeline_contributor_raises_exception_after_operation_executed : server_context
     {
-        private static readonly int PORT = 6687;
-
         public when_pipeline_contributor_raises_exception_after_operation_executed()
         {
 

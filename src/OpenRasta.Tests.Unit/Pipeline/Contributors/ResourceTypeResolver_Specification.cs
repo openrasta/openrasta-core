@@ -19,6 +19,7 @@ using OpenRasta.Testing;
 using OpenRasta.Tests;
 using OpenRasta.Web;
 using OpenRasta.Pipeline;
+using OpenRasta.TypeSystem;
 
 namespace ResourceTypeResolver_Specification
 {
@@ -67,7 +68,7 @@ namespace ResourceTypeResolver_Specification
 
             when_sending_notification<BootstrapperContributor>();
 
-            Context.PipelineData.SelectedResource.ResourceKey.ShouldBe(typeof (Fake).AssemblyQualifiedName);
+            Context.PipelineData.SelectedResource.ResourceKey.ShouldBe(TypeSystem.FromClr<Fake>());
 
         }[Test]
         public void the_match_is_relative_to_the_app_base_uri()
@@ -81,7 +82,7 @@ namespace ResourceTypeResolver_Specification
 
             Context.PipelineData.SelectedResource
                 .ShouldNotBeNull()
-                .ResourceKey.ShouldBe(typeof(Fake).AssemblyQualifiedName);
+                .ResourceKey.ShouldBe(TypeSystem.FromClr<Fake>());
         }
 
         void given_app_base_uri(string appBaseUri)

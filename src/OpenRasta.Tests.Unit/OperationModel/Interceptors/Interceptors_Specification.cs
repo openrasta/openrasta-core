@@ -67,8 +67,8 @@ namespace OpenRasta.Tests.Unit.OperationModel.Interceptors
         [Test]
         public void an_interceptor_throwing_an_exception_in_pre_condition_prevents_execution_from_continuing()
         {
-            given_mock_operation(op=>op.Expect(x => x.Invoke()).Throws<InvalidOperationException>());
-            given_mock_interceptor(i=>i.Expect(x=>x.BeforeExecute(It.IsAny<IOperation>())).Throws<ArgumentException>());
+            given_mock_operation(op=>op.Setup(x => x.Invoke()).Throws<InvalidOperationException>());
+            given_mock_interceptor(i=>i.Setup(x=>x.BeforeExecute(It.IsAny<IOperation>())).Throws<ArgumentException>());
             given_wrapper();
 
             Executing(invoking_wrapped_operation)
@@ -80,8 +80,8 @@ namespace OpenRasta.Tests.Unit.OperationModel.Interceptors
         [Test]
         public void an_interceptor_returning_false_in_pre_condition_prevents_execution_from_continuing()
         {
-            given_mock_operation(op => op.Expect(x => x.Invoke()).Throws<InvalidOperationException>());
-            given_mock_interceptor(i => i.Expect(x => x.BeforeExecute(It.IsAny<IOperation>())).Returns(false));
+            given_mock_operation(op => op.Setup(x => x.Invoke()).Throws<InvalidOperationException>());
+            given_mock_interceptor(i => i.Setup(x => x.BeforeExecute(It.IsAny<IOperation>())).Returns(false));
             given_wrapper();
 
             Executing(invoking_wrapped_operation)
@@ -92,7 +92,7 @@ namespace OpenRasta.Tests.Unit.OperationModel.Interceptors
         public void an_interceptor_throwing_an_exception_in_post_condition_prevents_execution_from_continuing()
         {
 
-            given_mock_operation(op => op.Expect(x => x.Invoke()).Returns(new OutputMember[0]).Verifiable());
+            given_mock_operation(op => op.Setup(x => x.Invoke()).Returns(new OutputMember[0]).Verifiable());
             given_mock_interceptor(before => before.Returns(true),
                                    after => after.Throws<ArgumentException>());
             
@@ -108,7 +108,7 @@ namespace OpenRasta.Tests.Unit.OperationModel.Interceptors
         [Test]
         public void an_interceptor_returning_false_in_post_condition_prevents_execution_from_continuing()
         {
-            given_mock_operation(op => op.Expect(x => x.Invoke()).Returns(new OutputMember[0]).Verifiable());
+            given_mock_operation(op => op.Setup(x => x.Invoke()).Returns(new OutputMember[0]).Verifiable());
             given_mock_interceptor(before => before.Returns(true),
                                    after => after.Returns(false));
             given_wrapper();
@@ -122,7 +122,7 @@ namespace OpenRasta.Tests.Unit.OperationModel.Interceptors
         public void an_interceptor_can_replace_the_original_invoke_call()
         {
             var emptyResult = new OutputMember[0];
-            given_mock_operation(op=>op.Expect(x=>x.Invoke()).Throws<InvalidOperationException>());
+            given_mock_operation(op=>op.Setup(x=>x.Invoke()).Throws<InvalidOperationException>());
             given_mock_interceptor(()=>emptyResult);
             given_wrapper();
 
@@ -153,9 +153,9 @@ namespace OpenRasta.Tests.Unit.OperationModel.Interceptors
         {
             given_mock_interceptor(i =>
             {
-                i.Expect(x => x.BeforeExecute(It.IsAny<IOperation>())).Returns(true);
-                i.Expect(x => x.AfterExecute(It.IsAny<IOperation>(), It.IsAny<IEnumerable<OutputMember>>())).Returns(true);
-                i.Expect(x => x.RewriteOperation(It.IsAny<Func<IEnumerable<OutputMember>>>())).Returns(overriddenMethod);
+                i.Setup(x => x.BeforeExecute(It.IsAny<IOperation>())).Returns(true);
+                i.Setup(x => x.AfterExecute(It.IsAny<IOperation>(), It.IsAny<IEnumerable<OutputMember>>())).Returns(true);
+                i.Setup(x => x.RewriteOperation(It.IsAny<Func<IEnumerable<OutputMember>>>())).Returns(overriddenMethod);
             });
             
         }
@@ -164,8 +164,8 @@ namespace OpenRasta.Tests.Unit.OperationModel.Interceptors
         {
             given_mock_interceptor(i =>
             {
-                before(i.Expect(x => x.BeforeExecute(It.IsAny<IOperation>())));
-                after(i.Expect(x => x.AfterExecute(It.IsAny<IOperation>(), It.IsAny<IEnumerable<OutputMember>>())));
+                before(i.Setup(x => x.BeforeExecute(It.IsAny<IOperation>())));
+                after(i.Setup(x => x.AfterExecute(It.IsAny<IOperation>(), It.IsAny<IEnumerable<OutputMember>>())));
             });
         }
 

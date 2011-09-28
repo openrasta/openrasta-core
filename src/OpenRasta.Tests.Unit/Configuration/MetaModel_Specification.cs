@@ -177,16 +177,6 @@ namespace Configuration_Specification
             TheUris[1].Uri.ShouldBe("/lothlorien");
         }
 
-        [Test]
-        public void cannot_register_a_uri_then_without_a_uri()
-        {
-            Executing(() =>
-                {
-                    ICodecParentDefinition reg = ResourceSpaceHas.ResourcesOfType<Frodo>()
-                        .AtUri("/theshrine")
-                        .And.WithoutUri;
-                }).ShouldThrow<InvalidOperationException>();
-        }
 
         [Test]
         public void lcannot_register_a_null_uri_for_a_resource()

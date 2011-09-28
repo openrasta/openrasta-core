@@ -3,5 +3,5 @@ JAMONERO
 JAMO
 ﻿namespace OpenRasta.Configuration.Fluent
 {
-    public interface ICodec { }
+    public interface ICodec : IResource { }
 }

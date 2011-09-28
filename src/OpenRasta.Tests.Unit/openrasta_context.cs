@@ -79,7 +79,7 @@ namespace OpenRasta.Tests
 
         public void given_registration_urimapping<T>(string uri)
         {
-            UriResolver.AddUriMapping(uri, typeof(T).AssemblyQualifiedName, CultureInfo.CurrentCulture, null);
+            UriResolver.Add(new UriRegistration(uri, typeof(T),null,  CultureInfo.CurrentCulture));
         }
 
         public void given_request_uri(string uri)

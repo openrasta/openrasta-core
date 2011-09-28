@@ -71,8 +71,8 @@ namespace OpenRasta.Tests.Unit.Web.Pipeline.Contributors
         IOperation CreateMockOperation()
         {
             var operation = new Mock<IOperation>();
-            operation.Expect(x => x.ToString()).Returns("Fake method");
-            operation.ExpectGet(x => x.Name).Returns("OperationName");
+            operation.Setup(x => x.ToString()).Returns("Fake method");
+            operation.SetupGet(x => x.Name).Returns("OperationName");
             return operation.Object;
         }
     }

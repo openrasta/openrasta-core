@@ -122,6 +122,7 @@
     <Compile Include="Configuration\CodecDefinitionExtensions.cs" />
     <Compile Include="Configuration\CodecParentDefinitionExtensions.cs" />
     <Compile Include="Configuration\Fluent\Extensions\ICodecTarget.cs" />
+    <Compile Include="Configuration\Fluent\Extensions\IHandlerTarget.cs" />
     <Compile Include="Configuration\Fluent\Extensions\IMediaTypeTarget.cs" />
     <Compile Include="Configuration\Fluent\Extensions\IResourceTarget.cs" />
     <Compile Include="Configuration\Fluent\Extensions\IUriTarget.cs" />
@@ -189,7 +190,6 @@
     <Compile Include="Configuration\MetaModel\ResourceModel.cs" />
     <Compile Include="Configuration\MetaModel\UriModel.cs" />
     <Compile Include="Configuration\Fluent\Implementation\ResourceDefinition.cs" />
-    <Compile Include="Configuration\Fluent\Implementation\UriDefinition.cs" />
     <Compile Include="DI\Internal\DependencyRegistration.cs" />
     <Compile Include="DI\Internal\DependencyRegistrationCollection.cs" />
     <Compile Include="DI\IDependencyResolverAccessor.cs" />

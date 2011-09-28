@@ -44,7 +44,7 @@ namespace BasicAuthenticationScheme_Specification
             _request.Headers["Authorization"] = validAuthString;
 
             _mockAuthenticator
-                .Expect(auth => auth.Authenticate(It.Is<BasicAuthRequestHeader>(h => h.Username == username && h.Password == password)))
+                .Setup(auth => auth.Authenticate(It.Is<BasicAuthRequestHeader>(h => h.Username == username && h.Password == password)))
                 .Returns(new AuthenticationResult.Success(username, userRoles));
 
             // when
@@ -82,7 +82,7 @@ namespace BasicAuthenticationScheme_Specification
             _request.Headers["Authorization"] = authString;
 
             _mockAuthenticator
-                .Expect(auth => auth.Authenticate(It.Is<BasicAuthRequestHeader>(h => h.Username == username && h.Password == password)))
+                .Setup(auth => auth.Authenticate(It.Is<BasicAuthRequestHeader>(h => h.Username == username && h.Password == password)))
                 .Returns(new AuthenticationResult.Failed());
 
             // when
@@ -100,7 +100,7 @@ namespace BasicAuthenticationScheme_Specification
             var response = new InMemoryResponse();
 
             _mockAuthenticator
-                .ExpectGet(auth => auth.Realm)
+                .SetupGet(auth => auth.Realm)
                 .Returns(realm);
 
             // when

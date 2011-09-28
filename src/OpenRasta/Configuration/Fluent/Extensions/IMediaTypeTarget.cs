@@ -5,7 +5,7 @@ JAMO
 
 namespace OpenRasta.Configuration.Fluent.Extensions
 {
-    public interface IMediaTypeTarget : IResourceTarget
+    public interface IMediaTypeTarget : ICodecTarget
     {
         MediaTypeModel MediaType { get; }
     }

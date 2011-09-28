@@ -29,7 +29,7 @@ namespace HtmlForm_Specification
         {
             ConfigureServer(() => ResourceSpace.Has.ResourcesOfType<Customer>()
                                       .AtUri("/flat/{id}").Named("Flat")
-                                      .AndAt("/constructed/{id}").Named("Constructed")
+                                      .And.AtUri("/constructed/{id}").Named("Constructed")
                                       .HandledBy<CustomerHandler>());
         }
 

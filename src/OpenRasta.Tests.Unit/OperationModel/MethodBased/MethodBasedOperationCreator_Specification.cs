@@ -39,7 +39,7 @@ namespace OpenRasta.Tests.Unit.OperationModel.MethodBased
         IMethodFilter[] filter_selecting_first_method()
         {
             MockFilter = new Mock<IMethodFilter>();
-            MockFilter.Expect(x => x.Filter(It.IsAny<IEnumerable<IMethod>>())).Returns(mock_filter()).Verifiable();
+            MockFilter.Setup(x => x.Filter(It.IsAny<IEnumerable<IMethod>>())).Returns(mock_filter()).Verifiable();
             return new[] { MockFilter.Object };
         }
         Func<IEnumerable<IMethod>,IEnumerable<IMethod>> mock_filter()

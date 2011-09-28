@@ -5,8 +5,8 @@ JAMO
 
 namespace OpenRasta.Configuration.Fluent.Extensions
 {
-    public interface IUriTarget : IResourceTarget
+    public interface IHandlerTarget : IResourceTarget
     {
-        UriModel Uri { get; }
+        HandlerModel Handler { get; }
     }
 }

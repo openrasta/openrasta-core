@@ -123,7 +123,7 @@ namespace ResponseEntityWriter_Specification
         IMediaTypeWriter GivenAContentTypeWriter(Action<object, IHttpEntity, string[]> code)
         {
             var mock = new Mock<IMediaTypeWriter>();
-            mock.Expect(writer => writer.WriteTo(It.IsAny<object>(), It.IsAny<IHttpEntity>(), It.IsAny<string[]>()))
+            mock.Setup(writer => writer.WriteTo(It.IsAny<object>(), It.IsAny<IHttpEntity>(), It.IsAny<string[]>()))
                 .Callback(code);
             return (Context.Response.Entity.Codec = mock.Object) as IMediaTypeWriter;
         }
