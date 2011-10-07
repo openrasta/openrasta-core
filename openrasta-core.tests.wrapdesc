@@ -1,2 +1,3 @@
 ﻿depends: nunit
 depends: moq
+depends: openrasta-testing
