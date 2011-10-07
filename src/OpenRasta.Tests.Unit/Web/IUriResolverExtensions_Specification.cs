@@ -36,7 +36,7 @@ namespace IUriResolverExtensions_Specification
 
         public void GivenUriMapping(object key, string uri, CultureInfo culture, string uriName)
         {
-            UriResolver.AddUriMapping(uri, key, culture, uriName);
+            UriResolver.Add(new UriRegistration(uri, key, uriName, culture));
         }
 
         public void WhenCreatingUriFor<TResource>()
@@ -119,7 +119,7 @@ namespace IUriResolverExtensions_Specification
         public void the_uri_is_created_using_contextual_base_address_from_the_context()
         {
             GivenContext()
-                .ExpectGet(c => c.ApplicationBaseUri)
+                .SetupGet(c => c.ApplicationBaseUri)
                 .Returns(new Uri("http://tempserver"));
 
             GivenUriMapping<string>("/test", null, null);

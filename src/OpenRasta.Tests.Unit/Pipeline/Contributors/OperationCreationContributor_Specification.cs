@@ -106,7 +106,7 @@ namespace OperationCreationContributor_Specification
         {
             var mock = new Mock<IOperationCreator>();
             Operations = count >= 0 ? Enumerable.Range(0, count).Select<int, IOperation>(i => CreateMockOperation()).ToList() : null;
-            mock.Expect(x => x.CreateOperations(It.IsAny<IEnumerable<IType>>()))
+            mock.Setup(x => x.CreateOperations(It.IsAny<IEnumerable<IType>>()))
                 .Returns(Operations);
             Resolver.AddDependencyInstance(typeof(IOperationCreator), mock.Object, DependencyLifetime.Singleton);
 
@@ -115,8 +115,8 @@ namespace OperationCreationContributor_Specification
         IOperation CreateMockOperation()
         {
             var operation = new Mock<IOperation>();
-            operation.Expect(x => x.ToString()).Returns("Fake method");
-            operation.ExpectGet(x => x.Name).Returns("OperationName");
+            operation.Setup(x => x.ToString()).Returns("Fake method");
+            operation.SetupGet(x => x.Name).Returns("OperationName");
             return operation.Object;
         }
 

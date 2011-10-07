@@ -58,7 +58,6 @@ namespace OpenRasta.Tests.Unit.Configuration
 
         protected class Customer { }
         protected class CustomerHandler { }
-
     }
 }
 

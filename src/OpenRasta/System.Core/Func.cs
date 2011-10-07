@@ -9,6 +9,7 @@
  */
 #endregion
 
+using System.Runtime.CompilerServices;
 
 #if __OW_PROFILE_net20 || __OW_PROFILE_net30__
 using System;

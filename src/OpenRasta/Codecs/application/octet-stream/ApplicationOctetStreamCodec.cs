@@ -66,7 +66,7 @@ namespace OpenRasta.Codecs
             if (file.ContentType != null && file.ContentType != MediaType.ApplicationOctetStream
                 || (file.ContentType == MediaType.ApplicationOctetStream && response.ContentType == null))
                 response.ContentType = file.ContentType;
-            
+            // TODO: use contentLength from IFile
             using (var stream = file.OpenStream())
                 stream.CopyTo(response.Stream);
         }
@@ -75,6 +75,7 @@ namespace OpenRasta.Codecs
         {
             yield return TryProcessAs<IDownloadableFile>(entity, file => WriteFileWithFilename(file, "attachment", response));
             yield return TryProcessAs<IFile>(entity, file => WriteFileWithFilename(file, "inline", response));
+            // TODO: Stream to be disposed and length to be written if needed
             yield return TryProcessAs<Stream>(entity, stream => stream.CopyTo(response.Stream));
             yield return TryProcessAs<byte[]>(entity, bytes => response.Stream.Write(bytes));
         }

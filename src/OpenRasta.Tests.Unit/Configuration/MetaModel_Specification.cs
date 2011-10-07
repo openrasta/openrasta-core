@@ -174,16 +174,6 @@ namespace Configuration_Specification
             TheUris[1].Uri.ShouldBe("/lothlorien");
         }
 
-        [Test]
-        public void cannot_register_a_uri_then_without_a_uri()
-        {
-            Executing(() =>
-                {
-                    ICodecParentDefinition reg = ResourceSpaceHas.ResourcesOfType<Frodo>()
-                        .AtUri("/theshrine")
-                        .And.WithoutUri;
-                }).ShouldThrow<InvalidOperationException>();
-        }
 
         [Test]
         public void lcannot_register_a_null_uri_for_a_resource()
@@ -201,7 +191,7 @@ namespace Configuration_Specification
             ResourceSpaceHas.ResourcesOfType<Frodo>().AtUri("/theshrine")
                 .HandledBy<CustomerHandler>();
 
-            FirstRegistration.Handlers[0].Name.ShouldBe("CustomerHandler");
+            FirstRegistration.Handlers[0].Type.Name.ShouldBe("CustomerHandler");
         }
 
         [Test]
@@ -209,7 +199,7 @@ namespace Configuration_Specification
         {
             ResourceSpaceHas.ResourcesOfType(typeof(Frodo)).AtUri("/theshrine")
                 .HandledBy(TypeSystems.Default.FromClr(typeof(CustomerHandler)));
-            FirstRegistration.Handlers[0].Name.ShouldBe("CustomerHandler");
+            FirstRegistration.Handlers[0].Type.Name.ShouldBe("CustomerHandler");
         }
 
         [Test]
@@ -217,7 +207,7 @@ namespace Configuration_Specification
         {
             ResourceSpaceHas.ResourcesOfType(typeof(Frodo)).AtUri("/theshrine")
                 .HandledBy(typeof(CustomerHandler));
-            FirstRegistration.Handlers[0].Name.ShouldBe("CustomerHandler");
+            FirstRegistration.Handlers[0].Type.Name.ShouldBe("CustomerHandler");
         }
 
         [Test]
@@ -237,8 +227,8 @@ namespace Configuration_Specification
                 .And
                 .HandledBy<object>();
 
-            FirstRegistration.Handlers[0].Name.ShouldBe("CustomerHandler");
-            FirstRegistration.Handlers[1].Name.ShouldBe("Object");
+            FirstRegistration.Handlers[0].Type.Name.ShouldBe("CustomerHandler");
+            FirstRegistration.Handlers[1].Type.Name.ShouldBe("Object");
         }
     }
     public class when_registering_uri_decorators : configuration_context
