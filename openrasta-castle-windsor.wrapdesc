@@ -1,0 +1,5 @@
+﻿depends: openwrap content
+depends: openrasta-core = 2.1
+depends: castle.windsor = 2.5
+build: msbuild; profile=net35; project=src\OpenRasta.DI.Windsor\OpenRasta.DI.Windsor.csproj
+name: openrasta-castle-windsor
