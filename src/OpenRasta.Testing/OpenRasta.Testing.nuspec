@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>$id$</id>
+    <version>2.1</version>
+    <title>$title$</title>
+    <authors>OpenRasta</authors>
+    <owners>OpenRasta</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>$description$</description>
+    <copyright>Copyright 2011</copyright>
+  </metadata>
+</package>

@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>OpenRasta.Core</id>
+    <version>2.1</version>
+    <title>$title$</title>
+    <authors>OpenRasta</authors>
+    <owners>OpenRasta</owners>    
+    <projectUrl>https://github.com/openrasta/openrasta-core</projectUrl>    
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>$description$</description>    
+    <copyright>Copyright 2011</copyright>    
+  </metadata>
+</package>
