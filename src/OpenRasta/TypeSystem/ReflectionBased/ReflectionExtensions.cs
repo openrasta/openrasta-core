@@ -414,6 +414,7 @@ namespace OpenRasta.TypeSystem.ReflectionBased
                     case "0":
                     case "-0":
                     case "false":
+                    case "False":
                     case "off":
                     case "null":
                     case "NaN":
