@@ -79,14 +79,7 @@ namespace OpenRasta.Pipeline.Contributors
                     }
                 }
             }
-            SendResponseHeaders(context);
-            return PipelineContinuation.Finished;
-        }
-
-        void SendResponseHeaders(ICommunicationContext context)
-        {
-            Log.WriteDebug("Writing http headers.");
-            context.Response.WriteHeaders();
+            return PipelineContinuation.Continue;
         }
 
         static void PadErrorMessageForIE(ICommunicationContext context)
