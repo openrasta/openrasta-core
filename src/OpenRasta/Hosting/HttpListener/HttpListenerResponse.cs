@@ -18,7 +18,6 @@ namespace OpenRasta.Hosting.HttpListener
             _context = context;
             _nativeResponse = response;
             Headers = new HttpHeaderDictionary();
-            // TODO: Wrap stream and send chunked when needed if write starts before sending response
             Entity = new HttpEntity(Headers, _tempStream);
             _nativeResponse.SendChunked = false;
         }
@@ -38,7 +37,7 @@ namespace OpenRasta.Hosting.HttpListener
             if (HeadersSent)
                 throw new InvalidOperationException("The headers have already been sent.");
             _nativeResponse.Headers.Clear();
-            foreach (var header in Headers.Where(h => h.Key != "Content-Length"))
+            foreach (var header in Headers.Where(h => h.Key != "Content-Length" && h.Key != "Content-Type"))
             {
                 try
                 {
@@ -53,8 +52,10 @@ namespace OpenRasta.Hosting.HttpListener
             HeadersSent = true;
             _nativeResponse.ContentLength64 = Headers.ContentLength.GetValueOrDefault();
             // TODO: Enable streaming straight back to native response output sting
-
-
+            if (Headers.ContentType != null)
+            {
+                _nativeResponse.ContentType = Headers.ContentType.MediaType;
+            }
             // Guard against a possible HttpListenerException : The specified network name is no longer available
             try
             {
