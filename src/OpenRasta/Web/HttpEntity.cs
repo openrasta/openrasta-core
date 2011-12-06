@@ -19,7 +19,7 @@ using OpenRasta.IO;
 
 namespace OpenRasta.Web
 {
-    public class HttpEntity : IHttpEntity
+    public class HttpEntity : IHttpEntity, IDisposable
     {
         public HttpEntity(HttpHeaderDictionary messageheaders, Stream entityBodyStream)
         {
@@ -55,6 +55,11 @@ namespace OpenRasta.Web
 
         public Stream Stream { get; private set; }
         public IList<Error> Errors { get; set; }
+
+        public void Dispose()
+        {
+            Stream.Dispose();
+        }
     }
 }
 
