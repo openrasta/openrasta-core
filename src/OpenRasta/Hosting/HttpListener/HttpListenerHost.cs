@@ -142,6 +142,7 @@ namespace OpenRasta.Hosting.HttpListener
                     HostManager.UnregisterHost(this);
                 }
                 _listener.Abort();
+                ((IDisposable)_listener).Dispose();
                 _isDisposed = true;
             }
         }
