@@ -129,11 +129,13 @@ namespace OpenRasta.IO
         {
             if (AtEndBoundary)
                 return new byte[0];
-            var part = new MemoryStream();
-            long count = ReadNextPart(part, true);
-            var result = new byte[count];
-            Buffer.BlockCopy(part.GetBuffer(), 0, result, 0, (int)count);
-            return result;
+            using (var part = new MemoryStream())
+            {
+                long count = ReadNextPart(part, true);
+                var result = new byte[count];
+                Buffer.BlockCopy(part.GetBuffer(), 0, result, 0, (int)count);
+                return result;
+            }
         }
 
         public long ReadNextPart(Stream destinationStream, bool continueToNextBoundaryOnEmptyRead)
