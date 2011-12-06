@@ -41,7 +41,7 @@ namespace OpenRasta.IO
         Save
     }
 #pragma warning disable 0618
-    public class InMemoryFile : IFile, IReceivedFile
+    public class InMemoryFile : IFile, IReceivedFile, IDisposable
     {
         public InMemoryFile() : this(new MemoryStream())
         {
@@ -66,6 +66,11 @@ namespace OpenRasta.IO
         string IReceivedFile.OriginalName
         {
             get { return FileName; }
+        }
+
+        public void Dispose()
+        {
+            _stream.Dispose();
         }
     }
 #pragma warning restore 0618
