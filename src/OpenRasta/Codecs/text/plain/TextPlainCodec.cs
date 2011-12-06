@@ -38,7 +38,11 @@ namespace OpenRasta.Codecs
             {
                 var encoding = DetectTextEncoding(request);
 
-                string result = new StreamReader(request.Stream, encoding).ReadToEnd();
+                string result;
+                using (var sr = new StreamReader(request.Stream, encoding))
+                {
+                    result = sr.ReadToEnd();
+                }
                 _values.Add(request, result);
             }
             return _values[request];
