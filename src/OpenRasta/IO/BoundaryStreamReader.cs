@@ -16,7 +16,7 @@ using OpenRasta.IO.Diagnostics;
 
 namespace OpenRasta.IO
 {
-    public class BoundaryStreamReader
+    public class BoundaryStreamReader : IDisposable
     {
         readonly byte[] _beginBoundary;
         readonly string _beginBoundaryAsString;
@@ -415,6 +415,11 @@ namespace OpenRasta.IO
             {
                 throw new NotSupportedException();
             }
+        }
+
+        public void Dispose()
+        {
+            _previousStream.Dispose();
         }
     }
 }
