@@ -9,7 +9,7 @@ using OpenRasta.Web;
 
 namespace OpenRasta.Hosting.HttpListener
 {
-    public class HttpListenerResponse : IResponse
+    public class HttpListenerResponse : IResponse, IDisposable
     {
         readonly HttpListenerCommunicationContext _context;
         readonly System.Net.HttpListenerResponse _nativeResponse;
@@ -68,6 +68,13 @@ namespace OpenRasta.Hosting.HttpListener
                 if (_context != null)
                     _context.ServerErrors.Add(new Error { Message = ex.ToString() });
             }
+        }
+
+
+        public void Dispose()
+        {
+            _tempStream.Dispose();
+            ((IDisposable)_nativeResponse).Dispose();
         }
     }
 }
