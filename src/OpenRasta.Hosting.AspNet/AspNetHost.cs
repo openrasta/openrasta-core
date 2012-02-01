@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 using System.Web;
 using System.Web.Compilation;
 using OpenRasta.Configuration;
@@ -13,10 +14,9 @@ namespace OpenRasta.Hosting.AspNet
 {
     public class AspNetHost : IHost
     {
+        private readonly object _syncRoot = new object();
         public AspNetHost()
         {
-            ConfigurationSource = FindTypeInProject<IConfigurationSource>();
-            DependencyResolverAccessor = FindTypeInProject<IDependencyResolverAccessor>();
         }
 
         public event EventHandler<IncomingRequestProcessedEventArgs> IncomingRequestProcessed;
@@ -30,12 +30,47 @@ namespace OpenRasta.Hosting.AspNet
             get { return HttpRuntime.AppDomainAppVirtualPath; }
         }
 
-        public IConfigurationSource ConfigurationSource { get; set; }
-        public IDependencyResolverAccessor DependencyResolverAccessor { get; set; }
+        private IConfigurationSource _configurationSource;
+        private IDependencyResolverAccessor _resolver;
+
+        public IConfigurationSource ConfigurationSource
+        {
+            get
+            {
+                if (_configurationSource == null)
+                    lock(_syncRoot)
+                    {
+                        if (_configurationSource == null)
+                        {
+                            var source = FindTypeInProject<IConfigurationSource>();
+                            Thread.MemoryBarrier();
+                            _configurationSource = source;
+                        }
+                    }
+                return _configurationSource;
+            }
+            set
+            {
+                _configurationSource = value;
+            }
+        }
 
         public IDependencyResolverAccessor ResolverAccessor
         {
-            get { return FindTypeInProject<IDependencyResolverAccessor>(); }
+            get
+            {
+                if (_resolver == null)
+                    lock(_syncRoot)
+                    {
+                        if (_resolver == null)
+                        {
+                            var resolver = ConfigurationSource as IDependencyResolverAccessor ?? FindTypeInProject<IDependencyResolverAccessor>();
+                            Thread.MemoryBarrier();
+                            _resolver = resolver;
+                        }
+                    }
+                return _resolver;
+            }
         }
 
         public static T FindTypeInProject<T>() where T : class

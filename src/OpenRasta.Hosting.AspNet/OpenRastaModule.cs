@@ -11,6 +11,7 @@
 using System;
 using System.Threading;
 using System.Web;
+using System.Web.Configuration;
 using System.Web.Hosting;
 using OpenRasta.DI;
 using OpenRasta.Diagnostics;
@@ -42,9 +43,9 @@ namespace OpenRasta.Hosting.AspNet
                 var context = HttpContext.Current;
                 if (context.Items.Contains(COMM_CONTEXT_KEY))
                     return (AspNetCommunicationContext)context.Items[COMM_CONTEXT_KEY];
-                var orContext = new AspNetCommunicationContext(Log, 
-                                                               context, 
-                                                               new AspNetRequest(context), 
+                var orContext = new AspNetCommunicationContext(Log,
+                                                               context,
+                                                               new AspNetRequest(context),
                                                                new AspNetResponse(context) { Log = Log });
                 context.Items[COMM_CONTEXT_KEY] = orContext;
                 return orContext;
@@ -73,12 +74,13 @@ namespace OpenRasta.Hosting.AspNet
                 if (app == null) return;
                 app.PostResolveRequestCache -= HandleHttpApplicationPostResolveRequestCacheEvent;
                 app.EndRequest -= HandleHttpApplicationEndRequestEvent;
+                HostManager.UnregisterHost(Host);
             };
             app.PostResolveRequestCache += HandleHttpApplicationPostResolveRequestCacheEvent;
             app.EndRequest += HandleHttpApplicationEndRequestEvent;
         }
 
-        static void InitializeHosting()
+        static void TryInitializeHosting()
         {
             if (HostManager == null)
             {
@@ -87,7 +89,9 @@ namespace OpenRasta.Hosting.AspNet
                     Thread.MemoryBarrier();
                     if (HostManager == null)
                     {
-                        HostManager = HostManager.RegisterHost(Host);
+                        var hostManager = HostManager.RegisterHost(Host);
+                        Thread.MemoryBarrier();
+                        HostManager = hostManager;
                         try
                         {
                             Host.RaiseStart();
@@ -110,7 +114,7 @@ namespace OpenRasta.Hosting.AspNet
 
         static void VerifyIisDetected(HttpContext context)
         {
-            InitializeHosting();
+            TryInitializeHosting();
             if (Iis == null)
             {
                 lock (_syncRoot)
@@ -165,16 +169,16 @@ namespace OpenRasta.Hosting.AspNet
         {
             VerifyIisDetected(HttpContext.Current);
 
-            if (HostingEnvironment.VirtualPathProvider.FileExists(HttpContext.Current.Request.Path) ) 
+            if (HostingEnvironment.VirtualPathProvider.FileExists(HttpContext.Current.Request.Path))
                 return; //don't process file files on disk
 
-            if( HttpContext.Current.Request.Path == "/" )
+            if (!HandleRootPath && HttpContext.Current.Request.Path == "/")
                 return; //don't handle root '/' requests in IIS whatsoever.
 
-            if( HttpContext.Current.Request.Path != "/" && HostingEnvironment.VirtualPathProvider.DirectoryExists(HttpContext.Current.Request.Path)) 
+            if (!HandleDirectories && HttpContext.Current.Request.Path != "/" && HostingEnvironment.VirtualPathProvider.DirectoryExists(HttpContext.Current.Request.Path))
                 return; //don't handle actual directories that exist
 
-            if( HandlerAlreadyMapped(HttpContext.Current.Request.HttpMethod, HttpContext.Current.Request.Url)) 
+            if (!OverrideHttpHandlers && HandlerAlreadyMapped(HttpContext.Current.Request.HttpMethod, HttpContext.Current.Request.Url))
                 return; //don't process requests that are handled by IIS handlers
 
             //else continue processing with OpenRasta
@@ -189,12 +193,29 @@ namespace OpenRasta.Hosting.AspNet
 
             if (context.PipelineData.ResourceKey != null || context.OperationResult != null)
             {
+                // TODO: This is to make the pipeline recognize the request by extension for handler processing. I *think* that's not necessary in integrated but have no memory of what is supposed to happen....
                 HttpContext.Current.Items[ORIGINAL_PATH_KEY] = HttpContext.Current.Request.Path;
                 HttpContext.Current.RewritePath(VirtualPathUtility.ToAppRelative("~/ignoreme.rastahook"), false);
                 Log.PathRewrote();
                 return;
             }
             Log.IgnoredRequest();
+        }
+
+        protected static bool OverrideHttpHandlers
+        {
+            get { return WebConfigurationManager.AppSettings["openrasta.hosting.aspnet.paths.handlers"] == "all"; }
+
+        }
+
+        protected static bool HandleDirectories
+        {
+            get { return WebConfigurationManager.AppSettings["openrasta.hosting.aspnet.paths.directories"] == "all"; }
+        }
+
+        protected static bool HandleRootPath
+        {
+            get { return WebConfigurationManager.AppSettings["openrasta.hosting.aspnet.paths.root"] == "enable"; }
         }
     }
 }
