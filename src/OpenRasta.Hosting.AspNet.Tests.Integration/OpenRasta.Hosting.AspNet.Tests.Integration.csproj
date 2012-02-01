@@ -75,10 +75,6 @@
     <EmbeddedResource Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\OpenRasta.Codecs.WebForms\OpenRasta.Codecs.WebForms.csproj">
-      <Project>{B4EC606E-48A7-4653-AD88-3614A5FF360A}</Project>
-      <Name>Project OpenRasta.Codecs.WebForms</Name>
-    </ProjectReference>
     <ProjectReference Include="..\OpenRasta.Hosting.AspNet\OpenRasta.Hosting.AspNet.csproj">
       <Project>{FE290BB8-9CB4-454E-89BE-E047674BB34F}</Project>
       <Name>Project OpenRasta.Hosting.AspNet</Name>
