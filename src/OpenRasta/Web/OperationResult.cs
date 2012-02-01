@@ -114,6 +114,11 @@ namespace OpenRasta.Web
             }
         }
 
+        public class PreconditionFailed : OperationResult
+        {
+            public PreconditionFailed() : base(412){}
+        }
+
         public class Gone : OperationResult
         {
             public Gone(ICommunicationContext context) : base(410)
