@@ -59,6 +59,7 @@ namespace OpenRasta.Hosting.AspNet
 
         public void Dispose()
         {
+            // Note we do not unsubscrie from events on HttpApplication as that instance is going down and it'd cause an exception.
             if (_disposed) return;
             _disposed = true;
             var dispose = _dispose;
@@ -69,13 +70,7 @@ namespace OpenRasta.Hosting.AspNet
 
         public void Init(HttpApplication app)
         {
-            _dispose = () =>
-            {
-                if (app == null) return;
-                app.PostResolveRequestCache -= HandleHttpApplicationPostResolveRequestCacheEvent;
-                app.EndRequest -= HandleHttpApplicationEndRequestEvent;
-                HostManager.UnregisterHost(Host);
-            };
+            _dispose = () => HostManager.UnregisterHost(Host);
             app.PostResolveRequestCache += HandleHttpApplicationPostResolveRequestCacheEvent;
             app.EndRequest += HandleHttpApplicationEndRequestEvent;
         }
