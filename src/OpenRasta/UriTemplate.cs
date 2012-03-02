@@ -160,7 +160,7 @@ namespace OpenRasta
                 path.Append('?');
                 foreach (var querySegment in _queryStringVariables)
                 {
-                    path.Append(querySegment.Value.Key).Append("=").Append(parameters[querySegment.Value.Value]).Append(";");
+                    path.Append(querySegment.Value.Key).Append("=").Append(parameters[querySegment.Value.Value]).Append("&");
                 }
                 path.Remove(path.Length - 1, 1);
             }
