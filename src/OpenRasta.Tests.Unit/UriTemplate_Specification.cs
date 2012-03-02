@@ -76,6 +76,13 @@ namespace UriTemplate_Specification
         }
 
         [Test]
+        public void a_query_string_with_seperator_is_appended_successfully()
+        {
+            BindingUriByName("?first={first}&?second={second}", new { first = "1", second = "2" }).ShouldAllBe("http://localhost/foo/?first=1&second=2");
+        }
+
+
+        [Test]
         public void a_segment_is_appended_successfully()
         {
             BindingUriByName("/{value}", new {value = "myQuery"}).ShouldAllBe("http://localhost/foo/myQuery");
@@ -85,7 +92,9 @@ namespace UriTemplate_Specification
         {
             BindingUriByName("{value}", new { value = "myQuery" }).ShouldAllBe("http://localhost/foo/myQuery");
         }
+
     }
+
     [TestFixture]
     public class when_matching_urls : uritemplate_context
     {
