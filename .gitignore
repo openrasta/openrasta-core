@@ -18,3 +18,5 @@ Thumbs.db
 reports
 reports/*
 *.wrap
+_*
+**/_*
