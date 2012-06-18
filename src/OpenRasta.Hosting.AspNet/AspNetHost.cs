@@ -148,6 +148,7 @@ namespace OpenRasta.Hosting.AspNet
         protected internal virtual void RaiseStop()
         {
             Stop.Raise(this);
+            _resolver = null;
         }
     }
 }

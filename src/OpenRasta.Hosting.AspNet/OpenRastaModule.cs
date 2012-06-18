@@ -62,15 +62,10 @@ namespace OpenRasta.Hosting.AspNet
             // Note we do not unsubscrie from events on HttpApplication as that instance is going down and it'd cause an exception.
             if (_disposed) return;
             _disposed = true;
-            var dispose = _dispose;
-            if (dispose != null)
-                dispose();
-
         }
 
         public void Init(HttpApplication app)
         {
-            _dispose = () => HostManager.UnregisterHost(Host);
             app.PostResolveRequestCache += HandleHttpApplicationPostResolveRequestCacheEvent;
             app.EndRequest += HandleHttpApplicationEndRequestEvent;
         }
@@ -186,15 +181,30 @@ namespace OpenRasta.Hosting.AspNet
             stage.SuspendAfter<KnownStages.IUriMatching>();
             Host.RaiseIncomingRequestReceived(context);
 
-            if (context.PipelineData.ResourceKey != null || context.OperationResult != null)
+            if (ResourceFound(context) ||  OperationResultSetByCode(context))
             {
-                // TODO: This is to make the pipeline recognize the request by extension for handler processing. I *think* that's not necessary in integrated but have no memory of what is supposed to happen....
+
                 HttpContext.Current.Items[ORIGINAL_PATH_KEY] = HttpContext.Current.Request.Path;
+                // TODO: This is to make the pipeline recognize the request by extension for handler processing. I *think* that's not necessary in integrated but have no memory of what is supposed to happen....
                 HttpContext.Current.RewritePath(VirtualPathUtility.ToAppRelative("~/ignoreme.rastahook"), false);
                 Log.PathRewrote();
                 return;
             }
             Log.IgnoredRequest();
+        }
+
+        private static bool OperationResultSetByCode(AspNetCommunicationContext context)
+        {
+            if (context.OperationResult == null) return false;
+            if (context.OperationResult.StatusCode != 404) return true;
+
+            var notFound = context.OperationResult as OperationResult.NotFound;
+            return notFound != null && notFound.Reason != NotFoundReason.NotMapped;
+        }
+
+        private static bool ResourceFound(AspNetCommunicationContext context)
+        {
+            return context.PipelineData.ResourceKey != null;
         }
 
         protected static bool OverrideHttpHandlers
