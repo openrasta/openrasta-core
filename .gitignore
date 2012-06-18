@@ -17,6 +17,6 @@ Thumbs.db
 .svn
 reports
 reports/*
-*.wrap
+
 _*
 **/_*
