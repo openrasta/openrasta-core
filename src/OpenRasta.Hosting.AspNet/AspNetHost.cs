@@ -81,11 +81,14 @@ namespace OpenRasta.Hosting.AspNet
             {
                 try
                 {
-                    var configType = assembly.GetTypes()
-                        .FirstOrDefault(t => typeof(T).IsAssignableFrom(t));
-                    if (configType != null && configType.IsClass)
+                    using(RedirectToLoadedAssembliesToShutUpPolicyRedirection())
                     {
-                        return Activator.CreateInstance(configType) as T;
+                        var configType = assembly.GetTypes()
+                            .FirstOrDefault(t => typeof(T).IsAssignableFrom(t));
+                        if (configType != null && configType.IsClass)
+                        {
+                            return Activator.CreateInstance(configType) as T;
+                        }
                     }
                 }
                 catch
@@ -93,6 +96,36 @@ namespace OpenRasta.Hosting.AspNet
                 }
             }
             return null;
+        }
+
+        static IDisposable RedirectToLoadedAssembliesToShutUpPolicyRedirection()
+        {
+            AppDomain.CurrentDomain.AssemblyResolve += ResolveToAlreadyLoaded;
+            return new ActionOnDispose(() => AppDomain.CurrentDomain.AssemblyResolve -= ResolveToAlreadyLoaded);
+        }
+        class ActionOnDispose : IDisposable
+        {
+            readonly Action _onDispose;
+            
+            bool _disposed;
+
+            public ActionOnDispose(Action onDispose)
+            {
+                _onDispose = onDispose;
+            }
+
+            public void Dispose()
+            {
+                if (!_disposed)
+                {
+                    _disposed = true;
+                    _onDispose();
+                }
+            }
+        }
+        static Assembly ResolveToAlreadyLoaded(object sender, ResolveEventArgs args)
+        {
+            return AppDomain.CurrentDomain.GetAssemblies().FirstOrDefault(_ => _.FullName == args.Name);
         }
 
         public static bool NotFrameworkAssembly(Assembly assembly)
