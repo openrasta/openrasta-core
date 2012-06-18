@@ -528,6 +528,7 @@
     <Compile Include="Web\IResponse.cs" />
     <Compile Include="Codecs\ICodecRepository.cs" />
     <Compile Include="Web\IUriResolver.cs" />
+    <Compile Include="Web\NotFoundReason.cs" />
     <Compile Include="Web\OperationResult.cs" />
     <Compile Include="Pipeline\IPipeline.cs" />
     <Compile Include="Pipeline\IPipelineContributor.cs" />

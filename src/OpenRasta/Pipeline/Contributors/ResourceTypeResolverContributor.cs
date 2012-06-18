@@ -67,7 +67,8 @@ namespace OpenRasta.Pipeline.Contributors
             {
                 Description =
                     "No registered resource could be found for "
-                    + context.Request.Uri
+                    + context.Request.Uri,
+                Reason = NotFoundReason.NotMapped
             };
         }
     }

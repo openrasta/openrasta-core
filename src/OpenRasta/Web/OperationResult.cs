@@ -49,6 +49,7 @@ namespace OpenRasta.Web
 
         public virtual string Title { get; set; }
         public virtual int StatusCode { get; set; }
+        public virtual int SubStatusCode { get; set; }
 
         public void Execute(ICommunicationContext context)
         {
@@ -197,7 +198,6 @@ namespace OpenRasta.Web
                 //Debugger.Launch();
             }
         }
-
         public class NotFound : OperationResult
         {
             public NotFound() : base(404)
@@ -207,6 +207,13 @@ namespace OpenRasta.Web
             public override string Title
             {
                 get { return "The requested resource was not found."; }
+            }
+
+            
+            public NotFoundReason Reason
+            {
+                get { return (NotFoundReason)SubStatusCode; }
+                set { SubStatusCode = (int)value; }
             }
         }
 
