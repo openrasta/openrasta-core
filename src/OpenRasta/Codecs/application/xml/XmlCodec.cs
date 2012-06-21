@@ -31,13 +31,12 @@ namespace OpenRasta.Codecs
                                              new XmlWriterSettings
                                              {
 												 Encoding = new UTF8Encoding(false),
-                                                 ConformanceLevel =
-                                                     ConformanceLevel.Document, 
+                                                 ConformanceLevel = ConformanceLevel.Document, 
                                                  Indent = true, 
                                                  NewLineOnAttributes = true, 
                                                  OmitXmlDeclaration = false, 
                                                  CloseOutput = true, 
-                                                 CheckCharacters = true
+                                                 CheckCharacters = false,
                                              }))
             {
                 WriteToCore(entity, response);
