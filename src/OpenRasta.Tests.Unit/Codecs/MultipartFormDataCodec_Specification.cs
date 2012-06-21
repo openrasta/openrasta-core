@@ -76,8 +76,8 @@ namespace MultipartFormDataCodec_Specification
 
             when_decoding<DateTime>("dateofbirth");
 
-            then_decoding_result<DateTime>()
-                .ShouldBe(DateTime.Parse("10 Dec 2001"));
+        	then_decoding_result<DateTime>()
+        			.ShouldBe(DateTime.Parse("10 Dec 2001"));
         }
         [Test]
         public void a_large_field_value_is_stored_on_disk()

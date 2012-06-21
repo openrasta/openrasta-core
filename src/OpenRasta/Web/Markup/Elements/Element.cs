@@ -58,10 +58,11 @@ namespace OpenRasta.Web.Markup.Elements
             get
             {
                 var sb = new StringBuilder();
-                var sw = new StringWriter(sb);
-                var writer = new XhtmlTextWriter(sw);
-                new XhtmlNodeWriter().Write(writer, this);
-                return sb.ToString();
+                using (var sw = new StringWriter(sb)) {
+                    var writer = new XhtmlTextWriter(sw);
+                    new XhtmlNodeWriter().Write(writer, this);
+                    return sb.ToString();
+                }
             }
         }
         public override string ToString()
