@@ -1,7 +1,5 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Security.Principal;
 using OpenRasta.Authentication;
 using OpenRasta.DI;
 using OpenRasta.Diagnostics;
@@ -12,11 +10,14 @@ namespace OpenRasta.Pipeline.Contributors
     public class AuthenticationContributor : KnownStages.IAuthentication
     {
         readonly IDependencyResolver _resolver;
+        readonly IPrincipalProvider _principalProvider;
+
         public ILogger Log { get; set; }
 
-        public AuthenticationContributor(IDependencyResolver resolver)
+        public AuthenticationContributor(IDependencyResolver resolver, IPrincipalProvider principalProvider)
         {
             _resolver = resolver;
+            _principalProvider = principalProvider;
         }
 
         public void Initialize(IPipeline pipelineRunner)
@@ -49,7 +50,7 @@ namespace OpenRasta.Pipeline.Contributors
             if (authResult is AuthenticationResult.Success)
             {
                 var success = (authResult as AuthenticationResult.Success);
-                context.User = CreatePrincipal(success, schemeToUse);
+                context.User = _principalProvider.Get(success, schemeToUse);
             }
 
             if (authResult is AuthenticationResult.MalformedCredentials)
@@ -80,12 +81,6 @@ namespace OpenRasta.Pipeline.Contributors
                 return null;
 
             return requestedAuthSchemeName;
-        }
-
-        static IPrincipal CreatePrincipal(AuthenticationResult.Success success, IAuthenticationScheme scheme)
-        {
-            var identity = new GenericIdentity(success.Username, scheme.Name);
-            return new GenericPrincipal(identity, success.Roles);
         }
     }
 }

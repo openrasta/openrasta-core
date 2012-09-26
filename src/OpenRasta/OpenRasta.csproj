@@ -67,6 +67,8 @@
     <Compile Include="Authentication\Basic\BasicAuthRequestHeader.cs" />
     <Compile Include="Authentication\Basic\IBasicAuthenticator.cs" />
     <Compile Include="Authentication\IAuthenticationScheme.cs" />
+    <Compile Include="Authentication\IPrincipalProvider.cs" />
+    <Compile Include="Authentication\PrincipalProvider.cs" />
     <Compile Include="Binding\BinderAttribute.cs" />
     <Compile Include="Binding\DefaultObjectBinderLocator.cs" />
     <Compile Include="Binding\BindingResult.cs" />

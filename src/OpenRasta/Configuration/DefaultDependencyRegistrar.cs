@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
+using OpenRasta.Authentication;
 using OpenRasta.Binding;
 using OpenRasta.Codecs;
 using OpenRasta.CodeDom.Compiler;
@@ -218,6 +219,11 @@ namespace OpenRasta.Configuration
             RegisterOperationModel(resolver);
             RegisterLogSources(resolver);
             RegisterCodecs(resolver);
+
+            if (!resolver.HasDependency(typeof(IPrincipalProvider)))
+            {
+                resolver.AddDependency(typeof(IPrincipalProvider), typeof(PrincipalProvider), DependencyLifetime.Singleton);
+            }
         }
 
         protected virtual void AddCSharpCodeSnippetModifiers()
