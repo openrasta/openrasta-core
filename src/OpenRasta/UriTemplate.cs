@@ -62,23 +62,21 @@ namespace OpenRasta
         static Dictionary<string, QuerySegment> ParseQueryStringVariables(Uri templateUri)
         {
             string queries = templateUri.Query;
+            if (queries.Length > 0 && queries[0] == '?')
+                queries = queries.Substring(1);
             string[] pairs = queries.Split('&');
             var nc = new Dictionary<string, QuerySegment>();
-            foreach (string value in pairs)
+            foreach (string pair in pairs)
             {
-                string unescapedString = Uri.UnescapeDataString(value);
-                if (unescapedString.Length == 0)
-                    continue;
-                int variableStart = unescapedString[0] == '?' ? 1 : 0;
-
-                int equalSignPosition = unescapedString.IndexOf('=');
+                int equalSignPosition = pair.IndexOf('=');
                 if (equalSignPosition != -1)
                 {
-                    string val = unescapedString.Substring(equalSignPosition + 1);
+                    string key = UnescapeUriDataStringAndPlusSign(pair.Substring(0, equalSignPosition));
+                    string val = UnescapeUriDataStringAndPlusSign(pair.Substring(equalSignPosition + 1));
                     string valAsVariable = GetVariableName(val);
                     var segment = new QuerySegment
                     {
-                        Key = unescapedString.Substring(variableStart, equalSignPosition - variableStart),
+                        Key = key,
                         Value = valAsVariable ?? val,
                         Type = valAsVariable == null ? SegmentType.Literal : SegmentType.Variable
                     };
@@ -86,6 +84,19 @@ namespace OpenRasta
                 }
             }
             return nc;
+        }
+
+        static string UnescapeUriDataStringAndPlusSign(string keyOrValue)
+        {
+            keyOrValue = Uri.UnescapeDataString(keyOrValue);
+
+            // Uri.UnescapeDataString() does not turn '+' back into ' ', which is necessary in the query
+            // part of an URI according to http://www.w3.org/Addressing/URL/uri-spec.html :
+            //
+            // "Within the query string, the plus sign is reserved as shorthand notation for a space.
+            //  Therefore, real plus signs must be encoded. This method was used to make query URIs
+            //  easier to pass in systems which did not allow spaces."
+            return keyOrValue.Replace('+', ' ');
         }
 
         static List<UrlSegment> ParseSegments(Uri _templateUri)
