@@ -2,21 +2,19 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{2EEC5803-1935-413B-AC35-7E5575CD59B6}"
 	ProjectSection(SolutionItems) = preProject
-		src\CommonInfo.cs = src\CommonInfo.cs
-		openrasta-core.tests.wrapdesc = openrasta-core.tests.wrapdesc
-		openrasta-core.wrapdesc = openrasta-core.wrapdesc
+		CommonInfo.cs = CommonInfo.cs
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenRasta", "src\OpenRasta\OpenRasta.csproj", "{C3ED9CCE-A140-4D0F-AE00-FBBF4CD27647}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenRasta", "OpenRasta\OpenRasta.csproj", "{C3ED9CCE-A140-4D0F-AE00-FBBF4CD27647}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenRasta.Testing", "src\OpenRasta.Testing\OpenRasta.Testing.csproj", "{174DEE64-B4B2-4F30-ADA2-15D67ADE3320}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenRasta.Testing", "OpenRasta.Testing\OpenRasta.Testing.csproj", "{174DEE64-B4B2-4F30-ADA2-15D67ADE3320}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenRasta.Tests.Integration", "src\OpenRasta.Tests.Integration\OpenRasta.Tests.Integration.csproj", "{C938666D-4CA8-4EF0-9EF5-03A508312037}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenRasta.Tests.Integration", "OpenRasta.Tests.Integration\OpenRasta.Tests.Integration.csproj", "{C938666D-4CA8-4EF0-9EF5-03A508312037}"
 	ProjectSection(ProjectDependencies) = postProject
 		{562EC958-6078-4DBD-B536-6E9FE1228867} = {562EC958-6078-4DBD-B536-6E9FE1228867}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenRasta.Tests.Unit", "src\OpenRasta.Tests.Unit\OpenRasta.Tests.Unit.csproj", "{562EC958-6078-4DBD-B536-6E9FE1228867}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenRasta.Tests.Unit", "OpenRasta.Tests.Unit\OpenRasta.Tests.Unit.csproj", "{562EC958-6078-4DBD-B536-6E9FE1228867}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

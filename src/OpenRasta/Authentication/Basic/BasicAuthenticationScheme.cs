@@ -38,12 +38,13 @@ namespace OpenRasta.Authentication.Basic
             {
                 var basicBase64Credentials = value.Split(' ')[1];
 
-                var basicCredentials = basicBase64Credentials.FromBase64String().Split(':');
+                var basicCredentials = basicBase64Credentials.FromBase64String();
 
-                if (basicCredentials.Length != 2)
+                var indexOfFirstColon = basicCredentials.IndexOf(':');
+                if (indexOfFirstColon < 0)
                     return null;
 
-                return new BasicAuthRequestHeader(basicCredentials[0], basicCredentials[1]);
+                return new BasicAuthRequestHeader(basicCredentials.Substring(0, indexOfFirstColon), basicCredentials.Substring(indexOfFirstColon + 1));
             }
             catch
             {

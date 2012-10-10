@@ -84,6 +84,10 @@ namespace OpenRasta.Hosting
             Host.Start -= HandleHostStart;
             Host.IncomingRequestReceived -= HandleHostIncomingRequestReceived;
             Host.IncomingRequestProcessed -= HandleIncomingRequestProcessed;
+
+            var disposableResolver = Resolver as IDisposable;
+            if (disposableResolver != null)
+                disposableResolver.Dispose();
         }
 
         void AssignResolver()
