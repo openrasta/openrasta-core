@@ -51,7 +51,7 @@ namespace OpenRasta.DI.Internal
             {
                 foreach (var reg in _registrations)
                 {
-                    var toRemove = reg.Value.Where(x => x.Key == key).ToList();
+                    var toRemove = reg.Value.Where(x => x.IsInstanceRegistration && x.Key == key).ToList();
 
                     toRemove.ForEach(x => reg.Value.Remove(x));
                 }
