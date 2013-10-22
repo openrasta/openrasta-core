@@ -7,18 +7,7 @@
  *      This file is distributed under the terms of the MIT License found at the end of this file.
  */
 #endregion
-using System;
-using System.Net;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Documents;
-using System.Windows.Ink;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Animation;
-using System.Windows.Shapes;
-using System.Collections.Generic;
-using System.Linq;
+
 using System.Globalization;
 
 namespace System
@@ -28,11 +17,11 @@ namespace System
 
         public static string ToUpperInvariant(this string str)
         {
-            return str.ToUpper(CultureInfo.OrdinalIgnoreCase);
+            return str.ToUpper(CultureInfo.InvariantCulture);
         }
         public static string ToLowerInvariant(this string str)
         {
-            return str.ToLower(CultureInfo.OrdinalIgnoreCase);
+            return str.ToLower(CultureInfo.InvariantCulture);
         }
 
         public static string GetLeftPart(this Uri uri, UriPartial partial)

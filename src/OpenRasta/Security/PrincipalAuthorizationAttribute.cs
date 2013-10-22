@@ -9,40 +9,64 @@
  */
 #endregion
 
+using System.Collections.Generic;
+using System.Linq;
+using OpenRasta.DI;
+using OpenRasta.OperationModel;
+using OpenRasta.OperationModel.Interceptors;
 using OpenRasta.Web;
-using OpenRasta.Web.Pipeline;
 
 namespace OpenRasta.Security
 {
-    public class PrincipalAuthorizationAttribute : RequiresAuthenticationAttribute
+    //todo: modified to get this to compile - assumed that this was intent; but this code is not production ready wihtout review
+    public class PrincipalAuthorizationAttribute : InterceptorProviderAttribute
+    {
+         public override IEnumerable<IOperationInterceptor> GetInterceptors(IOperation operation)
+        {
+            return new[]
+            {
+                new PrincipalAuthorizationInterceptor(DependencyManager.GetService<ICommunicationContext>())
+            };
+        }
+    }
+
+    public class PrincipalAuthorizationInterceptor: OperationInterceptor
     {
         public string[] InRoles { get; set; }
         public string[] Users { get; set; }
+        readonly ICommunicationContext _context;
 
-        public override PipelineContinuation ExecuteBefore(ICommunicationContext context)
+        public PrincipalAuthorizationInterceptor(ICommunicationContext context)
+        {
+            _context = context;
+        }
+
+        public override bool BeforeExecute(IOperation operation)
         {
             if ((InRoles == null || InRoles.Length == 0) && (Users == null || Users.Length == 0))
-                return PipelineContinuation.Continue;
-            if (base.ExecuteBefore(context) == PipelineContinuation.Continue)
+                return true;
+            
+            try
             {
-                try
-                {
-                    if (InRoles != null)
-                        foreach (string role in InRoles)
-                            if (context.User.IsInRole(role))
-                                return PipelineContinuation.Continue;
-                    if (Users != null)
-                        foreach (string user in Users)
-                            if (context.User.Identity.Name == user)
-                                return PipelineContinuation.Continue;
-                }
-                catch
-                {
-                    // todo: decide where to log this error.
-                }
+                if (InRoles != null)
+                    if (InRoles.Any(role => _context.User.IsInRole(role)))
+                    {
+                        return true;
+                    }
+
+                if (Users != null)
+                    if (Users.Any(user => _context.User.Identity.Name == user))
+                    {
+                        return true;
+                    }
             }
-            context.OperationResult = new OperationResult.Unauthorized();
-            return PipelineContinuation.RenderNow;
+            catch
+            {
+                // todo: decide where to log this error.
+            }
+
+            _context.OperationResult = new OperationResult.Unauthorized();
+            return false;
         }
     }
 }

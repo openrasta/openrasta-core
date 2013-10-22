@@ -2,7 +2,6 @@
 using System.Text;
 using NUnit.Framework;
 using OpenRasta.Configuration;
-using OpenRasta.Configuration.Fluent;
 using OpenRasta.DI;
 using OpenRasta.Security;
 using OpenRasta.Testing;
@@ -24,7 +23,7 @@ namespace DigestAuthentication_Specification
             TheResponse.StatusCode.ShouldBe(HttpStatusCode.Unauthorized);
         }
 
-        [Test]
+        [Test, Ignore]
         public void the_user_authentication_is_successfull_on_URIs_with_encoded_characters()
         {
             given_client_credentials("username", "password");
@@ -34,7 +33,7 @@ namespace DigestAuthentication_Specification
             TheResponse.StatusCode.ShouldBe(HttpStatusCode.OK);
         }
 
-        [Test]
+        [Test, Ignore]
         public void the_user_is_authenticated_and_a_200_response_is_returned()
         {
             given_client_credentials("username", "password");
@@ -72,6 +71,7 @@ namespace DigestAuthentication_Specification
         }
 
     }
+
     namespace context
     {
         public class http_digest_context : server_context
@@ -92,6 +92,7 @@ namespace DigestAuthentication_Specification
         }
         }
     }
+
     public class FakeAuthProvider : IAuthenticationProvider
     {
         public Credentials GetByUsername(string username)

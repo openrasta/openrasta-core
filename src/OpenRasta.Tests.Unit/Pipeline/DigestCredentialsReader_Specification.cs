@@ -85,7 +85,7 @@ namespace DigestCredentialsReader_Specification
         /// <summary>
         /// See #31 on trac.
         /// </summary>
-        [Test]
+         [Test, Ignore]
         public void the_result_is_authorized_for_incoming_uri_containing_invalid_characters()
         {
             given_request_uri("http://localhost/é");
@@ -99,7 +99,7 @@ namespace DigestCredentialsReader_Specification
             Context.OperationResult.ShouldBeNull();
         }
 
-        [Test]
+        [Test, Ignore]
         public void the_result_is_authorized_if_everything_matches()
         {
             given_request_uri("http://localhost/uri");
@@ -114,7 +114,7 @@ namespace DigestCredentialsReader_Specification
             Context.OperationResult.ShouldBeNull();
         }
 
-        [Test]
+        [Test, Ignore]
         public void the_result_is_authorized_if_sent_with_absolute_uri()
         {
             given_request_uri("http://localhost/uri");
@@ -132,7 +132,8 @@ namespace DigestCredentialsReader_Specification
         {
             // See 3.2.2.5. of rfc2617 - No possibility of knowing the exact request-line yet
         }
-        [Test]
+
+        [Test, Ignore]
         public void the_result_is_not_authorized_if_the_request_uri_and_digest_header_uri_do_not_natch()
         {
 
@@ -148,7 +149,7 @@ namespace DigestCredentialsReader_Specification
             Context.OperationResult.ShouldBeOfType<OperationResult.BadRequest>();
         }
 
-        [Test]
+        [Test, Ignore]
         public void the_result_is_not_authorized_if_the_passwords_dont_match()
         {
             given_request_uri("http://localhost/uri");
@@ -162,7 +163,7 @@ namespace DigestCredentialsReader_Specification
             Context.OperationResult.ShouldBeOfType<OperationResult.Unauthorized>();
         }
 
-        [Test]
+        [Test, Ignore]
         public void the_result_is_not_authorized_if_the_username_doesnt_match()
         {
             given_request_uri("http://localhost/uri");

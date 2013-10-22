@@ -195,6 +195,30 @@ namespace OpenRasta.Tests
             Context.OperationResult = new OperationResult.OK { ResponseResource = responseEntity };
         }
 
+        protected void GivenAUser(string username, string password)
+        {
+            var provider = Resolver.Resolve<IAuthenticationProvider>() as InMemAuthenticationProvider;
+            provider.Passwords[username] = password;
+        }
+
+
+        public class InMemAuthenticationProvider : IAuthenticationProvider
+        {
+            public Dictionary<string, string> Passwords = new Dictionary<string, string>();
+
+            public Credentials GetByUsername(string username)
+            {
+                if (username == null || !Passwords.ContainsKey(username))
+                    return null;
+                return new Credentials
+                {
+                    Username = username,
+                    Password = Passwords[username],
+                    Roles = new string[0]
+                };
+            }
+        }
+
         protected TestErrorCollector Errors { get; private set; }
         protected override void SetUp()
         {

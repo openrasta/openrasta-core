@@ -96,7 +96,8 @@ namespace OpenRasta.Authentication.Digest
         private const string SchemeName = "DIGEST";
         private const string SchemeNameWithSpace = SchemeName + " ";
 
-        public string Username { get; private set; } // username=""
+        public string Username { get; private set; }  // username=""
+        public string Password { get; set; }
         public string Realm { get; private set; } // realm=""
 
         public string QualityOfProtection { get; private set; } // qop=""
@@ -128,6 +129,12 @@ namespace OpenRasta.Authentication.Digest
             return new DigestAuthRequestParameters(username, password);
         }
 
+        private DigestAuthRequestParameters(string username, string password)
+        {
+            Username = username;
+            Password = password;
+        }
+
         public static bool TryParse(string value, out DigestAuthRequestParameters credentials)
         {
             credentials = null;
@@ -141,6 +148,12 @@ namespace OpenRasta.Authentication.Digest
             credentials = ExtractBasicCredentials(basicBase64Credentials);
 
             return true;
+        }
+
+        private static DigestAuthRequestParameters ExtractBasicCredentials(string basicBase64Credentials)
+        {
+            //todo: getting this to compile for now, needs work before production ready
+            throw new NotImplementedException();
         }
 
         private static DigestAuthRequestParameters ExtractDigestCredentials(string basicCredentialsAsBase64)

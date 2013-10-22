@@ -148,10 +148,10 @@ namespace OpenRasta.Codecs
                             string filePath;
                             using (var fileStream = CreateTempFile(out filePath))
                             {
-                                memoryStream.Position = 0;
-                                var memoryStreamLength = memoryStream.CopyTo(fileStream);
-                                fileStream.Write(_buffer, 0, lastRead);
-                                var leftoverLength = requestPart.Stream.CopyTo(fileStream);
+                               memoryStream.Position = 0;
+                               memoryStream.CopyTo(fileStream);
+                               fileStream.Write(_buffer, 0, lastRead);
+                               requestPart.Stream.CopyTo(fileStream);
                             }
                             memoryStream = null;
                             requestPart.SwapStream(filePath);
