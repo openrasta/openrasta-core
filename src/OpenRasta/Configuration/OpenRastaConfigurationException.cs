@@ -38,7 +38,6 @@ namespace OpenRasta.Configuration
             InnerExceptions = exceptions;
         }
 
-#if !__OW_PROFILE_sl30__ && !__OW_PROFILE_sl40__
         protected OpenRastaConfigurationException(
             SerializationInfo info, 
             StreamingContext context)
@@ -47,7 +46,6 @@ namespace OpenRasta.Configuration
         }
 
         public IList<OpenRastaConfigurationException> InnerExceptions { get; private set; }
-#endif
 
         static string GetInnerExceptionMessages(IList<OpenRastaConfigurationException> exceptions)
         {

@@ -19,6 +19,7 @@ using OpenRasta.Testing;
 using OpenRasta.Tests.Unit.Fakes;
 using OpenRasta.TypeSystem;
 using OpenRasta.TypeSystem.ReflectionBased;
+using TypeSystems = OpenRasta.TypeSystem.TypeSystems;
 
 namespace Accessors_Specification
 {

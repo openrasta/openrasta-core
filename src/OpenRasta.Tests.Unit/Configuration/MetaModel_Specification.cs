@@ -15,6 +15,7 @@ using OpenRasta.TypeSystem;
 using OpenRasta.TypeSystem.ReflectionBased;
 using OpenRasta.Web;
 using OpenRasta.Web.UriDecorators;
+using TypeSystems = OpenRasta.TypeSystem.TypeSystems;
 
 namespace Configuration_Specification
 {

@@ -47,8 +47,7 @@ namespace OpenRasta.Hosting
                                                       null, 
                                                       null, 
                                                       CultureInfo.CurrentCulture, 
-                                                      null, 
-                                                      HostAppDomain.Evidence);
+                                                      null);
             Listener.Initialize(_prefixes, _virtualDir, _resolver);
         }
 

@@ -4,7 +4,6 @@ using System.Xml;
 using NUnit.Framework;
 using OpenRasta.Codecs;
 using OpenRasta.Configuration;
-using OpenRasta.Configuration.Fluent;
 using OpenRasta.Testing;
 using OpenRasta.Web;
 

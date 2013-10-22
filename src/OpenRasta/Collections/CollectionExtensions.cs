@@ -134,8 +134,6 @@ namespace OpenRasta.Collections
             return sb.ToString();
         }
 
-#if !__OW_PROFILE_sl30__ && !__OW_PROFILE_sl40__
-
         public static string Find(this NameValueCollection collectionToSearch, 
                                   string name, 
                                   StringComparison comparisonType)
@@ -147,7 +145,6 @@ namespace OpenRasta.Collections
             }
             return null;
         }
-#endif
 
         public static IDictionary<TKey, TValue> AsReadOnly<TKey, TValue>(this IDictionary<TKey, TValue> objectToWrap)
         {

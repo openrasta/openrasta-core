@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Globalization;
 using System.Linq;
-using ExpressionTreeXHtmlProducer_Specification;
 using NUnit.Framework;
 using OpenRasta;
 using OpenRasta.Codecs;
-using OpenRasta.Configuration;
 using OpenRasta.Configuration.MetaModel;
 using OpenRasta.Configuration.MetaModel.Handlers;
 using OpenRasta.DI;

@@ -10,7 +10,6 @@
 
 using System.Collections.Generic;
 using OpenRasta.Diagnostics;
-using OpenRasta.Hosting;
 
 namespace OpenRasta.Tests
 {

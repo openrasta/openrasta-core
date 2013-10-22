@@ -8,7 +8,6 @@
  */
 #endregion
 
-#if __OW_PROFILE_net35__ || __OW_PROFILE_net40__
 using System;
 using System.Runtime.Serialization.Json;
 using OpenRasta.TypeSystem;
@@ -37,8 +36,6 @@ namespace OpenRasta.Codecs
         }
     }
 }
-
-#endif
 
 #region Full license
 //
