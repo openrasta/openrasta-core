@@ -1,4 +1,5 @@
-﻿using OpenRasta.Web;
+﻿using System;
+using OpenRasta.Web;
 
 namespace OpenRasta.Authentication
 {

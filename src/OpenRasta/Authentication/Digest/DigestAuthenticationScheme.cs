@@ -1,8 +1,9 @@
-﻿using OpenRasta.Authentication.Basic;
+﻿using System;
 using OpenRasta.Web;
 
 namespace OpenRasta.Authentication.Digest
 {
+    [Obsolete("This class is obsolete. See https://github.com/openrasta/openrasta/wiki/FAQs", false)] 
     public class DigestAuthenticationScheme : IAuthenticationScheme
     {
         private readonly IDigestAuthenticator _digestAuthenticator;
