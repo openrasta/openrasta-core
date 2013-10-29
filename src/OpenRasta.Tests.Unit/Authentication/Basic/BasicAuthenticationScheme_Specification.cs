@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text;
+using System;
 using Moq;
 using NUnit.Framework;
 using OpenRasta.Authentication;
@@ -10,6 +11,7 @@ using OpenRasta.Testing;
 namespace BasicAuthenticationScheme_Specification
 {
     [TestFixture]
+    [Obsolete("This class is obsolete. See https://github.com/openrasta/openrasta/wiki/FAQs", false)] 
     public class BasicAuthenticationScheme_Specification
     {
         Mock<IBasicAuthenticator> _mockAuthenticator;
@@ -91,26 +93,6 @@ namespace BasicAuthenticationScheme_Specification
             result.ShouldBeOfType<AuthenticationResult.Failed>();
         }
 
-        [Test]
-        public void can_have_colon_in_password()
-        {
-            string username = "Sausage";
-            string password = "and:mash";
-            string authString = "Basic " + Convert.ToBase64String(Encoding.ASCII.GetBytes(username + ":" + password));
-            _request.Headers["Authorization"] = authString;
-
-            _mockAuthenticator
-                .Setup(auth => auth.Authenticate(It.Is<BasicAuthRequestHeader>(h => h.Username == username && h.Password == password)))
-                .Returns(new AuthenticationResult.Success(username));
-
-            // when
-            var result = _basicScheme.Authenticate(_request);
-
-            // then
-            result.ShouldBeOfType<AuthenticationResult.Success>();
-        }
-
-        [Test]
         public void Given_ABasicAuthenticatorWithARealm_When_ChallengingAResponse_Then_TheResponseHasAWWWAuthenticateHeader()
         {
             // given
