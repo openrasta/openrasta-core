@@ -1,7 +1,9 @@
-﻿using OpenRasta.Web;
+﻿using System;
+using OpenRasta.Web;
 
 namespace OpenRasta.Authentication.Basic
 {
+    [Obsolete("This class is obsolete. See https://github.com/openrasta/openrasta/wiki/FAQs", false)] 
     public class BasicAuthenticationScheme : IAuthenticationScheme
     {
         const string SCHEME = "Basic";

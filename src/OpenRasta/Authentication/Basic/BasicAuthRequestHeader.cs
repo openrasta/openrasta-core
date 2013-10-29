@@ -4,6 +4,7 @@ using OpenRasta;
 
 namespace OpenRasta.Authentication.Basic
 {
+    [Obsolete("This class is obsolete. See https://github.com/openrasta/openrasta/wiki/FAQs", false)] 
     public class BasicAuthRequestHeader
     {
         public string Username { get; private set; }

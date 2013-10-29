@@ -1,15 +1,16 @@
 ﻿using System;
 using System.Security.Cryptography;
 using System.Text;
-using OpenRasta;
 
 namespace OpenRasta.Authentication.Digest
 {
+    [Obsolete("This class is obsolete. See https://github.com/openrasta/openrasta/wiki/FAQs", false)] 
     public enum DigestAlgorithm
     {
         MD5
     }
 
+    [Obsolete("This class is obsolete. See https://github.com/openrasta/openrasta/wiki/FAQs", false)] 
     public class DigestAuthResponseChallenge
     {
         public string Realm { get; private set; } // realm=""
