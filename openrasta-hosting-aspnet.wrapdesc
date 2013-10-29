@@ -1,6 +1,0 @@
-﻿depends: openwrap content
-depends: openrasta-core >= 2.1.1 and < 3.0
-build: msbuild; profile=net35; project=src\OpenRasta.Hosting.AspNet\OpenRasta.Hosting.AspNet.csproj;
-name: openrasta-hosting-aspnet
-title: OpenRasta hosting on asp.net
-directory-structure: src\*{scope: Tests=tests}*
