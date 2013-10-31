@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using OpenRasta.Diagnostics;
 using OpenRasta.Web;
 using OpenRasta.Pipeline;
 
@@ -9,6 +10,8 @@ namespace OpenRasta.Pipeline.Contributors
 {
     public class EndContributor : KnownStages.IEnd
     {
+        public ILogger Log { get; set; }
+        
         public void Initialize(IPipeline pipelineRunner)
         {
             var notification = pipelineRunner.Notify(ReturnFinished);
@@ -26,8 +29,10 @@ namespace OpenRasta.Pipeline.Contributors
             }
         }
 
-        PipelineContinuation ReturnFinished(ICommunicationContext arg)
+        PipelineContinuation ReturnFinished(ICommunicationContext context)
         {
+            Log.WriteDebug("Writing http headers.");
+            context.Response.WriteHeaders();
             return PipelineContinuation.Finished;
         }
     }
