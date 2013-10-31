@@ -105,12 +105,6 @@
     <Compile Include="Collections\ResumableIterator.cs" />
     <Compile Include="Collections\Specialized\DependencyNode%271.cs" />
     <Compile Include="Collections\Specialized\DependencyTree%271.cs" />
-    <Compile Include="Compat\ContentType.cs" />
-    <Compile Include="Compat\Extensions.cs" />
-    <Compile Include="Compat\Hashtable.cs" />
-    <Compile Include="Compat\HttpException.cs" />
-    <Compile Include="Compat\NameValueCollection.cs" />
-    <Compile Include="Compat\SerializableAttribute.cs" />
     <Compile Include="Configuration\CodecDefinitionExtensions.cs" />
     <Compile Include="Configuration\CodecParentDefinitionExtensions.cs" />
     <Compile Include="Configuration\DefaultDependencyRegistrar.cs" />
@@ -502,7 +496,6 @@
     <Compile Include="Web\OperationResult.cs" />
     <Compile Include="Web\ResourceHandlerException.cs" />
     <Compile Include="Web\ResourceMatch.cs" />
-    <Compile Include="Web\ResourceNotFoundException.cs" />
     <Compile Include="Web\ServerErrorList.cs" />
     <Compile Include="Web\TemplatedUriResolver.cs" />
     <Compile Include="Web\TemplatedUriResolverLegacyExtensions.cs" />

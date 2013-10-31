@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /* Authors:
  *      Sebastien Lambla (seb@serialseb.com)
  * Copyright:
@@ -7,9 +7,6 @@
  *      This file is distributed under the terms of the MIT License found at the end of this file.
  */
 #endregion
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace OpenRasta.Web.Markup
 {

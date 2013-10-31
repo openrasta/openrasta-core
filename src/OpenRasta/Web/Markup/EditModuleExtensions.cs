@@ -8,15 +8,13 @@
  */
 #endregion
 using System;
-using System.Collections.Generic;
-using System.Text;
 using OpenRasta.Web.Markup.Modules;
 
 namespace OpenRasta.Web.Markup
 {
     public static class EditModuleExtensions
     {
-        public static T DateTime<T>(this T element, DateTime dateTimes) where T:IEditElement
+        public static T DateTime<T>(this T element, DateTime dateTimes) where T : IEditElement
         {
             element.DateTime = dateTimes;
             return element;

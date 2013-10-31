@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Moq;
 using NUnit.Framework;
 using OpenRasta.Authentication;
-using OpenRasta.DI;
 using OpenRasta.Pipeline;
 using OpenRasta.Pipeline.Contributors;
 using OpenRasta.Testing;
@@ -14,7 +10,7 @@ using OpenRasta.Web;
 
 namespace Authentication_Specification
 {
-    [TestFixture]
+    [TestFixture, Ignore, Obsolete("This class is obsolete. See https://github.com/openrasta/openrasta/wiki/FAQs", false)] 
     public class Authentication_Specification : openrasta_context
     {
         [Test]
