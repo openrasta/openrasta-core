@@ -249,7 +249,8 @@ namespace InternalDependencyResolver_Specification
         [Test]
         public void per_request_creates_new_instance_in_between_requests()
         {
-            GivenInMemoryStore();
+            InMemoryStore = new InMemoryContextStore();
+            Resolver.AddDependencyInstance<IContextStore>(InMemoryStore);
 
             Resolver.AddDependency<IUnknown,JohnDoe>(DependencyLifetime.PerRequest);
 
@@ -257,6 +258,7 @@ namespace InternalDependencyResolver_Specification
 
 
             Resolver.HandleIncomingRequestProcessed();
+            InMemoryStore.Clear();
             var secondInstance = Resolver.Resolve<IUnknown>();
 
             firstInstance.ShouldNotBeTheSameInstanceAs(secondInstance);
