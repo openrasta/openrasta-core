@@ -10,6 +10,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Xml;
 using OpenRasta.Codecs;
 using OpenRasta.Configuration.Fluent;
 using OpenRasta.Web;
@@ -19,9 +20,9 @@ namespace OpenRasta.Configuration
 {
     public static class XmlConfigurationExtensions
     {
-        public static ICodecDefinition AsXmlDataContract(this ICodecParentDefinition codecParent)
+        public static ICodecDefinition AsXmlDataContract(this ICodecParentDefinition codecParent, Action<XmlWriterSettings> configuration = null)
         {
-            return codecParent.TranscodedBy<XmlDataContractCodec>();
+            return codecParent.TranscodedBy<XmlDataContractCodec>(configuration);
         }
     }
 }

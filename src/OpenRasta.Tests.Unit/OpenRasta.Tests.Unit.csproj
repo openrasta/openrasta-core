@@ -55,6 +55,7 @@
     <Compile Include="Codecs\media_type_writer_context.cs" />
     <Compile Include="Codecs\MultipartFormDataCodec_Specification.cs" />
     <Compile Include="Codecs\WebForms_Specification.cs" />
+    <Compile Include="Codecs\xml.cs" />
     <Compile Include="CodeDom.Compiler\ExtensibleCompiler_Specification.cs" />
     <Compile Include="Collections\CollectionExtensions_Specification.cs" />
     <Compile Include="Collections\ObservableIterator_Specification.cs" />
@@ -122,7 +123,7 @@
     <Compile Include="Pipeline\Contributors\ResponseEntityCodecResolver_Specification.cs" />
     <Compile Include="Pipeline\Contributors\ResponseEntityWriter_Specification.cs" />
     <Compile Include="Pipeline\Contributors\UriDecoratorsController_Specification.cs" />
-    <Compile Include="Pipeline\DigestCredentialsReader_Specification.cs" />
+    <Compile Include="Authentication\DigestCredentialsReader_Specification.cs" />
     <Compile Include="Pipeline\PipelineRunner_Specification.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Security\RequiresAuthenticationInterceptor_Specification.cs" />
