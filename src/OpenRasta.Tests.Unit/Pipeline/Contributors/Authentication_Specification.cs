@@ -68,7 +68,7 @@ namespace Authentication_Specification
             var result = when_sending_notification<KnownStages.IHandlerSelection>();
 
             // then
-            Context.Response.Headers["Warning"].ShouldBe("Unsupported Authentication Scheme");
+            Context.Response.Headers["Warning"].ShouldBe("199 Unsupported Authentication Scheme");
             result.ShouldBe(PipelineContinuation.Continue);
         }
 
@@ -94,7 +94,7 @@ namespace Authentication_Specification
             var result = when_sending_notification<KnownStages.IHandlerSelection>();
 
             // then
-            Context.Response.Headers["Warning"].ShouldBe("Malformed credentials");
+            Context.Response.Headers["Warning"].ShouldBe("199 Malformed credentials");
             Context.OperationResult.ShouldBeOfType<OperationResult.BadRequest>();
             result.ShouldBe(PipelineContinuation.RenderNow);
         }
