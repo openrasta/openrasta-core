@@ -147,12 +147,25 @@ namespace PipelineRunner_Specification
         [Test]
         public void error_is_collected_and_500_returned()
         {
-            var pipeline = CreatePipeline(typeof(ContributorThatThrows));
+            var pipeline = CreatePipeline(typeof(ContributorThatThrows), typeof(FakeOperationResultInvoker));
             var context = new InMemoryCommunicationContext();
             pipeline.Run(context);
             context.Response.StatusCode.ShouldBe(500);
             context.ServerErrors.ShouldHaveCountOf(1);
 
+        }
+
+        public class FakeOperationResultInvoker : KnownStages.IOperationResultInvocation
+        {
+            public void Initialize(IPipeline pipelineRunner)
+            {
+                pipelineRunner.Notify(DoNowt).After<ContributorThatThrows>();
+            }
+
+            PipelineContinuation DoNowt(ICommunicationContext arg)
+            {
+                return PipelineContinuation.Continue;
+            }
         }
 
         class ContributorThatThrows : IPipelineContributor
