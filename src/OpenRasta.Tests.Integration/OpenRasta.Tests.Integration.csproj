@@ -73,6 +73,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Binding\CustomSurrogates.cs" />
+    <Compile Include="Codecs\Jsonp_Specification.cs" />
     <Compile Include="Regressions\148.1.cs" />
     <Compile Include="Regressions\92.cs" />
     <Compile Include="Codecs\HtmlForm_Specification.cs" />

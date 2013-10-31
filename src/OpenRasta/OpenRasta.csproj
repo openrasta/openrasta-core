@@ -58,6 +58,7 @@
     <Reference Include="System.ServiceModel.Web">
       <HintPath>..\..\..\..\..\..\Program Files (x86)\Reference Assemblies\Microsoft\Framework\v3.5\System.ServiceModel.Web.dll</HintPath>
     </Reference>
+    <Reference Include="System.Web" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" Condition="'$(RuntimeTargetFrameworkVersion)' == 'v3.5'" />
   </ItemGroup>
@@ -77,6 +78,7 @@
     <Compile Include="Binding\KeyedValues`1.cs" />
     <Compile Include="Binding\KeyedValuesBinderAttribute.cs" />
     <Compile Include="Codecs\application\json\JsonDataContractCodec.cs" />
+    <Compile Include="Codecs\application\json\JsonpDataContractCodec.cs" />
     <Compile Include="Codecs\application\octet-stream\ApplicationOctetStreamCodec.cs" />
     <Compile Include="Binding\BinderBaseAttribute.cs" />
     <Compile Include="Codecs\application\x-www-form-urlencoded\AbstractApplicationXWwwFormUrlencodedCodec.cs" />
