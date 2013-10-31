@@ -11,6 +11,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
 using OpenRasta.DI;
@@ -165,21 +166,6 @@ namespace InternalDependencyResolver_Specification
         }
 
         [Test]
-        public void instance_registered_as_per_request_are_cleared_when_context_store_is_terminating()
-        {
-            GivenInMemoryStore();
-            var firstInstance = new TheClass();
-
-            Resolver.AddDependencyInstance<TheClass>(firstInstance, DependencyLifetime.PerRequest);
-
-            Resolver.Resolve<TheClass>().ShouldBeTheSameInstanceAs(firstInstance);
-
-            Resolver.HandleIncomingRequestProcessed();
-
-            Executing(() => Resolver.Resolve<TheClass>()).ShouldThrow<DependencyResolutionException>();
-        }
-
-        [Test]
         public void non_instance_registrations_are_created_for_each_context_store()
         {
             GivenInMemoryStore();
@@ -259,6 +245,39 @@ namespace InternalDependencyResolver_Specification
             (result.Contains(firstInstance) || result.Contains(secondInstance))
                 .ShouldBeTrue();
         }
+
+        [Test]
+        public void per_request_creates_new_instance_in_between_requests()
+        {
+            GivenInMemoryStore();
+
+            Resolver.AddDependency<IUnknown,JohnDoe>(DependencyLifetime.PerRequest);
+
+            var firstInstance = Resolver.Resolve<IUnknown>();
+
+
+            Resolver.HandleIncomingRequestProcessed();
+            var secondInstance = Resolver.Resolve<IUnknown>();
+
+            firstInstance.ShouldNotBeTheSameInstanceAs(secondInstance);
+        }
+        interface IUnknown{}
+        class JohnDoe : IUnknown {}
+        [Test]
+        public void instance_registered_as_per_request_are_cleared_when_context_store_is_terminating()
+        {
+            GivenInMemoryStore();
+            var firstInstance = new TheClass();
+
+            Resolver.AddDependencyInstance<TheClass>(firstInstance, DependencyLifetime.PerRequest);
+
+            Resolver.Resolve<TheClass>().ShouldBeTheSameInstanceAs(firstInstance);
+
+            Resolver.HandleIncomingRequestProcessed();
+
+            Executing(() => Resolver.Resolve<TheClass>()).ShouldThrow<DependencyResolutionException>();
+        }
+        
     }
 
     public abstract class when_registering_dependencies : dependency_resolver_context
