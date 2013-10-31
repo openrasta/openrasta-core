@@ -56,28 +56,6 @@ namespace PipelineRunner_Specification
         }
     }
 
-    // NOTE: Not sure if we really need those tests. They should be replaced by dependency analysis finding rootless elements
-    // public class when_registering_for_pipeline_events : pipelinerunner_context
-    // {
-    // [Test]
-    // public void registering_for_notification_before_the_bootstrap_results_in_an_error()
-    // {
-    // var pipeline = CreatePipeline();
-
-    // Executing(() => pipeline.Notify(c=>PipelineContinuation.Continue).Before<KnownStages.IBegin>())
-    // .ShouldThrow<InvalidOperationException>();
-    // }
-
-    // [Test]
-    // public void the_type_on_which_notification_is_requested_must_have_been_registered_when_the_pipeline_was_created()
-    // {
-    // var pipeline = CreatePipeline();
-
-    // Executing(() => pipeline.Notify(c => PipelineContinuation.Continue).After<KnownStages.IBegin>())
-    // .ShouldThrow<ArgumentOutOfRangeException>();
-    // }
-    // }
-
     public class when_building_the_call_graph : pipelinerunner_context
     {
         [Test]
@@ -164,6 +142,30 @@ namespace PipelineRunner_Specification
         }
     }
 
+    public class when_contributor_throws : pipelinerunner_context
+    {
+        [Test]
+        public void error_is_collected_and_500_returned()
+        {
+            var pipeline = CreatePipeline(typeof(ContributorThatThrows));
+            var context = new InMemoryCommunicationContext();
+            pipeline.Run(context);
+            context.Response.StatusCode.ShouldBe(500);
+            context.ServerErrors.ShouldHaveCountOf(1);
+
+        }
+
+        class ContributorThatThrows : IPipelineContributor
+        {
+            public void Initialize(IPipeline pipelineRunner)
+            {
+                pipelineRunner.Notify(ctx =>
+                {
+                    throw new NotImplementedException();
+                }).After<KnownStages.IBegin>();
+            }
+        }
+    }
     public class when_executing_the_pipeline : pipelinerunner_context
     {
         [Test]
