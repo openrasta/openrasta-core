@@ -1,10 +1,12 @@
-﻿using OpenRasta.Authentication;
+﻿using System;
+using OpenRasta.Authentication;
 using OpenRasta.DI;
 using OpenRasta.Diagnostics;
 using OpenRasta.Web;
 
 namespace OpenRasta.Pipeline.Contributors
 {
+    [Obsolete(ObsoletedContent.Authentication)]
     public class AuthenticationChallengerContributor : IPipelineContributor
     {
         readonly IDependencyResolver _resolver;

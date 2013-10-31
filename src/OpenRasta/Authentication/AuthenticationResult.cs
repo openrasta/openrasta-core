@@ -5,6 +5,7 @@ using OpenRasta.Pipeline.Contributors;
 
 namespace OpenRasta.Authentication
 {
+    [Obsolete(ObsoletedContent.Authentication)]
     public class AuthenticationResult
     {
         public class MalformedCredentials : AuthenticationResult { }
@@ -23,4 +24,10 @@ namespace OpenRasta.Authentication
             }
         }
     }
+
+    public static class ObsoletedContent
+    {
+        public const string Authentication = "Authentication features are moving to a new package, see more information at http://https://github.com/openrasta/openrasta/wiki/Authentication";
+    }
+
 }

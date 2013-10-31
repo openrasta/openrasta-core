@@ -1,5 +1,8 @@
-﻿namespace OpenRasta.Authentication.Basic
+﻿using System;
+
+namespace OpenRasta.Authentication.Basic
 {
+    [Obsolete(ObsoletedContent.Authentication)]
     public interface IBasicAuthenticator
     {
         string Realm { get; }
