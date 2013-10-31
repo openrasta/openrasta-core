@@ -58,7 +58,7 @@ namespace OpenRasta.IO
 
         public override long Length
         {
-            get { throw new NotSupportedException(); }
+            get { return BufferSize; }
         }
 
         public override long Position
