@@ -384,8 +384,6 @@ namespace OpenRasta.Configuration
             AddPipelineContributor<ResourceTypeResolverContributor>();
             AddPipelineContributor<HandlerResolverContributor>();
 
-            AddPipelineContributor<AuthenticationChallengerContributor>();
-
             AddPipelineContributor<OperationCreatorContributor>();
             AddPipelineContributor<OperationFilterContributor>();
             AddPipelineContributor<OperationHydratorContributor>();
