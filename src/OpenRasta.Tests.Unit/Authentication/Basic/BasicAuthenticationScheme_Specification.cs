@@ -1,4 +1,6 @@
-﻿using System;
+﻿#pragma warning disable 618
+
+using System;
 using System.Text;
 using Moq;
 using NUnit.Framework;
@@ -43,6 +45,7 @@ namespace BasicAuthenticationScheme_Specification
             _request.Headers["Authorization"] = validAuthString;
 
             _mockAuthenticator
+
                 .Setup(auth => auth.Authenticate(It.Is<BasicAuthRequestHeader>(h => h.Username == username && h.Password == password)))
                 .Returns(new AuthenticationResult.Success(username, userRoles));
 
@@ -130,3 +133,4 @@ namespace BasicAuthenticationScheme_Specification
         }
     }
 }
+#pragma warning restore 618

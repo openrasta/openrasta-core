@@ -1,4 +1,5 @@
-﻿using System;
+﻿#pragma warning disable 618
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -107,3 +108,4 @@ namespace given_an_authentication_contributor
 }
 
 
+#pragma warning restore 618

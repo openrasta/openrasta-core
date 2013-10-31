@@ -1,4 +1,5 @@
-﻿using System;
+﻿#pragma warning disable 618
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -158,3 +159,4 @@ namespace Authentication_Specification
         }
     }
 }
+#pragma warning restore 618

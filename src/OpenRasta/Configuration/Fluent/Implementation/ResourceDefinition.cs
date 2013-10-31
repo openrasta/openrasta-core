@@ -13,7 +13,7 @@ namespace OpenRasta.Configuration.Fluent.Implementation
         {
         }
 
-        public IUriDefinition<T> AtUri(string uri)
+        public new IUriDefinition<T> AtUri(string uri)
         {
             if (uri == null) throw new ArgumentNullException("uri");
             var uriModel = new UriModel { Uri = uri };
@@ -22,23 +22,16 @@ namespace OpenRasta.Configuration.Fluent.Implementation
             return new UriDefinition<T>(this, uriModel);
         }
 
-        abstract class TargetWrapper<T> : TargetWrapper
+        class UriDefinition<TResource> : UriDefinition, IUriDefinition<TResource>
         {
-            protected TargetWrapper(ResourceDefinition<T> target)
-                : base(target)
-            {
-            }
-        }
-        class UriDefinition<T> : UriDefinition, IUriDefinition<T>
-        {
-            readonly ResourceDefinition<T> _resourceDefinition;
+            readonly ResourceDefinition<TResource> _resourceDefinition;
 
-            public UriDefinition(ResourceDefinition<T> resourceDefinition, UriModel uriModel) : base(resourceDefinition, uriModel)
+            public UriDefinition(ResourceDefinition<TResource> resourceDefinition, UriModel uriModel) : base(resourceDefinition, uriModel)
             {
                 _resourceDefinition = resourceDefinition;
             }
 
-            public IResourceDefinition<T> And
+            public new IResourceDefinition<TResource> And
             {
                 get { return _resourceDefinition; }
             }
@@ -54,7 +47,6 @@ namespace OpenRasta.Configuration.Fluent.Implementation
         readonly IFluentTarget _rootTarget;
         readonly ITypeSystem _typeSystem;
         HandlerModel _lastHandlerModel;
-        UriModel _lastUriModel;
 
         public ResourceDefinition(IFluentTarget rootTarget, ITypeSystem typeSystem, ResourceModel resourceRegistration)
         {
@@ -159,7 +151,6 @@ namespace OpenRasta.Configuration.Fluent.Implementation
 
         protected class UriDefinition : TargetWrapper, IUriDefinition, IUriTarget
         {
-            readonly IFluentTarget _rootTarget;
             readonly ResourceDefinition _resourceDefinition;
             readonly UriModel _uriModel;
 
