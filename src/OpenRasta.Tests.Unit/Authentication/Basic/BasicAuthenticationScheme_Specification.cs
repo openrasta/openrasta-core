@@ -1,7 +1,4 @@
-﻿using System;
-using System.Text;
-using System;
-using Moq;
+﻿using Moq;
 using NUnit.Framework;
 using OpenRasta.Authentication;
 using OpenRasta.Authentication.Basic;
@@ -11,7 +8,6 @@ using OpenRasta.Testing;
 namespace BasicAuthenticationScheme_Specification
 {
     [TestFixture]
-    [Obsolete("This class is obsolete. See https://github.com/openrasta/openrasta/wiki/FAQs", false)] 
     public class BasicAuthenticationScheme_Specification
     {
         Mock<IBasicAuthenticator> _mockAuthenticator;
