@@ -193,6 +193,7 @@ namespace OpenRasta.Pipeline
                 }
                 catch (Exception e)
                 {
+                    context.Response.StatusCode = 500;
                     context.ServerErrors.Add(new Error
                     {
                         Title = "Fatal error",
