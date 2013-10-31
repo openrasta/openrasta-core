@@ -496,7 +496,6 @@
     <Compile Include="Web\OperationResult.cs" />
     <Compile Include="Web\ResourceHandlerException.cs" />
     <Compile Include="Web\ResourceMatch.cs" />
-    <Compile Include="Web\ResourceNotFoundException.cs" />
     <Compile Include="Web\ServerErrorList.cs" />
     <Compile Include="Web\TemplatedUriResolver.cs" />
     <Compile Include="Web\TemplatedUriResolverLegacyExtensions.cs" />
