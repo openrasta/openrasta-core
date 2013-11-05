@@ -49,6 +49,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\CommonInfo.cs">
+      <Link>CommonInfo.cs</Link>
+    </Compile>
     <Compile Include="Constants.cs" />
     <Compile Include="ContextStoreInstanceActivator.cs" />
     <Compile Include="ContextStoreLifetime.cs" />
