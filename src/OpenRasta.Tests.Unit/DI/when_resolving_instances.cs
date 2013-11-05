@@ -385,11 +385,11 @@ namespace InternalDependencyResolver_Specification
         [Test]
         public void the_resolved_instance_is_the_same_as_the_registered_instance()
         {
-            string objectInstance = "some object";
+            var objectInstance = new object();
 
-            Resolver.AddDependencyInstance(typeof (string), objectInstance);
+            Resolver.AddDependencyInstance(typeof(object), objectInstance);
 
-            Resolver.Resolve<string>().ShouldBe(objectInstance);
+            Resolver.Resolve<object>().ShouldBe(objectInstance);
         }
     }
 }
