@@ -53,10 +53,6 @@ namespace OpenRasta.DI.Windsor
 
         protected override object ResolveCore(Type serviceType)
         {
-            // IHandler[] handlers = _windsorContainer.Kernel.GetHandlers(serviceType);
-
-            // IHandler firstAvailHandler = AvailableHandlers(handlers).First();
-            // return _windsorContainer.Resolve(firstAvailHandler.ComponentModel.Name);
             return _windsorContainer.Resolve(serviceType);
         }
 
@@ -137,7 +133,7 @@ namespace OpenRasta.DI.Windsor
                 case DependencyLifetime.Singleton:
                     lock (ContainerLock)
                     {
-                        _windsorContainer.Register(Component.For(serviceType).Instance(instance).Named(key));
+                        _windsorContainer.Register(Component.For(serviceType).Instance(instance).Named(key).LifeStyle.Singleton);
                     }
                     break;
             }
