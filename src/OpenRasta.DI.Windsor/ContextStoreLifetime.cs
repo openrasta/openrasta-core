@@ -17,11 +17,12 @@ namespace OpenRasta.DI.Windsor
             GetStore()[key] = null;
         }
 
-        public override object Resolve(CreationContext context)
+
+        public override object Resolve(CreationContext context, IReleasePolicy releasePolicy)
         {
             var store = GetStore();
 
-            var instance = base.Resolve(context);
+            var instance = base.Resolve(context, releasePolicy);
 
             if (instance == null)
             {
@@ -45,14 +46,10 @@ namespace OpenRasta.DI.Windsor
             return store[Model.Name];
         }
 
-#if CASTLE_20
         public override bool Release(object instance)
         {
             return false;
         }
-#elif CASTLE_10
-        public override void  Release(object instance) {}
-#endif
 
         public override void Dispose()
         {

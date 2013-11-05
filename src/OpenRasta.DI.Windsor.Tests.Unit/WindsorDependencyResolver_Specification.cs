@@ -12,6 +12,8 @@
 
 using Castle.Windsor;
 
+using InternalDependencyResolver_Specification;
+
 using NUnit.Framework;
 using OpenRasta.DI;
 using OpenRasta.DI.Windsor;

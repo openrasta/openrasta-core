@@ -31,11 +31,23 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Castle.Core">
+      <HintPath>..\..\lib\Castle.Windsor-3.2.0\net40\Castle.Core.dll</HintPath>
+    </Reference>
     <Reference Include="Castle.Windsor">
-      <HintPath>..\..\lib\Castle.Windsor-2.5.2\dotNet40\Castle.Windsor.dll</HintPath>
+      <HintPath>..\..\lib\Castle.Windsor-3.2.0\net40\Castle.Windsor.dll</HintPath>
     </Reference>
     <Reference Include="nunit.framework">
       <HintPath>..\..\lib\nunit-2.6.3\bin\nunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="OpenRasta">
+      <HintPath>..\..\lib\openrasta\OpenRasta.dll</HintPath>
+    </Reference>
+    <Reference Include="OpenRasta.Testing">
+      <HintPath>..\..\lib\openrasta-testing\OpenRasta.Testing.dll</HintPath>
+    </Reference>
+    <Reference Include="OpenRasta.Tests.Unit">
+      <HintPath>..\..\lib\openrasta-testing-unit\OpenRasta.Tests.Unit.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />

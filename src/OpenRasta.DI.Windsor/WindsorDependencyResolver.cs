@@ -11,25 +11,20 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using Castle.Core;
 using Castle.MicroKernel;
-using Castle.MicroKernel.ComponentActivator;
-using Castle.MicroKernel.Context;
 using Castle.MicroKernel.Registration;
 using Castle.Windsor;
 using OpenRasta.DI.Internal;
 using OpenRasta.Pipeline;
-#if CASTLE_20
-using Castle.MicroKernel.Registration;
-#endif
 
 namespace OpenRasta.DI.Windsor
 {
     public class WindsorDependencyResolver : DependencyResolverCore, IDependencyResolver
     {
         readonly IWindsorContainer _windsorContainer;
+        static readonly object ContainerLock = new object();
 
         public WindsorDependencyResolver(IWindsorContainer container)
         {
@@ -67,13 +62,12 @@ namespace OpenRasta.DI.Windsor
 
         protected override IEnumerable<TService> ResolveAllCore<TService>()
         {
-            // return _windsorContainer.ResolveAll<TService>();
             var handlers = _windsorContainer.Kernel.GetAssignableHandlers(typeof (TService));
             var resolved = new List<TService>();
             foreach (var handler in AvailableHandlers(handlers))
                 try
                 {
-                    resolved.Add((TService) _windsorContainer.Resolve(handler.ComponentModel.Name, handler.ComponentModel.Service));
+                    resolved.Add( _windsorContainer.Resolve<TService>(handler.ComponentModel.Name));
                 }
                 catch
                 {
@@ -85,55 +79,67 @@ namespace OpenRasta.DI.Windsor
         protected override void AddDependencyCore(Type dependent, Type concrete, DependencyLifetime lifetime)
         {
             string componentName = Guid.NewGuid().ToString();
-            if (lifetime != DependencyLifetime.PerRequest)
+            lock (ContainerLock)
             {
-                _windsorContainer.AddComponentLifeStyle(componentName, dependent, concrete, 
-                                                        ConvertLifestyles.ToLifestyleType(lifetime));
-            }
-            else
-            {
-                _windsorContainer.Register(
-                    Component.For(dependent).Named(componentName).ImplementedBy(concrete).LifeStyle.Custom(typeof (ContextStoreLifetime)));
+                if (lifetime != DependencyLifetime.PerRequest)
+                {
+                    _windsorContainer.Register(Component.For(dependent).ImplementedBy(concrete).Named(componentName).LifeStyle.Is(ConvertLifestyles.ToLifestyleType(lifetime)));
+                }
+                else
+                {
+                    _windsorContainer.Register(Component.For(dependent).Named(componentName).ImplementedBy(concrete).LifeStyle.Custom(typeof(ContextStoreLifetime)));
+                }
             }
         }
 
         protected override void AddDependencyInstanceCore(Type serviceType, object instance, DependencyLifetime lifetime)
         {
             string key = Guid.NewGuid().ToString();
-            if (lifetime == DependencyLifetime.PerRequest)
-            {
-                // try to see if we have a registration already
-                var store = (IContextStore) Resolve(typeof (IContextStore));
-                if (_windsorContainer.Kernel.HasComponent(serviceType))
-                {
-                    var handler = _windsorContainer.Kernel.GetHandler(serviceType);
-                    if (handler.ComponentModel.ExtendedProperties[Constants.REG_IS_INSTANCE_KEY] != null)
-                    {
-                        // if there's already an instance registration we update the store with the correct reg.
-                        store[handler.ComponentModel.Name] = instance;
-                    }
-                    else
-                    {
-                        throw new DependencyResolutionException("Cannot register an instance for a type already registered");
-                    }
-                }
-                else
-                {
-                    var component = new ComponentModel(key, serviceType, instance.GetType());
-                    var customLifestyle = typeof (ContextStoreLifetime);
-                    component.LifestyleType = LifestyleType.Custom;
-                    component.CustomLifestyle = customLifestyle;
-                    component.CustomComponentActivator = typeof (ContextStoreInstanceActivator);
-                    component.ExtendedProperties[Constants.REG_IS_INSTANCE_KEY] = true;
-                    component.Name = component.Name;
 
-                    ((IKernelInternal)_windsorContainer.Kernel).AddCustomComponent(component);
-                    store[component.Name] = instance;
-                }
-            }
-            else if (lifetime == DependencyLifetime.Singleton)
+            switch (lifetime)
             {
-                _windsorContainer.Kernel.AddComponentInstance(key, serviceType, instance);
+                case DependencyLifetime.PerRequest:
+                    {
+                        var store = (IContextStore)Resolve(typeof(IContextStore));
+                        // try to see if we have a registration already
+                        if (_windsorContainer.Kernel.HasComponent(serviceType))
+                        {
+                            var handler = _windsorContainer.Kernel.GetHandler(serviceType);
+                            if (handler.ComponentModel.ExtendedProperties[Constants.REG_IS_INSTANCE_KEY] != null)
+                            {
+                                // if there's already an instance registration we update the store with the correct reg.
+                                store[handler.ComponentModel.Name] = instance;
+                            }
+                            else
+                            {
+                                throw new DependencyResolutionException("Cannot register an instance for a type already registered");
+                            }
+                        }
+                        else
+                        {
+                            lock (ContainerLock)
+                            {
+                                if (_windsorContainer.Kernel.HasComponent(serviceType) == false)
+                                {
+                                    _windsorContainer.Register(
+                                        Component.For(serviceType)
+                                                 .Activator<ContextStoreInstanceActivator>()
+                                                 .LifestyleCustom<ContextStoreLifetime>()
+                                                 .ImplementedBy(instance.GetType())
+                                                 .Named(key)
+                                                 .ExtendedProperties(new Property(Constants.REG_IS_INSTANCE_KEY, true)));
+                                    store[key] = instance;
+                                }
+                            }
+                        }
+                    }
+                    break;
+                case DependencyLifetime.Singleton:
+                    lock (ContainerLock)
+                    {
+                        _windsorContainer.Register(Component.For(serviceType).Instance(instance).Named(key));
+                    }
+                    break;
             }
         }
 
@@ -167,36 +173,6 @@ namespace OpenRasta.DI.Windsor
         {
             return typeof (ContextStoreLifetime).IsAssignableFrom(component.CustomLifestyle)
                    && component.ExtendedProperties[Constants.REG_IS_INSTANCE_KEY] != null;
-        }
-    }
-
-    public class ContextStoreInstanceActivator : AbstractComponentActivator
-    {
-        string storeKey;
-
-        public ContextStoreInstanceActivator(ComponentModel model, IKernel kernel, ComponentInstanceDelegate onCreation, ComponentInstanceDelegate onDestruction)
-            : base(model, kernel, onCreation, onDestruction)
-        {
-            storeKey = model.Name;
-        }
-
-        protected override object InternalCreate(CreationContext context)
-        {
-            var store = (IContextStore) Kernel.Resolve(typeof (IContextStore));
-            if (store[storeKey] == null)
-            {
-                Debug.WriteLine("The instance is not present in the context store");
-                return null;
-            }
-
-            return store[storeKey];
-        }
-
-        protected override void InternalDestroy(object instance)
-        {
-            var store = (IContextStore) Kernel.Resolve(typeof (IContextStore));
-
-            store[storeKey] = null;
         }
     }
 }

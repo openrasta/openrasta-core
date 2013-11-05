@@ -31,8 +31,14 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Castle.Core">
+      <HintPath>..\..\lib\Castle.Windsor-3.2.0\net40\Castle.Core.dll</HintPath>
+    </Reference>
     <Reference Include="Castle.Windsor">
-      <HintPath>..\..\lib\Castle.Windsor-2.5.2\dotNet40\Castle.Windsor.dll</HintPath>
+      <HintPath>..\..\lib\Castle.Windsor-3.2.0\net40\Castle.Windsor.dll</HintPath>
+    </Reference>
+    <Reference Include="OpenRasta">
+      <HintPath>..\..\lib\OpenRasta\OpenRasta.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -44,6 +50,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Constants.cs" />
+    <Compile Include="ContextStoreInstanceActivator.cs" />
     <Compile Include="ContextStoreLifetime.cs" />
     <Compile Include="Convert.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
