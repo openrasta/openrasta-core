@@ -123,7 +123,8 @@ namespace OpenRasta.DI.Windsor
                                                  .LifestyleCustom<ContextStoreLifetime>()
                                                  .ImplementedBy(instance.GetType())
                                                  .Named(key)
-                                                 .ExtendedProperties(new Property(Constants.REG_IS_INSTANCE_KEY, true)));
+                                                 .ExtendedProperties(new Property(Constants.REG_IS_INSTANCE_KEY, true))
+                                                 );
                                     store[key] = instance;
                                 }
                             }
