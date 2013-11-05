@@ -58,8 +58,8 @@ namespace OpenRasta.DI.Windsor
         IContextStore GetStore()
         {
             if (!Kernel.HasComponent(typeof (IContextStore)))
-                throw new InvalidOperationException(
-                    "There is no IContextStore implementation registered in the container.");
+                throw new InvalidOperationException("There is no IContextStore implementation registered in the container.");
+
             return Kernel.Resolve<IContextStore>();
         }
     }
