@@ -16,6 +16,9 @@
         <dependencies>
             <dependency id="OpenRasta" version="2.2.0" />
         </dependencies>
+        <frameworkAssemblies>
+            <frameworkAssembly assemblyName="System.Web" />
+        </frameworkAssemblies>
     </metadata>
     <files>
         <file src="web.config.install.xdt" target="content\web.config.install.xdt" />
