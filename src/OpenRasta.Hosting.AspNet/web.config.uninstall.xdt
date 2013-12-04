@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<configuration xmlns:xdt="http://schemas.microsoft.com/XML-Document-Transform">
+  <system.webServer>
+    <modules>
+      <add name="OpenRastaModule" type="OpenRasta.Hosting.AspNet.OpenRastaModule, OpenRasta.Hosting.AspNet" xdt:Transform="Remove" xdt:Locator="Match(name)" />
+    </modules>
+    <handlers>
+      <add name="OpenRastaHandler" verb="*" path="*.rastahook" type="OpenRasta.Hosting.AspNet.OpenRastaHandler, OpenRasta.Hosting.AspNet, Version=2.2.0.0, Culture=neutral" xdt:Transform="Remove" xdt:Locator="Match(name)" />
+    </handlers>
+  </system.webServer>
+</configuration>
