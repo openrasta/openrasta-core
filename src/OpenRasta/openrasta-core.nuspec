@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+    <metadata>
+        <id>openrasta-core</id>
+        <version>2.2.0-beta</version>
+        <title>Open Rasta Core</title>
+        <authors>Sebastien Lambla</authors>
+        <owners>Sebastien Lambla</owners>
+        <licenseUrl>http://openrasta.org/</licenseUrl>
+        <projectUrl>https://github.com/openrasta/openrasta-core</projectUrl>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <description>OpenRasta is an open-source .NET framework for building RESTful APIs</description>
+        <releaseNotes />
+        <copyright>Copyright 2013</copyright>
+        <tags>OpenRasta REST API</tags>
+    </metadata>
+    <files>
+        <file src="bin\debug\OpenRasta.dll" target="lib\net40\OpenRasta.dll" />
+    </files>
+</package>

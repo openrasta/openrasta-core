@@ -89,22 +89,39 @@ namespace InternalDependencyResolver_Specification
     {
         InMemoryContextStore InMemoryStore;
 
-        public class TheClass
+        public class TheClass {}
+
+
+        public class TheClassThatNeedsYou
         {
+            private readonly INeedYou _needYou;
+            public TheClassThatNeedsYou(INeedYou needYou)
+            {
+                _needYou = needYou;
+            }
+        }
+
+        public interface INeedYou {}
+        public class NeedYou : INeedYou {}
+
+        public class TheDependentClassThatNeedsYou
+        {
+            private readonly TheClassThatNeedsYou theClassThatNeedsYou;
+
+            public TheDependentClassThatNeedsYou(TheClassThatNeedsYou theClassThatNeedsYou)
+            {
+                this.theClassThatNeedsYou = theClassThatNeedsYou;
+            }
         }
 
         public class TheDependentClass
         {
             public TheDependentClass(TheClass dependent)
             {
-                _dependent = dependent;
+                Dependent = dependent;
             }
 
-            TheClass _dependent;
-            public TheClass Dependent
-            {
-                get { return _dependent; }
-            }
+            public TheClass Dependent { get; private set; }
         }
 
         void WhenClearingStore()
@@ -155,6 +172,7 @@ namespace InternalDependencyResolver_Specification
             var objectForScope = new TheClass();
             var scope = new AmbientContext();
             Resolver.AddDependency<TheDependentClass>(DependencyLifetime.Transient);
+
             using(new ContextScope(scope))
             {
                 Resolver.AddDependencyInstance(typeof(TheClass),objectForScope,DependencyLifetime.PerRequest);
@@ -162,6 +180,26 @@ namespace InternalDependencyResolver_Specification
                 var dependentClass = Resolver.Resolve<TheDependentClass>();
                 dependentClass.ShouldNotBeNull();
                 dependentClass.Dependent.ShouldBeTheSameInstanceAs(objectForScope);
+            }
+        }
+
+        [Test]
+        public void a_type_registered_as_transient_gets_an_instance_which_is_created_with_another_instance_and_is_registered_as_perwebrequest()
+        {
+            Resolver.AddDependency<IContextStore,AmbientContextStore>();
+
+            Resolver.AddDependency<TheDependentClassThatNeedsYou>(DependencyLifetime.Transient);
+
+            var contextStore = new AmbientContext();
+            using (new ContextScope(contextStore))
+            {
+                var objectForScope = new TheClassThatNeedsYou(new NeedYou());
+
+                Resolver.AddDependencyInstance(typeof(TheClassThatNeedsYou), objectForScope, DependencyLifetime.PerRequest);
+
+               var dependentClass =  Resolver.Resolve<TheDependentClassThatNeedsYou>();
+               dependentClass.ShouldNotBeNull();
+
             }
         }
 
@@ -265,6 +303,7 @@ namespace InternalDependencyResolver_Specification
         }
         interface IUnknown{}
         class JohnDoe : IUnknown {}
+
         [Test]
         public void instance_registered_as_per_request_are_cleared_when_context_store_is_terminating()
         {
@@ -279,8 +318,9 @@ namespace InternalDependencyResolver_Specification
 
             Executing(() => Resolver.Resolve<TheClass>()).ShouldThrow<DependencyResolutionException>();
         }
-        
     }
+
+
 
     public abstract class when_registering_dependencies : dependency_resolver_context
     {
@@ -385,12 +425,15 @@ namespace InternalDependencyResolver_Specification
         [Test]
         public void the_resolved_instance_is_the_same_as_the_registered_instance()
         {
-            string objectInstance = "some object";
+            var objectInstance = new object();
 
-            Resolver.AddDependencyInstance(typeof (string), objectInstance);
+            Resolver.AddDependencyInstance(typeof(object), objectInstance);
 
-            Resolver.Resolve<string>().ShouldBe(objectInstance);
+            Resolver.Resolve<object>().ShouldBe(objectInstance);
         }
+
+  
+
     }
 }
 
