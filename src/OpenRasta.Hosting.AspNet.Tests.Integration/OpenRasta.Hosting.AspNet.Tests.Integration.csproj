@@ -33,8 +33,9 @@
     <Reference Include="nunit.framework">
       <HintPath>..\..\lib\nunit-2.6.3\nunit.framework.dll</HintPath>
     </Reference>
-    <Reference Include="OpenRasta">
-      <HintPath>..\..\lib\OpenRasta\OpenRasta.dll</HintPath>
+    <Reference Include="OpenRasta, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\openrasta-core.2.5.0-beta\lib\net40\OpenRasta.dll</HintPath>
     </Reference>
     <Reference Include="OpenRasta.Testing">
       <HintPath>..\..\lib\openrasta-testing\OpenRasta.Testing.dll</HintPath>
@@ -66,6 +67,9 @@
       <Project>{288a707d-78b1-464f-87f2-63d6652c3bc8}</Project>
       <Name>OpenRasta.Hosting.AspNet</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
