@@ -2,19 +2,20 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/10/nuspec.xsd">
     <metadata>
         <id>openrasta-hosting-aspnet</id>
-        <version>2.2.0-beta</version>
-        <title>AspNet Hosting OpenRasta</title>
+        <version>2.5.0-beta</version>
+        <title>OpenRasta AspNet Hosting</title>
         <authors>Sebastien Lambla</authors>
         <owners>Sebastien Lambla</owners>
         <licenseUrl>http://openrasta.org/</licenseUrl>
         <projectUrl>https://github.com/openrasta/openrasta-hosting-aspnet</projectUrl>
+        <iconUrl>http://openrasta.org/openRastaLogo-32x32.png</iconUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <description>Asp.Net hosting environment for OpenRasta</description>
         <releaseNotes />
-        <copyright>Copyright 2013</copyright>
-        <tags>AspNet Hosting OpenRasta</tags>
+        <copyright>Copyright 2007</copyright>
+        <tags>OpenRasta AspNet Hosting</tags>
         <dependencies>
-            <dependency id="OpenRasta" version="2.2.0" />
+            <dependency id="OpenRasta" version="2.5.0-beta" />
         </dependencies>
         <frameworkAssemblies>
             <frameworkAssembly assemblyName="System.Web" />
@@ -23,6 +24,6 @@
     <files>
         <file src="web.config.install.xdt" target="content\web.config.install.xdt" />
         <file src="web.config.uninstall.xdt" target="content\web.config.uninstall.xdt" />
-        <file src="bin\debug\OpenRasta.Hosting.AspNet.dll" target="lib\net40\OpenRasta.Hosting.AspNet.dll" />
+        <file src="bin\release\OpenRasta.Hosting.AspNet.dll" target="lib\net40\OpenRasta.Hosting.AspNet.dll" />
     </files>
 </package>
