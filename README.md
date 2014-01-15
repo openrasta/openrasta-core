@@ -1,7 +1,8 @@
 OpenRasta hosted in ASP.NET
 ========================
 
-This allows OpenRasta to be host within ASP.NET, so all you need to do is create a empty ASP.NET orASP.NET MVC project or use an existing one and install the NuGet package.
+This allows OpenRasta to be host within ASP.NET.
+All you need to do is create a empty ASP.NET or ASP.NET MVC project, or use an existing one, and install the NuGet package.
 
 # Installation
 
