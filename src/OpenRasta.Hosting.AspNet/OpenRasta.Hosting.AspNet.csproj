@@ -31,8 +31,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="OpenRasta">
-      <HintPath>..\..\lib\OpenRasta\OpenRasta.dll</HintPath>
+    <Reference Include="OpenRasta, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\openrasta-core.2.5.0-beta\lib\net40\OpenRasta.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
@@ -67,13 +68,18 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="web.config.uninstall.xdt" />
+    <None Include="packages.config" />
+    <None Include="web.config.uninstall.xdt">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="openrasta-hosting-aspnet.nuspec">
       <SubType>Designer</SubType>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="web.config.install.xdt" />
+    <Content Include="web.config.install.xdt">
+      <SubType>Designer</SubType>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
