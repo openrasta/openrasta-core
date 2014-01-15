@@ -1,11 +1,24 @@
 <?xml version="1.0"?>
 <configuration xmlns:xdt="http://schemas.microsoft.com/XML-Document-Transform">
+  <system.webServer xdt:Transform="InsertIfMissing">
+  </system.webServer>
+  <system.webServer>
+    <modules xdt:Transform="InsertIfMissing">
+    </modules>
+  </system.webServer>
+  <system.webServer>
+    <handlers xdt:Transform="InsertIfMissing">
+    </handlers>
+  </system.webServer>
+  
   <system.webServer>
     <modules>
+      <add name="OpenRastaModule" xdt:Transform="Remove" xdt:Locator="Match(name)" />
       <add name="OpenRastaModule" type="OpenRasta.Hosting.AspNet.OpenRastaModule, OpenRasta.Hosting.AspNet" xdt:Transform="Insert" />
     </modules>
     <handlers>
-      <add name="OpenRastaHandler" verb="*" path="*.rastahook" type="OpenRasta.Hosting.AspNet.OpenRastaHandler, OpenRasta.Hosting.AspNet, Version=2.2.0.0, Culture=neutral" xdt:Transform="Insert" />
+      <add name="OpenRastaHandler" xdt:Transform="Remove" xdt:Locator="Match(name)" />
+      <add name="OpenRastaHandler" verb="*" path="*.rastahook" type="OpenRasta.Hosting.AspNet.OpenRastaHandler, OpenRasta.Hosting.AspNet, Version=2.5.0.0, Culture=neutral" xdt:Transform="Insert" />
     </handlers>
   </system.webServer>
 </configuration>

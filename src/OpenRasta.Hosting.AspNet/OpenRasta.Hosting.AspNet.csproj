@@ -69,13 +69,17 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <None Include="web.config.uninstall.xdt" />
+    <None Include="web.config.uninstall.xdt">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="openrasta-hosting-aspnet.nuspec">
       <SubType>Designer</SubType>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="web.config.install.xdt" />
+    <Content Include="web.config.install.xdt">
+      <SubType>Designer</SubType>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
