@@ -11,10 +11,10 @@ namespace OpenRasta.Hosting.InMemory
         readonly IConfigurationSource _configuration;
         bool _isDisposed;
 
-        public InMemoryHost(IConfigurationSource configuration)
+        public InMemoryHost(IConfigurationSource configuration, IDependencyResolver dependencyResolver = null)
         {
+            Resolver = dependencyResolver ?? new InternalDependencyResolver();
             _configuration = configuration;
-            Resolver = new InternalDependencyResolver();
             ApplicationVirtualPath = "/";
             HostManager = HostManager.RegisterHost(this);
             RaiseStart();

@@ -88,6 +88,7 @@
     <Compile Include="Fakes\GilGalad.cs" />
     <Compile Include="Fakes\House.cs" />
     <Compile Include="Fakes\Sauron.cs" />
+    <Compile Include="Hosting\InMemory\InMemoryHost_Specification.cs" />
     <Compile Include="IO\BoundaryStreamReader_Specification.cs" />
     <Compile Include="IO\ByteArrayExtension_Specification.cs" />
     <Compile Include="IO\DeterministicStreamWriter_Specification.cs" />
