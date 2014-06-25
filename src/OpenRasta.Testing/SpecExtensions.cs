@@ -28,10 +28,8 @@ namespace OpenRasta.Testing
                 return true;
             if (actualValue.Count != expectedValue.Count)
                 return false;
-            for (int i = 0; i < actualValue.Count; i++)
-                if (actualValue[i] != expectedValue[i])
-                    return false;
-            return true;
+            
+            return !actualValue.Where((t, i) => t != expectedValue[i]).Any();
         }
 
         public static IEnumerable<T> ShouldAllBe<T>(this IEnumerable<T> values, T expected)
@@ -75,7 +73,7 @@ namespace OpenRasta.Testing
 
         public static TExpected ShouldBeAssignableTo<TExpected>(this object obj)
         {
-            if (!typeof(TExpected).IsAssignableFrom(obj.GetType()))
+            if (!(obj is TExpected))
                 Assert.Fail("TargetType {0} is not implementing {1}.", obj.GetType().Name, typeof(TExpected).Name);
             return (TExpected)obj;
         }
@@ -156,9 +154,10 @@ namespace OpenRasta.Testing
 
         public static IEnumerable<T> ShouldContain<T>(this IEnumerable<T> list, T expected, Func<T, T, bool> match)
         {
-            foreach (var t in list)
-                if (match(t, expected))
-                    return list;
+            if (list.Any(t => match(t, expected)))
+            {
+                return list;
+            }
 
             Assert.Fail("Looking for element {0} but didn't find any.", expected);
             return null;
@@ -166,7 +165,7 @@ namespace OpenRasta.Testing
 
         public static string ShouldContain(this string baseString, string textToFind)
         {
-            if (baseString.IndexOf(textToFind) == -1)
+            if (baseString.IndexOf(textToFind, StringComparison.Ordinal) == -1)
                 Assert.Fail("text '{0}' not found in '{1}'", textToFind, baseString);
             return baseString;
         }
@@ -260,7 +259,7 @@ namespace OpenRasta.Testing
 
         public static void ShouldNotContain(this string baseString, string textToFind)
         {
-            if (baseString.IndexOf(textToFind) != -1)
+            if (baseString.IndexOf(textToFind, StringComparison.Ordinal) != -1)
                 Assert.Fail("text '{0}' found in '{1}'", textToFind, baseString);
         }
 
@@ -277,7 +276,7 @@ namespace OpenRasta.Testing
             }
             catch (Exception e)
             {
-                if (!typeof(T).IsInstanceOfType(e))
+                if (!(e is T))
                     Assert.Fail("Expected exception of type \"{0}\" but got \"{1}\" instead.", 
                                 typeof(T).Name, 
                                 e.GetType().Name);
