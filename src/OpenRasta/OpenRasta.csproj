@@ -37,6 +37,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\CommonInfo.cs">
+      <Link>CommonInfo.cs</Link>
+    </Compile>
     <Compile Include="Authentication\AuthenticationResult.cs" />
     <Compile Include="Authentication\Basic\BasicAuthenticationScheme.cs" />
     <Compile Include="Authentication\Basic\BasicAuthRequestHeader.cs" />
