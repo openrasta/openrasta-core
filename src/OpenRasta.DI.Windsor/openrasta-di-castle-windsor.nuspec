@@ -1,24 +1,25 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+<package xmlns="http://schemas.microsoft.com/packaging/2011/10/nuspec.xsd">
     <metadata>
         <id>openrasta-di-castle-windsor</id>
-        <version>2.2.0-beta</version>
+        <version>2.5.0-beta</version>
         <title>Open Rasta DI Castle Windsor</title>
         <authors>Sebastien Lambla</authors>
         <owners>Sebastien Lambla</owners>
         <licenseUrl>http://openrasta.org/</licenseUrl>
         <projectUrl>https://github.com/openrasta/openrasta-castle-windsor</projectUrl>
+        <iconUrl>http://openrasta.org/openRastaLogo-32x32.png</iconUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <description>Open Rasta dependence injection using Castle Windsor</description>
         <releaseNotes />
-        <copyright>Copyright 2013</copyright>
+        <copyright>Copyright 2007</copyright>
         <tags>OpenRasta DI Castle Windsor</tags>
-		<dependencies>
-            <dependency id="OpenRasta" version="2.2.0" />
-            <dependency id="Castle.Windsor" version="3.2.0" />
+        <dependencies>
+            <dependency id="openrasta-core" version="2.5.0-beta" />
+            <dependency id="Castle.Windsor" version="3.3.0" />
         </dependencies>
     </metadata>
     <files>
-        <file src="bin\debug\OpenRasta.DI.Windsor.dll" target="lib\net40\OpenRasta.DI.Windsor.dll" />
+        <file src="bin\release\OpenRasta.DI.Windsor.dll" target="lib\net40\OpenRasta.DI.Windsor.dll" />
     </files>
 </package>
