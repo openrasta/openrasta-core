@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/10/nuspec.xsd">
     <metadata>
         <id>openrasta-hosting-aspnet</id>
-        <version>$version$-beta</version>
+        <version>$version$</version>
         <title>OpenRasta AspNet Hosting</title>
         <authors>Sebastien Lambla</authors>
         <owners>Sebastien Lambla</owners>
@@ -15,7 +15,7 @@
         <copyright>Copyright 2007</copyright>
         <tags>OpenRasta AspNet Hosting</tags>
         <dependencies>
-            <dependency id="openrasta-core" version="2.5.0-beta" />
+            <dependency id="openrasta-core" version="2.5.0" />
         </dependencies>
         <frameworkAssemblies>
             <frameworkAssembly assemblyName="System.Web" targetFramework="" />
