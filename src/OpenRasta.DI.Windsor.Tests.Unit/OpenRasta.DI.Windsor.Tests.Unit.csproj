@@ -42,9 +42,9 @@
     <Reference Include="nunit.framework, Version=2.6.3.13283, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
       <HintPath>..\packages\NUnit.2.6.3\lib\nunit.framework.dll</HintPath>
     </Reference>
-    <Reference Include="OpenRasta, Version=2.5.0.5, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="OpenRasta, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\openrasta-core.2.5.0.5-beta\lib\net40\OpenRasta.dll</HintPath>
+      <HintPath>..\packages\openrasta-core.2.5.7\lib\net40\OpenRasta.dll</HintPath>
     </Reference>
     <Reference Include="OpenRasta.Testing">
       <HintPath>..\..\lib\openrasta-testing\OpenRasta.Testing.dll</HintPath>
@@ -68,6 +68,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Resources\error-test.htm" />
+    <Content Include="Resources\error.css" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
