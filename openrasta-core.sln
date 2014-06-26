@@ -1,11 +1,18 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 2013
+VisualStudioVersion = 12.0.30501.0
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenRasta", "src\OpenRasta\OpenRasta.csproj", "{3D251617-2581-4D9C-A639-5CFB0BB09420}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenRasta.Testing", "src\OpenRasta.Testing\OpenRasta.Testing.csproj", "{434205BD-81FF-44BE-9911-7597DDEB3EAB}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenRasta.Tests.Unit", "src\OpenRasta.Tests.Unit\OpenRasta.Tests.Unit.csproj", "{EECBE19A-4725-4F13-AE7E-B68CD98AEB6E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{67F8A154-ADDA-43F5-9DF7-EF9633BEA303}"
+	ProjectSection(SolutionItems) = preProject
+		src\CommonInfo.cs = src\CommonInfo.cs
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
