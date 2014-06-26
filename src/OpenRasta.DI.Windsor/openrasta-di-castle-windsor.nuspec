@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/10/nuspec.xsd">
     <metadata>
         <id>openrasta-di-castle-windsor</id>
-        <version>2.5.0-beta</version>
+        <version>$version$</version>
         <title>Open Rasta DI Castle Windsor</title>
         <authors>Sebastien Lambla</authors>
         <owners>Sebastien Lambla</owners>
@@ -15,7 +15,7 @@
         <copyright>Copyright 2007</copyright>
         <tags>OpenRasta DI Castle Windsor</tags>
         <dependencies>
-            <dependency id="openrasta-core" version="2.5.0-beta" />
+            <dependency id="openrasta-core" version="2.5.0" />
             <dependency id="Castle.Windsor" version="3.3.0" />
         </dependencies>
     </metadata>
