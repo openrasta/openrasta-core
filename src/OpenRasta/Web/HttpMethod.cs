@@ -19,7 +19,8 @@ namespace OpenRasta.Web
         POST,
         PUT,
         DELETE,
-        OPTIONS
+        OPTIONS,
+        PATCH
     }
 }
 
