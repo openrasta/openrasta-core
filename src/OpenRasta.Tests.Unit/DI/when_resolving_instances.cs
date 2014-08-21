@@ -146,7 +146,9 @@ namespace InternalDependencyResolver_Specification
             Resolver.AddDependency<IContextStore, AmbientContextStore>();
 
             using (new ContextScope(scope1))
+            {
                 Resolver.AddDependencyInstance<TheClass>(objectForScope1, DependencyLifetime.PerRequest);
+            }
 
             using (new ContextScope(scope2))
             {
@@ -184,7 +186,7 @@ namespace InternalDependencyResolver_Specification
         }
 
         [Test]
-        public void a_type_registered_as_transient_gets_an_instance_which_is_created_with_another_instance_and_is_registered_as_perwebrequest()
+        public virtual void a_type_registered_as_transient_gets_an_instance_which_is_created_with_another_instance_and_is_registered_as_perwebrequest()
         {
             Resolver.AddDependency<IContextStore,AmbientContextStore>();
 
@@ -199,7 +201,6 @@ namespace InternalDependencyResolver_Specification
 
                var dependentClass =  Resolver.Resolve<TheDependentClassThatNeedsYou>();
                dependentClass.ShouldNotBeNull();
-
             }
         }
 
