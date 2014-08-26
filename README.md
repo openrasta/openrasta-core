@@ -1,4 +1,5 @@
-# openrasta-core [![Build status](https://ci.appveyor.com/api/projects/status/1vk1auv7md2acu37)](https://ci.appveyor.com/project/holytshirt/openrasta-core-424)
+# openrasta-core [![Build status](https://ci.appveyor.com/api/projects/status/1vk1auv7md2acu37)](https://ci.appveyor.com/project/holytshirt/openrasta-core-424) [![Coverity Scan Build Status](https://scan.coverity.com/projects/2837/badge.svg)](https://scan.coverity.com/projects/2837)
+
 
 
 OpenRasta core library
