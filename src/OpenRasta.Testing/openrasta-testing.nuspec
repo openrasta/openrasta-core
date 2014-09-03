@@ -3,7 +3,7 @@
     <metadata>
         <id>openrasta-testing</id>
         <version>$version$</version>
-        <title>OpenRasta.Testing</title>
+        <title>OpenRasta Testing</title>
         <authors>Sebastien Lambla</authors>
         <owners>Sebastien Lambla</owners>
         <licenseUrl>http://openrasta.org/</licenseUrl>
@@ -16,6 +16,7 @@
         <tags>OpenRasta Testing Contexts</tags>
     	<dependencies>
         	<dependency id="openrasta-core" version="$version$" />
+			<dependency id="NUnit" version="2.6.3" />
         </dependencies>
     </metadata>
     <files>
