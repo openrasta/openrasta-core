@@ -1,10 +1,10 @@
+using OpenRasta.Codecs;
 using OpenRasta.DI;
 using OpenRasta.Hosting;
 using OpenRasta.Hosting.InMemory;
-using OpenRasta.Testing;
 using OpenRasta.Web;
 
-namespace OpenRasta.Codecs
+namespace OpenRasta.Testing.Contexts
 {
     public abstract class codec_context<TCodec> : context where TCodec:ICodec
     {

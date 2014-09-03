@@ -48,11 +48,8 @@
     <Compile Include="Codecs\ApplicationXWwwUrlformEncodedCodec_Specification.cs" />
     <Compile Include="Codecs\CodecMatch_Specification.cs" />
     <Compile Include="Codecs\CodecRepository_Specification.cs" />
-    <Compile Include="Codecs\codec_context.cs" />
     <Compile Include="Codecs\JsonDataContractCodec_Specification.cs" />
     <Compile Include="Codecs\MediaTypeDictionary_Specification.cs" />
-    <Compile Include="Codecs\media_type_reader_context.cs" />
-    <Compile Include="Codecs\media_type_writer_context.cs" />
     <Compile Include="Codecs\MultipartFormDataCodec_Specification.cs" />
     <Compile Include="Codecs\WebForms_Specification.cs" />
     <Compile Include="Codecs\xml.cs" />
@@ -97,10 +94,8 @@
     <Compile Include="IO\MultipartReader_Specification.cs" />
     <Compile Include="IO\MultipartWriter_Specification.cs" />
     <Compile Include="IO\stream_context.cs" />
-    <Compile Include="openrasta_context.cs" />
     <Compile Include="OperationModel\CodecSelectors\RequestCodecSelector_Specification.cs" />
     <Compile Include="OperationModel\Filters\HttpMethodOperationFilter_Specification.cs" />
-    <Compile Include="OperationModel\Filters\operation_filter_context.cs" />
     <Compile Include="OperationModel\Filters\UriNameOperationFilter_Specification.cs" />
     <Compile Include="OperationModel\Filters\UriParametersFilter_Specification.cs" />
     <Compile Include="OperationModel\Hydrators\RequestEntityReaderHydrator_Specification.cs" />
@@ -129,7 +124,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Security\RequiresAuthenticationInterceptor_Specification.cs" />
     <Compile Include="Security\RequiresRoleInterceptor_Specification.cs" />
-    <Compile Include="TestErrorCollector.cs" />
     <Compile Include="Text\Rfc2047Encoding_Specification.cs" />
     <Compile Include="TypeSystem\Extensions_Specification.cs" />
     <Compile Include="TypeSystem\Instances_Specification.cs" />

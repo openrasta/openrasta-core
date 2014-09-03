@@ -11,7 +11,7 @@
 using System.Collections.Generic;
 using OpenRasta.Diagnostics;
 
-namespace OpenRasta.Tests
+namespace OpenRasta.Testing
 {
     public class TestErrorCollector : IErrorCollector
     {

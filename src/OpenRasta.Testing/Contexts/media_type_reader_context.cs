@@ -12,13 +12,12 @@ using System;
 using System.IO;
 using System.Reflection;
 using System.Text;
-using OpenRasta.DI;
+using OpenRasta.Codecs;
 using OpenRasta.IO;
-using OpenRasta.Testing;
 using OpenRasta.TypeSystem;
 using OpenRasta.Web;
 
-namespace OpenRasta.Codecs
+namespace OpenRasta.Testing.Contexts
 {
     public abstract class media_type_reader_context<TCodec> : codec_context<TCodec>
         where TCodec : ICodec

@@ -2,11 +2,10 @@
 using System.Linq;
 using System.Runtime.InteropServices;
 using NUnit.Framework;
-using OpenRasta.Binding;
 using OpenRasta.DI;
 using OpenRasta.OperationModel;
-using OpenRasta.OperationModel.MethodBased;
 using OpenRasta.Testing;
+using OpenRasta.Testing.Contexts;
 using OpenRasta.TypeSystem;
 
 namespace OpenRasta.Tests.Unit.OperationModel.MethodBased
@@ -191,34 +190,5 @@ namespace OpenRasta.Tests.Unit.OperationModel.MethodBased
         {
             return 0;
         }
-    }
-
-    public abstract class operation_context<THandler> : openrasta_context
-    {
-        protected operation_context()
-        {
-            Handler = TypeSystem.FromClr<THandler>();
-        }
-
-        protected IType Handler { get; set; }
-        protected IOperation Operation { get; set; }
-
-        protected void given_operation(string name, params Type[] parameters)
-        {
-            IMethod method = (from m in Handler.GetMethods()
-                              where m.InputMembers.Count() == parameters.Length && m.Name.EqualsOrdinalIgnoreCase(name)
-                              let matchingParams = 
-                                  (from parameter in m.InputMembers
-                                  from typeParameter in parameters
-                                  where parameter.Type.CompareTo(parameter.TypeSystem.FromClr(typeParameter)) == 0
-                                       select parameter).Count()
-                              where parameters.Length == 0 || matchingParams == parameters.Length
-                              select m).First();
-            Operation = new MethodBasedOperation(new DefaultObjectBinderLocator(), Handler, method)
-            {
-                Resolver = Resolver
-            };
-        }
-
     }
 }

@@ -13,6 +13,7 @@ using System.Linq;
 using NUnit.Framework;
 using OpenRasta.Pipeline.Contributors;
 using OpenRasta.Testing;
+using OpenRasta.Testing.Contexts;
 using OpenRasta.Tests;
 using OpenRasta.Web;
 using OpenRasta.TypeSystem;

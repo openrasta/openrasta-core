@@ -14,6 +14,7 @@ using OpenRasta.Configuration;
 using OpenRasta.DI;
 using OpenRasta.Pipeline.Contributors;
 using OpenRasta.Testing;
+using OpenRasta.Testing.Contexts;
 using OpenRasta.Tests;
 using OpenRasta.Pipeline;
 using OpenRasta.Web.UriDecorators;

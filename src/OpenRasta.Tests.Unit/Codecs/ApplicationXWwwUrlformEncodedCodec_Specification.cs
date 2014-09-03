@@ -15,6 +15,7 @@ using OpenRasta.Binding;
 using OpenRasta.Data;
 using OpenRasta.Testing;
 using NUnit.Framework;
+using OpenRasta.Testing.Contexts;
 using OpenRasta.Web;
 using Moq;
 using System.IO;

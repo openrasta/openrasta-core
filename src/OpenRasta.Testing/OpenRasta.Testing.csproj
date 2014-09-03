@@ -39,12 +39,26 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="context.cs" />
+    <Compile Include="Contexts\codec_context.cs" />
+    <Compile Include="Contexts\contributor_context.cs" />
+    <Compile Include="Contexts\media_type_reader_context.cs" />
+    <Compile Include="Contexts\media_type_writer_context.cs" />
+    <Compile Include="Contexts\openrasta_context.cs" />
+    <Compile Include="Contexts\operation_context.cs" />
+    <Compile Include="Contexts\operation_filter_context.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SpecExtensions.cs" />
     <Compile Include="SpecExtensionsFixture.cs" />
+    <Compile Include="TestErrorCollector.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\OpenRasta\OpenRasta.csproj">
+      <Project>{3D251617-2581-4D9C-A639-5CFB0BB09420}</Project>
+      <Name>OpenRasta</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

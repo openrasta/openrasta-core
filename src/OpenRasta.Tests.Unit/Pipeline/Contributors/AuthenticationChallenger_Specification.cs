@@ -1,4 +1,5 @@
-﻿#pragma warning disable 618
+﻿using OpenRasta.Testing.Contexts;
+#pragma warning disable 618
 using System;
 using System.Collections.Generic;
 using System.Linq;
