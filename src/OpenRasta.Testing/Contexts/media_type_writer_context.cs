@@ -1,6 +1,7 @@
+using OpenRasta.Codecs;
 using OpenRasta.Web;
 
-namespace OpenRasta.Codecs
+namespace OpenRasta.Testing.Contexts
 {
     public abstract class media_type_writer_context<TCodec> : codec_context<TCodec> where TCodec : ICodec
     {

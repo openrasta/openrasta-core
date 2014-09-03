@@ -5,6 +5,7 @@ using System.Text;
 using NUnit.Framework;
 using OpenRasta.OperationModel.Filters;
 using OpenRasta.Testing;
+using OpenRasta.Testing.Contexts;
 
 namespace OpenRasta.Tests.Unit.OperationModel.Filters
 {

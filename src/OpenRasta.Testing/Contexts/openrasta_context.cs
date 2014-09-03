@@ -12,11 +12,10 @@ using OpenRasta.Handlers;
 using OpenRasta.Hosting.InMemory;
 using OpenRasta.Pipeline;
 using OpenRasta.Security;
-using OpenRasta.Testing;
 using OpenRasta.TypeSystem;
 using OpenRasta.Web;
 
-namespace OpenRasta.Tests
+namespace OpenRasta.Testing.Contexts
 {
     public class openrasta_context : context
     {

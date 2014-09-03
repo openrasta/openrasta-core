@@ -9,6 +9,7 @@ using OpenRasta.OperationModel;
 using OpenRasta.OperationModel.CodecSelectors;
 using OpenRasta.OperationModel.Hydrators;
 using OpenRasta.Testing;
+using OpenRasta.Testing.Contexts;
 using OpenRasta.Tests.Unit.Fakes;
 using OpenRasta.Tests.Unit.OperationModel.Filters;
 using OpenRasta.Web;

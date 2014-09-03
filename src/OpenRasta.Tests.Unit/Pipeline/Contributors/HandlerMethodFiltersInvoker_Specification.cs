@@ -12,6 +12,7 @@ using System;
 using NUnit.Framework;
 using OpenRasta.Reflection;
 using OpenRasta.Testing;
+using OpenRasta.Testing.Contexts;
 using OpenRasta.Tests;
 using OpenRasta.Web;
 using OpenRasta.Pipeline;

@@ -6,6 +6,7 @@ using ApplicationXWwwUrlformEncodedCodec_Specification;
 using NUnit.Framework;
 using OpenRasta.Codecs;
 using OpenRasta.Testing;
+using OpenRasta.Testing.Contexts;
 using OpenRasta.Web;
 using OpenRasta.TypeSystem;
 using OpenRasta.Web.UriDecorators;

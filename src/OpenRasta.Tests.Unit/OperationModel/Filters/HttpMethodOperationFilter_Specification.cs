@@ -2,6 +2,7 @@
 using NUnit.Framework;
 using OpenRasta.OperationModel.Filters;
 using OpenRasta.Testing;
+using OpenRasta.Testing.Contexts;
 using OpenRasta.Web;
 
 namespace OpenRasta.Tests.Unit.OperationModel.Filters
