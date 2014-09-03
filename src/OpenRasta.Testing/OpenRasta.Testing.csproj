@@ -38,6 +38,9 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\CommonInfo.cs">
+      <Link>CommonInfo.cs</Link>
+    </Compile>
     <Compile Include="context.cs" />
     <Compile Include="Contexts\codec_context.cs" />
     <Compile Include="Contexts\contributor_context.cs" />
