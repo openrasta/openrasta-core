@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/10/nuspec.xsd">
+    <metadata>
+        <id>openrasta-testing</id>
+        <version>$version$</version>
+        <title>OpenRasta.Testing</title>
+        <authors>Sebastien Lambla</authors>
+        <owners>Sebastien Lambla</owners>
+        <licenseUrl>http://openrasta.org/</licenseUrl>
+        <projectUrl>https://github.com/openrasta/openrasta-core</projectUrl>
+        <iconUrl>http://openrasta.org/openRastaLogo-32x32.png</iconUrl>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <description>BDD-style contexts for developing OpenRasta extensions.</description>
+        <releaseNotes />
+        <copyright>Copyright 2007</copyright>
+        <tags>OpenRasta Testing Contexts</tags>
+    	<dependencies>
+        	<dependency id="openrasta-core" version="2.5" />
+        </dependencies>
+    </metadata>
+    <files>
+        <file src="bin\release\OpenRasta.Testing.dll" target="lib\net40\OpenRasta.Testing.dll" />
+    </files>
+</package>
