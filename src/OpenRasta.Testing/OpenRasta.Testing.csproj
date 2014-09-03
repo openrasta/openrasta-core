@@ -55,6 +55,7 @@
     <Compile Include="TestErrorCollector.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="openrasta-testing.nuspec" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
