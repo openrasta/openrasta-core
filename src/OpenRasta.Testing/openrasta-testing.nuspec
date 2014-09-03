@@ -15,7 +15,7 @@
         <copyright>Copyright 2007</copyright>
         <tags>OpenRasta Testing Contexts</tags>
     	<dependencies>
-        	<dependency id="openrasta-core" version="2.5" />
+        	<dependency id="openrasta-core" version="$version$" />
         </dependencies>
     </metadata>
     <files>
