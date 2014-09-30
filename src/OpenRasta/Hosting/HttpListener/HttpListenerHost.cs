@@ -74,6 +74,11 @@ namespace OpenRasta.Hosting.HttpListener
             {
                 return;
             }
+            catch (ObjectDisposedException)
+            {
+                return;
+            }
+
             QueueNextRequestPending();
             var ambientContext = new AmbientContext();
             var context = new HttpListenerCommunicationContext(this, nativeContext);
