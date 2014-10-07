@@ -50,5 +50,13 @@ namespace OpenRasta.Hosting.AspNet.Tests.Integration
                 .Matches("GET", new Uri("http://localhost/service.svc/Value", UriKind.Absolute))
                 .ShouldBeTrue();
         }
+
+        [Test]
+        public void a_general_wildcard_path_is_not_matched_with_dot_at_end_of_query()
+        {
+            new HttpHandlerRegistration("*", "*.", "")
+                .Matches("GET", new Uri("http://localhost/path?q=blah.", UriKind.Absolute))
+                .ShouldBeFalse();
+        }
     }
 }
