@@ -106,8 +106,8 @@
     <Compile Include="Collections\ObservableIterator.cs" />
     <Compile Include="Collections\ObservableIteratorExtensions.cs" />
     <Compile Include="Collections\ResumableIterator.cs" />
-    <Compile Include="Collections\Specialized\DependencyNode%271.cs" />
-    <Compile Include="Collections\Specialized\DependencyTree%271.cs" />
+    <Compile Include="Collections\Specialized\DependencyNode.cs" />
+    <Compile Include="Collections\Specialized\DependencyTree.cs" />
     <Compile Include="Configuration\CodecDefinitionExtensions.cs" />
     <Compile Include="Configuration\CodecParentDefinitionExtensions.cs" />
     <Compile Include="Configuration\DefaultDependencyRegistrar.cs" />
@@ -513,8 +513,8 @@
     <Compile Include="Web\Wadl\WadlRenderer.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Resources\error-test.htm" />
-    <Content Include="Resources\error.css" />
+    <None Include="Resources\error-test.htm" />
+    <EmbeddedResource Include="Resources\error.css" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\Files.resx" />
