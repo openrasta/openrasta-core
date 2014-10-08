@@ -65,6 +65,10 @@ namespace OpenRasta.Hosting.HttpListener
         {
             if (_isDisposed)
                 return;
+
+            if (!_listener.IsListening)
+                return;
+
             HttpListenerContext nativeContext;
             try
             {
@@ -74,6 +78,7 @@ namespace OpenRasta.Hosting.HttpListener
             {
                 return;
             }
+
             QueueNextRequestPending();
             var ambientContext = new AmbientContext();
             var context = new HttpListenerCommunicationContext(this, nativeContext);
@@ -142,6 +147,7 @@ namespace OpenRasta.Hosting.HttpListener
                     HostManager.UnregisterHost(this);
                 }
                 _listener.Abort();
+                _listener.Close();
                 _isDisposed = true;
             }
         }
