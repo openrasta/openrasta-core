@@ -65,16 +65,16 @@ namespace OpenRasta.Hosting.HttpListener
         {
             if (_isDisposed)
                 return;
+
+            if (!_listener.IsListening)
+                return;
+
             HttpListenerContext nativeContext;
             try
             {
                 nativeContext = _listener.EndGetContext(result);
             }
             catch (HttpListenerException)
-            {
-                return;
-            }
-            catch (ObjectDisposedException)
             {
                 return;
             }
@@ -147,6 +147,7 @@ namespace OpenRasta.Hosting.HttpListener
                     HostManager.UnregisterHost(this);
                 }
                 _listener.Abort();
+                _listener.Close();
                 _isDisposed = true;
             }
         }
