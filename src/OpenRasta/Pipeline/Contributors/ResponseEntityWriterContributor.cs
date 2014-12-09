@@ -26,7 +26,9 @@ namespace OpenRasta.Pipeline.Contributors
         public ILogger Log { get; set; }
         public void Initialize(IPipeline pipeline)
         {
-            pipeline.Notify(WriteResponse).After<KnownStages.ICodecResponseSelection>();
+            pipeline.Notify(WriteResponse).After<KnownStages.ICodecResponseSelection>()
+                .And
+                .Before<KnownStages.IEnd>();
         }
 
         public PipelineContinuation WriteResponse(ICommunicationContext context)
@@ -80,7 +82,7 @@ namespace OpenRasta.Pipeline.Contributors
                 }
             }
             SendResponseHeaders(context);
-            return PipelineContinuation.Finished;
+            return PipelineContinuation.Continue;
         }
 
         void SendResponseHeaders(ICommunicationContext context)
