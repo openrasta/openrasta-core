@@ -34,7 +34,7 @@ namespace ResponseEntityWriter_Specification
             given_response_entity(null);
 
             when_sending_notification<KnownStages.ICodecResponseSelection>()
-                .ShouldBe(PipelineContinuation.Finished);
+                .ShouldBe(PipelineContinuation.Continue);
 
             Context.Response.Entity.Stream.Length.ShouldBe(0);
         }
@@ -46,7 +46,7 @@ namespace ResponseEntityWriter_Specification
             given_response_entity(null);
 
             when_sending_notification<KnownStages.ICodecResponseSelection>()
-                .ShouldBe(PipelineContinuation.Finished);
+                .ShouldBe(PipelineContinuation.Continue);
 
             Context.Response.HeadersSent.ShouldBeTrue();
         }
@@ -63,7 +63,7 @@ namespace ResponseEntityWriter_Specification
             GivenAResponseCodec<CustomerCodec>(new object());
 
             when_sending_notification<KnownStages.ICodecResponseSelection>()
-                .ShouldBe(PipelineContinuation.Finished);
+                .ShouldBe(PipelineContinuation.Continue);
 
             Context.Response.Entity.Headers["ENTITY_TYPE"].ShouldBe("Fake");
             Context.Response.Entity.Codec.Configuration.ShouldNotBeNull();
@@ -77,7 +77,7 @@ namespace ResponseEntityWriter_Specification
             GivenAResponseCodec<CustomerCodec>();
 
             when_sending_notification<KnownStages.ICodecResponseSelection>()
-                .ShouldBe(PipelineContinuation.Finished);
+                .ShouldBe(PipelineContinuation.Continue);
 
             Context.Response.Entity.Headers["ENTITY_TYPE"].ShouldBe("Fake");
         }
@@ -112,7 +112,7 @@ namespace ResponseEntityWriter_Specification
             GivenAContentTypeWriter((instance, entity, codecParams) => entity.Stream.Write(new byte[50]));
 
             when_sending_notification<KnownStages.ICodecResponseSelection>()
-                .ShouldBe(PipelineContinuation.Finished);
+                .ShouldBe(PipelineContinuation.Continue);
 
             Context.Response.Headers.ContentLength
                 .ShouldBe(50);

@@ -80,7 +80,7 @@ namespace OpenRasta.Pipeline.Contributors
                 }
             }
             SendResponseHeaders(context);
-            return PipelineContinuation.Finished;
+            return PipelineContinuation.Continue;
         }
 
         void SendResponseHeaders(ICommunicationContext context)
