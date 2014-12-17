@@ -9,6 +9,7 @@
  */
 #endregion
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using OpenRasta.Codecs;
@@ -43,14 +44,28 @@ namespace OpenRasta.Pipeline.Contributors
 
             string acceptHeader = context.Request.Headers[HEADER_ACCEPT];
 
-            IEnumerable<MediaType> acceptedContentTypes =
-                MediaType.Parse(string.IsNullOrEmpty(acceptHeader) ? "*/*" : acceptHeader);
-            IType responseEntityType = _typeSystem.FromInstance(context.Response.Entity.Instance);
 
-            IEnumerable<CodecRegistration> sortedCodecs = _codecs.FindMediaTypeWriter(responseEntityType,
-                                                                                      acceptedContentTypes);
+            var responseEntityType = _typeSystem.FromInstance(context.Response.Entity.Instance);
+            IEnumerable<CodecRegistration> sortedCodecs;
+            
+            try
+            {
+                var acceptedContentTypes = MediaType.Parse(string.IsNullOrEmpty(acceptHeader) ? "*/*" : acceptHeader);
+                sortedCodecs = _codecs.FindMediaTypeWriter(responseEntityType, acceptedContentTypes);
+
+            }
+            catch (FormatException)
+            {
+                Log.WriteWarning("Accept header: {0} is malformed", acceptHeader);
+
+                context.Response.Headers["Warning"] = "199 Malformed accept header";
+                context.OperationResult = new OperationResult.BadRequest();
+                return PipelineContinuation.RenderNow;
+            }
+
+
             int codecsCount = sortedCodecs.Count();
-            CodecRegistration negotiatedCodec = sortedCodecs.FirstOrDefault();
+            var negotiatedCodec = sortedCodecs.FirstOrDefault();
 
             if (negotiatedCodec != null)
             {

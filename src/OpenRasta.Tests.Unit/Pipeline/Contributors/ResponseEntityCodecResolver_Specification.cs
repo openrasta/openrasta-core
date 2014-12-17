@@ -72,6 +72,20 @@ namespace ResponseEntityCodecResolver_Specification
         }
 
         [Test]
+        public void an_error_is_returned_when_the_accept_header_is_malformed()
+        {
+            given_pipeline_contributor<ResponseEntityCodecResolverContributor>();
+            given_response_entity(new Customer());
+            given_registration_codec<CustomerCodec, Customer>("text/plain");
+            given_request_header_accept("q=");
+
+            when_sending_notification<KnownStages.IOperationResultInvocation>().ShouldBe(PipelineContinuation.RenderNow);
+            
+            Context.OperationResult.ShouldBeOfType<OperationResult.BadRequest>();
+            Context.Response.Headers["Warning"].ShouldBe("199 Malformed accept header");
+        }
+
+        [Test]
         public void an_error_is_returned_when_no_suitable_codec_is_found()
         {
             given_pipeline_contributor<ResponseEntityCodecResolverContributor>();
