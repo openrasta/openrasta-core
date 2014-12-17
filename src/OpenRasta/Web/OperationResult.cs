@@ -193,8 +193,7 @@ namespace OpenRasta.Web
         /// </summary>
         public class Accepted : OperationResult
         {
-            public Accepted()
-                : base(202)
+            public Accepted() : base(202)
             {
             }
         }
