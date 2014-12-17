@@ -232,7 +232,7 @@ namespace OpenRasta.Web
 
             
 
-            return mediaTypes.OrderByDescending(m => m.MediaType);
+            return mediaTypes.OrderByDescending(m => m);
         }
 
         public class MediaTypeEqualityComparer : IEqualityComparer<MediaType>
