@@ -46,13 +46,11 @@ namespace OpenRasta.Pipeline.Contributors
 
 
             var responseEntityType = _typeSystem.FromInstance(context.Response.Entity.Instance);
-            IEnumerable<CodecRegistration> sortedCodecs;
+            IEnumerable<MediaType> acceptedContentTypes;
             
             try
             {
-                var acceptedContentTypes = MediaType.Parse(string.IsNullOrEmpty(acceptHeader) ? "*/*" : acceptHeader);
-                sortedCodecs = _codecs.FindMediaTypeWriter(responseEntityType, acceptedContentTypes);
-
+                acceptedContentTypes = MediaType.Parse(string.IsNullOrEmpty(acceptHeader) ? "*/*" : acceptHeader);
             }
             catch (FormatException)
             {
@@ -63,7 +61,7 @@ namespace OpenRasta.Pipeline.Contributors
                 return PipelineContinuation.RenderNow;
             }
 
-
+            var sortedCodecs = _codecs.FindMediaTypeWriter(responseEntityType, acceptedContentTypes);
             int codecsCount = sortedCodecs.Count();
             var negotiatedCodec = sortedCodecs.FirstOrDefault();
 

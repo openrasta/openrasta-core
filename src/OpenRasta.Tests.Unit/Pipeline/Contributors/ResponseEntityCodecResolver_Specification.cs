@@ -72,7 +72,7 @@ namespace ResponseEntityCodecResolver_Specification
         }
 
         [Test]
-        public void an_error_is_returned_when_the_accept_header_is_malformed()
+        public void bad_request_is_returned_when_the_accept_header_has_only_one_entry_that_is_invalid()
         {
             given_pipeline_contributor<ResponseEntityCodecResolverContributor>();
             given_response_entity(new Customer());
@@ -83,6 +83,20 @@ namespace ResponseEntityCodecResolver_Specification
             
             Context.OperationResult.ShouldBeOfType<OperationResult.BadRequest>();
             Context.Response.Headers["Warning"].ShouldBe("199 Malformed accept header");
+        }
+
+        [Test]
+        public void ignore_an_invalid_entry_if_accept_header_has_mixture_of_valid_and_invalid_values()
+        {
+            given_pipeline_contributor<ResponseEntityCodecResolverContributor>();
+            given_response_entity(new Customer());
+            given_registration_codec<CustomerCodec, Customer>("text/plain");
+            given_request_header_accept("text/plain,q=");
+
+            when_running_pipeline();
+
+            Context.PipelineData.ResponseCodec.CodecType.ShouldBe<CustomerCodec>();
+            Context.Response.Entity.ContentType.MediaType.ShouldBe("text/plain");
         }
 
         [Test]

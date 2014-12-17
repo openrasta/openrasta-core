@@ -10,6 +10,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Net.Mime;
@@ -214,10 +215,24 @@ namespace OpenRasta.Web
             if (contentTypeList == null)
                 return new List<MediaType>();
 
-            return from mediaTypeComponent in contentTypeList.Split(',')
-                   let mediatype = new MediaType(mediaTypeComponent.Trim())
-                   orderby mediatype descending
-                   select mediatype;
+            var contentTypes = contentTypeList.Split(',');
+            var mediaTypes = new List<MediaType>();
+            foreach (var contentType in contentTypes)
+            {
+                try
+                {
+                    mediaTypes.Add(new MediaType(contentType.Trim()));
+                }
+                catch (FormatException)
+                {
+                    bool isThisOnlyContentTypeAndMalformed = contentTypes.Count() == 1;
+                    if (isThisOnlyContentTypeAndMalformed) throw;
+                }
+            }
+
+            
+
+            return mediaTypes.OrderByDescending(m => m.MediaType);
         }
 
         public class MediaTypeEqualityComparer : IEqualityComparer<MediaType>
