@@ -189,15 +189,25 @@ namespace OpenRasta.Web
         }
 
         /// <summary>
+        /// Represents a "202 Accepted" response.
+        /// </summary>
+        public class Accepted : OperationResult
+        {
+            public Accepted() : base(202)
+            {
+            }
+        }
+
+        /// <summary>
         /// Represents a "204 No content" response.
         /// </summary>
         public class NoContent : OperationResult
         {
             public NoContent() : base(204)
-            {
-                //Debugger.Launch();
+            {                
             }
         }
+
         public class NotFound : OperationResult
         {
             public NotFound() : base(404)
