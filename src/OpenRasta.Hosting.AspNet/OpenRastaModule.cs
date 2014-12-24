@@ -158,18 +158,12 @@ namespace OpenRasta.Hosting.AspNet
         static void HandleHttpApplicationPostResolveRequestCacheEvent(object sender, EventArgs e)
         {
             VerifyIisDetected(HttpContext.Current);
-
-            if (HostingEnvironment.VirtualPathProvider.FileExists(HttpContext.Current.Request.Path))
-                return; //don't process file files on disk
-
-            if (!HandleRootPath && HttpContext.Current.Request.Path == "/")
-                return; //don't handle root '/' requests in IIS whatsoever.
-
-            if (!HandleDirectories && HttpContext.Current.Request.Path != "/" && HostingEnvironment.VirtualPathProvider.DirectoryExists(HttpContext.Current.Request.Path))
-                return; //don't handle actual directories that exist
-
-            if (!OverrideHttpHandlers && HandlerAlreadyMapped(HttpContext.Current.Request.HttpMethod, HttpContext.Current.Request.Url))
-                return; //don't process requests that are handled by IIS handlers
+            
+            if (ShouldIgnoreRequest())
+            {
+                Log.IgnoredRequest();
+                return; 
+            }
 
             //else continue processing with OpenRasta
 
@@ -181,16 +175,34 @@ namespace OpenRasta.Hosting.AspNet
             stage.SuspendAfter<KnownStages.IUriMatching>();
             Host.RaiseIncomingRequestReceived(context);
 
-            if (ResourceFound(context) ||  OperationResultSetByCode(context))
+            if (!ResourceFound(context) && !OperationResultSetByCode(context))
             {
-
-                HttpContext.Current.Items[ORIGINAL_PATH_KEY] = HttpContext.Current.Request.Path;
-                // TODO: This is to make the pipeline recognize the request by extension for handler processing. I *think* that's not necessary in integrated but have no memory of what is supposed to happen....
-                HttpContext.Current.RewritePath(VirtualPathUtility.ToAppRelative("~/ignoreme.rastahook"), false);
-                Log.PathRewrote();
+                Log.IgnoredRequest();
                 return;
             }
-            Log.IgnoredRequest();
+            ;
+            HttpContext.Current.Items[ORIGINAL_PATH_KEY] = HttpContext.Current.Request.Path;
+            // TODO: This is to make the pipeline recognize the request by extension for handler processing. I *think* that's not necessary in integrated but have no memory of what is supposed to happen....
+            HttpContext.Current.RewritePath(VirtualPathUtility.ToAppRelative("~/ignoreme.rastahook"), false);
+            Log.PathRewrote();
+        }
+
+        private static bool ShouldIgnoreRequest()
+        {
+            if (HostingEnvironment.VirtualPathProvider.FileExists(HttpContext.Current.Request.Path))
+                return true;
+
+            if (!HandleRootPath && HttpContext.Current.Request.Path == "/")
+                return true;
+
+            if (!HandleDirectories && HttpContext.Current.Request.Path != "/" &&
+                HostingEnvironment.VirtualPathProvider.DirectoryExists(HttpContext.Current.Request.Path))
+                return true;
+
+            if (!OverrideHttpHandlers &&
+                HandlerAlreadyMapped(HttpContext.Current.Request.HttpMethod, HttpContext.Current.Request.Url))
+                return true;
+            return false;
         }
 
         private static bool OperationResultSetByCode(AspNetCommunicationContext context)
@@ -220,7 +232,7 @@ namespace OpenRasta.Hosting.AspNet
 
         protected static bool HandleRootPath
         {
-            get { return WebConfigurationManager.AppSettings["openrasta.hosting.aspnet.paths.root"] == "enable"; }
+            get { return WebConfigurationManager.AppSettings["openrasta.hosting.aspnet.paths.root"] != "disable"; }
         }
     }
 }
