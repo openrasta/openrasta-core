@@ -37,8 +37,7 @@ namespace OpenRasta.TypeSystem.ReflectionBased
         public override IEnumerable<TAttribute> FindAttributes<TAttribute>()
         {
             return _parameterInfo.GetCustomAttributes(true)
-                .Where(x => x is TAttribute)
-                .Cast<TAttribute>();
+                .OfType<TAttribute>();
         }
     }
 }
