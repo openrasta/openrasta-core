@@ -1,4 +1,5 @@
-using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 
 namespace OpenRasta.TypeSystem.ReflectionBased
@@ -20,29 +21,23 @@ namespace OpenRasta.TypeSystem.ReflectionBased
             get
             {
                 return _parameterInfo.DefaultValue == Missing.Value
-                           ? _parameterInfo.ParameterType.GetDefaultValue()
-                           : _parameterInfo.DefaultValue;
+                    ? _parameterInfo.ParameterType.GetDefaultValue()
+                    : _parameterInfo.DefaultValue;
             }
         }
 
-        public bool IsOutput
-        {
-            get { return _parameterInfo.IsOut; }
-        }
+        public bool IsOutput { get { return _parameterInfo.IsOut; } }
 
-        public bool IsOptional
-        {
-            get { return _parameterInfo.IsOptional; }
-        }
+        public bool IsOptional { get { return _parameterInfo.IsOptional; } }
 
-        public override string Name
-        {
-            get { return _parameterInfo.Name; }
-        }
+        public override string Name { get { return _parameterInfo.Name; } }
 
-        public IMethod Owner
+        public IMethod Owner { get { return _ownerMethod; } }
+
+        public override IEnumerable<TAttribute> FindAttributes<TAttribute>()
         {
-            get { return _ownerMethod; }
+            return _parameterInfo.GetCustomAttributes(true)
+                .OfType<TAttribute>();
         }
     }
 }
