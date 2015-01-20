@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using NUnit.Framework;
+using OpenRasta.Binding;
 using OpenRasta.DI;
 using OpenRasta.OperationModel;
 using OpenRasta.Testing;
@@ -34,8 +36,6 @@ namespace OpenRasta.Tests.Unit.OperationModel.MethodBased
             Operation.Inputs.Optional().First().IsOptional.ShouldBeTrue();
             Operation.Inputs.Optional().First().Member.ShouldBeOfType<IParameter>().DefaultValue
                 .ShouldBe("*");
-
-
         }
     }
     public class when_using_required_members : operation_context<MockOperationHandler>
@@ -155,6 +155,16 @@ namespace OpenRasta.Tests.Unit.OperationModel.MethodBased
             Operation.FindAttributes<AttributeUsageAttribute>().ShouldNotBeNull().ShouldBeEmpty();
         }
     }
+    public class when_reading_attributes_on_parameters : operation_context<OperationHandlerForAttributes>
+    {
+        [Test]
+        public void an_attribute_not_defined_returns_null()
+        {
+            given_operation("GetHasParameterAttribute", typeof(int));
+
+            Operation.Inputs.First().Binder.ShouldBeAssignableTo<ParameterBinder>();
+        }
+    }
     [Useless("type attribute")]
     public class OperationHandlerForAttributes
     {
@@ -163,6 +173,7 @@ namespace OpenRasta.Tests.Unit.OperationModel.MethodBased
         [Useless("one")]
         [Useless("two")]
         public void GetHasTwoAttributes(int index){}
+        public void GetHasParameterAttribute([Binder(Type=typeof(ParameterBinder))]int index) { }
     }
     [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class, AllowMultiple = true, Inherited=true)]
     public class UselessAttribute : Attribute, IUseless
@@ -186,9 +197,28 @@ namespace OpenRasta.Tests.Unit.OperationModel.MethodBased
         {
             return null;
         }
-        public object Search([Optional, DefaultParameterValue("*")]string searchString)
+        public object Search([Optional, DefaultParameterValue("*")] string searchString)
         {
             return 0;
+        }
+    }
+    public class ParameterBinder : IObjectBinder
+    {
+        public bool IsEmpty { get; private set; }
+        public ICollection<string> Prefixes { get; private set; }
+        public bool SetProperty<TValue>(string key, IEnumerable<TValue> values, ValueConverter<TValue> converter)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool SetInstance(object builtInstance)
+        {
+            throw new NotImplementedException();
+        }
+
+        public BindingResult BuildObject()
+        {
+            throw new NotImplementedException();
         }
     }
 }
