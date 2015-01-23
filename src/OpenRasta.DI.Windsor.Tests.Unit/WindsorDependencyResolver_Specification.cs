@@ -10,20 +10,13 @@
 
 #endregion
 
-using System;
-using System.Net;
-using Castle.MicroKernel.Registration;
 using Castle.Windsor;
 
 using InternalDependencyResolver_Specification;
 
 using NUnit.Framework;
-using OpenRasta.Codecs;
-using OpenRasta.Configuration;
 using OpenRasta.DI;
 using OpenRasta.DI.Windsor;
-using OpenRasta.Hosting.HttpListener;
-using OpenRasta.Testing;
 
 namespace WindsorDependencyResolver_Specification
 {

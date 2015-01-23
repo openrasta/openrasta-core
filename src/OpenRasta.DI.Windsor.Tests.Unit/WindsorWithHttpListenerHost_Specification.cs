@@ -158,7 +158,7 @@ namespace WindsorWithHttpListenerHost_Specification
         {
             var webClient = new WebClient();
             var response = webClient.DownloadString(Prefix + "with-header");
-            Assert.That(response, Is.EqualTo("ECHO TEST"));
+            Assert.That(response, Is.EqualTo("Test Response"));
 
             var fooHeader = webClient.ResponseHeaders["FOO"];
             Assert.That(fooHeader, Is.EqualTo("BAR"));
