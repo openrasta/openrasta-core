@@ -10,7 +10,7 @@ Currently built against Castle Windsor 3.3.0 and OpenRasta-core 2.5
 To configure OpenRasta that is been used with Asp.Net hosting the configuration for Castle-Windsor is:
 
 
-```c#
+```csharp
 using System.Web;
 
 using Castle.MicroKernel.Registration;
