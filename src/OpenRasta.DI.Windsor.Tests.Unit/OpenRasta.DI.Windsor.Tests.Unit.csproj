@@ -59,6 +59,7 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="WindsorDependencyResolver_Specification.cs" />
+    <Compile Include="WindsorWithHttpListenerHost_Specification.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\OpenRasta.DI.Windsor\OpenRasta.DI.Windsor.csproj">
