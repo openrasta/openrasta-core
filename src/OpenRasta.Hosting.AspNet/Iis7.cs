@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
 using System.Web;
 
 namespace OpenRasta.Hosting.AspNet
@@ -8,13 +10,19 @@ namespace OpenRasta.Hosting.AspNet
     public class Iis7 : Iis6
     {
         const string MICROSOFT_WEB_ADMINISTRATION = "Microsoft.Web.Administration, Version=7.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35";
+        readonly Lazy<IEnumerable<HttpHandlerRegistration>> _nativeHandlers;
+
+        public Iis7()
+        {
+            _nativeHandlers = new Lazy<IEnumerable<HttpHandlerRegistration>>(() => GetNativeHandlers().ToList(), LazyThreadSafetyMode.PublicationOnly); 
+        }
 
         public override IEnumerable<HttpHandlerRegistration> Handlers
         {
             get
             {
-                if (HttpRuntime.UsingIntegratedPipeline)
-                    return GetNativeHandlers();
+                if (HttpRuntime.UsingIntegratedPipeline) 
+                    return _nativeHandlers.Value;
                 return base.Handlers;
             }
         }
@@ -36,6 +44,7 @@ namespace OpenRasta.Hosting.AspNet
             {
                 yield break;
             }
+
             foreach (var handler in handlers)
             {
                 var attribValueMethod = handler.GetType().GetMethod("GetAttributeValue", new[] { typeof(string) });
