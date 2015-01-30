@@ -67,6 +67,11 @@ namespace OpenRasta.Testing.Contexts
             return (T)_theResult;
         }
 
+        protected void then_decoding_result_is_missing()
+        {
+            _theResult.ShouldBe(Missing.Value);
+        }
+
         protected void when_decoding<T>()
         {
             when_decoding<T>("entity");

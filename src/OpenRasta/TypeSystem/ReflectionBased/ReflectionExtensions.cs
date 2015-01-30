@@ -459,7 +459,16 @@ namespace OpenRasta.TypeSystem.ReflectionBased
                 }
 
                 if (value != null)
-                    return constructor.Invoke(new[] { value });
+                {
+                    try
+                    {
+                      return constructor.Invoke( new[] { value });
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new NotSupportedException("Unable to construct type with given value", ex);
+                    }
+                }
             }
 
 #if !SILVERLIGHT
