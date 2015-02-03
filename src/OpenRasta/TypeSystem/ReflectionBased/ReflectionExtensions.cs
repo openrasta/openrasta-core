@@ -436,6 +436,17 @@ namespace OpenRasta.TypeSystem.ReflectionBased
                 }
             }
 
+            if (type == typeof(Guid))
+            {
+                Guid validGuid;
+                if (!Guid.TryParse(propertyValue, out validGuid))
+                {
+                    throw new NotSupportedException(propertyValue + " is not a valid Guid"); 
+                }
+
+                return validGuid;
+            }
+
             recursionDefender = recursionDefender ?? new Stack<Type>();
             foreach (var constructor in type.GetConstructors())
             {
@@ -462,7 +473,7 @@ namespace OpenRasta.TypeSystem.ReflectionBased
                 {
                     try
                     {
-                      return constructor.Invoke( new[] { value });
+                        return constructor.Invoke( new[] { value });
                     }
                     catch (Exception ex)
                     {
