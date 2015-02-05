@@ -425,6 +425,17 @@ namespace OpenRasta.TypeSystem.ReflectionBased
                 }
             }
 
+            if (type == typeof(Guid))
+            {
+                Guid validGuid;
+                if (!Guid.TryParse(propertyValue, out validGuid))
+                {
+                    return null;
+                }
+
+                return validGuid;
+            }
+
             if (type.IsPrimitive)
             {
                 try
@@ -434,17 +445,6 @@ namespace OpenRasta.TypeSystem.ReflectionBased
                 catch
                 {
                 }
-            }
-
-            if (type == typeof(Guid))
-            {
-                Guid validGuid;
-                if (!Guid.TryParse(propertyValue, out validGuid))
-                {
-                    throw new NotSupportedException(propertyValue + " is not a valid Guid"); 
-                }
-
-                return validGuid;
             }
 
             recursionDefender = recursionDefender ?? new Stack<Type>();
