@@ -78,6 +78,30 @@ namespace ApplicationXWwwUrlformEncodedCodec_Specification
             then_decoding_result<string>()
                 .ShouldBe("John");
         }
+
+        [Test]
+        public void guids_are_assigned()
+        {
+            given_context();
+            given_request_stream("myguid=044A624B-466A-4383-89FA-A02B629C78B9");
+
+            when_decoding<Guid>("myguid");
+
+            then_decoding_result<Guid>()
+                .ShouldBe(new Guid("044A624B-466A-4383-89FA-A02B629C78B9"));
+        }
+
+        [Test]
+        public void invalid_guids_are_assigned()
+        {
+            given_context();
+            given_request_stream("myguid=xxx");
+
+            when_decoding<Guid>("myguid");
+
+            then_decoding_result_is_missing();
+        }
+
         [Test]
         public void integers_are_assigned()
         {

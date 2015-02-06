@@ -425,6 +425,17 @@ namespace OpenRasta.TypeSystem.ReflectionBased
                 }
             }
 
+            if (type == typeof(Guid))
+            {
+                Guid validGuid;
+                if (!Guid.TryParse(propertyValue, out validGuid))
+                {
+                    return null;
+                }
+
+                return validGuid;
+            }
+
             if (type.IsPrimitive)
             {
                 try
