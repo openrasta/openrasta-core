@@ -103,6 +103,17 @@ namespace ApplicationXWwwUrlformEncodedCodec_Specification
         }
 
         [Test]
+        public void invalid_nullable_guids_are_assigned()
+        {
+            given_context();
+            given_request_stream("myguid=xxx");
+
+            when_decoding<Guid?>("myguid");
+
+            then_decoding_result_is_missing();
+        }
+
+        [Test]
         public void integers_are_assigned()
         {
 
