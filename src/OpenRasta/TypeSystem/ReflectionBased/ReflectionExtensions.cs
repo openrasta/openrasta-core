@@ -425,7 +425,7 @@ namespace OpenRasta.TypeSystem.ReflectionBased
                 }
             }
 
-            if (type == typeof(Guid))
+            if (type == typeof(Guid) || type == typeof(Guid?))
             {
                 Guid validGuid;
                 if (!Guid.TryParse(propertyValue, out validGuid))
