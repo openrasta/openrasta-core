@@ -11,9 +11,9 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.IO;
 using System.Linq;
 using System.Text;
+using OpenRasta.Collections;
 using OpenRasta.Collections.Specialized;
 using OpenRasta.DI;
 using OpenRasta.Diagnostics;
@@ -26,8 +26,6 @@ namespace OpenRasta.Pipeline
     {
         readonly IList<IPipelineContributor> _contributors = new List<IPipelineContributor>();
         readonly ICollection<Notification> _notificationRegistrations = new List<Notification>();
-
-
         readonly IDependencyResolver _resolver;
         IEnumerable<ContributorCall> _callGraph;
 
@@ -170,8 +168,7 @@ namespace OpenRasta.Pipeline
             PipelineLog.WriteError("Aborting the pipeline and rendering the errors.");
             context.OperationResult = new OperationResult.InternalServerError
             {
-                Title =
-                    "The request could not be processed because of a fatal error. See log below.",
+                Title = "The request could not be processed because of a fatal error. See log below.",
                 ResponseResource = context.ServerErrors
             };
             context.PipelineData.ResponseCodec = null;
@@ -210,55 +207,67 @@ namespace OpenRasta.Pipeline
         {
             PipelineLog.WriteInfo("Pipeline finished.");
         }
-
-
+        
         IEnumerable<ContributorCall> GenerateCallGraph()
         {
             var bootstrapper = _contributors.OfType<KnownStages.IBegin>().Single();
-            var tree = new DependencyTree<ContributorNotification>(
-                new ContributorNotification(bootstrapper, new Notification(this, null)));
+            var nodes = new List<DependencyNode<ContributorNotification>>();
 
-            foreach (var contrib in _contributors.Where(x=>x != bootstrapper))
+            foreach (var contributor in _contributors.Where(x=>x != bootstrapper))
             {
                 _notificationRegistrations.Clear();
-                using (PipelineLog.Operation(this, "Initializing contributor {0}.".With(contrib.GetType().Name)))
-                    contrib.Initialize(this);
+
+                using (PipelineLog.Operation(this, "Initializing contributor {0}.".With(contributor.GetType().Name)))
+                {
+                    contributor.Initialize(this);
+                }
+
                 foreach (var reg in _notificationRegistrations.DefaultIfEmpty(new Notification(this, null)))
                 {
-                    tree.CreateNode(new ContributorNotification(contrib, reg));
+                    nodes.Add(new DependencyNode<ContributorNotification>(new ContributorNotification(contributor, reg)));
                 }
             }
-            foreach (var notificationNode in tree.Nodes)
+
+            foreach (var notificationNode in nodes)
             {
-                foreach (var parentNode in GetCompatibleTypes(tree,
-                                                              notificationNode,
-                                                              notificationNode.Value.Notification.AfterTypes))
-                    parentNode.ChildNodes.Add(notificationNode);
-                foreach (var childNode in GetCompatibleTypes(tree,
-                                                             notificationNode,
-                                                             notificationNode.Value.Notification.BeforeTypes))
-                    childNode.ParentNodes.Add(notificationNode);
+                foreach (var afterType in notificationNode.Item.Notification.AfterTypes)
+                {
+                    var parents = GetCompatibleNodes(nodes, notificationNode, afterType);
+                    notificationNode.Dependencies.AddRange(parents);
+                }
+
+                foreach (var beforeType in notificationNode.Item.Notification.BeforeTypes)
+                {
+                    var children = GetCompatibleNodes(nodes, notificationNode, beforeType);
+                    foreach (var child in children)
+                    {
+                        child.Dependencies.Add(notificationNode);
+                    }
+                }
             }
-            var graph = tree.GetCallGraph().Select(x =>
-                                                   new ContributorCall(x.Value.Contributor, x.Value.Notification.Target, x.Value.Notification.Description));
+
+            var rootItem = new ContributorNotification(bootstrapper, new Notification(this, null));
+            var graph = new DependencyGraph<ContributorNotification>(rootItem, nodes)
+                .Nodes.Select(n => new ContributorCall(n.Item.Contributor, n.Item.Notification.Target, n.Item.Notification.Description))
+                .ToList();
+
             LogContributorCallChainCreated(graph);
+
             return graph;
         }
 
-        static IEnumerable<DependencyNode<ContributorNotification>> GetCompatibleTypes(DependencyTree<ContributorNotification> tree,
-                                                                                DependencyNode<ContributorNotification> notificationNode,
-                                                                                IEnumerable<Type> beforeTypes)
+        static IEnumerable<DependencyNode<ContributorNotification>> GetCompatibleNodes(IEnumerable<DependencyNode<ContributorNotification>> nodes, DependencyNode<ContributorNotification> notificationNode, Type type)
         {
-            return from childType in beforeTypes
-                   from compatibleNode in tree.Nodes
-                   where compatibleNode != notificationNode
-                         && childType.IsAssignableFrom(compatibleNode.Value.Contributor.GetType())
+            return from compatibleNode in nodes
+                   where !compatibleNode.Equals(notificationNode)
+                         && type.IsInstanceOfType(compatibleNode.Item.Contributor)
                    select compatibleNode;
         }
+
         IEnumerable<IPipelineContributor> GetContributorsOfType(Type contributorType)
         {
             return from contributor in _contributors
-                   where contributorType.IsAssignableFrom(contributor.GetType())
+                   where contributorType.IsInstanceOfType(contributor)
                    select contributor;
         }
 
@@ -273,8 +282,7 @@ namespace OpenRasta.Pipeline
         void VerifyContributorIsRegistered(Type contributorType)
         {
             if (!GetContributorsOfType(contributorType).Any())
-                throw new ArgumentOutOfRangeException("There is no registered contributor matching type "
-                                                      + contributorType.FullName);
+                throw new ArgumentOutOfRangeException("There is no registered contributor matching type " + contributorType.FullName);
         }
 
         struct ContributorNotification
@@ -286,6 +294,11 @@ namespace OpenRasta.Pipeline
             {
                 Notification = notification;
                 Contributor = contributor;
+            }
+
+            public override string ToString()
+            {
+                return Contributor.ToString();
             }
         }
 

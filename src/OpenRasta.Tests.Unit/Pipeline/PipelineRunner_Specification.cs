@@ -61,36 +61,33 @@ namespace PipelineRunner_Specification
         [Test]
         public void a_second_contrib_registering_after_the_first_contrib_that_registers_after_the_boot_initializes_the_call_list_in_the_correct_order()
         {
-            var pipeline = CreatePipeline(typeof(SecondIsAfterFirstContributor), 
-                                          typeof(FirstIsAfterBootstrapContributor));
+            var pipeline = CreatePipeline(typeof (SecondIsAfterFirstContributor), typeof (FirstIsAfterBootstrapContributor));
+
             pipeline.CallGraph.ShouldHaveSameElementsAs(new[]
             {
-                typeof(BootstrapperContributor), 
-                typeof(FirstIsAfterBootstrapContributor), 
-                typeof(SecondIsAfterFirstContributor)
-            }, 
-                                                        (a, b) => a.Target.GetType() == b);
+                typeof (BootstrapperContributor),
+                typeof (FirstIsAfterBootstrapContributor),
+                typeof (SecondIsAfterFirstContributor)
+            }, (a, b) => a.Target.GetType() == b);
         }
 
         [Test]
         public void registering_all_the_contributors_results_in_a_correct_call_graph()
         {
             var pipeline = CreatePipeline(
-                typeof(FirstIsAfterBootstrapContributor), 
-                typeof(SecondIsAfterFirstContributor), 
-                typeof(ThirdIsBeforeFirstContributor), 
-                typeof(FourthIsAfterThridContributor));
+                typeof(FirstIsAfterBootstrapContributor),
+                typeof(SecondIsAfterFirstContributor),
+                typeof(ThirdIsBeforeFirstContributor),
+                typeof(FourthIsAfterThirdContributor));
 
-            pipeline.CallGraph.ShouldHaveSameElementsAs(
-                new[]
-                {
-                    typeof(BootstrapperContributor), 
-                    typeof(ThirdIsBeforeFirstContributor), 
-                    typeof(FourthIsAfterThridContributor), 
-                    typeof(FirstIsAfterBootstrapContributor), 
-                    typeof(SecondIsAfterFirstContributor)
-                }, 
-                (a, b) => a.Target.GetType() == b);
+            pipeline.CallGraph.ShouldHaveSameElementsAs(new[]
+            {
+                typeof(BootstrapperContributor),
+                typeof(ThirdIsBeforeFirstContributor),
+                typeof(FirstIsAfterBootstrapContributor),
+                typeof(SecondIsAfterFirstContributor),
+                typeof(FourthIsAfterThirdContributor)
+            }, (a, b) => a.Target.GetType() == b);
         }
 
         [Test]
@@ -100,6 +97,45 @@ namespace PipelineRunner_Specification
                 .ShouldThrow<RecursionException>();
         }
 
+        [Test]
+        public void registering_contributors_with_multiple_recursive_notifications_should_be_identified_as_invalid()
+        {
+            Executing(() => CreatePipeline(
+                typeof(ContributorA),
+                typeof(ContributorB),
+                typeof(ContributorC)))
+                .ShouldThrow<RecursionException>();
+        }
+
+        public static PipelineContinuation DoNothing(ICommunicationContext c)
+        {
+            return PipelineContinuation.Continue;
+        }
+
+        public class ContributorA : IPipelineContributor
+        {
+            public void Initialize(IPipeline pipelineRunner)
+            {
+                pipelineRunner.Notify(DoNothing).After<KnownStages.IBegin>();
+            }
+        }
+
+        public class ContributorB : IPipelineContributor
+        {
+            public void Initialize(IPipeline pipelineRunner)
+            {
+                pipelineRunner.Notify(DoNothing).After<ContributorA>();
+                pipelineRunner.Notify(DoNothing).After<ContributorC>();
+            }
+        }
+
+        public class ContributorC : IPipelineContributor
+        {
+            public void Initialize(IPipeline pipelineRunner)
+            {
+                pipelineRunner.Notify(DoNothing).After<ContributorB>();
+            }
+        }
 
         public class AfterAnyContributor : AfterContributor<IPipelineContributor>
         {
@@ -109,16 +145,12 @@ namespace PipelineRunner_Specification
         {
         }
 
-        public class FourthIsAfterThridContributor : AfterContributor<ThirdIsBeforeFirstContributor>
+        public class FourthIsAfterThirdContributor : AfterContributor<ThirdIsBeforeFirstContributor>
         {
         }
 
         public class RecursiveA : IPipelineContributor
         {
-            public PipelineContinuation DoNothing(ICommunicationContext c)
-            {
-                return PipelineContinuation.Continue;
-            }
 
             public void Initialize(IPipeline pipelineRunner)
             {
@@ -152,7 +184,6 @@ namespace PipelineRunner_Specification
             pipeline.Run(context);
             context.Response.StatusCode.ShouldBe(500);
             context.ServerErrors.ShouldHaveCountOf(1);
-
         }
 
         public class FakeOperationResultInvoker : KnownStages.IOperationResultInvocation

@@ -42,7 +42,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\CommonInfo.cs">
-      <Link>CommonInfo.cs</Link>
+      <Link>Properties\CommonInfo.cs</Link>
     </Compile>
     <Compile Include="Authentication\Basic\BasicAuthenticationScheme_Specification.cs" />
     <Compile Include="Binding\DefaultBinderLocator_Specification.cs" />
@@ -160,7 +160,6 @@
     <Compile Include="Web\WhenUsingCollectionExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="obj\Debug\DesignTimeResolveAssemblyReferencesInput.cache" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
@@ -172,9 +171,6 @@
       <Project>{3d251617-2581-4d9c-a639-5cfb0bb09420}</Project>
       <Name>OpenRasta</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="obj\Debug\TempPE\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

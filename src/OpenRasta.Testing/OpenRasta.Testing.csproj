@@ -39,7 +39,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\CommonInfo.cs">
-      <Link>CommonInfo.cs</Link>
+      <Link>Properties\CommonInfo.cs</Link>
     </Compile>
     <Compile Include="context.cs" />
     <Compile Include="Contexts\codec_context.cs" />

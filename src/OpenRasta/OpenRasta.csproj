@@ -38,7 +38,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\CommonInfo.cs">
-      <Link>CommonInfo.cs</Link>
+      <Link>Properties\CommonInfo.cs</Link>
     </Compile>
     <Compile Include="Authentication\AuthenticationResult.cs" />
     <Compile Include="Authentication\Basic\BasicAuthenticationScheme.cs" />
@@ -97,6 +97,7 @@
     <Compile Include="CodeDom.Compiler\ICodeSnippetTextModifier.cs" />
     <Compile Include="CodeDom.Compiler\MarkupElementModifier.cs" />
     <Compile Include="CodeDom.Compiler\UnencodedOutputModifier.cs" />
+    <Compile Include="Collections\TopologicalSort.cs" />
     <Compile Include="Collections\CollectionExtensions.cs" />
     <Compile Include="Collections\DictionaryBase.cs" />
     <Compile Include="Collections\EnumerableExtensions.cs" />
@@ -106,8 +107,8 @@
     <Compile Include="Collections\ObservableIterator.cs" />
     <Compile Include="Collections\ObservableIteratorExtensions.cs" />
     <Compile Include="Collections\ResumableIterator.cs" />
+    <Compile Include="Collections\Specialized\DependencyGraph.cs" />
     <Compile Include="Collections\Specialized\DependencyNode.cs" />
-    <Compile Include="Collections\Specialized\DependencyTree.cs" />
     <Compile Include="Configuration\CodecDefinitionExtensions.cs" />
     <Compile Include="Configuration\CodecParentDefinitionExtensions.cs" />
     <Compile Include="Configuration\DefaultDependencyRegistrar.cs" />
