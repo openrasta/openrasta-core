@@ -2,13 +2,13 @@
 
 namespace OpenRasta.Collections.Specialized
 {
-    public class DependencyGraph<T>
+    internal sealed class DependencyGraph<T>
     {
-        public IEnumerable<DependencyNode<T>> Nodes { get; private set; }
+        public IEnumerable<DependencyNodeV2<T>> Nodes { get; private set; }
 
-        public DependencyGraph(T rootItem, IList<DependencyNode<T>> nodes)
+        public DependencyGraph(T rootItem, IList<DependencyNodeV2<T>> nodes)
         {
-            var rootNode = new DependencyNode<T>(rootItem);
+            var rootNode = new DependencyNodeV2<T>(rootItem);
             Nodes = TopologicalSort.Sort(rootNode, nodes);
         }
     }

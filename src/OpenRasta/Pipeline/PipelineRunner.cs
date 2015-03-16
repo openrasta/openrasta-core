@@ -13,10 +13,9 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
-using OpenRasta.Collections;
-using OpenRasta.Collections.Specialized;
 using OpenRasta.DI;
 using OpenRasta.Diagnostics;
+using OpenRasta.Pipeline.CallGraph;
 using OpenRasta.Pipeline.Diagnostics;
 using OpenRasta.Web;
 
@@ -34,15 +33,17 @@ namespace OpenRasta.Pipeline
             Contributors = new ReadOnlyCollection<IPipelineContributor>(_contributors);
 
             _resolver = resolver;
+
             PipelineLog = NullLogger<PipelineLogSource>.Instance;
             Log = NullLogger.Instance;
         }
 
         public IList<IPipelineContributor> Contributors { get; private set; }
-
         public bool IsInitialized { get; private set; }
         public ILogger<PipelineLogSource> PipelineLog { get; set; }
         public ILogger Log { get; set; }
+
+        internal ICollection<Notification> NotificationRegistrations { get { return _notificationRegistrations; } }
 
         IEnumerable<ContributorCall> IPipeline.CallGraph
         {
@@ -64,7 +65,12 @@ namespace OpenRasta.Pipeline
                     PipelineLog.WriteDebug("Initialized contributor {0}.", item.GetType().Name);
                     _contributors.Add(item);
                 }
-                _callGraph = GenerateCallGraph();
+
+                _callGraph = new CallGraphGeneratorFactory(_resolver)
+                    .GetCallGraphGenerator()
+                    .GenerateCallGraph(this);
+
+                LogContributorCallChainCreated(_callGraph);
             }
             IsInitialized = true;
             PipelineLog.WriteInfo("Pipeline has been successfully initialized.");
@@ -138,6 +144,7 @@ namespace OpenRasta.Pipeline
                 }
             }
         }
+        
 
         static void AttemptCatastrophicErrorNotification(ICommunicationContext context)
         {
@@ -151,7 +158,7 @@ namespace OpenRasta.Pipeline
             }
             catch
             {}
-    }
+        }
 
         bool CanBeExecuted(ContributorCall call)
         {
@@ -207,69 +214,6 @@ namespace OpenRasta.Pipeline
         {
             PipelineLog.WriteInfo("Pipeline finished.");
         }
-        
-        IEnumerable<ContributorCall> GenerateCallGraph()
-        {
-            var bootstrapper = _contributors.OfType<KnownStages.IBegin>().Single();
-            var nodes = new List<DependencyNode<ContributorNotification>>();
-
-            foreach (var contributor in _contributors.Where(x=>x != bootstrapper))
-            {
-                _notificationRegistrations.Clear();
-
-                using (PipelineLog.Operation(this, "Initializing contributor {0}.".With(contributor.GetType().Name)))
-                {
-                    contributor.Initialize(this);
-                }
-
-                foreach (var reg in _notificationRegistrations.DefaultIfEmpty(new Notification(this, null)))
-                {
-                    nodes.Add(new DependencyNode<ContributorNotification>(new ContributorNotification(contributor, reg)));
-                }
-            }
-
-            foreach (var notificationNode in nodes)
-            {
-                foreach (var afterType in notificationNode.Item.Notification.AfterTypes)
-                {
-                    var parents = GetCompatibleNodes(nodes, notificationNode, afterType);
-                    notificationNode.Dependencies.AddRange(parents);
-                }
-
-                foreach (var beforeType in notificationNode.Item.Notification.BeforeTypes)
-                {
-                    var children = GetCompatibleNodes(nodes, notificationNode, beforeType);
-                    foreach (var child in children)
-                    {
-                        child.Dependencies.Add(notificationNode);
-                    }
-                }
-            }
-
-            var rootItem = new ContributorNotification(bootstrapper, new Notification(this, null));
-            var graph = new DependencyGraph<ContributorNotification>(rootItem, nodes)
-                .Nodes.Select(n => new ContributorCall(n.Item.Contributor, n.Item.Notification.Target, n.Item.Notification.Description))
-                .ToList();
-
-            LogContributorCallChainCreated(graph);
-
-            return graph;
-        }
-
-        static IEnumerable<DependencyNode<ContributorNotification>> GetCompatibleNodes(IEnumerable<DependencyNode<ContributorNotification>> nodes, DependencyNode<ContributorNotification> notificationNode, Type type)
-        {
-            return from compatibleNode in nodes
-                   where !compatibleNode.Equals(notificationNode)
-                         && type.IsInstanceOfType(compatibleNode.Item.Contributor)
-                   select compatibleNode;
-        }
-
-        IEnumerable<IPipelineContributor> GetContributorsOfType(Type contributorType)
-        {
-            return from contributor in _contributors
-                   where contributorType.IsInstanceOfType(contributor)
-                   select contributor;
-        }
 
         void LogContributorCallChainCreated(IEnumerable<ContributorCall> callGraph)
         {
@@ -277,78 +221,6 @@ namespace OpenRasta.Pipeline
             int pos = 0;
             foreach (var contributor in callGraph)
                 PipelineLog.WriteInfo("{0} {1}", pos++, contributor.ContributorTypeName);
-        }
-
-        void VerifyContributorIsRegistered(Type contributorType)
-        {
-            if (!GetContributorsOfType(contributorType).Any())
-                throw new ArgumentOutOfRangeException("There is no registered contributor matching type " + contributorType.FullName);
-        }
-
-        struct ContributorNotification
-        {
-            public readonly IPipelineContributor Contributor;
-            public readonly Notification Notification;
-
-            public ContributorNotification(IPipelineContributor contributor, Notification notification)
-            {
-                Notification = notification;
-                Contributor = contributor;
-            }
-
-            public override string ToString()
-            {
-                return Contributor.ToString();
-            }
-        }
-
-        class Notification : IPipelineExecutionOrder, IPipelineExecutionOrderAnd
-        {
-            readonly ICollection<Type> _after = new List<Type>();
-            readonly ICollection<Type> _before = new List<Type>();
-            readonly PipelineRunner _runner;
-
-            public Notification(PipelineRunner runner, Func<ICommunicationContext, PipelineContinuation> action)
-            {
-                _runner = runner;
-                Target = action;
-            }
-
-            public ICollection<Type> AfterTypes
-            {
-                get { return _after; }
-            }
-
-            public IPipelineExecutionOrder And
-            {
-                get { return this; }
-            }
-
-            public ICollection<Type> BeforeTypes
-            {
-                get { return _before; }
-            }
-
-            public string Description
-            {
-                get { return Target != null && Target.Target != null ? Target.Target.GetType().Name : null; }
-            }
-
-            public Func<ICommunicationContext, PipelineContinuation> Target { get; private set; }
-
-            public IPipelineExecutionOrderAnd After(Type contributorType)
-            {
-                _runner.VerifyContributorIsRegistered(contributorType);
-                AfterTypes.Add(contributorType);
-                return this;
-            }
-
-            public IPipelineExecutionOrderAnd Before(Type contributorType)
-            {
-                _runner.VerifyContributorIsRegistered(contributorType);
-                BeforeTypes.Add(contributorType);
-                return this;
-            }
         }
     }
 }

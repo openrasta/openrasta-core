@@ -15,6 +15,7 @@ using OpenRasta;
 using OpenRasta.DI;
 using OpenRasta.Diagnostics;
 using OpenRasta.Hosting.InMemory;
+using OpenRasta.Pipeline.CallGraph;
 using OpenRasta.Pipeline.Contributors;
 using OpenRasta.Pipeline.Diagnostics;
 using OpenRasta.Testing;
@@ -25,10 +26,15 @@ namespace PipelineRunner_Specification
 {
     public class when_creating_the_pipeline : pipelinerunner_context
     {
-        [Test]
-        public void a_registered_contributor_gets_initialized_and_is_part_of_the_contributor_collection()
+        [TestCase(null)]
+        [TestCase(typeof(DefaultCallGraphGenerator))]
+        [TestCase(typeof(TopologicalSortCallGraphGenerator))]
+        public void a_registered_contributor_gets_initialized_and_is_part_of_the_contributor_collection(Type callGraphGeneratorType)
         {
-            var pipeline = CreatePipeline(typeof(DummyContributor));
+            var pipeline = CreatePipeline(callGraphGeneratorType, new[]
+            {
+                typeof(DummyContributor)
+            });
             pipeline.Contributors.OfType<DummyContributor>().FirstOrDefault()
                 .ShouldNotBeNull();
         }
@@ -40,28 +46,40 @@ namespace PipelineRunner_Specification
 
     public class when_accessing_the_contributors : pipelinerunner_context
     {
-        [Test]
-        public void the_contributor_list_always_contains_the_bootstrap_contributor()
+        [TestCase(null)]
+        [TestCase(typeof(DefaultCallGraphGenerator))]
+        [TestCase(typeof(TopologicalSortCallGraphGenerator))]
+        public void the_contributor_list_always_contains_the_bootstrap_contributor(Type callGraphGeneratorType)
         {
-            var pipeline = CreatePipeline();
+            var pipeline = CreatePipeline(callGraphGeneratorType, new Type[] { });
+
             pipeline.Contributors.OfType<KnownStages.IBegin>().FirstOrDefault()
                 .ShouldNotBeNull();
         }
 
-        [Test]
-        public void the_contributor_list_is_read_only()
+        [TestCase(null)]
+        [TestCase(typeof(DefaultCallGraphGenerator))]
+        [TestCase(typeof(TopologicalSortCallGraphGenerator))]
+        public void the_contributor_list_is_read_only(Type callGraphGeneratorType)
         {
-            CreatePipeline().Contributors.IsReadOnly
+            CreatePipeline(callGraphGeneratorType, new Type[] { })
+                .Contributors.IsReadOnly
                 .ShouldBeTrue();
         }
     }
 
     public class when_building_the_call_graph : pipelinerunner_context
     {
-        [Test]
-        public void a_second_contrib_registering_after_the_first_contrib_that_registers_after_the_boot_initializes_the_call_list_in_the_correct_order()
+        [TestCase(null)]
+        [TestCase(typeof(DefaultCallGraphGenerator))]
+        [TestCase(typeof(TopologicalSortCallGraphGenerator))]
+        public void a_second_contrib_registering_after_the_first_contrib_that_registers_after_the_boot_initializes_the_call_list_in_the_correct_order(Type callGraphGeneratorType)
         {
-            var pipeline = CreatePipeline(typeof (SecondIsAfterFirstContributor), typeof (FirstIsAfterBootstrapContributor));
+            var pipeline = CreatePipeline(callGraphGeneratorType, new []
+            {
+                typeof (SecondIsAfterFirstContributor),
+                typeof (FirstIsAfterBootstrapContributor)
+            });
 
             pipeline.CallGraph.ShouldHaveSameElementsAs(new[]
             {
@@ -71,14 +89,38 @@ namespace PipelineRunner_Specification
             }, (a, b) => a.Target.GetType() == b);
         }
 
-        [Test]
-        public void registering_all_the_contributors_results_in_a_correct_call_graph()
+        [TestCase(null)]
+        [TestCase(typeof(DefaultCallGraphGenerator))]
+        public void registering_all_the_contributors_results_in_a_correct_call_graph(Type callGraphGeneratorType)
         {
-            var pipeline = CreatePipeline(
+            var pipeline = CreatePipeline(callGraphGeneratorType, new[]
+            {
                 typeof(FirstIsAfterBootstrapContributor),
                 typeof(SecondIsAfterFirstContributor),
                 typeof(ThirdIsBeforeFirstContributor),
-                typeof(FourthIsAfterThirdContributor));
+                typeof(FourthIsAfterThirdContributor)
+            });
+
+            pipeline.CallGraph.ShouldHaveSameElementsAs(new[]
+            {
+                typeof(BootstrapperContributor),
+                typeof(ThirdIsBeforeFirstContributor),
+                typeof(FourthIsAfterThirdContributor),
+                typeof(FirstIsAfterBootstrapContributor),
+                typeof(SecondIsAfterFirstContributor)
+            }, (a, b) => a.Target.GetType() == b);
+        }
+
+        [Test]
+        public void registering_all_the_contributors_results_in_a_correct_call_graph_topological()
+        {
+            var pipeline = CreatePipeline(typeof(TopologicalSortCallGraphGenerator), new[]
+            {
+                typeof(FirstIsAfterBootstrapContributor),
+                typeof(SecondIsAfterFirstContributor),
+                typeof(ThirdIsBeforeFirstContributor),
+                typeof(FourthIsAfterThirdContributor)
+            });
 
             pipeline.CallGraph.ShouldHaveSameElementsAs(new[]
             {
@@ -90,21 +132,28 @@ namespace PipelineRunner_Specification
             }, (a, b) => a.Target.GetType() == b);
         }
 
-        [Test]
-        public void the_call_graph_cannot_be_recursive()
+        [TestCase(null)]
+        [TestCase(typeof(DefaultCallGraphGenerator))]
+        [TestCase(typeof(TopologicalSortCallGraphGenerator))]
+        public void the_call_graph_cannot_be_recursive(Type callGraphGeneratorType)
         {
-            Executing(() => CreatePipeline(typeof(RecursiveA), typeof(RecursiveB)))
-                .ShouldThrow<RecursionException>();
+            Executing(() => CreatePipeline(callGraphGeneratorType, new[]
+            {
+                typeof(RecursiveA), typeof(RecursiveB)
+            })).ShouldThrow<RecursionException>();
         }
 
-        [Test]
-        public void registering_contributors_with_multiple_recursive_notifications_should_be_identified_as_invalid()
+        [TestCase(null)]
+        [TestCase(typeof(DefaultCallGraphGenerator))]
+        [TestCase(typeof(TopologicalSortCallGraphGenerator))]
+        public void registering_contributors_with_multiple_recursive_notifications_should_be_identified_as_invalid(Type callGraphGeneratorType)
         {
-            Executing(() => CreatePipeline(
+            Executing(() => CreatePipeline(callGraphGeneratorType, new[]
+            {
                 typeof(ContributorA),
                 typeof(ContributorB),
-                typeof(ContributorC)))
-                .ShouldThrow<RecursionException>();
+                typeof(ContributorC)
+            })).ShouldThrow<RecursionException>();
         }
 
         public static PipelineContinuation DoNothing(ICommunicationContext c)
@@ -176,10 +225,17 @@ namespace PipelineRunner_Specification
 
     public class when_contributor_throws : pipelinerunner_context
     {
-        [Test]
-        public void error_is_collected_and_500_returned()
+        [TestCase(null)]
+        [TestCase(typeof(DefaultCallGraphGenerator))]
+        [TestCase(typeof(TopologicalSortCallGraphGenerator))]
+        public void error_is_collected_and_500_returned(Type callGraphGeneratorType)
         {
-            var pipeline = CreatePipeline(typeof(ContributorThatThrows), typeof(FakeOperationResultInvoker));
+            var pipeline = CreatePipeline(callGraphGeneratorType, new[]
+            {
+                typeof(ContributorThatThrows),
+                typeof(FakeOperationResultInvoker)
+            });
+
             var context = new InMemoryCommunicationContext();
             pipeline.Run(context);
             context.Response.StatusCode.ShouldBe(500);
@@ -212,17 +268,24 @@ namespace PipelineRunner_Specification
     }
     public class when_executing_the_pipeline : pipelinerunner_context
     {
-        [Test]
-        public void contributors_get_executed()
+        [TestCase(null)]
+        [TestCase(typeof(DefaultCallGraphGenerator))]
+        [TestCase(typeof(TopologicalSortCallGraphGenerator))]
+        public void contributors_get_executed(Type callGraphGeneratorType)
         {
-            var pipeline = CreatePipeline(typeof(WasCalledContributor));
+            var pipeline = CreatePipeline(callGraphGeneratorType, new[]
+            {
+                typeof(WasCalledContributor)
+            });
 
             pipeline.Run(new InMemoryCommunicationContext());
             WasCalledContributor.WasCalled.ShouldBeTrue();
         }
 
-        [Test]
-        public void the_pipeline_must_have_been_initialized()
+        [TestCase(null)]
+        [TestCase(typeof(DefaultCallGraphGenerator))]
+        [TestCase(typeof(TopologicalSortCallGraphGenerator))]
+        public void the_pipeline_must_have_been_initialized(Type callGraphGeneratorType)
         {
             var pipeline = new PipelineRunner(new InternalDependencyResolver());
             Executing(() => pipeline.Run(new InMemoryCommunicationContext()))
@@ -248,10 +311,16 @@ namespace PipelineRunner_Specification
 
     public class pipelinerunner_context : context
     {
-        protected IPipeline CreatePipeline(params Type[] contributorTypes)
+        protected IPipeline CreatePipeline(Type callGraphGeneratorType, Type[] contributorTypes)
         {
             var resolver = new InternalDependencyResolver();
             resolver.AddDependency<IPipelineContributor, BootstrapperContributor>();
+
+            if (callGraphGeneratorType != null)
+            {
+                resolver.AddDependency(typeof(IGenerateCallGraphs), callGraphGeneratorType, DependencyLifetime.Singleton);
+            }
+
             foreach (var type in contributorTypes)
                 resolver.AddDependency(typeof(IPipelineContributor), type, DependencyLifetime.Singleton);
             var runner = new PipelineRunner(resolver) { PipelineLog = new TraceSourceLogger<PipelineLogSource>() };

@@ -8,10 +8,10 @@ namespace OpenRasta.Collections
     // Credit to Tomas Takac for initial inspiration for this algorithm, see http://www.codeproject.com/Articles/869059/Topological-sorting-in-Csharp
     internal class TopologicalSort
     {
-        public static IEnumerable<DependencyNode<T>> Sort<T>(DependencyNode<T> rootNode, IList<DependencyNode<T>> nodes)
+        public static IEnumerable<DependencyNodeV2<T>> Sort<T>(DependencyNodeV2<T> rootNode, IList<DependencyNodeV2<T>> nodes)
         {
-            var sorted = new List<DependencyNode<T>>();
-            var visited = new Dictionary<DependencyNode<T>, bool>();
+            var sorted = new List<DependencyNodeV2<T>>();
+            var visited = new Dictionary<DependencyNodeV2<T>, bool>();
 
             Visit(rootNode, sorted, visited);
             nodes.ForEach(n => Visit(n, sorted, visited));
@@ -19,7 +19,7 @@ namespace OpenRasta.Collections
             return sorted;
         }
 
-        private static void Visit<T>(DependencyNode<T> node, IList<DependencyNode<T>> sorted, IDictionary<DependencyNode<T>, bool> visited)
+        private static void Visit<T>(DependencyNodeV2<T> node, IList<DependencyNodeV2<T>> sorted, IDictionary<DependencyNodeV2<T>, bool> visited)
         {
             bool inProcess;
             var alreadyVisited = visited.TryGetValue(node, out inProcess);
