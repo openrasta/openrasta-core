@@ -66,7 +66,7 @@ namespace OpenRasta
             var nc = new Dictionary<string, QuerySegment>();
             foreach (string value in pairs)
             {
-                string unescapedString = Uri.UnescapeDataString(value);
+                string unescapedString = Uri.UnescapeDataString(value.Replace('+', ' '));
                 if (unescapedString.Length == 0)
                     continue;
                 int variableStart = unescapedString[0] == '?' ? 1 : 0;
