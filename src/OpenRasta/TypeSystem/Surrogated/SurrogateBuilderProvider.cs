@@ -1,6 +1,7 @@
 using System;
-using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Linq;
+
 using OpenRasta.DI;
 using OpenRasta.TypeSystem.Surrogates;
 
@@ -9,8 +10,8 @@ namespace OpenRasta.TypeSystem.Surrogated
     public class SurrogateBuilderProvider : ISurrogateProvider
     {
         readonly ISurrogateBuilder[] _builders;
-        static Dictionary<IType, IType> _typeCache = new Dictionary<IType, IType>();
-        static Dictionary<IProperty, IProperty> _propCache = new Dictionary<IProperty, IProperty>();
+        static readonly ConcurrentDictionary<IType, IType> _typeCache = new ConcurrentDictionary<IType, IType>();
+        static readonly ConcurrentDictionary<IProperty, IProperty> _propCache = new ConcurrentDictionary<IProperty, IProperty>();
         // HACK: Waiting to push Func<IEnumerable<T>> resolution
         // in container. Remove when done.
         public SurrogateBuilderProvider(IDependencyResolver resolver)
@@ -56,17 +57,9 @@ namespace OpenRasta.TypeSystem.Surrogated
                           });
 
         }
-        T Cached<T>(Dictionary<T, T> cache, T value, Func<T, T> createCached)
+        T Cached<T>(ConcurrentDictionary<T, T> cache, T value, Func<T, T> createCached)
         {
-            T cachedValue;
-            if (cache.TryGetValue(value, out cachedValue))
-                return cachedValue;
-            lock (cache)
-            {
-                cachedValue = createCached(value);
-                cache.Add(value, cachedValue);
-                return cachedValue;
-            }
+            return cache.GetOrAdd(value, createCached);
         }
     }
 }
