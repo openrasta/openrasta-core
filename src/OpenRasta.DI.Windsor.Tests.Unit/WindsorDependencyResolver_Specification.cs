@@ -10,13 +10,14 @@
 
 #endregion
 
+using System;
+using Castle.MicroKernel.Registration;
 using Castle.Windsor;
-
 using InternalDependencyResolver_Specification;
-
 using NUnit.Framework;
 using OpenRasta.DI;
 using OpenRasta.DI.Windsor;
+using OpenRasta.Testing;
 
 namespace WindsorDependencyResolver_Specification
 {
@@ -32,9 +33,27 @@ namespace WindsorDependencyResolver_Specification
     [TestFixture]
     public class when_registering_dependencies_with_the_castle_resolver : when_registering_dependencies
     {
+
+        readonly WindsorContainer _container = new WindsorContainer();
+        
+
         public override IDependencyResolver CreateResolver()
         {
-            return new WindsorDependencyResolver(new WindsorContainer());
+            return new WindsorDependencyResolver(_container);
+        }
+        
+
+        [Test]
+        public void then_it_should_be_regarded_as_dependency_regardless_of_its_state()
+        {
+            var serviceToBeResolved = typeof(DependencyOnTypeWithGernericParams);
+            const String dynamicDependency = "TestDependency";
+
+            _container.Register(Component.For(serviceToBeResolved)
+                .DynamicParameters((k, d) => d["dependency"] = dynamicDependency));
+              
+            Resolver.HasDependency(serviceToBeResolved).ShouldBe(true);
+            Resolver.Resolve<DependencyOnTypeWithGernericParams>().Dependency.ShouldBe(dynamicDependency);
         }
     }
 
