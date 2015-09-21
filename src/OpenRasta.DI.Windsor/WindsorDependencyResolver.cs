@@ -148,8 +148,7 @@ namespace OpenRasta.DI.Windsor
         IEnumerable<IHandler> AvailableHandlers(IEnumerable<IHandler> handlers)
         {
             return from handler in handlers
-                   where handler.CurrentState == HandlerState.Valid
-                         && IsAvailable(handler.ComponentModel)
+                   where IsAvailable(handler.ComponentModel)
                    select handler;
         }
 
