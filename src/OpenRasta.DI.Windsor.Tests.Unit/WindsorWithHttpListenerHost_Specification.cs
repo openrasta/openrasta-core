@@ -117,6 +117,7 @@ namespace WindsorWithHttpListenerHost_Specification
                 Component.For<HttpListenerContext>().UsingFactoryMethod(() => (HttpListenerContext)null),
                 Component.For<HttpListenerCommunicationContext>().UsingFactoryMethod(() => (HttpListenerCommunicationContext)null),
                 Component.For<System.Net.HttpListenerRequest>().UsingFactoryMethod(() => (System.Net.HttpListenerRequest)null),
+                Component.For<System.Net.HttpListenerResponse>().UsingFactoryMethod(() => (System.Net.HttpListenerResponse)null),
 
                 Component.For<IConfigurationSource>().ImplementedBy<TestConfigurationSource>().LifestyleSingleton(),
                 Component.For<TestHttpListenerHostWithConfig>().ImplementedBy<TestHttpListenerHostWithConfig>().LifestyleSingleton());
@@ -153,7 +154,6 @@ namespace WindsorWithHttpListenerHost_Specification
         }
 
         [Test]
-        [Ignore("Not sure how to get this test to pass")]
         public void the_with_header_uri_serves_the_response_header()
         {
             var webClient = new WebClient();
