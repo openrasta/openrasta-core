@@ -15,7 +15,6 @@ using System.IO;
 using System.Text;
 using OpenRasta.Diagnostics;
 using OpenRasta.IO;
-using OpenRasta.IO.Diagnostics;
 
 namespace OpenRasta.Web
 {
@@ -84,20 +83,27 @@ namespace OpenRasta.Web
         {
             if (AtEndBoundary)
                 return false;
+
             var entity = new MultipartHttpEntity();
 
-// TODO: Handle split headers
+            // TODO: Handle split headers
             while (ReadNextLine() && !string.IsNullOrEmpty(_currentLine) && !AtBoundary && !AtEndBoundary)
             {
-                int columnIndex = _currentLine.IndexOf(":");
+                var columnIndex = _currentLine.IndexOf(":", StringComparison.Ordinal);
+                
                 if (columnIndex != -1)
-                    entity.Headers[_currentLine.Substring(0, columnIndex).Trim()] =
-                        _currentLine.Substring(columnIndex + 1).Trim();
+                    entity.Headers[_currentLine.Substring(0, columnIndex).Trim()] = _currentLine.Substring(columnIndex + 1).Trim();
             }
+
             if (_currentLine == null)
+            {
+                entity.Dispose();
                 return false;
+            }
+
             if (_currentLine.Length == 0)
                 entity.Stream = _reader.GetNextPart();
+
             CurrentEntity = entity;
             return true;
         }
