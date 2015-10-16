@@ -9,16 +9,21 @@
 #endregion
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using OpenRasta.Text;
 
 namespace OpenRasta.Web
 {
     public class ContentDispositionHeader: IEquatable<ContentDispositionHeader>
     {
+        private static readonly Regex SplitReg = new Regex(";(?=([^\"]*\"[^\"]*\")*[^\"]*$)");
+
         public ContentDispositionHeader(string header)
         {
-            var fragments = header.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+            var fragments = SplitReg.Split(header).Where(f => !string.IsNullOrEmpty(f)).ToArray();
+                
             if (fragments.Length == 0)
                 throw new FormatException("The header value {0} is invalid for Content-Disposition.".With(header));
             Disposition = fragments[0].Trim();
