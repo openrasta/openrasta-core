@@ -18,7 +18,7 @@ namespace OpenRasta.Web
 {
     public class ContentDispositionHeader: IEquatable<ContentDispositionHeader>
     {
-        private static readonly Regex SplitReg = new Regex(";(?=([^\"]*\"[^\"]*\")*[^\"]*$)");
+        private static readonly Regex SplitReg = new Regex(";(?=([^\"]*\"[^\"]*\")*[^\"]*$)", RegexOptions.Compiled);
 
         public ContentDispositionHeader(string header)
         {
