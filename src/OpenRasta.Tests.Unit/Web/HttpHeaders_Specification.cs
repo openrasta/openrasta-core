@@ -43,6 +43,14 @@ namespace HttpHeaders_Specification
         }
 
         [Test]
+        public void fields_can_contain_semi_colons()
+        {
+            var header = new ContentDispositionHeader("form-data;filename=\"test;name\"");
+            header.FileName.
+                ShouldBe("test;name");
+        }
+
+        [Test]
         public void the_first_value_is_the_disposition()
         {
             var header = new ContentDispositionHeader("form-data");
