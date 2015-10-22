@@ -102,8 +102,8 @@ namespace OpenRasta.Web
                 }
 
                 CleanUpFile();
-                _disposed = true;
             }
+            _disposed = true;
         }
 
         private void CleanUpFile()
