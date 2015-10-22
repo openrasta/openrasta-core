@@ -56,6 +56,7 @@ namespace OpenRasta.Web
         public void Dispose()
         {
             Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
         private bool _disposed;
@@ -64,7 +65,13 @@ namespace OpenRasta.Web
         {
             if (_disposed) return;
 
-            Stream.Dispose();
+            if (disposing)
+            {
+                if (Stream != null)
+                {
+                    Stream.Dispose();
+                }
+            }
             _disposed = true;
         }
     }

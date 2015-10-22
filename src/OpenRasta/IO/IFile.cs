@@ -69,13 +69,20 @@ namespace OpenRasta.IO
         public void Dispose()
         {
             Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
         protected virtual void Dispose(bool disposing)
         {
             if (_disposed) return;
 
-            _stream.Dispose();
+            if (disposing)
+            {
+                if (_stream != null)
+                {
+                    _stream.Dispose();
+                }
+            }
             _disposed = true;
         }
     }

@@ -41,11 +41,6 @@ namespace OpenRasta.Web
             GC.SuppressFinalize(this);
         }
 
-        ~HttpEntityFile()
-        {
-            Dispose(false);
-        }
-
         protected virtual void Dispose(bool disposing)
         {
             if (_disposed) return;
@@ -57,8 +52,8 @@ namespace OpenRasta.Web
                     _entity.Dispose();
                     _entity = null;
                 }
-                _disposed = true;
             }
+            _disposed = true;
         }
     }
 }
