@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using OpenRasta.IO;
 
@@ -5,7 +6,9 @@ namespace OpenRasta.Web
 {
     public class HttpEntityFile : IFile
     {
-        readonly IHttpEntity _entity;
+        private bool _disposed;
+
+        private IHttpEntity _entity;
 
         public HttpEntityFile(IHttpEntity entity)
         {
@@ -30,6 +33,32 @@ namespace OpenRasta.Web
         public Stream OpenStream()
         {
             return _entity.Stream;
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        ~HttpEntityFile()
+        {
+            Dispose(false);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (_disposed) return;
+
+            if (disposing)
+            {
+                if (_entity != null)
+                {
+                    _entity.Dispose();
+                    _entity = null;
+                }
+                _disposed = true;
+            }
         }
     }
 }

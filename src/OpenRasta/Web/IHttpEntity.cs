@@ -15,7 +15,7 @@ using OpenRasta.Codecs;
 
 namespace OpenRasta.Web
 {
-    public interface IHttpEntity
+    public interface IHttpEntity : IDisposable
     {
         ICodec Codec { get; set; }
         object Instance { get; set; }

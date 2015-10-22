@@ -9,7 +9,6 @@
 #endregion
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.IO;
 using OpenRasta.Codecs;
 using OpenRasta.Diagnostics;
@@ -22,7 +21,7 @@ namespace OpenRasta.Web
         void SwapStream(Stream stream);
     }
 
-    public class MultipartHttpEntity : IMultipartHttpEntity, IDisposable
+    public class MultipartHttpEntity : IMultipartHttpEntity
     {
         ILogger Log { get; set; }
 
@@ -54,6 +53,7 @@ namespace OpenRasta.Web
             }
             set
             {
+                CleanUpFile();
                 _stream = value;
                 _filePath = null;
             }
@@ -67,10 +67,12 @@ namespace OpenRasta.Web
         private string _filePath = null;
         public void SwapStream(Stream stream)
         {
+            CleanUpFile();
             Stream = stream;
         }
         public void SwapStream(string filepath)
         {
+            CleanUpFile();
             _filePath = filepath;
             _stream = null;
         }
@@ -80,45 +82,50 @@ namespace OpenRasta.Web
             GC.SuppressFinalize(this);
         }
         private bool _disposed = false;
+
         protected virtual void Dispose(bool disposing)
         {
-            if (!_disposed)
+            if (_disposed) return;
+
+            if (disposing)
             {
-                if (disposing)
+                if (_stream != null)
                 {
-                    if (_stream != null)
+                    try
                     {
-                        try
-                        {
-                            _stream.Dispose();
-                        }
-                        catch (ObjectDisposedException) { }
-                        finally
-                        {
-                            _stream = null;
-                        }
+                        _stream.Dispose();
                     }
-                    if (_filePath != null && File.Exists(_filePath))
+                    finally
                     {
-                        try
-                        {
-                            File.Delete(_filePath);
-                        }
-                        catch (Exception e)
-                        {
-                            Log.Safe().WriteError("Could not delete file {0} after use. See exception for details.", _filePath);
-                            Log.Safe().WriteException(e);
-                        }
-                        finally
-                        {
-                            _filePath = null;
-                        }
+                        _stream = null;
                     }
                 }
 
+                CleanUpFile();
                 _disposed = true;
             }
         }
+
+        private void CleanUpFile()
+        {
+            if (_filePath == null || !File.Exists(_filePath)) return;
+
+            try
+            {
+                File.Delete(_filePath);
+            }
+            catch (Exception e)
+            {
+                Log.Safe()
+                    .WriteError("Could not delete file {0} after use. See exception for details.", _filePath);
+                Log.Safe().WriteException(e);
+            }
+            finally
+            {
+                _filePath = null;
+            }
+        }
+
         ~MultipartHttpEntity()
         {
             Dispose(false);

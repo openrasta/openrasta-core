@@ -15,7 +15,7 @@ using OpenRasta.Web;
 
 namespace OpenRasta.IO
 {
-    public interface IFile
+    public interface IFile : IDisposable
     {
         MediaType ContentType { get; }
         string FileName { get; }
@@ -51,6 +51,7 @@ namespace OpenRasta.IO
         }
 
         readonly Stream _stream;
+        bool _disposed;
         public MediaType ContentType { get; set; }
         public string FileName { get; set; }
         public long Length { get; set; }
@@ -63,6 +64,19 @@ namespace OpenRasta.IO
         string IReceivedFile.OriginalName
         {
             get { return FileName; }
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (_disposed) return;
+
+            _stream.Dispose();
+            _disposed = true;
         }
     }
 #pragma warning restore 0618
