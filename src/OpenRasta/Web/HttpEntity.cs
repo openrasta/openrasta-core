@@ -52,6 +52,28 @@ namespace OpenRasta.Web
 
         public Stream Stream { get; private set; }
         public IList<Error> Errors { get; set; }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        private bool _disposed;
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (_disposed) return;
+
+            if (disposing)
+            {
+                if (Stream != null)
+                {
+                    Stream.Dispose();
+                }
+            }
+            _disposed = true;
+        }
     }
 }
 

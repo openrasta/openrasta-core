@@ -212,6 +212,16 @@ namespace OpenRasta.Pipeline
 
         protected virtual void FinishPipeline(ICommunicationContext context)
         {
+            if (context.Request.Entity != null)
+            {
+                context.Request.Entity.Dispose();
+            }
+
+            if (context.Response.Entity != null)
+            {
+                context.Response.Entity.Dispose();
+            }
+
             PipelineLog.WriteInfo("Pipeline finished.");
         }
 
