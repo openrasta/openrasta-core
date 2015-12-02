@@ -216,6 +216,11 @@ namespace OpenRasta.Testing.Contexts
                     Roles = new string[0]
                 };
             }
+
+            public bool ValidatePassword(Credentials credentials, string suppliedPassword)
+            {
+                return (credentials.Password == suppliedPassword);
+            }
         }
 
         protected TestErrorCollector Errors { get; private set; }
