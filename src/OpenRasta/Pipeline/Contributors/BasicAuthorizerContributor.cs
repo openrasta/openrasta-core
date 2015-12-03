@@ -26,8 +26,6 @@ namespace OpenRasta.Pipeline.Contributors
 {
     public class BasicAuthorizerContributor : IPipelineContributor
     {
-        public const string REALM = "Basic Authentication";
-
         private readonly IDependencyResolver _resolver;
         private IAuthenticationProvider _authentication;
 
@@ -43,72 +41,39 @@ namespace OpenRasta.Pipeline.Contributors
                 .After<KnownStages.IBegin>()
                 .And
                 .Before<KnownStages.IHandlerSelection>();
-
-            pipelineRunner.Notify(WriteCredentialRequest)
-                .After<KnownStages.IOperationResultInvocation>()
-                .And
-                .Before<KnownStages.IResponseCoding>();
         }
 
         public PipelineContinuation ReadCredentials(ICommunicationContext context)
         {
-            if (!_resolver.HasDependency(typeof(IAuthenticationProvider)))
+            if (_resolver.HasDependency(typeof(IAuthenticationProvider)))
             {
-                return NotAuthorized(context);
-            }
-
-            _authentication = _resolver.Resolve<IAuthenticationProvider>();
-
-            try
-            {
+                _authentication = _resolver.Resolve<IAuthenticationProvider>();
                 var header = ReadBasicAuthHeader(context);
-
-                if (header == null)
+                if (header != null)
                 {
-                    return NotAuthorized(context);
-                }
+                    var credentials = _authentication.GetByUsername(header.Username);
 
-                var credentials = _authentication.GetByUsername(header.Username);
-
-                if (credentials == null)
-                {
-                    return NotAuthorized(context);
+                    if (_authentication.ValidatePassword(credentials, header.Password))
+                    {
+                        IIdentity id = new GenericIdentity(credentials.Username, "Basic");
+                        context.User = new GenericPrincipal(id, credentials.Roles);
+                    }
                 }
-
-                if (!_authentication.ValidatePassword(credentials, header.Password))
-                {
-                    return NotAuthorized(context);
-                }
-                IIdentity id = new GenericIdentity(credentials.Username, "Basic");
-                context.User = new GenericPrincipal(id, credentials.Roles);
-                return PipelineContinuation.Continue;
-            } 
-            catch (ArgumentException ex)
-            {
-                return NotAuthorized(context);
             }
+
+            return PipelineContinuation.Continue;
         }
 
         private static BasicAuthorizationHeader ReadBasicAuthHeader(ICommunicationContext context)
         {
-            var header = context.Request.Headers["Authorization"];
-            return string.IsNullOrEmpty(header) ? null : BasicAuthorizationHeader.Parse(header);
-        }
-
-        private static PipelineContinuation NotAuthorized(ICommunicationContext context)
-        {
-            context.OperationResult = new OperationResult.Unauthorized();
-            return PipelineContinuation.RenderNow;
-        }
-
-        private static PipelineContinuation WriteCredentialRequest(ICommunicationContext context)
-        {
-            if (context.OperationResult is OperationResult.Unauthorized)
+            try
             {
-                var header = new BasicAuthenticationRequiredHeader().ServerResponseHeader;
-                context.Response.Headers["WWW-Authenticate"] = header;
+                var header = context.Request.Headers["Authorization"];
+                return string.IsNullOrEmpty(header) ? null : BasicAuthorizationHeader.Parse(header);
+            } catch (ArgumentException ex)
+            {
+                return (null);
             }
-            return PipelineContinuation.Continue;
         }
     }
 }

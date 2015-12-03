@@ -39,3 +39,4 @@ namespace RequiresAuthenticationInterceptor_Specification
         }
     }
 }
+

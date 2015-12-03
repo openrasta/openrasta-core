@@ -1,55 +1,43 @@
-#region License
-
+﻿#region License
 /* Authors:
- *      Dylan Beattie (dylan@dylanbeattie.net)
  *      Sebastien Lambla (seb@serialseb.com)
  * Copyright:
- *      (C) 2007-2015 Caffeine IT & naughtyProd Ltd (http://www.caffeine-it.com)
+ *      (C) 2007-2009 Caffeine IT & naughtyProd Ltd (http://www.caffeine-it.com)
  * License:
  *      This file is distributed under the terms of the MIT License found at the end of this file.
  */
-
 #endregion
 
 using System;
-using System.Text;
+using System.Collections.Generic;
+using OpenRasta.DI;
+using OpenRasta.OperationModel;
+using OpenRasta.OperationModel.Interceptors;
+using OpenRasta.Web;
 
 namespace OpenRasta.Security
 {
-    public class BasicAuthorizationHeader
+    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
+    public class RequiresBasicAuthenticationAttribute : InterceptorProviderAttribute
     {
-        private BasicAuthorizationHeader(string username, string password)
+        private readonly string realm;
+
+        public RequiresBasicAuthenticationAttribute(string realm)
         {
-            this.Username = username;
-            this.Password = password;
+            this.realm = realm;
         }
 
-        public string Username { get; set; }
-        public string Password { get; set; }
-
-        public static BasicAuthorizationHeader Parse(string header)
+        public override IEnumerable<IOperationInterceptor> GetInterceptors(IOperation operation)
         {
-            var tokens = header.Split(' ');
-            if (tokens.Length != 2 || tokens[0] != "Basic")
+            return new[]
             {
-                return (null);
-            }
-            try
-            {
-                var credentialString = Encoding.UTF8.GetString(Convert.FromBase64String(tokens[1]));
-
-                var credentials = credentialString.Split(new[] { ':' }, 2);
-                return (new BasicAuthorizationHeader(credentials[0], credentials[1]));
-            } catch (FormatException ex)
-            {
-                return (null);
-            }
+                new RequiresBasicAuthenticationInterceptor(DependencyManager.GetService<ICommunicationContext>(),realm)
+            };
         }
     }
 }
 
 #region Full license
-
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
 // "Software"), to deal in the Software without restriction, including
@@ -66,5 +54,4 @@ namespace OpenRasta.Security
 // LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
 #endregion
