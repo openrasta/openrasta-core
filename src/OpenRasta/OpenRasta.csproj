@@ -279,6 +279,7 @@
     <Compile Include="Pipeline\Contributors\AuthenticationChallengerContributor.cs" />
     <Compile Include="Pipeline\Contributors\AuthenticationContributor.cs" />
     <Compile Include="Pipeline\Contributors\BootstrapperContributor.cs" />
+    <Compile Include="Pipeline\Contributors\BasicAuthorizerContributor.cs" />
     <Compile Include="Pipeline\Contributors\DigestAuthorizerContributor.cs" />
     <Compile Include="Pipeline\Contributors\EndContributor.cs" />
     <Compile Include="Pipeline\Contributors\HandlerResolverContributor.cs" />
@@ -323,6 +324,8 @@
     <Compile Include="Reflection\ScopedDictionary.cs" />
     <Compile Include="Resources\Files.Designer.cs" />
     <Compile Include="Security\Credentials.cs" />
+    <Compile Include="Security\BasicAuthenticationRequiredHeader.cs" />
+    <Compile Include="Security\BasicAuthorizationHeader.cs" />
     <Compile Include="Security\DigestHeader.cs" />
     <Compile Include="Security\IAuthenticationProvider.cs" />
     <Compile Include="Security\PrincipalAuthorizationAttribute.cs" />

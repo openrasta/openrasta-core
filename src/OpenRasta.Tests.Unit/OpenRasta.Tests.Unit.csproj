@@ -110,6 +110,7 @@
     <Compile Include="OperationModel\OperationHydration_Spec.cs" />
     <Compile Include="Pipeline\Contributors\AuthenticationChallenger_Specification.cs" />
     <Compile Include="Pipeline\Contributors\Authentication_Specification.cs" />
+    <Compile Include="Pipeline\Contributors\BasicAuthorizer_Specification.cs" />
     <Compile Include="Pipeline\Contributors\HandlerMethodFiltersInvoker_Specification.cs" />
     <Compile Include="Pipeline\Contributors\HandlerMethodInvoker_Specification.cs" />
     <Compile Include="Pipeline\Contributors\HandlerMethodrequestEntityResolver_Specification.cs" />

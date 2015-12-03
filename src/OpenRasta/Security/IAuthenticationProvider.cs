@@ -7,6 +7,7 @@
  * License:
  *      This file is distributed under the terms of the MIT License found at the end of this file.
  */
+
 #endregion
 
 namespace OpenRasta.Security
@@ -14,6 +15,12 @@ namespace OpenRasta.Security
     public interface IAuthenticationProvider
     {
         Credentials GetByUsername(string p);
+
+        /// <summary>Returns true if the supplied password matches the password stored in the specified credentials; otherwise false.</summary>
+        /// <param name="credentials">A set of <see cref="Credentials"/> containing authentication details (e.g. from your application's security database)</param>
+        /// <param name="suppliedPassword">The plaintext password supplied by the user who is trying to authenticate.</param>
+        /// <returns>True if the supplied password matches the credential; otherwise false.</returns>
+        bool ValidatePassword(Credentials credentials, string suppliedPassword);
     }
 }
 
