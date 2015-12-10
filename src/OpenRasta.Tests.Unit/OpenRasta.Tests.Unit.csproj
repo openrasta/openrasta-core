@@ -127,6 +127,7 @@
     <Compile Include="Authentication\DigestCredentialsReader_Specification.cs" />
     <Compile Include="Pipeline\PipelineRunner_Specification.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Security\RequiresBasicAuthenticationInterceptor_Specification.cs" />
     <Compile Include="Security\RequiresAuthenticationInterceptor_Specification.cs" />
     <Compile Include="Security\RequiresRoleInterceptor_Specification.cs" />
     <Compile Include="Text\Rfc2047Encoding_Specification.cs" />

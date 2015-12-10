@@ -17,11 +17,18 @@ namespace OpenRasta.Security
         {
             if (_context.User == null || _context.User.Identity == null || !_context.User.Identity.IsAuthenticated)
             {
-                _context.OperationResult = new OperationResult.Unauthorized();
+                DenyAuthorization(_context);
                 return false;
             }
 
             return true;
         }
+
+        protected virtual void DenyAuthorization(ICommunicationContext context)
+        {
+            _context.OperationResult = new OperationResult.Unauthorized();
+        }
     }
+
+    
 }

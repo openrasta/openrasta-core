@@ -329,6 +329,8 @@
     <Compile Include="Security\DigestHeader.cs" />
     <Compile Include="Security\IAuthenticationProvider.cs" />
     <Compile Include="Security\PrincipalAuthorizationAttribute.cs" />
+    <Compile Include="Security\RequiresBasicAuthenticationInterceptor.cs" />
+    <Compile Include="Security\RequiresBasicAuthenticationAttribute.cs" />
     <Compile Include="Security\RequiresAuthenticationAttribute.cs" />
     <Compile Include="Security\RequiresAuthenticationInterceptor.cs" />
     <Compile Include="Security\RequiresRoleAttribute.cs" />
