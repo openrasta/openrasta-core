@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using System.Linq;
 
+using OpenRasta.TypeSystem;
+
 namespace OpenRasta.OperationModel
 {
     public static class OperationExtensions
@@ -10,7 +12,12 @@ namespace OpenRasta.OperationModel
             return members.All(x => x.IsReadyForAssignment);
         }
 
-        /// <summary>
+        public static IEnumerable<IMember> WhosNotReady(this IEnumerable<InputMember> members)
+        {
+            return members.Where(x => x.IsReadyForAssignment == false).Select(x => x.Member);
+        }
+
+    /// <summary>
         /// Returns the number of members ready for invocation (aka either having a default value or having had a value assigned to them).
         /// </summary>
         /// <param name="members"></param>

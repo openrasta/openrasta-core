@@ -53,7 +53,10 @@ namespace OpenRasta.OperationModel.MethodBased
         public IEnumerable<OutputMember> Invoke()
         {
             if (!Inputs.AllReady())
-                throw new InvalidOperationException("The operation is not ready for invocation.");
+            {
+                var notReady = Inputs.WhosNotReady();
+                throw new InvalidOperationException(string.Format("The operation {0} for {1} is not ready for invocation. These members are not ready; {2}", _method.Name, _method.Owner.Name, notReady.Select(x => x.Name).JoinString(", ")));
+            }
 
             var handler = CreateInstance(_ownerType, Resolver);
 
