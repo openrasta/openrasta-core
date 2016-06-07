@@ -8,9 +8,7 @@ namespace OpenRasta.Graph {
 
   public class TestingStuff {
     static void Main() {
-      new ResourceConfiguration()
-        .Resource<Stuff>()
-        .Uri(_ => _/"stuff");
+      ;
     }
   }
 
