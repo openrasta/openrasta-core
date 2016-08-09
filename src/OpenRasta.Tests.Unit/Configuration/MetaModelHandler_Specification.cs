@@ -15,7 +15,7 @@ using OpenRasta.Web;
 
 namespace MetaModelHandler_Specification
 {
-    public class metamodelhandler_context<T> : context where T:IMetaModelHandler
+    public abstract class metamodelhandler_context<T> : context where T:IMetaModelHandler
     {
         protected IDependencyResolver Resolver;
         protected T Handler;

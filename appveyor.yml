@@ -1,4 +1,4 @@
-version: 2.6.{build}
+﻿version: 2.6.{build}
 
 configuration: Release
 

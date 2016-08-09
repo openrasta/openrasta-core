@@ -14,18 +14,6 @@ namespace HandlerRepository_Specification
   public class when_adding_handler_types : context
   {
     [Test]
-    public void canoot_add_the_same_handler_type_twice_to_the_same_key()
-    {
-      var type = TypeSystems.Default.FromClr(typeof(string));
-      var repo = new HandlerRepository();
-
-      repo.AddResourceHandler("ring of power", type);
-
-      Executing(() => repo.AddResourceHandler("ring of power", type))
-        .ShouldThrow<ArgumentException>();
-    }
-
-    [Test]
     public void two_handlers_can_be_registered_for_the_same_key()
     {
       var handler1 = TypeSystems.Default.FromClr(typeof(Sauron));
