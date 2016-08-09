@@ -17,7 +17,7 @@ using OpenRasta.Web;
 
 namespace OpenRasta.Testing.Contexts
 {
-    public class openrasta_context : context
+    public abstract class openrasta_context : context
     {
         Dictionary<Type, Func<ICommunicationContext, PipelineContinuation>> _actions;
         InMemoryHost Host;

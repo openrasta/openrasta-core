@@ -16,7 +16,7 @@ using NUnit.Framework;
 namespace OpenRasta.Testing
 {
     [TestFixture]
-    public class context
+    public abstract class context
     {
         [SetUp]
         protected virtual void SetUp()
