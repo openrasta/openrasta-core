@@ -538,7 +538,7 @@
     <EmbeddedResource Include="Resources\Files.resx" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="OpenRasta.nuspec">
+    <None Include="openrasta-core.nuspec">
       <SubType>Designer</SubType>
     </None>
   </ItemGroup>
