@@ -1,62 +1,65 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using OpenRasta.Collections;
 using OpenRasta.Collections.Specialized;
 
 namespace OpenRasta.Pipeline.CallGraph
 {
-    public sealed class TopologicalSortCallGraphGenerator : IGenerateCallGraphs
+  public sealed class TopologicalSortCallGraphGenerator : IGenerateCallGraphs
+  {
+    public IEnumerable<ContributorCall> GenerateCallGraph(IEnumerable<IPipelineContributor> contributors)
     {
-        public IEnumerable<ContributorCall> GenerateCallGraph(PipelineRunner pipelineRunner)
+      contributors = contributors.ToList();
+
+      var bootstrapper = contributors.OfType<KnownStages.IBegin>().Single();
+      var nodes = new List<TopologicalNode<ContributorNotification>>();
+
+      foreach (var contributor in contributors.Where(x => x != bootstrapper))
+      {
+        var builder = new PipelineBuilder(contributors);
+        builder.ContributorRegistrations.Clear();
+
+        contributor.Initialize(builder);
+
+        nodes.AddRange(builder.ContributorRegistrations
+          .DefaultIfEmpty(new Notification(null, builder.Contributors))
+          .Select(reg => new TopologicalNode<ContributorNotification>(new ContributorNotification(contributor, reg))));
+      }
+
+      foreach (var notificationNode in nodes)
+      {
+        foreach (var afterType in notificationNode.Item.Notification.AfterTypes)
         {
-            var bootstrapper = pipelineRunner.Contributors.OfType<KnownStages.IBegin>().Single();
-            var nodes = new List<DependencyNodeV2<ContributorNotification>>();
-
-            foreach (var contributor in pipelineRunner.Contributors.Where(x => x != bootstrapper))
-            {
-                pipelineRunner.NotificationRegistrations.Clear();
-
-                using (pipelineRunner.PipelineLog.Operation(pipelineRunner, "Initializing contributor {0}.".With(contributor.GetType().Name)))
-                {
-                    contributor.Initialize(pipelineRunner);
-                }
-
-                foreach (var reg in pipelineRunner.NotificationRegistrations.DefaultIfEmpty(new Notification(pipelineRunner, null)))
-                {
-                    nodes.Add(new DependencyNodeV2<ContributorNotification>(new ContributorNotification(contributor, reg)));
-                }
-            }
-
-            foreach (var notificationNode in nodes)
-            {
-                foreach (var afterType in notificationNode.Item.Notification.AfterTypes)
-                {
-                    var parents = GetCompatibleNodes(nodes, notificationNode, afterType);
-                    notificationNode.Dependencies.AddRange(parents);
-                }
-
-                foreach (var beforeType in notificationNode.Item.Notification.BeforeTypes)
-                {
-                    var children = GetCompatibleNodes(nodes, notificationNode, beforeType);
-                    foreach (var child in children)
-                    {
-                        child.Dependencies.Add(notificationNode);
-                    }
-                }
-            }
-
-            var rootItem = new ContributorNotification(bootstrapper, new Notification(pipelineRunner, null));
-
-            return new DependencyGraph<ContributorNotification>(rootItem, nodes).Nodes
-                .Select(n => new ContributorCall(n.Item.Contributor, n.Item.Notification.Target, n.Item.Notification.Description));
+          var parents = GetCompatibleNodes(nodes, notificationNode, afterType);
+          notificationNode.Dependencies.AddRange(parents);
         }
 
-        static IEnumerable<DependencyNodeV2<ContributorNotification>> GetCompatibleNodes(IEnumerable<DependencyNodeV2<ContributorNotification>> nodes, DependencyNodeV2<ContributorNotification> notificationNode, Type type)
+        foreach (var beforeType in notificationNode.Item.Notification.BeforeTypes)
         {
-            return from compatibleNode in nodes
-                   where !compatibleNode.Equals(notificationNode) && type.IsInstanceOfType(compatibleNode.Item.Contributor)
-                   select compatibleNode;
+          var children = GetCompatibleNodes(nodes, notificationNode, beforeType);
+          foreach (var child in children)
+          {
+            child.Dependencies.Add(notificationNode);
+          }
         }
+      }
+
+      var rootItem = new ContributorNotification(bootstrapper, new Notification(null, contributors));
+
+      return new TopologicalTree<ContributorNotification>(rootItem, nodes).Nodes
+        .Select(
+          n => new ContributorCall(n.Item.Contributor, n.Item.Notification.Target, n.Item.Notification.Description));
     }
+
+    static IEnumerable<TopologicalNode<ContributorNotification>> GetCompatibleNodes(
+      IEnumerable<TopologicalNode<ContributorNotification>> nodes,
+      TopologicalNode<ContributorNotification> notificationNode, Type type)
+    {
+      return from compatibleNode in nodes
+        where !compatibleNode.Equals(notificationNode) && type.IsInstanceOfType(compatibleNode.Item.Contributor)
+        select compatibleNode;
+    }
+  }
 }

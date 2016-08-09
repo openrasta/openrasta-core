@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /* Authors:
  *      Sebastien Lambla (seb@serialseb.com)
  * Copyright:
@@ -27,7 +27,7 @@ namespace PipelineRunner_Specification
     public class when_creating_the_pipeline : pipelinerunner_context
     {
         [TestCase(null)]
-        [TestCase(typeof(DefaultCallGraphGenerator))]
+        [TestCase(typeof(WeightedCallGraphGenerator))]
         [TestCase(typeof(TopologicalSortCallGraphGenerator))]
         public void a_registered_contributor_gets_initialized_and_is_part_of_the_contributor_collection(Type callGraphGeneratorType)
         {
@@ -47,7 +47,7 @@ namespace PipelineRunner_Specification
     public class when_accessing_the_contributors : pipelinerunner_context
     {
         [TestCase(null)]
-        [TestCase(typeof(DefaultCallGraphGenerator))]
+        [TestCase(typeof(WeightedCallGraphGenerator))]
         [TestCase(typeof(TopologicalSortCallGraphGenerator))]
         public void the_contributor_list_always_contains_the_bootstrap_contributor(Type callGraphGeneratorType)
         {
@@ -58,7 +58,7 @@ namespace PipelineRunner_Specification
         }
 
         [TestCase(null)]
-        [TestCase(typeof(DefaultCallGraphGenerator))]
+        [TestCase(typeof(WeightedCallGraphGenerator))]
         [TestCase(typeof(TopologicalSortCallGraphGenerator))]
         public void the_contributor_list_is_read_only(Type callGraphGeneratorType)
         {
@@ -71,7 +71,7 @@ namespace PipelineRunner_Specification
     public class when_building_the_call_graph : pipelinerunner_context
     {
         [TestCase(null)]
-        [TestCase(typeof(DefaultCallGraphGenerator))]
+        [TestCase(typeof(WeightedCallGraphGenerator))]
         [TestCase(typeof(TopologicalSortCallGraphGenerator))]
         public void a_second_contrib_registering_after_the_first_contrib_that_registers_after_the_boot_initializes_the_call_list_in_the_correct_order(Type callGraphGeneratorType)
         {
@@ -90,7 +90,7 @@ namespace PipelineRunner_Specification
         }
 
         [TestCase(null)]
-        [TestCase(typeof(DefaultCallGraphGenerator))]
+        [TestCase(typeof(WeightedCallGraphGenerator))]
         public void registering_all_the_contributors_results_in_a_correct_call_graph(Type callGraphGeneratorType)
         {
             var pipeline = CreatePipeline(callGraphGeneratorType, new[]
@@ -133,7 +133,7 @@ namespace PipelineRunner_Specification
         }
 
         [TestCase(null)]
-        [TestCase(typeof(DefaultCallGraphGenerator))]
+        [TestCase(typeof(WeightedCallGraphGenerator))]
         [TestCase(typeof(TopologicalSortCallGraphGenerator))]
         public void the_call_graph_cannot_be_recursive(Type callGraphGeneratorType)
         {
@@ -144,7 +144,7 @@ namespace PipelineRunner_Specification
         }
 
         [TestCase(null)]
-        [TestCase(typeof(DefaultCallGraphGenerator))]
+        [TestCase(typeof(WeightedCallGraphGenerator))]
         [TestCase(typeof(TopologicalSortCallGraphGenerator))]
         public void registering_contributors_with_multiple_recursive_notifications_should_be_identified_as_invalid(Type callGraphGeneratorType)
         {
@@ -226,7 +226,7 @@ namespace PipelineRunner_Specification
     public class when_contributor_throws : pipelinerunner_context
     {
         [TestCase(null)]
-        [TestCase(typeof(DefaultCallGraphGenerator))]
+        [TestCase(typeof(WeightedCallGraphGenerator))]
         [TestCase(typeof(TopologicalSortCallGraphGenerator))]
         public void error_is_collected_and_500_returned(Type callGraphGeneratorType)
         {
@@ -269,7 +269,7 @@ namespace PipelineRunner_Specification
     public class when_executing_the_pipeline : pipelinerunner_context
     {
         [TestCase(null)]
-        [TestCase(typeof(DefaultCallGraphGenerator))]
+        [TestCase(typeof(WeightedCallGraphGenerator))]
         [TestCase(typeof(TopologicalSortCallGraphGenerator))]
         public void contributors_get_executed(Type callGraphGeneratorType)
         {
@@ -283,7 +283,7 @@ namespace PipelineRunner_Specification
         }
 
         [TestCase(null)]
-        [TestCase(typeof(DefaultCallGraphGenerator))]
+        [TestCase(typeof(WeightedCallGraphGenerator))]
         [TestCase(typeof(TopologicalSortCallGraphGenerator))]
         public void the_pipeline_must_have_been_initialized(Type callGraphGeneratorType)
         {

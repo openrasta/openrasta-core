@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -102,7 +102,6 @@
     <Compile Include="CodeDom.Compiler\UnencodedOutputModifier.cs" />
     <Compile Include="Collections\Specialized\DependencyNode.cs" />
     <Compile Include="Collections\Specialized\DependencyTree.cs" />
-    <Compile Include="Collections\TopologicalSort.cs" />
     <Compile Include="Collections\CollectionExtensions.cs" />
     <Compile Include="Collections\DictionaryBase.cs" />
     <Compile Include="Collections\EnumerableExtensions.cs" />
@@ -112,8 +111,9 @@
     <Compile Include="Collections\ObservableIterator.cs" />
     <Compile Include="Collections\ObservableIteratorExtensions.cs" />
     <Compile Include="Collections\ResumableIterator.cs" />
-    <Compile Include="Collections\Specialized\DependencyGraph.cs" />
-    <Compile Include="Collections\Specialized\DependencyNodeV2.cs" />
+    <Compile Include="Collections\Specialized\TopologicalSort.cs" />
+    <Compile Include="Collections\Specialized\TopologicalTree.cs" />
+    <Compile Include="Collections\Specialized\TopologicalNode.cs" />
     <Compile Include="Configuration\CodecDefinitionExtensions.cs" />
     <Compile Include="Configuration\CodecParentDefinitionExtensions.cs" />
     <Compile Include="Configuration\DefaultDependencyRegistrar.cs" />
@@ -270,7 +270,8 @@
     <Compile Include="OperationModel\OutputMember.cs" />
     <Compile Include="Pipeline\CallGraph\CallGraphGeneratorFactory.cs" />
     <Compile Include="Pipeline\CallGraph\ContributorNotification.cs" />
-    <Compile Include="Pipeline\CallGraph\DefaultCallGraphGenerator.cs" />
+    <Compile Include="Pipeline\CallGraph\PipelineBuilder.cs" />
+    <Compile Include="Pipeline\CallGraph\WeightedCallGraphGenerator.cs" />
     <Compile Include="Pipeline\CallGraph\IGenerateCallGraphs.cs" />
     <Compile Include="Pipeline\CallGraph\Notification.cs" />
     <Compile Include="Pipeline\CallGraph\TopologicalSortCallGraphGenerator.cs" />

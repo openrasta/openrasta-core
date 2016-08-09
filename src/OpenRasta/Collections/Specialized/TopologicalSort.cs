@@ -1,17 +1,16 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using OpenRasta.Collections.Specialized;
 
-namespace OpenRasta.Collections
+namespace OpenRasta.Collections.Specialized
 {
     // Topological sort based on depth-first algorithm described by Cormen et al. (2001), see http://en.wikipedia.org/wiki/Topological_sorting
     // Credit to Tomas Takac for initial inspiration for this algorithm, see http://www.codeproject.com/Articles/869059/Topological-sorting-in-Csharp
     internal class TopologicalSort
     {
-        public static IEnumerable<DependencyNodeV2<T>> Sort<T>(DependencyNodeV2<T> rootNode, IList<DependencyNodeV2<T>> nodes)
+        public static IEnumerable<TopologicalNode<T>> Sort<T>(TopologicalNode<T> rootNode, IList<TopologicalNode<T>> nodes)
         {
-            var sorted = new List<DependencyNodeV2<T>>();
-            var visited = new Dictionary<DependencyNodeV2<T>, bool>();
+            var sorted = new List<TopologicalNode<T>>();
+            var visited = new Dictionary<TopologicalNode<T>, bool>();
 
             Visit(rootNode, sorted, visited);
             nodes.ForEach(n => Visit(n, sorted, visited));
@@ -19,7 +18,7 @@ namespace OpenRasta.Collections
             return sorted;
         }
 
-        private static void Visit<T>(DependencyNodeV2<T> node, IList<DependencyNodeV2<T>> sorted, IDictionary<DependencyNodeV2<T>, bool> visited)
+        private static void Visit<T>(TopologicalNode<T> node, IList<TopologicalNode<T>> sorted, IDictionary<TopologicalNode<T>, bool> visited)
         {
             bool inProcess;
             var alreadyVisited = visited.TryGetValue(node, out inProcess);

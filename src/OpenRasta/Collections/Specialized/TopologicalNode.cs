@@ -4,18 +4,18 @@ using System.Linq;
 
 namespace OpenRasta.Collections.Specialized
 {
-    internal sealed class DependencyNodeV2<T> : IEquatable<DependencyNodeV2<T>>
+    internal sealed class TopologicalNode<T> : IEquatable<TopologicalNode<T>>
     {
         public T Item { get; set; }
-        public IList<DependencyNodeV2<T>> Dependencies { get; private set; }
+        public IList<TopologicalNode<T>> Dependencies { get; private set; }
 
-        public DependencyNodeV2(T value)
+        public TopologicalNode(T value)
         {
             Item = value;
-            Dependencies = new List<DependencyNodeV2<T>>();
+            Dependencies = new List<TopologicalNode<T>>();
         }
 
-        public bool Equals(DependencyNodeV2<T> other)
+        public bool Equals(TopologicalNode<T> other)
         {
             if (ReferenceEquals(null, other))
                 return false;
@@ -34,7 +34,7 @@ namespace OpenRasta.Collections.Specialized
             if (obj.GetType() != GetType())
                 return false;
 
-            return Equals((DependencyNodeV2<T>)obj);
+            return Equals((TopologicalNode<T>)obj);
         }
 
         public override int GetHashCode()

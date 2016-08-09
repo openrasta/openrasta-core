@@ -7,37 +7,23 @@ namespace OpenRasta.Pipeline.CallGraph
 {
     internal class Notification : IPipelineExecutionOrder, IPipelineExecutionOrderAnd
     {
-        readonly ICollection<Type> _after = new List<Type>();
-        readonly ICollection<Type> _before = new List<Type>();
-        readonly PipelineRunner _runner;
+      readonly IList<IPipelineContributor> _contributors;
 
-        public Notification(PipelineRunner runner, Func<ICommunicationContext, PipelineContinuation> action)
+      public Notification(Func<ICommunicationContext, PipelineContinuation> action, IEnumerable<IPipelineContributor> contributors)
         {
-            _runner = runner;
+          _contributors = contributors.ToList();
             Target = action;
         }
 
-        public ICollection<Type> AfterTypes
-        {
-            get { return _after; }
-        }
+        public ICollection<Type> AfterTypes { get; } = new List<Type>();
 
-        public IPipelineExecutionOrder And
-        {
-            get { return this; }
-        }
+      public IPipelineExecutionOrder And => this;
 
-        public ICollection<Type> BeforeTypes
-        {
-            get { return _before; }
-        }
+      public ICollection<Type> BeforeTypes { get; } = new List<Type>();
 
-        public string Description
-        {
-            get { return Target != null && Target.Target != null ? Target.Target.GetType().Name : null; }
-        }
+      public string Description => Target?.Target?.GetType().Name;
 
-        public Func<ICommunicationContext, PipelineContinuation> Target { get; private set; }
+      public Func<ICommunicationContext, PipelineContinuation> Target { get; }
 
         public IPipelineExecutionOrderAnd After(Type contributorType)
         {
@@ -61,7 +47,7 @@ namespace OpenRasta.Pipeline.CallGraph
 
         IEnumerable<IPipelineContributor> GetContributorsOfType(Type contributorType)
         {
-            return from contributor in _runner.Contributors
+            return from contributor in _contributors
                    where contributorType.IsInstanceOfType(contributor)
                    select contributor;
         }
