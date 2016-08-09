@@ -8,13 +8,12 @@ assembly_info:
   assembly_file_version: '{version}'
   assembly_informational_version: '{version}'
 build:
-  publish_nuget: true
-  publish_nuget_symbols: true
+  publish_nuget: true             # package projects with .nuspec files and push to artifacts
+  publish_nuget_symbols: true     # generate and publish NuGet symbol packages
+  include_nuget_references: true  # add -IncludeReferencedProjects option while packaging NuGet artifacts
   parallel: true
   verbosity: minimal
 artifacts:
-- path: '*.nupkg'
-  name: NuGet
 - path: src\openrasta\bin\$(configuration)\*.dll
   name: dlls
 - path: src\openrasta\bin\$(configuration)\*.pdb
