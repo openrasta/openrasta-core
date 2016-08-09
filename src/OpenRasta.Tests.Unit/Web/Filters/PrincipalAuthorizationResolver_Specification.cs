@@ -21,7 +21,7 @@ namespace PrincipalAuthorizationResolver_Specification
 {
     public class when_the_user_is_not_authenticated : context
     {
-        [Test, Ignore]
+        [Test, Ignore("no idea")]
         public void the_filter_doesnt_authorize_the_execution()
         {
             var context = new InMemoryCommunicationContext();
@@ -35,7 +35,7 @@ namespace PrincipalAuthorizationResolver_Specification
     [TestFixture]
     public class when_the_user_is_authenticated : context
     {
-        [Test, Ignore]
+        [Test, Ignore("no idea")]
         public void the_role_is_matched_and_execution_continues()
         {
             Thread.CurrentPrincipal = new GenericPrincipal(new GenericIdentity("name"), new[] {"Administrator"});
@@ -50,7 +50,7 @@ namespace PrincipalAuthorizationResolver_Specification
             rastaContext.OperationResult.ShouldBeNull();
         }
 
-        [Test, Ignore]
+        [Test, Ignore("no idea")]
         public void the_username_is_matched_and_execution_continues()
         {
             Thread.CurrentPrincipal = new GenericPrincipal(new GenericIdentity("johndoe"), new[] { "Administrator" });

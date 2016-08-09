@@ -2,7 +2,7 @@
 
 namespace OpenRasta.Authentication.Basic
 {
-    [Obsolete(ObsoletedContent.Authentication)]
+    [Obsolete("Authentication features are moving to a new package, see more information at http://https://github.com/openrasta/openrasta/wiki/Authentication")]
     public interface IBasicAuthenticator
     {
         string Realm { get; }

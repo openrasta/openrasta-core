@@ -9,6 +9,7 @@ using OpenRasta.OperationModel;
 using OpenRasta.Testing;
 using OpenRasta.Testing.Contexts;
 using OpenRasta.TypeSystem;
+using DescriptionAttribute = System.ComponentModel.DescriptionAttribute;
 
 namespace OpenRasta.Tests.Unit.OperationModel.MethodBased
 {
