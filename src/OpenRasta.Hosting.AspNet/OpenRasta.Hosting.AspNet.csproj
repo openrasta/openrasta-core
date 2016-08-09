@@ -69,9 +69,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <None Include="web.config.uninstall.xdt">
+    <Content Include="web.config.uninstall.xdt">
       <SubType>Designer</SubType>
-    </None>
+    </Content>
     <None Include="OpenRasta.Hosting.AspNet.nuspec">
       <SubType>Designer</SubType>
     </None>
