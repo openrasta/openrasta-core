@@ -32,8 +32,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="OpenRasta, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\openrasta-core.2.5.7\lib\net40\OpenRasta.dll</HintPath>
+      <HintPath>..\packages\openrasta-core.2.5.63\lib\net40\OpenRasta.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
@@ -72,7 +72,7 @@
     <None Include="web.config.uninstall.xdt">
       <SubType>Designer</SubType>
     </None>
-    <None Include="openrasta-hosting-aspnet.nuspec">
+    <None Include="OpenRasta.Hosting.AspNet.nuspec">
       <SubType>Designer</SubType>
     </None>
   </ItemGroup>
