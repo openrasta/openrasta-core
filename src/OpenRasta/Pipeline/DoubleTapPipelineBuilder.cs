@@ -1,16 +1,15 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Remoting.Contexts;
-using OpenRasta.Pipeline.CallGraph;
 using OpenRasta.Pipeline.Contributors;
 
 namespace OpenRasta.Pipeline
 {
   public static class DoubleTapPipelineBuilder
   {
-    public static IPipelineComponent Build(IGenerateCallGraphs graphs, IEnumerable<IPipelineContributor> contributors)
+    public static IPipelineComponent Build(IEnumerable<ContributorCall> callGraph)
     {
-      var all = graphs.GenerateCallGraph(contributors).Reverse().ToList();
+      var all = callGraph.Reverse().ToList();
 
       var renderPipeline = all
         .TakeWhile(_ => _.Target is KnownStages.IOperationResultInvocation == false)

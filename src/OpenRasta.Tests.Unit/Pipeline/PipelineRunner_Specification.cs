@@ -340,8 +340,10 @@ namespace OpenRasta.Tests.Unit.Pipeline
     protected IPipeline CreatePipeline(Type callGraphGeneratorType, Type[] contributorTypes)
     {
       var resolver = new InternalDependencyResolver();
+      resolver.AddDependencyInstance<IDependencyResolver>(resolver);
       resolver.AddDependency<IPipelineContributor, BootstrapperContributor>();
-      resolver.AddDependency<IPipeline, T>(DependencyLifetime.Singleton);
+      resolver.AddDependency<T>();
+      //resolver.AddDependency<IPipeline, T>(DependencyLifetime.Singleton);
 
 
       if (callGraphGeneratorType != null)
@@ -352,7 +354,7 @@ namespace OpenRasta.Tests.Unit.Pipeline
       foreach (var type in contributorTypes)
         resolver.AddDependency(typeof(IPipelineContributor), type, DependencyLifetime.Singleton);
 
-      var runner = resolver.Resolve<IPipeline>();
+      var runner = resolver.Resolve<T>();
       runner.Initialize();
       return runner;
     }

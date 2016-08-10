@@ -14,16 +14,19 @@ namespace OpenRasta.Pipeline
     Func<ICommunicationContext,Task> _invoker;
     public bool IsInitialized { get; }
     public IList<IPipelineContributor> Contributors { get; }
-    public IEnumerable<ContributorCall> CallGraph { get; }
+    public IEnumerable<ContributorCall> CallGraph { get; private set; }
 
     public DoubleTapPipelineAdaptor(IDependencyResolver resolver)
     {
-      _graphs = resolver.Resolve<IGenerateCallGraphs>() ?? new WeightedCallGraphGenerator();
+      _graphs = resolver.HasDependency<IGenerateCallGraphs>()
+          ? resolver.Resolve<IGenerateCallGraphs>()
+          : new WeightedCallGraphGenerator();
       Contributors = resolver.ResolveAll<IPipelineContributor>().ToList().AsReadOnly();
     }
     public void Initialize()
     {
-      _invoker = DoubleTapPipelineBuilder.Build(_graphs, Contributors).Invoke;
+      IEnumerable<IPipelineContributor> contributors = Contributors;
+      _invoker = DoubleTapPipelineBuilder.Build(CallGraph = _graphs.GenerateCallGraph(contributors)).Invoke;
     }
 
     public IPipelineExecutionOrder Notify(Func<ICommunicationContext, PipelineContinuation> notification)
