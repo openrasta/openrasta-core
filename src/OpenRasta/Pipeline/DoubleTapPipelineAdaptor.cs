@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using OpenRasta.DI;
 using OpenRasta.Pipeline.CallGraph;
 using OpenRasta.Web;
 
@@ -15,10 +16,10 @@ namespace OpenRasta.Pipeline
     public IList<IPipelineContributor> Contributors { get; }
     public IEnumerable<ContributorCall> CallGraph { get; }
 
-    public DoubleTapPipelineAdaptor(IEnumerable<IPipelineContributor> contributors, IGenerateCallGraphs graphs)
+    public DoubleTapPipelineAdaptor(IDependencyResolver resolver)
     {
-      _graphs = graphs;
-      Contributors = contributors.ToList().AsReadOnly();
+      _graphs = resolver.Resolve<IGenerateCallGraphs>() ?? new WeightedCallGraphGenerator();
+      Contributors = resolver.ResolveAll<IPipelineContributor>().ToList().AsReadOnly();
     }
     public void Initialize()
     {

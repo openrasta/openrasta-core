@@ -24,7 +24,7 @@ using OpenRasta.Web;
 namespace OpenRasta.Tests.Unit.Pipeline
 {
   [TestFixture(TypeArgs = new[] {typeof(PipelineRunner)})]
-  [TestFixture(TypeArgs = new[] {typeof(DoubleTapPipelineAdaptor)})]
+  //[TestFixture(TypeArgs = new[] {typeof(DoubleTapPipelineAdaptor)})]
   public class when_creating_the_pipeline<T> : pipelinerunner_context<T> where T : class, IPipeline
   {
     [TestCase(null)]
@@ -341,7 +341,8 @@ namespace OpenRasta.Tests.Unit.Pipeline
     {
       var resolver = new InternalDependencyResolver();
       resolver.AddDependency<IPipelineContributor, BootstrapperContributor>();
-      resolver.AddDependency<IPipeline, T>();
+      resolver.AddDependency<IPipeline, T>(DependencyLifetime.Singleton);
+
 
       if (callGraphGeneratorType != null)
       {
@@ -350,7 +351,8 @@ namespace OpenRasta.Tests.Unit.Pipeline
 
       foreach (var type in contributorTypes)
         resolver.AddDependency(typeof(IPipelineContributor), type, DependencyLifetime.Singleton);
-      var runner = resolver.Resolve<T>();
+
+      var runner = resolver.Resolve<IPipeline>();
       runner.Initialize();
       return runner;
     }
