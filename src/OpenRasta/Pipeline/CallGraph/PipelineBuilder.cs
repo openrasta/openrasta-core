@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using OpenRasta.Web;
 
 namespace OpenRasta.Pipeline.CallGraph
@@ -22,7 +23,7 @@ namespace OpenRasta.Pipeline.CallGraph
 
     public IPipelineExecutionOrder Notify(Func<ICommunicationContext, PipelineContinuation> method)
     {
-      var notification = new Notification(method, Contributors);
+      var notification = new Notification(_=>Task.FromResult(method(_)), Contributors);
       ContributorRegistrations.Add(notification);
       return notification;
     }

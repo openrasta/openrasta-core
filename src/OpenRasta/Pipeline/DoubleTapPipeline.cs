@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using OpenRasta.Collections;
-using OpenRasta.DI;
 using OpenRasta.Pipeline.CallGraph;
 using OpenRasta.Web;
 
@@ -41,13 +39,13 @@ namespace OpenRasta.Pipeline
 
     static IPipelineMiddleware CreateRenderComponent(ContributorCall contrib)
     {
-      return new RenderComponent(env => Task.FromResult(contrib.Action(env)));
+      return new RenderComponent(contrib.Action);
 
     }
 
     static IPipelineMiddleware CreatePrerenderComponent(ContributorCall contrib)
     {
-      return new ExecutionPipelineComponent(env => Task.FromResult(contrib.Action(env)));
+      return new ExecutionPipelineComponent(contrib.Action);
     }
   }
 }

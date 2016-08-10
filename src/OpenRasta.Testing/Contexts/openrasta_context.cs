@@ -4,6 +4,7 @@ using System.Collections.Specialized;
 using System.Globalization;
 using System.IO;
 using System.Text;
+using System.Threading.Tasks;
 using OpenRasta.Codecs;
 using OpenRasta.Collections;
 using OpenRasta.DI;
@@ -19,7 +20,7 @@ namespace OpenRasta.Testing.Contexts
 {
     public abstract class openrasta_context : context
     {
-        Dictionary<Type, Func<ICommunicationContext, PipelineContinuation>> _actions;
+        Dictionary<Type, Func<ICommunicationContext, Task<PipelineContinuation>>> _actions;
         InMemoryHost Host;
 
         public openrasta_context()
@@ -91,7 +92,7 @@ namespace OpenRasta.Testing.Contexts
         public PipelineContinuation when_sending_notification<TTrigger>()
         {
             IsContributorExecuted = _actions.ContainsKey(typeof(TTrigger));
-            Result = _actions[typeof(TTrigger)](Context);
+            Result = _actions[typeof(TTrigger)](Context).Result;
             return Result;
         }
 
@@ -229,7 +230,7 @@ namespace OpenRasta.Testing.Contexts
             base.SetUp();
             Host = new InMemoryHost(null);
             Pipeline = null;
-            _actions = new Dictionary<Type, Func<ICommunicationContext, PipelineContinuation>>();
+            _actions = new Dictionary<Type, Func<ICommunicationContext, Task<PipelineContinuation>>>();
             var manager = Host.HostManager;
             Resolver.AddDependencyInstance(typeof(IErrorCollector), Errors = new TestErrorCollector());
             Resolver.AddDependency<IPathManager, PathManager>();
@@ -246,14 +247,14 @@ namespace OpenRasta.Testing.Contexts
 
         public class SinglePipeline<T> : IPipeline, IPipelineExecutionOrder, IPipelineExecutionOrderAnd where T : class, IPipelineContributor
         {
-            internal Dictionary<Type, Func<ICommunicationContext, PipelineContinuation>> _actions;
+            internal Dictionary<Type, Func<ICommunicationContext, Task<PipelineContinuation>>> _actions;
             internal List<IPipelineContributor> _list;
             internal IDependencyResolver _resolver;
-            Func<ICommunicationContext, PipelineContinuation> _lastNotification;
+            Func<ICommunicationContext, Task<PipelineContinuation>> _lastNotification;
 
             public SinglePipeline(Func<T> creator,
                                   IDependencyResolver resolver,
-                                  Dictionary<Type, Func<ICommunicationContext, PipelineContinuation>> actions)
+                                  Dictionary<Type, Func<ICommunicationContext, Task<PipelineContinuation>>> actions)
             {
                 ContextData = new PipelineData();
                 _resolver = resolver;
@@ -294,7 +295,7 @@ namespace OpenRasta.Testing.Contexts
 
             public IPipelineExecutionOrder Notify(Func<ICommunicationContext, PipelineContinuation> notification)
             {
-                _lastNotification = notification;
+                _lastNotification = env=>Task.FromResult(notification(env));
                 return this;
             }
 

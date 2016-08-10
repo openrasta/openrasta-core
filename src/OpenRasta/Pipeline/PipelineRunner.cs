@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using OpenRasta.DI;
 using OpenRasta.Diagnostics;
 using OpenRasta.Pipeline.CallGraph;
@@ -23,7 +24,7 @@ using OpenRasta.Web;
 
 namespace OpenRasta.Pipeline
 {
-  public class PipelineRunner : IPipeline
+  public class PipelineRunner : IPipeline, IPipelineAsync
   {
     readonly IList<IPipelineContributor> _contributors = new List<IPipelineContributor>();
     readonly IDependencyResolver _resolver;
@@ -82,23 +83,27 @@ namespace OpenRasta.Pipeline
 
     public void Run(ICommunicationContext context)
     {
-      if (context == null) throw new ArgumentNullException("context");
+      RunAsync(context).Wait();
+    }
+
+    public async Task RunAsync(ICommunicationContext context)
+    {
+      if (context == null) throw new ArgumentNullException(nameof(context));
+
       CheckPipelineIsInitialized();
 
       if (context.PipelineData.PipelineStage == null)
         context.PipelineData.PipelineStage = new PipelineStage(this);
-      RunCallGraph(context, context.PipelineData.PipelineStage);
+      await RunCallGraph(context, context.PipelineData.PipelineStage);
     }
 
-    void RunCallGraph(ICommunicationContext context, PipelineStage stage)
+    async Task RunCallGraph(ICommunicationContext context, PipelineStage stage)
     {
-      lock (stage)
-      {
         foreach (var contrib in stage)
         {
           if (!CanBeExecuted(contrib))
             continue;
-          stage.CurrentState = ExecuteContributor(context, contrib);
+          stage.CurrentState = await ExecuteContributor(context, contrib);
           switch (stage.CurrentState)
           {
             case PipelineContinuation.Abort:
@@ -112,10 +117,9 @@ namespace OpenRasta.Pipeline
               return;
           }
         }
-      }
     }
 
-    void RenderNow(ICommunicationContext context, PipelineStage stage)
+    async Task RenderNow(ICommunicationContext context, PipelineStage stage)
     {
       PipelineLog.WriteDebug("Pipeline is in RenderNow mode.");
       if (!stage.ResumeFrom<KnownStages.IOperationResultInvocation>())
@@ -133,7 +137,8 @@ namespace OpenRasta.Pipeline
           var nestedPipeline = new PipelineStage(this, stage);
           if (!nestedPipeline.ResumeFrom<KnownStages.IOperationResultInvocation>())
             throw new InvalidOperationException("Could not find an IOperationResultInvocation in the new pipeline.");
-          RunCallGraph(context, nestedPipeline);
+
+          await RunCallGraph(context, nestedPipeline);
         }
       }
     }
@@ -182,7 +187,7 @@ namespace OpenRasta.Pipeline
         context.ServerErrors.Aggregate(string.Empty, (str, error) => str + "\r\n" + error.ToString()));
     }
 
-    protected virtual PipelineContinuation ExecuteContributor(ICommunicationContext context, ContributorCall call)
+    protected virtual async Task<PipelineContinuation> ExecuteContributor(ICommunicationContext context, ContributorCall call)
     {
       using (
         PipelineLog.Operation(this,
@@ -191,7 +196,7 @@ namespace OpenRasta.Pipeline
         PipelineContinuation nextStep;
         try
         {
-          nextStep = call.Action(context);
+          nextStep = await call.Action(context);
         }
         catch (Exception e)
         {
@@ -230,6 +235,11 @@ namespace OpenRasta.Pipeline
       foreach (var contributor in callGraph)
         PipelineLog.WriteInfo("{0} {1}", pos++, contributor.ContributorTypeName);
     }
+  }
+
+  public interface IPipelineAsync
+  {
+    Task RunAsync(ICommunicationContext env);
   }
 }
 

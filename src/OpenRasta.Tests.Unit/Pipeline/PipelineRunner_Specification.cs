@@ -10,6 +10,7 @@
 
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using NUnit.Framework;
 using OpenRasta;
 using OpenRasta.DI;
@@ -261,7 +262,7 @@ namespace PipelineRunner_Specification
             {
                 pipelineRunner.Notify(ctx =>
                 {
-                    throw new NotImplementedException();
+                  throw new NotImplementedException();
                 }).After<KnownStages.IBegin>();
             }
         }
