@@ -83,7 +83,7 @@ namespace OpenRasta.Pipeline
 
     public void Run(ICommunicationContext context)
     {
-      RunAsync(context).Wait();
+      RunAsync(context).GetAwaiter().GetResult();
     }
 
     public async Task RunAsync(ICommunicationContext context)
