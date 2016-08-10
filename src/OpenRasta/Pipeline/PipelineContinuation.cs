@@ -19,10 +19,12 @@ namespace OpenRasta.Pipeline
         /// </summary>
         /// <remarks>Aborting the pipeline will result in the error list 
         /// being sent back to the client</remarks>
+        [Obsolete("If there is a good reason to abort, throw an exception instead")]
         Abort,
         /// <summary>
         /// Processing of the pipeline is complete.
         /// </summary>
+        [Obsolete("Finished is now a noop")]
         Finished,
         /// <summary>
         /// Continue processing the pipeline.
