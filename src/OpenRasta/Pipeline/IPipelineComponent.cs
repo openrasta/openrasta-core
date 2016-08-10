@@ -5,8 +5,12 @@ namespace OpenRasta.Pipeline
 {
   public interface IPipelineComponent
   {
-    IPipelineComponent Build(IPipelineComponent next);
     Task Invoke(ICommunicationContext env);
+  }
+
+  public interface IPipelineMiddleware : IPipelineComponent
+  {
+    IPipelineComponent Build(IPipelineComponent next);
   }
 
 }

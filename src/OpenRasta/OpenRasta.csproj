@@ -269,7 +269,9 @@
     <Compile Include="OperationModel\OperationRequestCodecExtensions.cs" />
     <Compile Include="OperationModel\OutputMember.cs" />
     <Compile Include="Pipeline\AbstractPipelineComponent.cs" />
-    <Compile Include="Pipeline\BeforeRenderComponent.cs" />
+    <Compile Include="Pipeline\CatastrophicFailureComponent.cs" />
+    <Compile Include="Pipeline\CleanupPipelineComponent.cs" />
+    <Compile Include="Pipeline\ExecutionPipelineComponent.cs" />
     <Compile Include="Pipeline\CallGraph\CallGraphGeneratorFactory.cs" />
     <Compile Include="Pipeline\CallGraph\ContributorNotification.cs" />
     <Compile Include="Pipeline\CallGraph\PipelineBuilder.cs" />
@@ -299,6 +301,8 @@
     <Compile Include="Pipeline\Contributors\ResponseEntityWriterContributor.cs" />
     <Compile Include="Pipeline\Contributors\UriDecoratorsContributor.cs" />
     <Compile Include="Pipeline\Diagnostics\PipelineLogSource.cs" />
+    <Compile Include="Pipeline\DoubleTapPipeline.cs" />
+    <Compile Include="Pipeline\FullPipelineComponent.cs" />
     <Compile Include="Pipeline\IPipelineComponent.cs" />
     <Compile Include="Pipeline\IContextStore.cs" />
     <Compile Include="Pipeline\IContextStoreDependencyCleaner.cs" />
@@ -312,8 +316,10 @@
     <Compile Include="Pipeline\PipelineContinuation.cs" />
     <Compile Include="Pipeline\PipelineData.cs" />
     <Compile Include="Pipeline\PipelineExecutionOrderExtensions.cs" />
+    <Compile Include="Pipeline\PipelineExtensions.cs" />
     <Compile Include="Pipeline\PipelineRunner.cs" />
     <Compile Include="Pipeline\PipelineStage.cs" />
+    <Compile Include="Pipeline\RenderComponent.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RecursionException.cs" />
     <Compile Include="Reflection\ExpressionComparer.cs" />
@@ -539,11 +545,6 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\Files.resx" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="openrasta-core.nuspec">
-      <SubType>Designer</SubType>
-    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
