@@ -3,7 +3,7 @@ using OpenRasta.Web;
 
 namespace OpenRasta.Pipeline
 {
-  public class FullPipelineComponent
+  public class FullPipelineComponent : IPipelineComponent
   {
     readonly IPipelineComponent _execution;
     readonly IPipelineComponent _rendering;

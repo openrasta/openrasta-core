@@ -236,11 +236,6 @@ namespace OpenRasta.Pipeline
         PipelineLog.WriteInfo("{0} {1}", pos++, contributor.ContributorTypeName);
     }
   }
-
-  public interface IPipelineAsync
-  {
-    Task RunAsync(ICommunicationContext env);
-  }
 }
 
 #region Full license

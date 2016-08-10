@@ -1,19 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
+using System.Runtime.Remoting.Contexts;
 using OpenRasta.Pipeline.CallGraph;
-using OpenRasta.Web;
+using OpenRasta.Pipeline.Contributors;
 
 namespace OpenRasta.Pipeline
 {
-  public class DoubleTapPipeline
+  public static class DoubleTapPipelineBuilder
   {
-    FullPipelineComponent _pipeline;
-
-    void Build(Func<IGenerateCallGraphs> graphs, IEnumerable<IPipelineContributor> contributors)
+    public static IPipelineComponent Build(IGenerateCallGraphs graphs, IEnumerable<IPipelineContributor> contributors)
     {
-      var all = graphs().GenerateCallGraph(contributors).Reverse().ToList();
+      var all = graphs.GenerateCallGraph(contributors).Reverse().ToList();
 
       var renderPipeline = all
         .TakeWhile(_ => _.Target is KnownStages.IOperationResultInvocation == false)
@@ -24,17 +21,13 @@ namespace OpenRasta.Pipeline
         .Select(CreatePrerenderComponent)
         .BuildPipeline();
 
-      _pipeline = new FullPipelineComponent(
+      return new FullPipelineComponent(
         executePipeline,
         renderPipeline,
         new CatastrophicFailureComponent(),
         new CleanupPipelineComponent());
     }
 
-    Task Run(ICommunicationContext env)
-    {
-      return _pipeline.Invoke(env);
-    }
 
 
     static IPipelineMiddleware CreateRenderComponent(ContributorCall contrib)

@@ -271,6 +271,7 @@
     <Compile Include="Pipeline\AbstractPipelineComponent.cs" />
     <Compile Include="Pipeline\CatastrophicFailureComponent.cs" />
     <Compile Include="Pipeline\CleanupPipelineComponent.cs" />
+    <Compile Include="Pipeline\DoubleTapPipelineAdaptor.cs" />
     <Compile Include="Pipeline\ExecutionPipelineComponent.cs" />
     <Compile Include="Pipeline\CallGraph\CallGraphGeneratorFactory.cs" />
     <Compile Include="Pipeline\CallGraph\ContributorNotification.cs" />
@@ -301,8 +302,9 @@
     <Compile Include="Pipeline\Contributors\ResponseEntityWriterContributor.cs" />
     <Compile Include="Pipeline\Contributors\UriDecoratorsContributor.cs" />
     <Compile Include="Pipeline\Diagnostics\PipelineLogSource.cs" />
-    <Compile Include="Pipeline\DoubleTapPipeline.cs" />
+    <Compile Include="Pipeline\DoubleTapPipelineBuilder.cs" />
     <Compile Include="Pipeline\FullPipelineComponent.cs" />
+    <Compile Include="Pipeline\IPipelineAsync.cs" />
     <Compile Include="Pipeline\IPipelineComponent.cs" />
     <Compile Include="Pipeline\IContextStore.cs" />
     <Compile Include="Pipeline\IContextStoreDependencyCleaner.cs" />
@@ -311,6 +313,7 @@
     <Compile Include="Pipeline\IPipelineContributor.cs" />
     <Compile Include="Pipeline\IPipelineExecutionOrder.cs" />
     <Compile Include="Pipeline\IPipelineExecutionOrderAnd.cs" />
+    <Compile Include="Pipeline\IPipelineMiddleware.cs" />
     <Compile Include="Pipeline\KnownStages.cs" />
     <Compile Include="Pipeline\LegacyPipelineExtensions.cs" />
     <Compile Include="Pipeline\PipelineContinuation.cs" />

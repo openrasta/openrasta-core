@@ -3,8 +3,8 @@ using OpenRasta.Web;
 
 namespace OpenRasta.Pipeline
 {
-  public interface IPipelineComponent
+  public interface IPipelineAsync
   {
-    Task Invoke(ICommunicationContext env);
+    Task RunAsync(ICommunicationContext env);
   }
 }
