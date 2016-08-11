@@ -24,7 +24,7 @@ using OpenRasta.Web;
 namespace OpenRasta.Tests.Unit.Pipeline
 {
   [TestFixture(TypeArgs = new[] {typeof(PipelineRunner)})]
-  //[TestFixture(TypeArgs = new[] {typeof(DoubleTapPipelineAdaptor)})]
+  [TestFixture(TypeArgs = new[] {typeof(DoubleTapPipelineAdaptor)})]
   public class when_creating_the_pipeline<T> : pipelinerunner_context<T> where T : class, IPipeline
   {
     [TestCase(null)]
@@ -286,6 +286,7 @@ namespace OpenRasta.Tests.Unit.Pipeline
     [TestCase(typeof(TopologicalSortCallGraphGenerator))]
     public void contributors_get_executed(Type callGraphGeneratorType)
     {
+      System.Diagnostics.Debug.WriteLine("yo");
       var pipeline = CreatePipeline(callGraphGeneratorType, new[]
       {
         typeof(WasCalledContributor)

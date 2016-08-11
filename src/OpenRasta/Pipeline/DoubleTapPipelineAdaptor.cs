@@ -41,6 +41,8 @@ namespace OpenRasta.Pipeline
 
     public Task RunAsync(ICommunicationContext env)
     {
+      if (env.PipelineData.PipelineStage == null)
+        env.PipelineData.PipelineStage = new PipelineStage(this);
       return _invoker(env);
     }
   }
