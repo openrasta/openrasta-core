@@ -12,11 +12,11 @@ namespace OpenRasta.Pipeline
 
     protected AbstractPipelineComponent(Func<ICommunicationContext, Task<PipelineContinuation>> singleTapContributor)
     {
-      Contributor = singleTapContributor;
-
+        if (singleTapContributor == null) throw new ArgumentNullException(nameof(singleTapContributor));
+        Contributor = singleTapContributor;
     }
 
-    public virtual IPipelineComponent Build(IPipelineComponent next)
+      public virtual IPipelineComponent Build(IPipelineComponent next)
     {
       Next = next;
       return this;

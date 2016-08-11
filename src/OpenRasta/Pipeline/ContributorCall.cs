@@ -21,6 +21,8 @@ namespace OpenRasta.Pipeline
 
         public ContributorCall(IPipelineContributor target, Func<ICommunicationContext, Task<PipelineContinuation>> action, string description)
         {
+            if (target == null) throw new ArgumentNullException(nameof(target));
+            if (action == null) throw new ArgumentNullException(nameof(action));
             Action = action;
             ContributorTypeName = description;
             Target = target;

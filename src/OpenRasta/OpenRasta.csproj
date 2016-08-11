@@ -319,7 +319,7 @@
     <Compile Include="Pipeline\PipelineContinuation.cs" />
     <Compile Include="Pipeline\PipelineData.cs" />
     <Compile Include="Pipeline\PipelineExecutionOrderExtensions.cs" />
-    <Compile Include="Pipeline\PipelineExtensions.cs" />
+    <Compile Include="Pipeline\Components.cs" />
     <Compile Include="Pipeline\PipelineRunner.cs" />
     <Compile Include="Pipeline\PipelineStage.cs" />
     <Compile Include="Pipeline\RenderComponent.cs" />

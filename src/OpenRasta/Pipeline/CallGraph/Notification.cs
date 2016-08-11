@@ -10,10 +10,13 @@ namespace OpenRasta.Pipeline.CallGraph
   {
     readonly IList<IPipelineContributor> _contributors;
 
-    public Notification(Func<ICommunicationContext, Task<PipelineContinuation>> action,
+    public Notification(
+        Func<ICommunicationContext, Task<PipelineContinuation>> action,
       IEnumerable<IPipelineContributor> contributors)
     {
-      _contributors = contributors.ToList();
+        if (action == null) throw new ArgumentNullException(nameof(action));
+        if (contributors == null) throw new ArgumentNullException(nameof(contributors));
+        _contributors = contributors.ToList();
       Target = action;
     }
 

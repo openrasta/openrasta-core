@@ -2,14 +2,20 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 using OpenRasta.Collections;
 using OpenRasta.Collections.Specialized;
+using OpenRasta.Web;
 
 namespace OpenRasta.Pipeline.CallGraph
 {
   public sealed class TopologicalSortCallGraphGenerator : IGenerateCallGraphs
   {
-    public IEnumerable<ContributorCall> GenerateCallGraph(IEnumerable<IPipelineContributor> contributors)
+      static TopologicalSortCallGraphGenerator()
+      {
+      }
+
+      public IEnumerable<ContributorCall> GenerateCallGraph(IEnumerable<IPipelineContributor> contributors)
     {
       contributors = contributors.ToList();
 
@@ -23,9 +29,13 @@ namespace OpenRasta.Pipeline.CallGraph
 
         contributor.Initialize(builder);
 
-        nodes.AddRange(builder.ContributorRegistrations
-          .DefaultIfEmpty(new Notification(null, builder.Contributors))
-          .Select(reg => new TopologicalNode<ContributorNotification>(new ContributorNotification(contributor, reg))));
+        nodes.AddRange(
+          builder.ContributorRegistrations
+              .DefaultIfEmpty(new Notification(
+                  Components.IdentitySingleTap,
+                  builder.Contributors))
+              .Select(reg => new TopologicalNode<ContributorNotification>(
+                  new ContributorNotification(contributor, reg))));
       }
 
       foreach (var notificationNode in nodes)
@@ -46,7 +56,8 @@ namespace OpenRasta.Pipeline.CallGraph
         }
       }
 
-      var rootItem = new ContributorNotification(bootstrapper, new Notification(null, contributors));
+      var rootItem = new ContributorNotification(bootstrapper,
+          new Notification(Components.IdentitySingleTap, contributors));
 
       return new TopologicalTree<ContributorNotification>(rootItem, nodes).Nodes
         .Select(
