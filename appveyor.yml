@@ -1,6 +1,6 @@
-﻿init:
+﻿install:
   - ps: |
-        $version = [version]$(cat "$env:APPVEYOR_BUILD_FOLDER\VERSION")
+        $version = [version]$(cat VERSION)
         $build = $env:APPVEYOR_BUILD_NUMBER
 
 
