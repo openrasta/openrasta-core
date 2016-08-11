@@ -105,54 +105,49 @@ namespace OpenRasta.Hosting.AspNet
         static void VerifyIisDetected(HttpContext context)
         {
             TryInitializeHosting();
-            if (Iis == null)
+          if (Iis != null) return;
+          lock (_syncRoot)
+          {
+            if (Iis != null) return;
+            if (context == null)
+              throw new InvalidOperationException();
+            Iis iisVersion = null;
+            var serverSoftwareHeader = context.Request.ServerVariables[SERVER_SOFTWARE_KEY];
+
+            var slashPos = serverSoftwareHeader?.IndexOf('/') ?? -1;
+            if (slashPos != -1)
             {
-                lock (_syncRoot)
-                {
-                    if (Iis == null)
-                    {
-                        if (context == null)
-                            throw new InvalidOperationException();
-                        Iis iisVersion = null;
-                        string serverSoftwareHeader = context.Request.ServerVariables[SERVER_SOFTWARE_KEY];
+              var productName = serverSoftwareHeader.Substring(0, slashPos);
+              Version parsedVersion;
+              try
+              {
+                parsedVersion = new Version(serverSoftwareHeader.Substring(slashPos + 1, serverSoftwareHeader.Length - slashPos - 1).Trim());
+              }
+              catch
+              {
+                parsedVersion = null;
+              }
 
-                        int slashPos = serverSoftwareHeader != null ? serverSoftwareHeader.IndexOf('/') : -1;
-                        if (slashPos != -1)
-                        {
-                            string productName = serverSoftwareHeader.Substring(0, slashPos);
-                            Version parsedVersion;
-                            try
-                            {
-                                parsedVersion = new Version(serverSoftwareHeader.Substring(slashPos + 1, serverSoftwareHeader.Length - slashPos - 1).Trim());
-                            }
-                            catch
-                            {
-                                parsedVersion = null;
-                            }
-
-                            if (productName.EqualsOrdinalIgnoreCase("microsoft-iis") &&
-                                parsedVersion != null &&
-                                parsedVersion.Major >= 7)
-                            {
-                                iisVersion = new Iis7();
-                            }
-                        }
-
-                        Iis = iisVersion ?? new Iis6();
-                        Log.IisDetected(Iis, serverSoftwareHeader);
-                    }
-                }
+              if (productName.EqualsOrdinalIgnoreCase("microsoft-iis") &&
+                  parsedVersion != null &&
+                  parsedVersion.Major >= 7)
+              {
+                iisVersion = new Iis7();
+              }
             }
+
+            Iis = iisVersion ?? new Iis6();
+
+            Log.IisDetected(Iis, serverSoftwareHeader);
+          }
         }
 
         static void HandleHttpApplicationEndRequestEvent(object sender, EventArgs e)
         {
-            if (HttpContext.Current.Items.Contains(ORIGINAL_PATH_KEY))
-            {
-                var commContext = (ICommunicationContext)((HttpApplication)sender).Context.Items[COMM_CONTEXT_KEY];
+          if (!HttpContext.Current.Items.Contains(ORIGINAL_PATH_KEY)) return;
+          var commContext = (ICommunicationContext)((HttpApplication)sender).Context.Items[COMM_CONTEXT_KEY];
 
-                Host.RaiseIncomingRequestProcessed(commContext);
-            }
+          Host.RaiseIncomingRequestProcessed(commContext);
         }
 
         static void HandleHttpApplicationPostResolveRequestCacheEvent(object sender, EventArgs e)

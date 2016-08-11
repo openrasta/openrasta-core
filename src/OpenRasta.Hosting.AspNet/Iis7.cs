@@ -17,17 +17,9 @@ namespace OpenRasta.Hosting.AspNet
             _nativeHandlers = new Lazy<IEnumerable<HttpHandlerRegistration>>(() => GetNativeHandlers().ToList(), LazyThreadSafetyMode.PublicationOnly); 
         }
 
-        public override IEnumerable<HttpHandlerRegistration> Handlers
-        {
-            get
-            {
-                if (HttpRuntime.UsingIntegratedPipeline) 
-                    return _nativeHandlers.Value;
-                return base.Handlers;
-            }
-        }
+        public override IEnumerable<HttpHandlerRegistration> Handlers => HttpRuntime.UsingIntegratedPipeline ? _nativeHandlers.Value : base.Handlers;
 
-        IEnumerable<HttpHandlerRegistration> GetNativeHandlers()
+      IEnumerable<HttpHandlerRegistration> GetNativeHandlers()
         {
             IEnumerable handlers;
             try

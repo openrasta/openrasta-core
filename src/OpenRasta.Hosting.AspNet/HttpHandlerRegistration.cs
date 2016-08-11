@@ -23,13 +23,11 @@ namespace OpenRasta.Hosting.AspNet
 
         public bool Matches(string httpMethod, Uri path)
         {
-            if (!Methods.Contains("*") && !Methods.Any(x => string.CompareOrdinal(x, httpMethod) == 0))
+            if (!Methods.Contains("*") && Methods.All(x => string.CompareOrdinal(x, httpMethod) != 0))
                 return false;
 
-            bool simpleMatch = _pathRegex.IsMatch(path.LocalPath);
-            if (simpleMatch) return true;
-
-            return path.Segments.Any(x => _pathRegex.IsMatch(x));
+            var simpleMatch = _pathRegex.IsMatch(path.LocalPath);
+            return simpleMatch || path.Segments.Any(x => _pathRegex.IsMatch(x));
         }
     }
 }
