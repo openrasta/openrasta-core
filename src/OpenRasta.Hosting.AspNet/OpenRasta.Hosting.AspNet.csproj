@@ -59,6 +59,7 @@
     <Compile Include="AspNetHttpListener\HttpListenerController.cs" />
     <Compile Include="AspNetHttpListener\HttpListenerWorkerRequest.cs" />
     <Compile Include="AspNetLogSource.cs" />
+    <Compile Include="AspNetLogSourceExtensions.cs" />
     <Compile Include="AspNetRequest.cs" />
     <Compile Include="AspNetResponse.cs" />
     <Compile Include="HttpHandlerRegistration.cs" />
@@ -66,7 +67,9 @@
     <Compile Include="Iis6.cs" />
     <Compile Include="Iis7.cs" />
     <Compile Include="OpenRastaHandler.cs" />
+    <Compile Include="OpenRastaIntegratedHandler.cs" />
     <Compile Include="OpenRastaModule.cs" />
+    <Compile Include="OpenRastaRewriterHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

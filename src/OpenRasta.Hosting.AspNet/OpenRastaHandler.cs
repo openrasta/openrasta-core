@@ -10,7 +10,6 @@
 
 using System.Web;
 using OpenRasta.DI;
-using OpenRasta.Diagnostics;
 
 namespace OpenRasta.Hosting.AspNet
 {
@@ -40,51 +39,6 @@ namespace OpenRasta.Hosting.AspNet
 
         public void ReleaseHandler(IHttpHandler handler)
         {
-        }
-    }
-
-    public class OpenRastaRewriterHandler : IHttpHandler
-    {
-        public OpenRastaRewriterHandler()
-        {
-            Log = NullLogger.Instance;
-        }
-        public bool IsReusable
-        {
-            get { return true; }
-        }
-
-        public ILogger Log { get; set; }
-
-        public void ProcessRequest(HttpContext context)
-        {
-            using (Log.Operation(this, "Rewriting to original path"))
-            {
-                HttpContext.Current.RewritePath((string)HttpContext.Current.Items[OpenRastaModule.ORIGINAL_PATH_KEY], false);
-                OpenRastaModule.HostManager.Resolver.Resolve<OpenRastaIntegratedHandler>().ProcessRequest(context);
-            }
-        }
-    }
-
-    public class OpenRastaIntegratedHandler : IHttpHandler
-    {
-        public OpenRastaIntegratedHandler()
-        {
-            Log = NullLogger.Instance;
-        }
-        public bool IsReusable
-        {
-            get { return true; }
-        }
-
-        public ILogger Log { get; set; }
-
-        public void ProcessRequest(HttpContext context)
-        {
-            using (Log.Operation(this, "Request for {0}".With(context.Request.Url)))
-            {
-                OpenRastaModule.Host.RaiseIncomingRequestReceived(OpenRastaModule.CommunicationContext);
-            }
         }
     }
 }
