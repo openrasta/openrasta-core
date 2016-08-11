@@ -2,17 +2,17 @@
   - ps: |
         $version = [version]$(cat VERSION)
         $build = $env:APPVEYOR_BUILD_NUMBER
-
+        $major = $version.Major
 
         $branch = $env:APPVEYOR_REPO_BRANCH
         if ($branch -eq 'master') {
           $version = "$version-ci-$build"
         }
         else {
-          $version = "$version-$branch-$build"
+          $version = "$version-branch-$branch-$build"
         }
-        Set-AppveyorBuildVariable -Name AssemblyMajor -Value $version.Major
-        Update-AppVeyorBuild -Version $version
+        Set-AppveyorBuildVariable -Name "AssemblyMajor" -Value "$major"
+        Update-AppVeyorBuild -Version "$version"
 
 
 configuration: Release
