@@ -1,15 +1,30 @@
-version: 2.5.{build}
+﻿install:
+  - ps: |
+        $version = [version]$(cat VERSION)
+        $build = $env:APPVEYOR_BUILD_NUMBER
+        $major = $version.Major
 
-configuration: Release
-
-platform: Any CPU
+        $branch = $env:APPVEYOR_REPO_BRANCH
+        if ($branch -eq 'master') {
+          $version = "$version-ci-$build"
+        }
+        else {
+          $version = "$version-branch-$branch-$build"
+        }
+        Set-AppveyorBuildVariable -Name "AssemblyMajor" -Value "$major"
+        Update-AppVeyorBuild -Version "$version"
 
 assembly_info:
   patch: true
   file: src\CommonInfo.cs
-  assembly_version: 2.0.0.0
+  assembly_version: $(AssemblyMajor).0.0.0
   assembly_file_version: '{version}'
   assembly_informational_version: '{version}'
+
+
+configuration: Release
+
+platform: Any CPU
 
 build:
   publish_nuget: true
