@@ -22,3 +22,5 @@ reports/*
 
 _*
 **/_*
+*.iml
+.idea
