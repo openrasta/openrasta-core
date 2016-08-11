@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>OpenRasta.Hosting.AspNet</RootNamespace>
     <AssemblyName>OpenRasta.Hosting.AspNet</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -35,6 +35,9 @@
       <HintPath>..\packages\openrasta-core.2.5.63\lib\net40\OpenRasta.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="OpenRasta, Version=2.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\openrasta-core.2.6.0-branch-async-1003\lib\net45\OpenRasta.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
@@ -58,7 +61,6 @@
     <Compile Include="AspNetLogSource.cs" />
     <Compile Include="AspNetRequest.cs" />
     <Compile Include="AspNetResponse.cs" />
-    <Compile Include="AutoConf.cs" />
     <Compile Include="HttpHandlerRegistration.cs" />
     <Compile Include="Iis.cs" />
     <Compile Include="Iis6.cs" />
@@ -68,7 +70,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
+    <Content Include="..\..\..\core\openrasta-core.sln">
+      <Link>openrasta-core.sln</Link>
+    </Content>
+    <Content Include="packages.config" />
     <Content Include="web.config.uninstall.xdt">
       <SubType>Designer</SubType>
     </Content>

@@ -38,6 +38,9 @@
       <HintPath>..\packages\openrasta-core.2.5.63\lib\net40\OpenRasta.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="OpenRasta, Version=2.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\openrasta-core.2.6.0-branch-async-1003\lib\net45\OpenRasta.dll</HintPath>
+    </Reference>
     <Reference Include="OpenRasta.Testing">
       <HintPath>..\..\lib\openrasta-testing\OpenRasta.Testing.dll</HintPath>
     </Reference>

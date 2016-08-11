@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 2015
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenRasta.Hosting.AspNet.Tests.Integration", "OpenRasta.Hosting.AspNet.Tests.Integration\OpenRasta.Hosting.AspNet.Tests.Integration.csproj", "{A1255B7C-690D-47A3-A2E7-61CF37ED2DFB}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenRasta.Hosting.AspNet", "OpenRasta.Hosting.AspNet\OpenRasta.Hosting.AspNet.csproj", "{288A707D-78B1-464F-87F2-63D6652C3BC8}"
@@ -8,6 +8,9 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{64C6136A-7C06-4F9B-B01C-3BBF51870756}"
 	ProjectSection(SolutionItems) = preProject
 		CommonInfo.cs = CommonInfo.cs
+		NuGet.config = NuGet.config
+		..\VERSION = ..\VERSION
+		..\appveyor.yml = ..\appveyor.yml
 	EndProjectSection
 EndProject
 Global
