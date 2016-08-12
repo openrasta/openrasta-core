@@ -1,26 +1,28 @@
-﻿using System.Web;
+﻿using System;
+using System.Threading.Tasks;
+using System.Web;
 using OpenRasta.Diagnostics;
 
 namespace OpenRasta.Hosting.AspNet
 {
-  public class OpenRastaIntegratedHandler : IHttpHandler
+  public class OpenRastaIntegratedHandler : HttpTaskAsyncHandler
   {
     public OpenRastaIntegratedHandler()
     {
       Log = NullLogger.Instance;
     }
-    public bool IsReusable
-    {
-      get { return true; }
-    }
 
+    public override bool IsReusable { get; } = true;
     public ILogger Log { get; set; }
 
-    public void ProcessRequest(HttpContext context)
+    public override Task ProcessRequestAsync(HttpContext context)
     {
       using (Log.Operation(this, "Request for {0}".With(context.Request.Url)))
       {
-        OpenRastaModule.Host.RaiseIncomingRequestReceived(OpenRastaModule.CommunicationContext);
+        var env = OpenRastaModule.CommunicationContext;
+        OpenRastaModule.Host.RaiseIncomingRequestReceived(env);
+        var task = env.PipelineData["openrasta.pipeline.completion"] as Task;
+        return task ?? Task.FromResult(0);
       }
     }
   }
