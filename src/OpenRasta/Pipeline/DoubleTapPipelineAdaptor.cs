@@ -21,12 +21,15 @@ namespace OpenRasta.Pipeline
       _graphs = resolver.HasDependency<IGenerateCallGraphs>()
           ? resolver.Resolve<IGenerateCallGraphs>()
           : new WeightedCallGraphGenerator();
-      Contributors = resolver.ResolveAll<IPipelineContributor>().ToList().AsReadOnly();
+      Contributors = resolver.ResolveAll<IPipelineContributor>()
+                             .ToList()
+                             .AsReadOnly();
     }
     public void Initialize()
     {
       IEnumerable<IPipelineContributor> contributors = Contributors;
-      _invoker = DoubleTapPipelineBuilder.Build(CallGraph = _graphs.GenerateCallGraph(contributors)).Invoke;
+      _invoker = (CallGraph = _graphs.GenerateCallGraph(contributors))
+        .ToDoubleTapMiddleware<KnownStages.IOperationResultInvocation>().Invoke;
     }
 
     public IPipelineExecutionOrder Notify(Func<ICommunicationContext, PipelineContinuation> notification)

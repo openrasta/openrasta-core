@@ -13,7 +13,7 @@ namespace OpenRasta.Pipeline.CallGraph
 
       var bootstrapper = contributors.OfType<KnownStages.IBegin>().Single();
       var tree = new DependencyTree<ContributorNotification>(
-        new ContributorNotification(bootstrapper, new Notification(Components.IdentitySingleTap, contributors)));
+        new ContributorNotification(bootstrapper, new Notification(Middleware.IdentitySingleTap, contributors)));
 
       foreach (var contrib in contributors.Where(x => x != bootstrapper))
       {
@@ -24,7 +24,7 @@ namespace OpenRasta.Pipeline.CallGraph
         contrib.Initialize(builder);
 
         var contributorRegistrations =
-          builder.ContributorRegistrations.DefaultIfEmpty(new Notification(Components.IdentitySingleTap, contributors)).ToList();
+          builder.ContributorRegistrations.DefaultIfEmpty(new Notification(Middleware.IdentitySingleTap, contributors)).ToList();
         foreach (var registration in contributorRegistrations)
         {
           tree.CreateNode(new ContributorNotification(contrib, registration));

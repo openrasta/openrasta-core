@@ -3,7 +3,7 @@ using OpenRasta.Web;
 
 namespace OpenRasta.Pipeline
 {
-  public class CleanupPipelineComponent : IPipelineComponent
+  public class CleanupMiddleware : IPipelineMiddleware
   {
     public Task Invoke(ICommunicationContext env)
     {

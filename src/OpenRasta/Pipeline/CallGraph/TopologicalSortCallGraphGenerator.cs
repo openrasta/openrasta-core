@@ -32,7 +32,7 @@ namespace OpenRasta.Pipeline.CallGraph
         nodes.AddRange(
           builder.ContributorRegistrations
               .DefaultIfEmpty(new Notification(
-                  Components.IdentitySingleTap,
+                  Middleware.IdentitySingleTap,
                   builder.Contributors))
               .Select(reg => new TopologicalNode<ContributorNotification>(
                   new ContributorNotification(contributor, reg))));
@@ -57,7 +57,7 @@ namespace OpenRasta.Pipeline.CallGraph
       }
 
       var rootItem = new ContributorNotification(bootstrapper,
-          new Notification(Components.IdentitySingleTap, contributors));
+          new Notification(Middleware.IdentitySingleTap, contributors));
 
       return new TopologicalTree<ContributorNotification>(rootItem, nodes).Nodes
         .Select(

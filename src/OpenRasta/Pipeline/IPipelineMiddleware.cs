@@ -1,7 +1,10 @@
-﻿namespace OpenRasta.Pipeline
+﻿using System.Threading.Tasks;
+using OpenRasta.Web;
+
+namespace OpenRasta.Pipeline
 {
-  public interface IPipelineMiddleware : IPipelineComponent
+  public interface IPipelineMiddleware
   {
-    IPipelineComponent Build(IPipelineComponent next);
+    Task Invoke(ICommunicationContext env);
   }
 }
