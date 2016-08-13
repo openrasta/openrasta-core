@@ -6,7 +6,7 @@ using OpenRasta.Web;
 
 namespace OpenRasta.Pipeline.CallGraph
 {
-  internal class PipelineBuilder : IPipeline
+  internal class PipelineBuilder : IPipeline, IPipelineBuilder
   {
     public bool IsInitialized { get; } = false;
     public IList<IPipelineContributor> Contributors { get; }
@@ -31,6 +31,25 @@ namespace OpenRasta.Pipeline.CallGraph
     public void Run(ICommunicationContext context)
     {
       throw new NotImplementedException("No one should be calling Run on this");
+    }
+
+    public IPipelineExecutionOrder Notify(Func<ICommunicationContext, Task<PipelineContinuation>> action)
+    {
+
+      var notification = new Notification(action, Contributors);
+      ContributorRegistrations.Add(notification);
+      return notification;
+    }
+
+    public IPipelineExecutionOrder Notify(Func<ICommunicationContext, Task> action)
+    {
+      var notification = new Notification(
+        async env =>
+        {
+          await action(env); return PipelineContinuation.Continue;
+        }, Contributors);
+      ContributorRegistrations.Add(notification);
+      return notification;
     }
   }
 }

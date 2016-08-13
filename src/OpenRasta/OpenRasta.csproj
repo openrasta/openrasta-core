@@ -272,6 +272,9 @@
     <Compile Include="Pipeline\CatastrophicFailureMiddleware.cs" />
     <Compile Include="Pipeline\CleanupMiddleware.cs" />
     <Compile Include="Pipeline\DoubleTapPipelineAdaptor.cs" />
+    <Compile Include="Pipeline\IPipelineBuilder.cs" />
+    <Compile Include="Pipeline\IPipelineContributorAsync.cs" />
+    <Compile Include="Pipeline\PipelineAbortedException.cs" />
     <Compile Include="Pipeline\PipelineExtensions.cs" />
     <Compile Include="Pipeline\RequestMiddleware.cs" />
     <Compile Include="Pipeline\CallGraph\CallGraphGeneratorFactory.cs" />

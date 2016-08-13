@@ -29,10 +29,6 @@ namespace OpenRasta.Pipeline
       await Next.Invoke(env);
     }
   }
-
-  public class PipelineAbortedException : Exception
-  {
-  }
 }
 
 
