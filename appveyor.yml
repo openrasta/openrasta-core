@@ -17,9 +17,9 @@
 
   - gem install chandler
   - ps: |
-        "machine api.github.com" >> %USERPROFILE%\.netrc
-        "  login %github_username%" >> %USERPROFILE%\.netrc
-        "  password %github_password%" >> %USERPROFILE%\.netrc
+        "machine api.github.com" >> "$env:USERPROFILE\.netrc"
+        "  login %github_username%" >> "$env:USERPROFILE\.netrc"
+        "  password %github_password%" >> "$env:USERPROFILE\.netrc"
         "chandler push"
 
 assembly_info:
