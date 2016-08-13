@@ -13,7 +13,13 @@
         }
         Set-AppveyorBuildVariable -Name "AssemblyMajor" -Value "$major"
         Update-AppVeyorBuild -Version "$version"
-
+        
+  - cmd: gem install chandler
+  - ps: |
+        "machine api.github.com" >> %USERPROFILE%\.netrc
+        "  login %github_username%" >> %USERPROFILE%\.netrc
+        "  password %github_password%" >> %USERPROFILE%\.netrc
+        "chandler push"
 
 assembly_info:
   patch: true
@@ -41,7 +47,11 @@ build:
   publish_nuget_symbols: true
   include_nuget_references: true
 
-
+environment:
+  github_username: serialseb
+  github_password:
+    secure:
+      1lXaOJ0GvCAOd0O9DDvVqw2eb7TvP2jve12u3hD2g4J7RVW2c2jC5XuRFyEuduUA
 artifacts:
 - path: src\openrasta\bin\$(configuration)\*.dll
   name: dlls
