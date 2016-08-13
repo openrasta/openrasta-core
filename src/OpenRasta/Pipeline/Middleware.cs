@@ -8,8 +8,11 @@ namespace OpenRasta.Pipeline
 {
   public static class Middleware
   {
-      public static readonly IPipelineMiddleware Identity = new NothingPipelineMiddleware();
-      public static Task<PipelineContinuation> IdentitySingleTap(ICommunicationContext context) => Task.FromResult(PipelineContinuation.Continue);
+    public static IPipelineMiddleware Identity { get; } = new NothingPipelineMiddleware();
+
+    public static Task<PipelineContinuation> IdentitySingleTap(ICommunicationContext context)
+      => Task.FromResult(PipelineContinuation.Continue);
+
     class NothingPipelineMiddleware : IPipelineMiddleware
     {
       Task IPipelineMiddleware.Invoke(ICommunicationContext context)

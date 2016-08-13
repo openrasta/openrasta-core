@@ -1,4 +1,5 @@
 ﻿install:
+  - set PATH=C:\Ruby22\bin;%PATH%
   - ps: |
         $version = [version]$(cat VERSION)
         $build = $env:APPVEYOR_BUILD_NUMBER
@@ -13,8 +14,8 @@
         }
         Set-AppveyorBuildVariable -Name "AssemblyMajor" -Value "$major"
         Update-AppVeyorBuild -Version "$version"
-        
-  - cmd: gem install chandler
+
+  - gem install chandler
   - ps: |
         "machine api.github.com" >> %USERPROFILE%\.netrc
         "  login %github_username%" >> %USERPROFILE%\.netrc
