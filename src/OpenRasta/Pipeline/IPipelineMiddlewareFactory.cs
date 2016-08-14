@@ -1,6 +1,6 @@
 ﻿namespace OpenRasta.Pipeline
 {
-  public interface IPipelineMiddlewareFactory : IPipelineMiddleware
+  public interface IPipelineMiddlewareFactory
   {
     IPipelineMiddleware Build(IPipelineMiddleware next);
   }
