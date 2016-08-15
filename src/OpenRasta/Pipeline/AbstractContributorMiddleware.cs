@@ -6,25 +6,21 @@ namespace OpenRasta.Pipeline
 {
   public abstract class AbstractContributorMiddleware : IPipelineMiddlewareFactory, IPipelineMiddleware
   {
-    protected IPipelineMiddleware Next { get; set; }
-    protected Func<ICommunicationContext, Task<PipelineContinuation>> Contributor { get; set; }
+    protected IPipelineMiddleware Next { get; private set; }
+    protected Func<ICommunicationContext, Task<PipelineContinuation>> Contributor { get; }
     public abstract Task Invoke(ICommunicationContext env);
 
     protected AbstractContributorMiddleware(Func<ICommunicationContext, Task<PipelineContinuation>> singleTapContributor)
     {
-      if (singleTapContributor == null) throw new ArgumentNullException(nameof(singleTapContributor));
+      if (singleTapContributor == null)
+        throw new ArgumentNullException(nameof(singleTapContributor));
       Contributor = singleTapContributor;
     }
 
-    public virtual IPipelineMiddleware Build(IPipelineMiddleware next)
+    public virtual IPipelineMiddleware Compose(IPipelineMiddleware next)
     {
       Next = next;
       return this;
-    }
-
-    protected async Task<PipelineContinuation> InvokeSingleTap(ICommunicationContext env)
-    {
-      return await Contributor(env);
     }
   }
 }

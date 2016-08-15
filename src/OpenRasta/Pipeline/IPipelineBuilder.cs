@@ -8,6 +8,5 @@ namespace OpenRasta.Pipeline
   {
     IPipelineExecutionOrder Notify(Func<ICommunicationContext, Task<PipelineContinuation>> action);
     IPipelineExecutionOrder Notify(Func<ICommunicationContext, Task> action);
-
   }
 }

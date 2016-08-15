@@ -2,6 +2,6 @@
 {
   public interface IPipelineMiddlewareFactory
   {
-    IPipelineMiddleware Build(IPipelineMiddleware next);
+    IPipelineMiddleware Compose(IPipelineMiddleware next);
   }
 }
