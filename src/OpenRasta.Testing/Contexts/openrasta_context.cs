@@ -322,6 +322,16 @@ namespace OpenRasta.Testing.Contexts
                 _actions[contributorType] = _lastNotification;
                 return this;
             }
+
+          public IPipelineExecutionOrder Notify(Func<ICommunicationContext, Task<PipelineContinuation>> action)
+          {
+            throw new NotImplementedException();
+          }
+
+          public IPipelineExecutionOrder Notify(Func<ICommunicationContext, Task> action)
+          {
+            throw new NotImplementedException();
+          }
         }
 
         protected void given_request_uriName(string uriName)

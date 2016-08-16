@@ -1,4 +1,5 @@
 #region License
+
 /* Authors:
  *      Sebastien Lambla (seb@serialseb.com)
  * Copyright:
@@ -6,6 +7,7 @@
  * License:
  *      This file is distributed under the terms of the MIT License found at the end of this file.
  */
+
 #endregion
 
 using System;
@@ -15,24 +17,31 @@ using OpenRasta.Web;
 
 namespace OpenRasta.Pipeline
 {
-    /// <summary>
-    /// Represents an instance of an OpenRasta pipeline
-    /// </summary>
-    public interface IPipeline
-    {
-        bool IsInitialized { get; }
+  /// <summary>
+  /// Represents an instance of an OpenRasta pipeline
+  /// </summary>
+  public interface IPipeline : IPipelineBuilder
+  {
+    [Obsolete("[SRP] - You should not be needing this. If you do, please fill in an issue on github")]
+    bool IsInitialized { get; }
 
-        IList<IPipelineContributor> Contributors { get; }
-        IEnumerable<ContributorCall> CallGraph { get; }
-        void Initialize();
+    [Obsolete("[SRP] - You should not be needing this. If you do, please fill in an issue on github")]
+    IList<IPipelineContributor> Contributors { get; }
 
-        IPipelineExecutionOrder Notify(Func<ICommunicationContext, PipelineContinuation> notification);
+    [Obsolete("[SRP] - You should not be needing this. If you do, please fill in an issue on github")]
+    IEnumerable<ContributorCall> CallGraph { get; }
 
-        void Run(ICommunicationContext context);
-    }
+    [Obsolete("[SRP] - You should not be needing this. If you do, please fill in an issue on github")]
+    void Initialize();
+
+    IPipelineExecutionOrder Notify(Func<ICommunicationContext, PipelineContinuation> notification);
+
+    void Run(ICommunicationContext context);
+  }
 }
 
 #region Full license
+
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -53,4 +62,5 @@ namespace OpenRasta.Pipeline
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+
 #endregion

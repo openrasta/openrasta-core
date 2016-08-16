@@ -8,7 +8,7 @@ using OpenRasta.Web;
 
 namespace OpenRasta.Pipeline
 {
-  public class DoubleTapPipelineAdaptor : IPipeline, IPipelineAsync
+  public class TwoPhasedPipelineAdaptor : IPipeline, IPipelineAsync
   {
     readonly IGenerateCallGraphs _graphs;
     Func<ICommunicationContext,Task> _invoker;
@@ -16,7 +16,7 @@ namespace OpenRasta.Pipeline
     public IList<IPipelineContributor> Contributors { get; }
     public IEnumerable<ContributorCall> CallGraph { get; private set; }
 
-    public DoubleTapPipelineAdaptor(IDependencyResolver resolver)
+    public TwoPhasedPipelineAdaptor(IDependencyResolver resolver)
     {
       _graphs = resolver.HasDependency<IGenerateCallGraphs>()
           ? resolver.Resolve<IGenerateCallGraphs>()
@@ -29,7 +29,7 @@ namespace OpenRasta.Pipeline
     {
       IEnumerable<IPipelineContributor> contributors = Contributors;
       _invoker = (CallGraph = _graphs.GenerateCallGraph(contributors))
-        .ToDoubleTapMiddleware<KnownStages.IOperationResultInvocation>().Invoke;
+        .ToTwoPhasedMiddleware<KnownStages.IOperationResultInvocation>().Invoke;
     }
 
     public IPipelineExecutionOrder Notify(Func<ICommunicationContext, PipelineContinuation> notification)
@@ -47,6 +47,17 @@ namespace OpenRasta.Pipeline
       if (env.PipelineData.PipelineStage == null)
         env.PipelineData.PipelineStage = new PipelineStage(this);
       return _invoker(env);
+    }
+
+    public IPipelineExecutionOrder Notify(Func<ICommunicationContext, Task<PipelineContinuation>> action)
+    {
+      throw new NotImplementedException("Should never be called here, ever!");
+    }
+
+    public IPipelineExecutionOrder Notify(Func<ICommunicationContext, Task> action)
+    {
+      throw new NotImplementedException("Should never be called here, ever!");
+
     }
   }
 }

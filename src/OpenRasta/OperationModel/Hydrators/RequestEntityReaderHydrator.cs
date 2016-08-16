@@ -63,6 +63,7 @@ namespace OpenRasta.OperationModel.Hydrators
                     if (!TryReadPayloadAsObject(_request.Entity, (IMediaTypeReader)codecInstance, operation))
                         yield break;
             }
+
             yield return operation;
         }
 

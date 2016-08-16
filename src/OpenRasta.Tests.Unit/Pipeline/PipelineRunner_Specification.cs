@@ -24,7 +24,7 @@ using OpenRasta.Web;
 namespace OpenRasta.Tests.Unit.Pipeline
 {
   [TestFixture(TypeArgs = new[] {typeof(PipelineRunner)})]
-  [TestFixture(TypeArgs = new[] {typeof(DoubleTapPipelineAdaptor)})]
+  [TestFixture(TypeArgs = new[] {typeof(TwoPhasedPipelineAdaptor)})]
   public class when_creating_the_pipeline<T> : pipelinerunner_context<T> where T : class, IPipeline
   {
     [TestCase(null)]
@@ -48,7 +48,7 @@ namespace OpenRasta.Tests.Unit.Pipeline
   }
 
   [TestFixture(TypeArgs = new[] {typeof(PipelineRunner)})]
-  [TestFixture(TypeArgs = new[] {typeof(DoubleTapPipelineAdaptor)})]
+  [TestFixture(TypeArgs = new[] {typeof(TwoPhasedPipelineAdaptor)})]
   public class when_accessing_the_contributors<T> : pipelinerunner_context<T> where T : class, IPipeline
   {
     [TestCase(null)]
@@ -75,7 +75,7 @@ namespace OpenRasta.Tests.Unit.Pipeline
 
 
   [TestFixture(TypeArgs = new[] {typeof(PipelineRunner)})]
-  [TestFixture(TypeArgs = new[] {typeof(DoubleTapPipelineAdaptor)})]
+  [TestFixture(TypeArgs = new[] {typeof(TwoPhasedPipelineAdaptor)})]
   public class when_building_the_call_graph<T> : pipelinerunner_context<T> where T : class, IPipeline
   {
     [TestCase(null)]
@@ -235,7 +235,7 @@ namespace OpenRasta.Tests.Unit.Pipeline
   }
 
   [TestFixture(TypeArgs = new[] {typeof(PipelineRunner)})]
-  [TestFixture(TypeArgs = new[] {typeof(DoubleTapPipelineAdaptor)})]
+  [TestFixture(TypeArgs = new[] {typeof(TwoPhasedPipelineAdaptor)})]
   public class when_contributor_throws<T> : pipelinerunner_context<T> where T : class, IPipeline
   {
     [TestCase(null)]
@@ -278,7 +278,7 @@ namespace OpenRasta.Tests.Unit.Pipeline
   }
 
   [TestFixture(TypeArgs = new[] {typeof(PipelineRunner)})]
-  [TestFixture(TypeArgs = new[] {typeof(DoubleTapPipelineAdaptor)})]
+  [TestFixture(TypeArgs = new[] {typeof(TwoPhasedPipelineAdaptor)})]
   public class when_executing_the_pipeline<T> : pipelinerunner_context<T> where T : class, IPipeline
   {
     [TestCase(null)]

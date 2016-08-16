@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /* Authors:
  *      Sebastien Lambla (seb@serialseb.com)
  * Copyright:
@@ -62,7 +62,7 @@ namespace OpenRasta.Configuration
             SetUriResolver<TemplatedUriResolver>();
             SetCodecRepository<CodecRepository>();
             SetHandlerRepository<HandlerRepository>();
-            SetPipeline<DoubleTapPipelineAdaptor>();
+            SetPipeline<TwoPhasedPipelineAdaptor>();
             SetLogger<TraceSourceLogger>();
             SetErrorCollector<OperationContextErrorCollector>();
             SetObjectBinderLocator<DefaultObjectBinderLocator>();

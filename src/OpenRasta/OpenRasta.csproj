@@ -271,7 +271,7 @@
     <Compile Include="Pipeline\AbstractContributorMiddleware.cs" />
     <Compile Include="Pipeline\CatastrophicFailureMiddleware.cs" />
     <Compile Include="Pipeline\CleanupMiddleware.cs" />
-    <Compile Include="Pipeline\DoubleTapPipelineAdaptor.cs" />
+    <Compile Include="Pipeline\TwoPhasedPipelineAdaptor.cs" />
     <Compile Include="Pipeline\IPipelineBuilder.cs" />
     <Compile Include="Pipeline\IPipelineContributorAsync.cs" />
     <Compile Include="Pipeline\PipelineAbortedException.cs" />
@@ -306,8 +306,8 @@
     <Compile Include="Pipeline\Contributors\ResponseEntityWriterContributor.cs" />
     <Compile Include="Pipeline\Contributors\UriDecoratorsContributor.cs" />
     <Compile Include="Pipeline\Diagnostics\PipelineLogSource.cs" />
-    <Compile Include="Pipeline\DoubleTapPipelineExtensions.cs" />
-    <Compile Include="Pipeline\DoubleTapMiddleware.cs" />
+    <Compile Include="Pipeline\PipelineBuildingExtensions.cs" />
+    <Compile Include="Pipeline\TwoPhasedMiddleware.cs" />
     <Compile Include="Pipeline\IPipelineAsync.cs" />
     <Compile Include="Pipeline\IPipelineMiddleware.cs" />
     <Compile Include="Pipeline\IContextStore.cs" />

@@ -24,7 +24,7 @@ using OpenRasta.Web;
 
 namespace OpenRasta.Pipeline
 {
-  public class PipelineRunner : IPipeline, IPipelineAsync
+  public class PipelineRunner : IPipeline
   {
     readonly IList<IPipelineContributor> _contributors = new List<IPipelineContributor>();
     readonly IDependencyResolver _resolver;
@@ -75,10 +75,6 @@ namespace OpenRasta.Pipeline
       PipelineLog.WriteInfo("Pipeline has been successfully initialized.");
     }
 
-    public IPipelineExecutionOrder Notify(Func<ICommunicationContext, PipelineContinuation> action)
-    {
-      throw new NotImplementedException("This code has moved. Try using a PipelineBuilder instad.");
-    }
 
 
     public void Run(ICommunicationContext context)
@@ -107,14 +103,20 @@ namespace OpenRasta.Pipeline
           switch (stage.CurrentState)
           {
             case PipelineContinuation.Abort:
+            {
               AbortPipeline(context);
               goto case PipelineContinuation.RenderNow;
+            }
             case PipelineContinuation.RenderNow:
-              RenderNow(context, stage);
+            {
+              await RenderNow(context, stage);
               break;
+            }
             case PipelineContinuation.Finished:
+            {
               FinishPipeline(context);
               return;
+            }
           }
         }
     }
@@ -162,12 +164,9 @@ namespace OpenRasta.Pipeline
 
     bool CanBeExecuted(ContributorCall call)
     {
-      if (call.Action == null)
-      {
-        PipelineLog.WriteWarning("Contributor call for {0} had a null Action.", call.ContributorTypeName);
-        return false;
-      }
-      return true;
+      if (call.Action != null) return true;
+      PipelineLog.WriteWarning("Contributor call for {0} had a null Action.", call.ContributorTypeName);
+      return false;
     }
 
     protected virtual void AbortPipeline(ICommunicationContext context)
@@ -215,15 +214,9 @@ namespace OpenRasta.Pipeline
 
     protected virtual void FinishPipeline(ICommunicationContext context)
     {
-      if (context.Request.Entity != null)
-      {
-        context.Request.Entity.Dispose();
-      }
+      context.Request.Entity?.Dispose();
 
-      if (context.Response.Entity != null)
-      {
-        context.Response.Entity.Dispose();
-      }
+      context.Response.Entity?.Dispose();
 
       PipelineLog.WriteInfo("Pipeline finished.");
     }
@@ -234,6 +227,21 @@ namespace OpenRasta.Pipeline
       int pos = 0;
       foreach (var contributor in callGraph)
         PipelineLog.WriteInfo("{0} {1}", pos++, contributor.ContributorTypeName);
+    }
+
+    public IPipelineExecutionOrder Notify(Func<ICommunicationContext, Task<PipelineContinuation>> action)
+    {
+      throw new NotImplementedException("Shouldn't be called here ever.");
+    }
+
+    public IPipelineExecutionOrder Notify(Func<ICommunicationContext, Task> action)
+    {
+      throw new NotImplementedException("Shouldn't be called here ever.");
+    }
+
+    public IPipelineExecutionOrder Notify(Func<ICommunicationContext, PipelineContinuation> action)
+    {
+      throw new NotImplementedException("This code has moved. Try using a PipelineBuilder instad.");
     }
   }
 }

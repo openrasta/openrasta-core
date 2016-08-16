@@ -5,9 +5,9 @@ using OpenRasta.Pipeline.Contributors;
 
 namespace OpenRasta.Pipeline
 {
-  public static class DoubleTapPipelineExtensions
+  public static class PipelineBuildingExtensions
   {
-    public static IPipelineMiddleware ToDoubleTapMiddleware<TResponseType>(this IEnumerable<ContributorCall> callGraph)
+    public static IPipelineMiddleware ToTwoPhasedMiddleware<TResponseType>(this IEnumerable<ContributorCall> callGraph)
     {
       var all = callGraph.Reverse().ToList();
 
@@ -20,7 +20,7 @@ namespace OpenRasta.Pipeline
         .Select(CreateRequestMiddleware)
         .BuildPipeline();
 
-      return new DoubleTapMiddleware(
+      return new TwoPhasedMiddleware(
         requerstPipeline,
         responsePipeline,
         new CatastrophicFailureMiddleware(),

@@ -4,14 +4,14 @@ using OpenRasta.Web;
 
 namespace OpenRasta.Pipeline
 {
-  public class DoubleTapMiddleware : IPipelineMiddleware
+  public class TwoPhasedMiddleware : IPipelineMiddleware
   {
     readonly IPipelineMiddleware _requestPipeline;
     readonly IPipelineMiddleware _responsePipeline;
     readonly IPipelineMiddleware _catastrophicFail;
     readonly IPipelineMiddleware _cleanup;
 
-    public DoubleTapMiddleware(
+    public TwoPhasedMiddleware(
       IPipelineMiddleware requestPipeline,
       IPipelineMiddleware responsePipeline,
       IPipelineMiddleware catastrophicFail,
