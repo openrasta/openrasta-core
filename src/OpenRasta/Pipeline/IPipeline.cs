@@ -36,6 +36,7 @@ namespace OpenRasta.Pipeline
 
     IPipelineExecutionOrder Notify(Func<ICommunicationContext, PipelineContinuation> notification);
 
+    [Obsolete("[SRP] - You should not be needing this. If you do, please fill in an issue on github")]
     void Run(ICommunicationContext context);
   }
 }
