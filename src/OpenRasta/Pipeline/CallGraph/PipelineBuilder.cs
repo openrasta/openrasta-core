@@ -33,7 +33,7 @@ namespace OpenRasta.Pipeline.CallGraph
       throw new NotImplementedException("No one should be calling Run on this");
     }
 
-    public IPipelineExecutionOrder Notify(Func<ICommunicationContext, Task<PipelineContinuation>> action)
+    public IPipelineExecutionOrder Use(Func<ICommunicationContext, Task<PipelineContinuation>> action)
     {
 
       var notification = new Notification(action, Contributors);

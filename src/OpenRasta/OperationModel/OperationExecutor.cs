@@ -1,27 +1,31 @@
+using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using OpenRasta.OperationModel.Interceptors;
+using System.Threading.Tasks;
 using OpenRasta.Web;
 
 namespace OpenRasta.OperationModel
 {
-    public class OperationExecutor : IOperationExecutor
+  public class OperationExecutor : IOperationExecutor
+  {
+    static readonly ConcurrentDictionary<Type, Func<object, Task<OperationResult>>> _accessor
+      = new ConcurrentDictionary<Type, Func<object, Task<OperationResult>>>();
+
+    public async Task<OperationResult> Execute(IEnumerable<IOperation> operations)
     {
-        public OperationResult Execute(IEnumerable<IOperation> operations)
-        {
-            var operation = operations.FirstOrDefault();
-            
-                var result = operation.Invoke().ToList();
-            if (result.Count == 0)
-                return new OperationResult.NoContent();
+      var operation = operations.Cast<IOperationAsync>().First();
+      var result = (await operation.InvokeAsync()).Select(_=>_.Value).FirstOrDefault();
 
-            var firstResult = result[0];
-
-            var operationResult = firstResult.Value as OperationResult;
-            if (operationResult != null)
-                return operationResult;
-
-            return new OperationResult.OK(firstResult.Value);
-        }
+      return ToOperationResult(result);
     }
+
+    static OperationResult ToOperationResult(object returnValue)
+    {
+      if (returnValue == null)
+        return new OperationResult.NoContent();
+      var operationResult = returnValue as OperationResult;
+      return operationResult ?? new OperationResult.OK(returnValue);
+    }
+  }
 }

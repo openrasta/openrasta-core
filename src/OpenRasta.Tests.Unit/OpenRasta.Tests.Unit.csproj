@@ -113,15 +113,30 @@
     <Compile Include="OperationModel\Filters\UriParametersFilter_Specification.cs" />
     <Compile Include="OperationModel\Hydrators\RequestEntityReaderHydrator_Specification.cs" />
     <Compile Include="OperationModel\Interceptors\Interceptors_Specification.cs" />
-    <Compile Include="OperationModel\MethodBased\MethodBasedOperationCreator_Specification.cs" />
-    <Compile Include="OperationModel\MethodBased\MethodBasedOperation_Specification.cs" />
+    <Compile Include="OperationModel\MethodBased\OperationCreator\when_there_is_a_method_filter.cs" />
+    <Compile Include="OperationModel\MethodBased\OperationCreator\method_based_operation_creator_context.cs" />
+    <Compile Include="OperationModel\MethodBased\OperationCreator\MockHandler.cs" />
+    <Compile Include="OperationModel\MethodBased\OperationCreator\operation_creator_context.cs" />
+    <Compile Include="OperationModel\MethodBased\OperationCreator\when_there_is_no_method_filter.cs" />
+    <Compile Include="OperationModel\MethodBased\Operation\IUseless.cs" />
+    <Compile Include="OperationModel\MethodBased\Operation\when_using_async_operation.cs" />
+    <Compile Include="OperationModel\MethodBased\Operation\when_using_optional_members.cs" />
+    <Compile Include="OperationModel\MethodBased\Operation\MockOperationHandler.cs" />
+    <Compile Include="OperationModel\MethodBased\Operation\OperationHandlerForAttributes.cs" />
+    <Compile Include="OperationModel\MethodBased\Operation\ParameterBinder.cs" />
+    <Compile Include="OperationModel\MethodBased\Operation\UselessAttribute.cs" />
+    <Compile Include="OperationModel\MethodBased\Operation\when_creating_operations.cs" />
+    <Compile Include="OperationModel\MethodBased\Operation\when_invoking_an_operation.cs" />
+    <Compile Include="OperationModel\MethodBased\Operation\when_reading_attributes_not_present_on_a_method.cs" />
+    <Compile Include="OperationModel\MethodBased\Operation\when_reading_attributes_on_parameters.cs" />
+    <Compile Include="OperationModel\MethodBased\Operation\when_reading_attributes_present_on_a_method.cs" />
+    <Compile Include="OperationModel\MethodBased\Operation\when_using_required_members.cs" />
     <Compile Include="OperationModel\MethodBased\TypeExclusionFilter_Specification.cs" />
     <Compile Include="OperationModel\OperationHydration_Spec.cs" />
     <Compile Include="Pipeline\Contributors\AuthenticationChallenger_Specification.cs" />
     <Compile Include="Pipeline\Contributors\Authentication_Specification.cs" />
     <Compile Include="Pipeline\Contributors\BasicAuthorizer_Specification.cs" />
     <Compile Include="Pipeline\Contributors\HandlerMethodFiltersInvoker_Specification.cs" />
-    <Compile Include="Pipeline\Contributors\HandlerMethodInvoker_Specification.cs" />
     <Compile Include="Pipeline\Contributors\HandlerMethodrequestEntityResolver_Specification.cs" />
     <Compile Include="Pipeline\Contributors\HandlerResolver_Specification.cs" />
     <Compile Include="Pipeline\Contributors\HttpMethodOverrider_Specification.cs" />
@@ -183,6 +198,10 @@
       <Project>{3d251617-2581-4d9c-a639-5cfb0bb09420}</Project>
       <Name>OpenRasta</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="OperationModel\MethodBased\Operation" />
+    <Folder Include="OperationModel\MethodBased\OperationCreator" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

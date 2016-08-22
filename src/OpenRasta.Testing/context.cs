@@ -11,6 +11,7 @@
 #endregion
 
 using System;
+using System.Threading.Tasks;
 using NUnit.Framework;
 
 namespace OpenRasta.Testing
@@ -32,6 +33,11 @@ namespace OpenRasta.Testing
         {
             return action;
         }
+
+      public Func<Task> Executing(Func<Task> action)
+      {
+        return action;
+      }
     }
 }
 

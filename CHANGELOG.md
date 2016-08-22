@@ -6,6 +6,7 @@ OpenRasta adheres to [Semantic Versioning](http://semver.org/).
 ### Added
  - A new pipeline with "double tap" semantics, which makes most of the old pipeline
    look like an old picture, trigger keen memories but visibly dated.
+ - Support for async contributors, with the new `.Use` method on IPipeline.
  - Obsoleting `Abort`, you should instead throw an exception from the contributor: aborting
    was meant only for exceptional circumstances, and surely that's what 
    exceptions are for.
@@ -13,15 +14,21 @@ OpenRasta adheres to [Semantic Versioning](http://semver.org/).
    and that's all that ever really mattered.
 
 ### Changed
- - Cool kids have moved on, so we have to follow. .net 4.5 is now a minimum.
+ - Cool kids have moved on, so we follow. .net 4.5 is now a minimum.
  - The AppVeyor build is now under the OpenRasta organisation. We were not
    really organised before, so we (well, @holytshirt) sorted it out, and we feel
    much cleaner.
  - `IPipeline` used to have a read-only `IList` Contributors property. This was
    really as useless as a web framework with no web, so it's now an
    `IEnumerable`.
+ - Methods on handlers returning `void` or `Task` will now return a 202 accepted
+   instead of a 204 no content. If we can't know the semantics we shouldn't give
+   any better guarantees.
 
 ### Deprecated
+ - All members bar `Notify` on `IPipeline`. Because really, why would you ever
+   want to know anything about the pipeline.
+
 ### Removed
 ### Fixed
 ### Security

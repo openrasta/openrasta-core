@@ -49,7 +49,7 @@ namespace OpenRasta.Pipeline
       return _invoker(env);
     }
 
-    public IPipelineExecutionOrder Notify(Func<ICommunicationContext, Task<PipelineContinuation>> action)
+    public IPipelineExecutionOrder Use(Func<ICommunicationContext, Task<PipelineContinuation>> action)
     {
       throw new NotImplementedException("Should never be called here, ever!");
     }

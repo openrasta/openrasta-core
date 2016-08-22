@@ -14,6 +14,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using NUnit.Framework;
 
 namespace OpenRasta.Testing
@@ -268,7 +269,27 @@ namespace OpenRasta.Testing
             codeToExecute().ShouldBe(expectedValue);
         }
 
-        public static T ShouldThrow<T>(this Action codeToExecute) where T : Exception
+      public static T ShouldThrow<T>(this Func<Task> codeToExecute) where T : Exception
+      {
+        try
+        {
+          codeToExecute().GetAwaiter().GetResult();
+        }
+        catch (Exception e)
+        {
+          if (!(e is T))
+            Assert.Fail("Expected exception of type \"{0}\" but got \"{1}\" instead.",
+              typeof(T).Name,
+              e.GetType().Name);
+          else
+            return (T) e;
+        }
+
+        Assert.Fail("Expected an exception of type \"{0}\" but none were thrown.", typeof(T).Name);
+        return null; // this never happens as Fail will throw...
+      }
+
+      public static T ShouldThrow<T>(this Action codeToExecute) where T : Exception
         {
             try
             {

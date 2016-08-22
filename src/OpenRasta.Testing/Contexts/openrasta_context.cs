@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Globalization;
@@ -323,7 +323,7 @@ namespace OpenRasta.Testing.Contexts
                 return this;
             }
 
-          public IPipelineExecutionOrder Notify(Func<ICommunicationContext, Task<PipelineContinuation>> action)
+          public IPipelineExecutionOrder Use(Func<ICommunicationContext, Task<PipelineContinuation>> action)
           {
             throw new NotImplementedException();
           }

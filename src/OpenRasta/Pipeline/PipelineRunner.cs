@@ -229,7 +229,7 @@ namespace OpenRasta.Pipeline
         PipelineLog.WriteInfo("{0} {1}", pos++, contributor.ContributorTypeName);
     }
 
-    public IPipelineExecutionOrder Notify(Func<ICommunicationContext, Task<PipelineContinuation>> action)
+    public IPipelineExecutionOrder Use(Func<ICommunicationContext, Task<PipelineContinuation>> action)
     {
       throw new NotImplementedException("Shouldn't be called here ever.");
     }
