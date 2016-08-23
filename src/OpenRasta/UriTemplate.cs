@@ -22,10 +22,10 @@ namespace OpenRasta
     public class UriTemplate
     {
         const string WILDCARD_TEXT = "*";
-        Dictionary<string, UrlSegment> _pathSegmentVariables;
-        List<UrlSegment> _segments;
-        Dictionary<string, QuerySegment> _queryStringVariables;
-        Uri _templateUri;
+        readonly Dictionary<string, UrlSegment> _pathSegmentVariables;
+        readonly List<UrlSegment> _segments;
+        readonly Dictionary<string, QuerySegment> _queryStringVariables;
+        readonly Uri _templateUri;
 
         public UriTemplate(string template)
         {
@@ -50,7 +50,7 @@ namespace OpenRasta
 
         static Dictionary<string, UrlSegment> ParseSegmentVariables(List<UrlSegment> _segments)
         {
-            var returnDic = new Dictionary<string, UrlSegment>();
+            var returnDic = new Dictionary<string, UrlSegment>(StringComparer.OrdinalIgnoreCase);
             foreach (UrlSegment segment in _segments)
             {
                 if (segment.Type == SegmentType.Variable)
@@ -63,7 +63,7 @@ namespace OpenRasta
         {
             string queries = templateUri.Query;
             string[] pairs = queries.Split('&');
-            var nc = new Dictionary<string, QuerySegment>();
+            var nc = new Dictionary<string, QuerySegment>(StringComparer.OrdinalIgnoreCase);
             foreach (string value in pairs)
             {
                 string unescapedString = Uri.UnescapeDataString(value.Replace('+', ' '));
@@ -278,7 +278,8 @@ namespace OpenRasta
                 if (querySegment.Type == SegmentType.Literal && (!requestQueryString.ContainsKey(querySegment.Key)
                                                                  || requestQueryString[querySegment.Key].Value != querySegment.Value))
                     return null;
-                else if (querySegment.Type == SegmentType.Variable)
+
+                if (querySegment.Type == SegmentType.Variable)
                 {
                     if (requestQueryString.ContainsKey(querySegment.Key))
                     {

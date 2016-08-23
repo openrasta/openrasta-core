@@ -313,6 +313,18 @@ namespace UriTemplate_Specification
         }
 
         [Test]
+        public void the_query_parameters_should_be_case_insensitive()
+        {
+            var template = new UriTemplate("/test?page={page}");
+
+            var match = template.Match(new Uri("http://localhost"), new Uri("http://localhost/test?pAgE=2"));
+
+            match.ShouldNotBeNull();
+            match.QueryStringVariables.Count.ShouldBe(1);
+            match.QueryStringVariables["PAGE"].ShouldBe("2");
+        }
+
+        [Test]
         public void the_template_matches_when_query_strings_are_not_present()
         {
             var template = new UriTemplate("/temperature?unit={unit}");
