@@ -26,6 +26,10 @@ OpenRasta adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 ### Security
 
+## [2.5.1023] - 2016-08-24
+### Changed
+ - Made uri to handler method parameters mapping case-insensitive.
+
 ## [2.5.63] - 2016-03-22
 ### Fixed
  - Removes a resource leak in the multipart codec
