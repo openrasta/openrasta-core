@@ -29,11 +29,9 @@ namespace OpenRasta.Pipeline.Contributors
       {
         context.OperationResult = await executor.Execute(context.PipelineData.Operations);
       }
-      catch (InterceptorException)
+      catch (InterceptorException) when (context.OperationResult != null)
       {
-        if (context.OperationResult != null)
-          return PipelineContinuation.RenderNow;
-        throw;
+        return PipelineContinuation.RenderNow;
       }
       return PipelineContinuation.Continue;
     }

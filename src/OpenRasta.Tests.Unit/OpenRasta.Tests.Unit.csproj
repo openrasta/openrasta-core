@@ -111,7 +111,14 @@
     <Compile Include="OperationModel\Filters\HttpMethodOperationFilter_Specification.cs" />
     <Compile Include="OperationModel\Filters\UriNameOperationFilter_Specification.cs" />
     <Compile Include="OperationModel\Filters\UriParametersFilter_Specification.cs" />
-    <Compile Include="OperationModel\Hydrators\RequestEntityReaderHydrator_Specification.cs" />
+    <Compile Include="OperationModel\Hydrators\EntityReaderHandler.cs" />
+    <Compile Include="OperationModel\Hydrators\when_multiple_operations_are_defined_without_codec.cs" />
+    <Compile Include="OperationModel\Hydrators\request_entity_reader_context.cs" />
+    <Compile Include="OperationModel\Hydrators\when_codec_supports_keyed_values.cs" />
+    <Compile Include="OperationModel\Hydrators\when_codec_supports_object_building.cs" />
+    <Compile Include="OperationModel\Hydrators\when_multiple_operations_are_defined_with_codecs.cs" />
+    <Compile Include="OperationModel\Hydrators\when_no_operation_can_be_processed.cs" />
+    <Compile Include="OperationModel\Hydrators\when_no_processable_operation_.cs" />
     <Compile Include="OperationModel\Interceptors\Interceptors_Specification.cs" />
     <Compile Include="OperationModel\MethodBased\OperationCreator\when_there_is_a_method_filter.cs" />
     <Compile Include="OperationModel\MethodBased\OperationCreator\method_based_operation_creator_context.cs" />
@@ -132,7 +139,6 @@
     <Compile Include="OperationModel\MethodBased\Operation\when_reading_attributes_present_on_a_method.cs" />
     <Compile Include="OperationModel\MethodBased\Operation\when_using_required_members.cs" />
     <Compile Include="OperationModel\MethodBased\TypeExclusionFilter_Specification.cs" />
-    <Compile Include="OperationModel\OperationHydration_Spec.cs" />
     <Compile Include="Pipeline\Contributors\AuthenticationChallenger_Specification.cs" />
     <Compile Include="Pipeline\Contributors\Authentication_Specification.cs" />
     <Compile Include="Pipeline\Contributors\BasicAuthorizer_Specification.cs" />

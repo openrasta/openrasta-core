@@ -299,7 +299,7 @@
     <Compile Include="Pipeline\Contributors\OperationCodecSelectorContributor.cs" />
     <Compile Include="Pipeline\Contributors\OperationCreatorContributor.cs" />
     <Compile Include="Pipeline\Contributors\OperationFilterContributor.cs" />
-    <Compile Include="Pipeline\Contributors\OperationHydratorContributor.cs" />
+    <Compile Include="Pipeline\Contributors\RequestDecoderContributor.cs" />
     <Compile Include="Pipeline\Contributors\OperationInterceptorContributor.cs" />
     <Compile Include="Pipeline\Contributors\OperationInvokerContributor.cs" />
     <Compile Include="Pipeline\Contributors\OperationResultInvokerContributor.cs" />
