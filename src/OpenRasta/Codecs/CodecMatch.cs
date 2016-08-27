@@ -1,43 +1,47 @@
 using System;
+using OpenRasta.Web;
 
 namespace OpenRasta.Codecs
 {
-    /// <summary>
-    /// Represents the result of matching a codec to method parameters.
-    /// </summary>
-    public class CodecMatch : IComparable<CodecMatch>
+  /// <summary>
+  /// Represents the result of matching a codec to method parameters.
+  /// </summary>
+  public class CodecMatch : IComparable<CodecMatch>
+  {
+    public CodecMatch(CodecRegistration codecRegistration, float score, int matchingParameters)
     {
-        public CodecMatch(CodecRegistration codecRegistration, float score, int matchingParameters)
-        {
-            if (codecRegistration == null)
-                throw new ArgumentNullException("codecRegistration");
+      if (codecRegistration == null)
+        throw new ArgumentNullException(nameof(codecRegistration));
 
-            CodecRegistration = codecRegistration;
-            Score = score;
-            MatchingParameterCount = matchingParameters;
-        }
-
-        public CodecRegistration CodecRegistration { get; private set; }
-        public int MatchingParameterCount { get; private set; }
-        public float Score { get; private set; }
-
-        public int CompareTo(CodecMatch other)
-        {
-            if (other == null || other.CodecRegistration == null)
-                return 1;
-            if (this == other)
-                return 0;
-            float weightedScore = Score * CodecRegistration.MediaType.Quality;
-            float otherWeightedScore = other.Score * other.CodecRegistration.MediaType.Quality;
-            if (weightedScore == otherWeightedScore)
-            {
-                return MatchingParameterCount == other.MatchingParameterCount
-                           ? CodecRegistration.MediaType.CompareTo(other.CodecRegistration.MediaType)
-                           : MatchingParameterCount.CompareTo(other.MatchingParameterCount);
-            }
-
-// highest score is better, so we revert the comparison
-            return weightedScore.CompareTo(otherWeightedScore);
-        }
+      CodecRegistration = codecRegistration;
+      Score = score;
+      MatchingParameterCount = matchingParameters;
+      MediaType = CodecRegistration.MediaType;
+      WeightedScore = Score * CodecRegistration.MediaType.Quality;
     }
+
+    MediaType MediaType { get; }
+
+    public float WeightedScore { get; }
+
+    public CodecRegistration CodecRegistration { get; }
+    public int MatchingParameterCount { get; }
+    public float Score { get; }
+
+    public int CompareTo(CodecMatch other)
+    {
+      if (other?.CodecRegistration == null)
+        return 1;
+      if (ReferenceEquals(this, other))
+        return 0;
+      if (WeightedScore == other.WeightedScore)
+      {
+        return MatchingParameterCount == other.MatchingParameterCount
+          ? MediaType.CompareTo(other.MediaType)
+          : MatchingParameterCount.CompareTo(other.MatchingParameterCount);
+      }
+
+      return WeightedScore.CompareTo(other.WeightedScore);
+    }
+  }
 }

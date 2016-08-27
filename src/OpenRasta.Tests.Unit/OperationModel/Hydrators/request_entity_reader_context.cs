@@ -21,7 +21,7 @@ namespace OpenRasta.Tests.Unit.OperationModel.Hydrators
 
     protected void given_filter()
     {
-      Filter = new RequestEntityReaderHydrator(Resolver, Request)
+      RequestEntityReader = new RequestEntityReaderHydrator(Resolver, Request)
       {
         ErrorCollector = Errors,
         Log = new TraceSourceLogger<CodecLogSource>()
@@ -36,7 +36,7 @@ namespace OpenRasta.Tests.Unit.OperationModel.Hydrators
         new DefaultObjectBinderLocator()).CreateOperations(new[] {TypeSystem.FromClr<EntityReaderHandler>()}).ToList();
     }
 
-    protected RequestEntityReaderHydrator Filter { get; set; }
+    protected RequestEntityReaderHydrator RequestEntityReader { get; set; }
 
     protected void given_operation_has_codec_match<TCodec>(string name, MediaType mediaType, float codecScore)
     {
@@ -48,7 +48,7 @@ namespace OpenRasta.Tests.Unit.OperationModel.Hydrators
     {
       try
       {
-        ResultOperation = Filter.Read(Operations).GetAwaiter().GetResult();
+        ResultOperation = RequestEntityReader.Read(Operations).GetAwaiter().GetResult().Item2;
       }
       catch (Exception e)
       {

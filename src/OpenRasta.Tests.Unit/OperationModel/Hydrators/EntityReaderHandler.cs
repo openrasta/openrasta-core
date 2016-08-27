@@ -13,7 +13,7 @@ namespace OpenRasta.Tests.Unit.OperationModel.Hydrators
     {
       return null;
     }
-    public string PostStream(Stream anOject)
+    public string PostStream(Stream anObject)
     {
       return null;
     }

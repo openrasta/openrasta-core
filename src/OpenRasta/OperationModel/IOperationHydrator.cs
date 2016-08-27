@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using OpenRasta.OperationModel.Hydrators;
 using OpenRasta.Pipeline;
 
 namespace OpenRasta.OperationModel
@@ -11,6 +13,6 @@ namespace OpenRasta.OperationModel
 
   public interface IRequestEntityReader
   {
-    Task<IOperation> Read(IEnumerable<IOperation> operation);
+    Task<Tuple<RequestReadResult, IOperation>> Read(IEnumerable<IOperation> operation);
   }
 }

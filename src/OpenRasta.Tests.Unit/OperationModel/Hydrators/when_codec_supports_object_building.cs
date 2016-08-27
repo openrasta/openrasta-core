@@ -37,9 +37,8 @@ namespace OpenRasta.Tests.Unit.OperationModel.Hydrators
       given_request_entity_body(new byte[] { 0 });
 
       when_filtering_operations();
-      ResultOperation.ShouldBeNull();
+      ResultOperation.Name.ShouldBe("PostName");
       Errors.Errors.ShouldHaveCountOf(1);
-
     }
   }
 }
