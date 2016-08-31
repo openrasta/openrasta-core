@@ -12,13 +12,14 @@ namespace OpenRasta.Pipeline
 
         public PipelineStage(IPipeline pipeline)
         {
+          CurrentState = PipelineContinuation.Continue;
             _enumerator = new ResumableIterator<ContributorCall, Type>(
                 new List<ContributorCall>(pipeline.CallGraph).GetEnumerator(),
-                x => x.Target != null ? x.Target.GetType() : null,
+                x => x.Target?.GetType(),
                 (contributorType, key) => key != null && key.IsAssignableFrom(contributorType));
         }
 
-        public PipelineStage(PipelineRunner pipeline, PipelineStage ownerStage)
+        public PipelineStage(IPipeline pipeline, PipelineStage ownerStage)
             : this(pipeline)
         {
             OwnerStage = ownerStage;
@@ -28,7 +29,6 @@ namespace OpenRasta.Pipeline
 
         public bool ResumeFrom<T>() where T:IPipelineContributor
         {
-            
             return _enumerator.ResumeFrom(typeof(T));
         }
         public void SuspendAfter<T>() where T:IPipelineContributor

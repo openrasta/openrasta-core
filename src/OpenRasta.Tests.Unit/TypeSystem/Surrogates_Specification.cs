@@ -201,7 +201,7 @@ namespace Surrogates_Specification
     }
     namespace context
     {
-        public class indexer_context<T,TValue> : OpenRasta.Testing.context
+        public abstract class indexer_context<T,TValue> : OpenRasta.Testing.context
             where T:IEnumerable<TValue>
         {
             protected static ITypeSystem TypeSystem = TypeSystems.Default;

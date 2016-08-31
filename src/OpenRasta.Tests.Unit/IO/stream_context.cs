@@ -16,7 +16,7 @@ using OpenRasta.Testing;
 
 namespace OpenRasta.IO
 {
-    public class stream_context : context
+    public abstract class stream_context : context
     {
         protected Stream Stream;
 

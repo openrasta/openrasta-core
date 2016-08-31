@@ -8,8 +8,6 @@
  */
 #endregion
 
-using System;
-
 namespace OpenRasta.Pipeline
 {
     public interface IPipelineContributor

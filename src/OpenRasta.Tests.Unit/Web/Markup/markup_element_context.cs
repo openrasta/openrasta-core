@@ -18,7 +18,7 @@ using OpenRasta.Web.Markup;
 
 namespace FormElement_Specification
 {
-    public class markup_element_context<TMarkupElement> : openrasta_context
+    public abstract class markup_element_context<TMarkupElement> : openrasta_context
         where TMarkupElement : IElement
     {
         protected override void SetUp()

@@ -9,6 +9,7 @@
 #endregion
 
 using System;
+using System.Threading.Tasks;
 using OpenRasta.Web;
 
 namespace OpenRasta.Pipeline
@@ -18,8 +19,10 @@ namespace OpenRasta.Pipeline
         IPipelineContributor _target;
         public ContributorCall() { ContributorTypeName = "Unknown"; }
 
-        public ContributorCall(IPipelineContributor target, Func<ICommunicationContext, PipelineContinuation> action, string description)
+        public ContributorCall(IPipelineContributor target, Func<ICommunicationContext, Task<PipelineContinuation>> action, string description)
         {
+            if (target == null) throw new ArgumentNullException(nameof(target));
+            if (action == null) throw new ArgumentNullException(nameof(action));
             Action = action;
             ContributorTypeName = description;
             Target = target;
@@ -36,7 +39,7 @@ namespace OpenRasta.Pipeline
                     ContributorTypeName = _target.GetType().Name;
             }
         }
-        public Func<ICommunicationContext, PipelineContinuation> Action { get; set; }
+        public Func<ICommunicationContext, Task<PipelineContinuation>> Action { get; set; }
     }
 }
 

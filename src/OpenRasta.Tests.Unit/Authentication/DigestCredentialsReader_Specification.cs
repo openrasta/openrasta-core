@@ -86,12 +86,12 @@ namespace DigestCredentialsReader_Specification
         /// <summary>
         /// See #31 on trac.
         /// </summary>
-         [Test, Ignore]
+         [Test, Ignore("no idea")]
         public void the_result_is_authorized_for_incoming_uri_containing_invalid_characters()
         {
-            given_request_uri("http://localhost/é");
+            given_request_uri("http://localhost/ï¿½");
             given_request_httpmethod("GET");
-            GivenAClientAuthzHeader("GET", "username", "password", "realm", "nonce", @"http://localhost/é");
+            GivenAClientAuthzHeader("GET", "username", "password", "realm", "nonce", @"http://localhost/ï¿½");
             GivenAUser("username", "password");
             var authorizer = DependencyManager.GetService<DigestAuthorizerContributor>();
 
@@ -100,7 +100,7 @@ namespace DigestCredentialsReader_Specification
             Context.OperationResult.ShouldBeNull();
         }
 
-        [Test, Ignore]
+        [Test, Ignore("no idea")]
         public void the_result_is_authorized_if_everything_matches()
         {
             given_request_uri("http://localhost/uri");
@@ -115,7 +115,7 @@ namespace DigestCredentialsReader_Specification
             Context.OperationResult.ShouldBeNull();
         }
 
-        [Test, Ignore]
+        [Test, Ignore("no idea")]
         public void the_result_is_authorized_if_sent_with_absolute_uri()
         {
             given_request_uri("http://localhost/uri");
@@ -128,13 +128,13 @@ namespace DigestCredentialsReader_Specification
                 .ShouldBe(PipelineContinuation.Continue);
             Context.OperationResult.ShouldBeNull();
         }
-        [Test,Ignore]
+        [Test,Ignore("no idea")]
         public void a_non_absolute_digest_uri_for_an_absolute_request_should_fail()
         {
             // See 3.2.2.5. of rfc2617 - No possibility of knowing the exact request-line yet
         }
 
-        [Test, Ignore]
+        [Test, Ignore("no idea")]
         public void the_result_is_not_authorized_if_the_request_uri_and_digest_header_uri_do_not_natch()
         {
 
@@ -150,7 +150,7 @@ namespace DigestCredentialsReader_Specification
             Context.OperationResult.ShouldBeOfType<OperationResult.BadRequest>();
         }
 
-        [Test, Ignore]
+        [Test, Ignore("no idea")]
         public void the_result_is_not_authorized_if_the_passwords_dont_match()
         {
             given_request_uri("http://localhost/uri");
@@ -164,7 +164,7 @@ namespace DigestCredentialsReader_Specification
             Context.OperationResult.ShouldBeOfType<OperationResult.Unauthorized>();
         }
 
-        [Test, Ignore]
+        [Test, Ignore("no idea")]
         public void the_result_is_not_authorized_if_the_username_doesnt_match()
         {
             given_request_uri("http://localhost/uri");

@@ -15,7 +15,7 @@ namespace OpenRasta.Testing.Contexts
         }
 
         protected IType Handler { get; set; }
-        protected IOperation Operation { get; set; }
+        protected IOperationAsync Operation { get; set; }
 
         protected void given_operation(string name, params Type[] parameters)
         {

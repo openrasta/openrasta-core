@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>OpenRasta.Tests.Unit</RootNamespace>
     <AssemblyName>OpenRasta.Tests.Unit</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -30,13 +30,22 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Castle.Core, Version=3.3.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc">
+      <HintPath>..\..\packages\Castle.Core.3.3.3\lib\net45\Castle.Core.dll</HintPath>
+    </Reference>
     <Reference Include="Moq, Version=4.2.1507.118, Culture=neutral, PublicKeyToken=69f491c39445e920, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Moq.4.2.1507.0118\lib\net40\Moq.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Moq, Version=4.5.16.0, Culture=neutral, PublicKeyToken=69f491c39445e920">
+      <HintPath>..\..\packages\Moq.4.5.16\lib\net45\Moq.dll</HintPath>
+    </Reference>
     <Reference Include="nunit.framework, Version=2.6.4.14350, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
       <HintPath>..\..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
       <Private>True</Private>
+    </Reference>
+    <Reference Include="nunit.framework, Version=3.4.1.0, Culture=neutral, PublicKeyToken=2638cd05610744eb">
+      <HintPath>..\..\packages\NUnit.3.4.1\lib\net45\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -102,17 +111,38 @@
     <Compile Include="OperationModel\Filters\HttpMethodOperationFilter_Specification.cs" />
     <Compile Include="OperationModel\Filters\UriNameOperationFilter_Specification.cs" />
     <Compile Include="OperationModel\Filters\UriParametersFilter_Specification.cs" />
-    <Compile Include="OperationModel\Hydrators\RequestEntityReaderHydrator_Specification.cs" />
+    <Compile Include="OperationModel\Hydrators\EntityReaderHandler.cs" />
+    <Compile Include="OperationModel\Hydrators\when_multiple_operations_are_defined_without_codec.cs" />
+    <Compile Include="OperationModel\Hydrators\request_entity_reader_context.cs" />
+    <Compile Include="OperationModel\Hydrators\when_codec_supports_keyed_values.cs" />
+    <Compile Include="OperationModel\Hydrators\when_codec_supports_object_building.cs" />
+    <Compile Include="OperationModel\Hydrators\when_multiple_operations_are_defined_with_codecs.cs" />
+    <Compile Include="OperationModel\Hydrators\when_no_operation_can_be_processed.cs" />
+    <Compile Include="OperationModel\Hydrators\when_no_processable_operation_.cs" />
     <Compile Include="OperationModel\Interceptors\Interceptors_Specification.cs" />
-    <Compile Include="OperationModel\MethodBased\MethodBasedOperationCreator_Specification.cs" />
-    <Compile Include="OperationModel\MethodBased\MethodBasedOperation_Specification.cs" />
+    <Compile Include="OperationModel\MethodBased\OperationCreator\when_there_is_a_method_filter.cs" />
+    <Compile Include="OperationModel\MethodBased\OperationCreator\method_based_operation_creator_context.cs" />
+    <Compile Include="OperationModel\MethodBased\OperationCreator\MockHandler.cs" />
+    <Compile Include="OperationModel\MethodBased\OperationCreator\operation_creator_context.cs" />
+    <Compile Include="OperationModel\MethodBased\OperationCreator\when_there_is_no_method_filter.cs" />
+    <Compile Include="OperationModel\MethodBased\Operation\IUseless.cs" />
+    <Compile Include="OperationModel\MethodBased\Operation\when_using_async_operation.cs" />
+    <Compile Include="OperationModel\MethodBased\Operation\when_using_optional_members.cs" />
+    <Compile Include="OperationModel\MethodBased\Operation\MockOperationHandler.cs" />
+    <Compile Include="OperationModel\MethodBased\Operation\OperationHandlerForAttributes.cs" />
+    <Compile Include="OperationModel\MethodBased\Operation\ParameterBinder.cs" />
+    <Compile Include="OperationModel\MethodBased\Operation\UselessAttribute.cs" />
+    <Compile Include="OperationModel\MethodBased\Operation\when_creating_operations.cs" />
+    <Compile Include="OperationModel\MethodBased\Operation\when_invoking_an_operation.cs" />
+    <Compile Include="OperationModel\MethodBased\Operation\when_reading_attributes_not_present_on_a_method.cs" />
+    <Compile Include="OperationModel\MethodBased\Operation\when_reading_attributes_on_parameters.cs" />
+    <Compile Include="OperationModel\MethodBased\Operation\when_reading_attributes_present_on_a_method.cs" />
+    <Compile Include="OperationModel\MethodBased\Operation\when_using_required_members.cs" />
     <Compile Include="OperationModel\MethodBased\TypeExclusionFilter_Specification.cs" />
-    <Compile Include="OperationModel\OperationHydration_Spec.cs" />
     <Compile Include="Pipeline\Contributors\AuthenticationChallenger_Specification.cs" />
     <Compile Include="Pipeline\Contributors\Authentication_Specification.cs" />
     <Compile Include="Pipeline\Contributors\BasicAuthorizer_Specification.cs" />
     <Compile Include="Pipeline\Contributors\HandlerMethodFiltersInvoker_Specification.cs" />
-    <Compile Include="Pipeline\Contributors\HandlerMethodInvoker_Specification.cs" />
     <Compile Include="Pipeline\Contributors\HandlerMethodrequestEntityResolver_Specification.cs" />
     <Compile Include="Pipeline\Contributors\HandlerResolver_Specification.cs" />
     <Compile Include="Pipeline\Contributors\HttpMethodOverrider_Specification.cs" />
@@ -174,6 +204,10 @@
       <Project>{3d251617-2581-4d9c-a639-5cfb0bb09420}</Project>
       <Name>OpenRasta</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="OperationModel\MethodBased\Operation" />
+    <Folder Include="OperationModel\MethodBased\OperationCreator" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

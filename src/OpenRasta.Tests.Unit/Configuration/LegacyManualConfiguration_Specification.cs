@@ -164,7 +164,7 @@ namespace LegacyManualConfiguration_Specification
                 .HandledBy<CustomerHandler>()
                 .AndTranscodedBy<NakedCodec>();
 
-            Executing(WhenTheConfigurationIsFinished)
+            Executing((Action)WhenTheConfigurationIsFinished)
                 .ShouldThrow<OpenRastaConfigurationException>();
         }
     }

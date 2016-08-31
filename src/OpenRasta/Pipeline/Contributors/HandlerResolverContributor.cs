@@ -1,14 +1,3 @@
-#region License
-
-/* Authors:
- *      Sebastien Lambla (seb@serialseb.com)
- * Copyright:
- *      (C) 2007-2009 Caffeine IT & naughtyProd Ltd (http://www.caffeine-it.com)
- * License:
- *      This file is distributed under the terms of the MIT License found at the end of this file.
- */
-
-#endregion
 
 using System;
 using System.Linq;
@@ -20,37 +9,35 @@ using OpenRasta.Pipeline;
 
 namespace OpenRasta.Pipeline.Contributors
 {
-    /// <summary>
-    /// Resolves the handler attached to a resource type.
-    /// </summary>
-    public class HandlerResolverContributor : KnownStages.IHandlerSelection
+  /// <summary>
+  /// Resolves the handler attached to a resource type.
+  /// </summary>
+  public class HandlerResolverContributor : KnownStages.IHandlerSelection
+  {
+    readonly IDependencyResolver _resolver;
+    readonly IHandlerRepository _handlers;
+
+    public HandlerResolverContributor(IDependencyResolver resolver, IHandlerRepository repository)
     {
-        readonly IDependencyResolver _resolver;
-        readonly IHandlerRepository _handlers;
-
-        public HandlerResolverContributor(IDependencyResolver resolver, IHandlerRepository repository)
-        {
-            _resolver = resolver;
-            _handlers = repository;
-        }
-
-        public void Initialize(IPipeline pipelineRunner)
-        {
-            pipelineRunner.Notify(ResolveHandler).After<KnownStages.IUriMatching>();
-        }
-
-        public PipelineContinuation ResolveHandler(ICommunicationContext context)
-        {
-            var handlerTypes = _handlers.GetHandlerTypesFor(context.PipelineData.ResourceKey);
-
-            if (handlerTypes != null && handlerTypes.Count() > 0)
-            {
-                context.PipelineData.SelectedHandlers = handlerTypes.ToList();
-                return PipelineContinuation.Continue;
-            }
-            return PipelineContinuation.Abort;
-        }
+      _resolver = resolver;
+      _handlers = repository;
     }
+
+    public void Initialize(IPipeline pipelineRunner)
+    {
+      pipelineRunner.Notify(ResolveHandler).After<KnownStages.IUriMatching>();
+    }
+
+    PipelineContinuation ResolveHandler(ICommunicationContext context)
+    {
+      var handlerTypes = _handlers.GetHandlerTypesFor(context.PipelineData.ResourceKey);
+
+      var enumerable = handlerTypes as IType[] ?? handlerTypes.ToArray();
+      if (handlerTypes == null || !enumerable.Any()) return PipelineContinuation.Abort;
+      context.PipelineData.SelectedHandlers = enumerable.ToList();
+      return PipelineContinuation.Continue;
+    }
+  }
 }
 
 #region Full license

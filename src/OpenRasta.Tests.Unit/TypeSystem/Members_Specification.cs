@@ -70,10 +70,10 @@ namespace Accessors_Specification
                 .ShouldBeFalse();
         }
 
-        [Test, Ignore]
+        [Test, Ignore("no idea")]
         public void interfaces_cannot_be_initialized()
         {
-            Executing(GivenTypeFor<ICollection>)
+            Executing((Action)GivenTypeFor<ICollection>)
                 .ShouldThrow<NotSupportedException>();
         }
 

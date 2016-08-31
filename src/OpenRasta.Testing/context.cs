@@ -11,12 +11,13 @@
 #endregion
 
 using System;
+using System.Threading.Tasks;
 using NUnit.Framework;
 
 namespace OpenRasta.Testing
 {
     [TestFixture]
-    public class context
+    public abstract class context
     {
         [SetUp]
         protected virtual void SetUp()
@@ -32,6 +33,11 @@ namespace OpenRasta.Testing
         {
             return action;
         }
+
+      public Func<Task> Executing(Func<Task> action)
+      {
+        return action;
+      }
     }
 }
 

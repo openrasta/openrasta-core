@@ -1,23 +1,59 @@
-version: 2.5.{build}
+﻿install:
+  - set PATH=C:\Ruby23\bin;%PATH%
+  - ps: mkdir c:\ca; iwr http://curl.haxx.se/ca/cacert.pem -outfile C:\ca\cacert.pem
+  - set SSL_CERT_FILE=C:\ca\cacert.pem
+  - ps: |
+        $version = [version]$(cat VERSION)
+        $build = $env:APPVEYOR_BUILD_NUMBER
+        $major = $version.Major
+
+        $branch = $env:APPVEYOR_REPO_BRANCH
+        if ($branch -eq 'master') {
+          $version = "$version-ci-$build"
+        }
+        else {
+          $version = "$version-branch-$branch-$build"
+        }
+        Set-AppveyorBuildVariable -Name "AssemblyMajor" -Value "$major"
+        Update-AppVeyorBuild -Version "$version"
+
+  - gem install chandler
+  - ps: set-content ~/.netrc "machine api.github.com login $env:github_username password $env:github_password" -encoding ascii
+  - ps: cp ~/.netrc ~/_netrc
+  - chandler push
+
+assembly_info:
+  patch: true
+  file: src\CommonInfo.cs
+  assembly_version: $(AssemblyMajor).0.0.0
+  assembly_file_version: '{version}'
+  assembly_informational_version: '{version}'
 
 configuration: Release
 
 platform: Any CPU
 
-assembly_info:
-  patch: true
-  file: src\CommonInfo.cs
-  assembly_version: 2.0.0.0
-  assembly_file_version: '{version}'
-  assembly_informational_version: '{version}'
+
+before_build:
+  - nuget restore
+
+nuget:
+  project_feed: true
+  disable_publish_on_pr: true
 
 build:
-  publish_nuget: true             # package projects with .nuspec files and push to artifacts
-  publish_nuget_symbols: true     # generate and publish NuGet symbol packages
-  include_nuget_references: true  # add -IncludeReferencedProjects option while packaging NuGet artifacts
   parallel: true
   verbosity: minimal
+  publish_nuget: true
+  publish_nuget_symbols: true
+  include_nuget_references: true
 
+environment:
+  SSL_CERT_FILE: C:\ca\cacert.pem
+  github_username: serialseb
+  github_password:
+    secure:
+      1lXaOJ0GvCAOd0O9DDvVqw2eb7TvP2jve12u3hD2g4J7RVW2c2jC5XuRFyEuduUA
 artifacts:
 - path: src\openrasta\bin\$(configuration)\*.dll
   name: dlls

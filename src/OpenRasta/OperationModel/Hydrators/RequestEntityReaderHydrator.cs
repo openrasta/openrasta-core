@@ -1,125 +1,171 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using OpenRasta.Binding;
+using System.Threading.Tasks;
 using OpenRasta.Codecs;
-using OpenRasta.Collections;
 using OpenRasta.DI;
 using OpenRasta.Diagnostics;
 using OpenRasta.OperationModel.Hydrators.Diagnostics;
 using OpenRasta.TypeSystem.ReflectionBased;
 using OpenRasta.Web;
-using OpenRasta.Pipeline;
+using OpenRasta.TypeSystem;
 
 namespace OpenRasta.OperationModel.Hydrators
 {
-    public class RequestEntityReaderHydrator : IOperationHydrator
+  public class RequestEntityReaderHydrator  : IRequestEntityReader
+  {
+    readonly IRequest _request;
+    readonly IDependencyResolver _resolver;
+
+    public RequestEntityReaderHydrator(IDependencyResolver resolver, IRequest request)
     {
-        readonly IRequest _request;
-        readonly IDependencyResolver _resolver;
-
-        public RequestEntityReaderHydrator(IDependencyResolver resolver, IRequest request)
-        {
-            Log = NullLogger<CodecLogSource>.Instance;
-            ErrorCollector = NullErrorCollector.Instance;
-            _resolver = resolver;
-            _request = request;
-        }
-
-        public IErrorCollector ErrorCollector { get; set; }
-        public ILogger<CodecLogSource> Log { get; set; }
-
-        public IEnumerable<IOperation> Process(IEnumerable<IOperation> operations)
-        {
-            var operation = operations.Where(x => x.GetRequestCodec() != null)
-                                .OrderByDescending(x => x.GetRequestCodec()).FirstOrDefault()
-                            ?? operations.Where(x => x.Inputs.AllReady())
-                                   .OrderByDescending(x => x.Inputs.CountReady()).FirstOrDefault();
-            if (operation == null)
-            {
-                Log.OperationNotFound();
-                yield break;
-            }
-
-            Log.OperationFound(operation);
-
-            if (operation.GetRequestCodec() != null)
-            {
-                var codecInstance = CreateMediaTypeReader(operation);
-
-                var codecType = codecInstance.GetType();
-                Log.CodecLoaded(codecType);
-
-                if (codecType.Implements(typeof(IKeyedValuesMediaTypeReader<>)))
-                    if (TryAssignKeyedValues(_request.Entity, codecInstance, codecType, operation))
-                    {
-                        yield return operation;
-                        yield break;
-                    }
-
-                if (codecType.Implements<IMediaTypeReader>())
-                    if (!TryReadPayloadAsObject(_request.Entity, (IMediaTypeReader)codecInstance, operation))
-                        yield break;
-            }
-            yield return operation;
-        }
-
-        static ErrorFrom<RequestEntityReaderHydrator> CreateErrorForException(Exception e)
-        {
-            return new ErrorFrom<RequestEntityReaderHydrator>
-            {
-                Message = "The codec failed to process the request entity. See the exception below.\r\n" + e,
-                Exception = e
-            };
-        }
-
-
-        ICodec CreateMediaTypeReader(IOperation operation)
-        {
-            return _resolver.Resolve(operation.GetRequestCodec().CodecRegistration.CodecType, UnregisteredAction.AddAsTransient) as ICodec;
-        }
-
-        bool TryAssignKeyedValues(IHttpEntity requestEntity, ICodec codec, Type codecType, IOperation operation)
-        {
-            Log.CodecSupportsKeyedValues();
-
-            return codec.TryAssignKeyValues(requestEntity, operation.Inputs.Select(x => x.Binder), Log.KeyAssigned, Log.KeyFailed);
-        }
-
-        bool TryReadPayloadAsObject(IHttpEntity requestEntity, IMediaTypeReader reader, IOperation operation)
-        {
-            Log.CodecSupportsFullObjectResolution();
-            foreach (var member in from m in operation.Inputs
-                                   where m.Binder.IsEmpty
-                                   select m)
-            {
-                Log.ProcessingMember(member);
-                try
-                {
-                    var entityInstance = reader.ReadFrom(requestEntity,
-                                                         member.Member.Type,
-                                                         member.Member.Name);
-                    Log.Result(entityInstance);
-
-                    if (entityInstance != Missing.Value)
-                    {
-                        if (!member.Binder.SetInstance(entityInstance))
-                        {
-                            Log.BinderInstanceAssignmentFailed();
-                            return false;
-                        }
-                        Log.BinderInstanceAssignmentSucceeded();
-                    }
-                }
-                catch (Exception e)
-                {
-                    ErrorCollector.AddServerError(CreateErrorForException(e));
-                    return false;
-                }
-            }
-            return true;
-        }
+      Log = NullLogger<CodecLogSource>.Instance;
+      ErrorCollector = NullErrorCollector.Instance;
+      _resolver = resolver;
+      _request = request;
     }
+
+    public IErrorCollector ErrorCollector { get; set; }
+    public ILogger<CodecLogSource> Log { get; set; }
+
+    static IOperation SelectWithCodec(IEnumerable<IOperation> operations)
+    {
+      return VerifySingleMatch((
+        from o in operations
+        let codecMatch = o.GetRequestCodec()
+        where codecMatch != null
+        orderby codecMatch descending
+        group o by new
+        {
+          codecMatch.WeightedScore,
+          codecMatch.MatchingParameterCount
+        }
+      ).FirstOrDefault());
+    }
+
+    static IOperation SelectReady(IEnumerable<IOperation> operations)
+    {
+      return VerifySingleMatch((
+        from o in operations
+        where o.Inputs.AllReady()
+        orderby o.Inputs.CountReady() descending
+        group o by o.Inputs.CountReady()
+      ).FirstOrDefault());
+    }
+
+    static IOperation VerifySingleMatch(IEnumerable<IOperation> operations)
+    {
+      if (operations == null) return null;
+
+      if (operations.Count() > 1)
+        throw new AmbiguousRequestException(operations);
+      return operations.Single();
+    }
+
+    async Task<Tuple<RequestReadResult, IOperation>> ReadWithCodec(IOperation operation)
+    {
+      var codecInstance = CreateMediaTypeReader(operation);
+
+      var codecType = codecInstance.GetType();
+      Log.CodecLoaded(codecType);
+
+      if (codecType.Implements(typeof(IKeyedValuesMediaTypeReader<>)))
+      return Tuple.Create(
+        TryAssignKeyedValues(_request.Entity, codecInstance, codecType, operation),
+        operation);
+
+      return Tuple.Create(await TryReadPayloadAsObject(
+        _request.Entity,
+        GetReader(codecInstance),
+        operation),
+        operation);
+    }
+
+    static Func<IHttpEntity, IType, string, Task<object>> GetReader(ICodec instance)
+    {
+      var readerAsync = instance as IMediaTypeReaderAsync;
+      if (readerAsync != null) return readerAsync.ReadFrom;
+      return (obj, type, name) => Task.FromResult(
+        ((IMediaTypeReader) instance).ReadFrom(obj, type, name));
+    }
+
+    public Task<Tuple<RequestReadResult, IOperation>> Read(IEnumerable<IOperation> operations)
+    {
+      var opWithCodec = SelectWithCodec(operations);
+      if (opWithCodec != null) return ReadWithCodec(opWithCodec);
+
+      var ready = SelectReady(operations);
+      return Task.FromResult(
+        ready == null
+          ? Tuple.Create<RequestReadResult,IOperation>(RequestReadResult.NoneFound,null)
+          : Tuple.Create(RequestReadResult.Success, ready));
+    }
+
+    static ErrorFrom<RequestEntityReaderHydrator> CreateErrorForException(Exception e)
+    {
+      return new ErrorFrom<RequestEntityReaderHydrator>
+      {
+        Message = "The codec failed to process the request entity. See the exception below.\r\n" + e,
+        Exception = e
+      };
+    }
+
+
+    ICodec CreateMediaTypeReader(IOperation operation)
+    {
+      return
+        _resolver.Resolve(operation.GetRequestCodec().CodecRegistration.CodecType, UnregisteredAction.AddAsTransient) as
+          ICodec;
+    }
+
+    RequestReadResult TryAssignKeyedValues(IHttpEntity requestEntity, ICodec codec, Type codecType, IOperation operation)
+    {
+      Log.CodecSupportsKeyedValues();
+
+      return codec.TryAssignKeyValues(requestEntity, operation.Inputs.Select(x => x.Binder), Log.KeyAssigned,
+        Log.KeyFailed)
+        ? RequestReadResult.Success : RequestReadResult.CodecFailure;
+    }
+
+    async Task<RequestReadResult> TryReadPayloadAsObject(IHttpEntity requestEntity, Func<IHttpEntity,IType,string,Task<object>> reader, IOperation operation)
+    {
+      Log.CodecSupportsFullObjectResolution();
+      foreach (var member in operation.Inputs.Where(m => m.Binder.IsEmpty))
+      {
+        Log.ProcessingMember(member);
+        try
+        {
+          var entityInstance = await reader(requestEntity,
+            member.Member.Type,
+            member.Member.Name);
+          Log.Result(entityInstance);
+
+          if (entityInstance != Missing.Value)
+          {
+            if (!member.Binder.SetInstance(entityInstance))
+            {
+              Log.BinderInstanceAssignmentFailed();
+              return RequestReadResult.BinderFailure;
+            }
+            Log.BinderInstanceAssignmentSucceeded();
+          }
+        }
+        catch (Exception e)
+        {
+          ErrorCollector.AddServerError(CreateErrorForException(e));
+          return RequestReadResult.CodecFailure;
+        }
+      }
+      return RequestReadResult.Success;
+    }
+  }
+
+  public enum RequestReadResult
+  {
+    BinderFailure,
+    CodecFailure,
+    Success,
+    NoneFound
+  }
 }

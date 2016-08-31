@@ -129,10 +129,6 @@ namespace CodecRepository_Specification
                 .ShouldBe("specific");
         }
 
-        [Test, Ignore]
-        public void the_most_specific_codec_is_found_when_matching_against_several_resource_types()
-        {
-        }
     }
 
     public class when_registering_a_codec : codec_repository_context

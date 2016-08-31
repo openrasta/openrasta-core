@@ -1,4 +1,7 @@
+using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using OpenRasta.DI;
 using OpenRasta.OperationModel;
 using OpenRasta.OperationModel.Interceptors;
@@ -26,11 +29,33 @@ namespace OpenRasta.Pipeline.Contributors
 
         PipelineContinuation WrapOperations(ICommunicationContext context)
         {
-            context.PipelineData.Operations = from op in context.PipelineData.Operations
+            context.PipelineData.Operations = from op in context.PipelineData.Operations.Select(ConvertToAsync)
                                               let interceptors = _resolver.Resolve<IOperationInterceptorProvider>().GetInterceptors(op)
-                                              select (IOperation)new OperationWithInterceptors(op, interceptors);
+                                              select (IOperationAsync)new OperationWithInterceptors(op, interceptors);
 
             return PipelineContinuation.Continue;
         }
+
+      IOperationAsync ConvertToAsync(IOperation arg)
+      {
+        return arg as IOperationAsync ?? new LeagacySyncOperation(arg);
+      }
     }
+
+  internal class LeagacySyncOperation : IOperationAsync
+  {
+    readonly IOperation _impl;
+
+    public LeagacySyncOperation(IOperation operation)
+    {
+      _impl = operation;
+    }
+    public T FindAttribute<T>() where T : class => _impl.FindAttribute<T>();
+    public IEnumerable<T> FindAttributes<T>() where T : class => _impl.FindAttributes<T>();
+    public IEnumerable<InputMember> Inputs => _impl.Inputs;
+    public IDictionary ExtendedProperties => _impl.ExtendedProperties;
+    public string Name => _impl.Name;
+    public IEnumerable<OutputMember> Invoke() => _impl.Invoke();
+    public Task<IEnumerable<OutputMember>> InvokeAsync() => Task.FromResult(Invoke());
+  }
 }
