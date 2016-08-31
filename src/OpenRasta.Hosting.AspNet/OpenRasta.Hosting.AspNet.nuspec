@@ -3,19 +3,16 @@
     <metadata>
         <id>openrasta-hosting-aspnet</id>
         <version>$version$</version>
-        <title>OpenRasta AspNet Hosting</title>
+        <title>OpenRasta asp.net Hosting</title>
         <authors>Sebastien Lambla</authors>
         <owners>Sebastien Lambla</owners>
         <licenseUrl>http://openrasta.org/</licenseUrl>
         <projectUrl>https://github.com/openrasta/openrasta-hosting-aspnet</projectUrl>
         <iconUrl>http://openrasta.org/openRastaLogo-32x32.png</iconUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
-        <description>Asp.Net hosting environment for OpenRasta</description>
+        <description>Asp.net hosting environment for OpenRasta</description>
         <releaseNotes />
-        <copyright>Copyright 2007</copyright>
+        <copyright>Copyright 2007-2016 Sebastien Lambla and contributors</copyright>
         <tags>OpenRasta AspNet Hosting</tags>
-        <frameworkAssemblies>
-            <frameworkAssembly assemblyName="System.Web" targetFramework="" />
-        </frameworkAssemblies>
     </metadata>
 </package>

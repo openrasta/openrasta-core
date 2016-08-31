@@ -1,3 +1,5 @@
+src/packages
+.idea
 obj
 bin
 bin/*
