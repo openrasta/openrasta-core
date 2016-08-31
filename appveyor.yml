@@ -1,5 +1,6 @@
 ﻿install:
-  - set PATH=C:\Ruby22\bin;%PATH%
+  - set PATH=C:\Ruby23\bin;%PATH%
+  - ps: mkdir c:\ca; iwr http://curl.haxx.se/ca/cacert.pem -outfile c:\ca\cacert.pem
   - ps: |
         $version = [version]$(cat VERSION)
         $build = $env:APPVEYOR_BUILD_NUMBER
@@ -16,11 +17,9 @@
         Update-AppVeyorBuild -Version "$version"
 
   - gem install chandler
-  - ps: |
-        "machine api.github.com" >> "$env:USERPROFILE\.netrc"
-        "  login $env:github_username" >> "$env:USERPROFILE\.netrc"
-        "  password $env:github_password" >> "$env:USERPROFILE\.netrc"
-        "chandler push"
+  - ps: set-content ~/.netrc "machine api.github.com login $env:github_username password $env:github_password" -encoding ascii
+  - ps: cp ~/.netrc ~/_netrc
+  - chandler push
 
 assembly_info:
   patch: true
@@ -49,6 +48,7 @@ build:
   include_nuget_references: true
 
 environment:
+  SSL_CERT_FILE: C:\ca\cacert.pem
   github_username: serialseb
   github_password:
     secure:
