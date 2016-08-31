@@ -30,7 +30,7 @@ assembly_info:
   assembly_informational_version: '{version}'
 
 before_build:
-  - nuget restore
+  - nuget restore src
 
 configuration: Release
 
