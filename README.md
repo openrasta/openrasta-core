@@ -3,6 +3,9 @@
 [![Coverity Scan Build Status](https://scan.coverity.com/projects/2837/badge.svg)](https://scan.coverity.com/projects/2837)
 [![NuGet Version](http://img.shields.io/nuget/v/openrasta-core.svg)](https://www.nuget.org/packages/openrasta-core/)
 
+Cutting Edge nuget packages
+[https://ci.appveyor.com/nuget/openrasta-core](https://ci.appveyor.com/nuget/openrasta-core)
+
 OpenRasta core library
 
 This the core OpenRasta library which allows you to run an in-memory instance of openrasta.
