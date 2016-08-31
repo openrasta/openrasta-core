@@ -60,7 +60,7 @@ namespace ResponseEntityWriter_Specification
             given_pipeline_contributor<ResponseEntityWriterContributor>();
 
             given_response_entity(new Fake());
-            GivenAResponseCodec<CustomerCodec>(new object());
+            given_response_codec<CustomerCodec>(new object());
 
             when_sending_notification<KnownStages.ICodecResponseSelection>()
                 .ShouldBe(PipelineContinuation.Continue);
@@ -74,7 +74,7 @@ namespace ResponseEntityWriter_Specification
         {
             given_pipeline_contributor<ResponseEntityWriterContributor>();
             given_response_entity(new Fake());
-            GivenAResponseCodec<CustomerCodec>();
+            given_response_codec<CustomerCodec>();
 
             when_sending_notification<KnownStages.ICodecResponseSelection>()
                 .ShouldBe(PipelineContinuation.Continue);
@@ -82,12 +82,12 @@ namespace ResponseEntityWriter_Specification
             Context.Response.Entity.Headers["ENTITY_TYPE"].ShouldBe("Fake");
         }
 
-        void GivenAResponseCodec<TCodec>()
+        void given_response_codec<TCodec>()
         {
-            GivenAResponseCodec<TCodec>(null);
+            given_response_codec<TCodec>(null);
         }
 
-        void GivenAResponseCodec<TCodec>(object config)
+        void given_response_codec<TCodec>(object config)
         {
             if (Context.PipelineData.ResponseCodec != null)
                 Context.PipelineData.ResponseCodec = null;

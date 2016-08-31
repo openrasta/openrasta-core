@@ -14,7 +14,7 @@ namespace OpenRasta.Tests.Unit.Web.Pipeline.Contributors
 {
     namespace CodecSelector
     {
-        public class when_no_operation_is_returned : operation_processors_context<OperationCodecSelectorContributor>
+        public class when_no_operation_is_returned : operation_processors_context<RequestCodecSelector>
         {
             [Test]
             public void the_result_is_a_415_error()
@@ -28,9 +28,9 @@ namespace OpenRasta.Tests.Unit.Web.Pipeline.Contributors
                 Context.OperationResult.ShouldBeOfType<OperationResult.RequestMediaTypeUnsupported>();
             }
 
-            protected override OperationCodecSelectorContributor create_processor()
+            protected override RequestCodecSelector create_processor()
             {
-                return new OperationCodecSelectorContributor(Resolver);
+                return new RequestCodecSelector(Resolver);
             }
 
             void when_executing_processor()

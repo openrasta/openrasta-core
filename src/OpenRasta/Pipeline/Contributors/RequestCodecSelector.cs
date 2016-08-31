@@ -7,11 +7,11 @@ using OpenRasta.Pipeline;
 
 namespace OpenRasta.Pipeline.Contributors
 {
-    public class OperationCodecSelectorContributor
+    public class RequestCodecSelector
         : AbstractOperationProcessing<IOperationCodecSelector, KnownStages.ICodecRequestSelection>,
           KnownStages.ICodecRequestSelection
     {
-        public OperationCodecSelectorContributor(IDependencyResolver resolver) : base(resolver)
+        public RequestCodecSelector(IDependencyResolver resolver) : base(resolver)
         {
         }
 

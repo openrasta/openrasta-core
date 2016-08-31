@@ -38,6 +38,7 @@ using OpenRasta.TypeSystem.Surrogated;
 using OpenRasta.TypeSystem.Surrogates;
 using OpenRasta.TypeSystem.Surrogates.Static;
 using OpenRasta.Web;
+using RequestCodecSelector = OpenRasta.Pipeline.Contributors.RequestCodecSelector;
 
 namespace OpenRasta.Configuration
 {
@@ -253,7 +254,7 @@ namespace OpenRasta.Configuration
 
     protected virtual void AddOperationCodecResolvers()
     {
-      AddOperationCodecSelector<RequestCodecSelector>();
+      AddOperationCodecSelector<OperationModel.CodecSelectors.RequestCodecSelector>();
     }
 
     protected virtual void AddOperationFilter<T>() where T : IOperationFilter
@@ -408,7 +409,7 @@ namespace OpenRasta.Configuration
       AddPipelineContributor<OperationCreatorContributor>();
       AddPipelineContributor<OperationFilterContributor>();
       AddPipelineContributor<RequestDecoderContributor>();
-      AddPipelineContributor<OperationCodecSelectorContributor>();
+      AddPipelineContributor<RequestCodecSelector>();
       AddPipelineContributor<OperationInvokerContributor>();
       AddPipelineContributor<OperationResultInvokerContributor>();
 

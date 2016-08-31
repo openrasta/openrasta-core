@@ -38,6 +38,10 @@ OpenRasta adheres to [Semantic Versioning](http://semver.org/).
 
 ### Removed
 ### Fixed
+ - When padding error messages in HTML for IE clients, we would send an
+   incorrect Length, and no one wants that, so we made it accurate and bigger.
+ - We would try and pad the result even if the response stream is not seekable,
+   now we check correctly.
 ### Security
 
 ## [2.5.1023] - 2016-08-24

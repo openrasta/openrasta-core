@@ -9,7 +9,6 @@
 #endregion
 
 using System;
-using System.Threading.Tasks;
 using OpenRasta.TypeSystem;
 using OpenRasta.Web;
 
@@ -19,11 +18,6 @@ namespace OpenRasta.Codecs
     {
         object ReadFrom(IHttpEntity request, IType destinationType, string destinationName);
     }
-
-  public interface IMediaTypeReaderAsync : ICodec
-  {
-    Task<object> ReadFrom(IHttpEntity request, IType destinationType, string destinationName);
-  }
 }
 
 #region Full license

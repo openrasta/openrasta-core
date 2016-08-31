@@ -86,7 +86,9 @@
     <Compile Include="Codecs\ICodecRepository.cs" />
     <Compile Include="Codecs\IKeyedValuesMediaTypeReader.cs" />
     <Compile Include="Codecs\IMediaTypeReader.cs" />
+    <Compile Include="Codecs\IMediaTypeReaderAsync.cs" />
     <Compile Include="Codecs\IMediaTypeWriter.cs" />
+    <Compile Include="Codecs\IMediaTypeWriterAsync.cs" />
     <Compile Include="Codecs\MediaTypeAttribute.cs" />
     <Compile Include="Codecs\MediaTypeDictionary.cs" />
     <Compile Include="Codecs\multipart\form-data\AbstractMultipartFormDataCodec.cs" />
@@ -298,7 +300,7 @@
     <Compile Include="Pipeline\Contributors\EndContributor.cs" />
     <Compile Include="Pipeline\Contributors\HandlerResolverContributor.cs" />
     <Compile Include="Pipeline\Contributors\HttpMethodOverriderContributor.cs" />
-    <Compile Include="Pipeline\Contributors\OperationCodecSelectorContributor.cs" />
+    <Compile Include="Pipeline\Contributors\RequestCodecSelector.cs" />
     <Compile Include="Pipeline\Contributors\OperationCreatorContributor.cs" />
     <Compile Include="Pipeline\Contributors\OperationFilterContributor.cs" />
     <Compile Include="Pipeline\Contributors\RequestDecoderContributor.cs" />
