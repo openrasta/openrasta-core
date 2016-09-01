@@ -43,6 +43,8 @@ namespace OpenRasta.Configuration
                     "Something went horribly wrong and the Configuration is deemed finish when it didn't even start!");
 
             DependencyManager.Pipeline.Initialize();
+            DependencyManager.PipelineAsync.Initialize();
+
             _isBeingConfigured = false;
         }
 

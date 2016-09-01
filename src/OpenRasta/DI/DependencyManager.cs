@@ -60,6 +60,11 @@ namespace OpenRasta.DI
             get { return GetService<IPipeline>(); }
         }
 
+        public static IPipelineAsync PipelineAsync
+        {
+            get { return GetService<IPipelineAsync>(); }
+        }
+
         public static IUriResolver Uris
         {
             get { return GetService<IUriResolver>(); }

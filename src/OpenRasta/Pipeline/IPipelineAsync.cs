@@ -6,5 +6,6 @@ namespace OpenRasta.Pipeline
   public interface IPipelineAsync
   {
     Task RunAsync(ICommunicationContext env);
+      void Initialize();
   }
 }
