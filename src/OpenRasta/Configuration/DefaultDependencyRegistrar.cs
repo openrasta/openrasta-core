@@ -195,12 +195,12 @@ namespace OpenRasta.Configuration
       PathManagerType = typeof(T);
     }
 
-    public void SetPipeline<T>() where T : IPipeline
+    public void SetPipeline<T>() where T : IPipeline, IPipelineAsync
     {
-      PipelineType = typeof(T);
+        PipelineType = typeof(T);
     }
 
-    public void SetTypeSystem<T>() where T : ITypeSystem
+      public void SetTypeSystem<T>() where T : ITypeSystem
     {
       TypeSystemType = typeof(T);
     }
@@ -311,12 +311,12 @@ namespace OpenRasta.Configuration
       resolver.AddDependency(typeof(ICodecRepository), CodecRepositoryType, DependencyLifetime.Singleton);
       resolver.AddDependency(typeof(IHandlerRepository), HandlerRepositoryType, DependencyLifetime.Singleton);
       resolver.AddDependency(typeof(IPipeline), PipelineType, DependencyLifetime.Singleton);
+      resolver.AddDependency(typeof(IPipelineAsync), PipelineType, DependencyLifetime.Singleton);
       resolver.AddDependency(typeof(IObjectBinderLocator), ParameterBinderLocatorType, DependencyLifetime.Singleton);
       resolver.AddDependency(typeof(IOperationCreator), OperationCreatorType, DependencyLifetime.Transient);
       resolver.AddDependency(typeof(IOperationExecutor), OperationExecutorType, DependencyLifetime.Transient);
       resolver.AddDependency(typeof(IErrorCollector), ErrorCollectorType, DependencyLifetime.Transient);
-      resolver.AddDependency(typeof(IOperationInterceptorProvider), OperationInterceptorProviderType,
-        DependencyLifetime.Transient);
+      resolver.AddDependency(typeof(IOperationInterceptorProvider), OperationInterceptorProviderType, DependencyLifetime.Transient);
       resolver.AddDependency(typeof(IPathManager), PathManagerType, DependencyLifetime.Singleton);
       resolver.AddDependency(typeof(ISurrogateProvider), typeof(SurrogateBuilderProvider), DependencyLifetime.Singleton);
     }
