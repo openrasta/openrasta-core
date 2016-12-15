@@ -302,7 +302,7 @@ namespace OpenRasta.Tests.Unit.Pipeline
     public void the_pipeline_must_have_been_initialized(Type callGraphGeneratorType)
     {
       var pipeline = new PipelineRunner(new InternalDependencyResolver());
-      Executing(() => pipeline.Run(new InMemoryCommunicationContext()))
+      Executing(() => pipeline.RunAsync(new InMemoryCommunicationContext()).Wait())
         .ShouldThrow<InvalidOperationException>();
     }
 

@@ -22,7 +22,7 @@ using OpenRasta.Testing;
 
 namespace UriTemplate_Specification
 {
-    public class uritemplate_context : context
+    public abstract class uritemplate_context : context
     {
         protected IEnumerable<Uri> BaseUris = new List<Uri> {new Uri("http://localhost")};
 

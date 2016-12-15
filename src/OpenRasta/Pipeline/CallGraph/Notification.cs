@@ -6,57 +6,74 @@ using OpenRasta.Web;
 
 namespace OpenRasta.Pipeline.CallGraph
 {
-  internal class Notification : IPipelineExecutionOrder, IPipelineExecutionOrderAnd
-  {
-    readonly IList<IPipelineContributor> _contributors;
-
-    public Notification(
-        Func<ICommunicationContext, Task<PipelineContinuation>> action,
-      IEnumerable<IPipelineContributor> contributors)
+    internal class Notification : IPipelineExecutionOrder, IPipelineExecutionOrderAnd
     {
-        if (action == null) throw new ArgumentNullException(nameof(action));
-        if (contributors == null) throw new ArgumentNullException(nameof(contributors));
-        _contributors = contributors.ToList();
-      Target = action;
+        readonly IList<IPipelineContributor> _contributors;
+
+        public Notification(
+            Func<ICommunicationContext, Task<PipelineContinuation>> action,
+            IEnumerable<IPipelineContributor> contributors)
+        {
+            if (action == null) throw new ArgumentNullException(nameof(action));
+            if (contributors == null) throw new ArgumentNullException(nameof(contributors));
+            _contributors = contributors.ToList();
+            Target = action;
+        }
+
+
+        public ICollection<Type> AfterTypes { get; } = new List<Type>();
+
+        public IPipelineExecutionOrder And => this;
+
+        public ICollection<Type> BeforeTypes { get; } = new List<Type>();
+
+        public string Description => Target?.Target?.GetType().Name;
+
+        public Func<ICommunicationContext, Task<PipelineContinuation>> Target { get; }
+
+        public IPipelineExecutionOrderAnd After(Type contributorType)
+        {
+            VerifyContributorIsRegistered(contributorType);
+            AfterTypes.Add(contributorType);
+            return this;
+        }
+
+        public IPipelineExecutionOrderAnd Before(Type contributorType)
+        {
+            VerifyContributorIsRegistered(contributorType);
+            BeforeTypes.Add(contributorType);
+            return this;
+        }
+
+        void VerifyContributorIsRegistered(Type contributorType)
+        {
+            if (!GetContributorsOfType(contributorType).Any())
+                throw new DependentContributorMissingException(contributorType);
+        }
+
+        IEnumerable<IPipelineContributor> GetContributorsOfType(Type contributorType)
+        {
+            return from contributor in _contributors
+                where contributorType.IsInstanceOfType(contributor)
+                select contributor;
+        }
     }
 
-
-    public ICollection<Type> AfterTypes { get; } = new List<Type>();
-
-    public IPipelineExecutionOrder And => this;
-
-    public ICollection<Type> BeforeTypes { get; } = new List<Type>();
-
-    public string Description => Target?.Target?.GetType().Name;
-
-    public Func<ICommunicationContext, Task<PipelineContinuation>> Target { get; }
-
-    public IPipelineExecutionOrderAnd After(Type contributorType)
+    public class DependentContributorMissingException : Exception
     {
-      VerifyContributorIsRegistered(contributorType);
-      AfterTypes.Add(contributorType);
-      return this;
-    }
+        public IEnumerable<Type> ContributorTypes { get; set; }
 
-    public IPipelineExecutionOrderAnd Before(Type contributorType)
-    {
-      VerifyContributorIsRegistered(contributorType);
-      BeforeTypes.Add(contributorType);
-      return this;
-    }
+        public DependentContributorMissingException(params Type[] contributorTypes)
+            : this((IEnumerable<Type>)contributorTypes)
 
-    void VerifyContributorIsRegistered(Type contributorType)
-    {
-      if (!GetContributorsOfType(contributorType).Any())
-        throw new ArgumentOutOfRangeException("There is no registered contributor matching type " +
-                                              contributorType.FullName);
-    }
+        {
+        }
 
-    IEnumerable<IPipelineContributor> GetContributorsOfType(Type contributorType)
-    {
-      return from contributor in _contributors
-        where contributorType.IsInstanceOfType(contributor)
-        select contributor;
+        public DependentContributorMissingException(IEnumerable<Type> contributorTypes)
+            : base($"Dependent contributor(s) missing, ensure they are added to the pipeline: "
+            + string.Join(", ", contributorTypes.Select(c=>c.Name)))
+        {
+            ContributorTypes = contributorTypes;
+        }
     }
-  }
 }
