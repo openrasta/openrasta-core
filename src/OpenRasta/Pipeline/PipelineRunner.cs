@@ -65,7 +65,7 @@ namespace OpenRasta.Pipeline
                     PipelineLog.WriteDebug("Initialized contributor {0}.", item.GetType().Name);
                     _contributors.Add(item);
                 }
-
+                VerifyKnownStagesRegistered(_contributors);
                 _callGraph = new CallGraphGeneratorFactory(_resolver)
                     .GetCallGraphGenerator()
                     .GenerateCallGraph(this);
@@ -74,6 +74,17 @@ namespace OpenRasta.Pipeline
             }
             IsInitialized = true;
             PipelineLog.WriteInfo("Pipeline has been successfully initialized.");
+        }
+
+        static void VerifyKnownStagesRegistered(IList<IPipelineContributor> contributors)
+        {
+            var missingTypes =
+                typeof(KnownStages).GetNestedTypes()
+                    .Where(known => contributors.Where(known.IsInstanceOfType).Any() == false);
+            if (missingTypes.Any())
+            {
+                throw new DependentContributorMissingException(missingTypes);
+            }
         }
 
         public IPipelineExecutionOrder Notify(Func<ICommunicationContext, PipelineContinuation> action)

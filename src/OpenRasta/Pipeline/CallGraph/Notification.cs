@@ -56,7 +56,7 @@ namespace OpenRasta.Pipeline.CallGraph
         void VerifyContributorIsRegistered(Type contributorType)
         {
             if (!GetContributorsOfType(contributorType).Any())
-                throw new ArgumentOutOfRangeException("There is no registered contributor matching type " + contributorType.FullName);
+                throw new DependentContributorMissingException(contributorType);
         }
 
         IEnumerable<IPipelineContributor> GetContributorsOfType(Type contributorType)
@@ -64,6 +64,24 @@ namespace OpenRasta.Pipeline.CallGraph
             return from contributor in _runner.Contributors
                    where contributorType.IsInstanceOfType(contributor)
                    select contributor;
+        }
+    }
+
+    public class DependentContributorMissingException : Exception
+    {
+        public IEnumerable<Type> ContributorTypes { get; set; }
+
+        public DependentContributorMissingException(params Type[] contributorTypes)
+            : this((IEnumerable<Type>)contributorTypes)
+
+        {
+        }
+
+        public DependentContributorMissingException(IEnumerable<Type> contributorTypes)
+            : base($"Dependent contributor(s) missing, ensure they are added to the pipeline: "
+            + string.Join(", ", contributorTypes.Select(c=>c.Name)))
+        {
+            ContributorTypes = contributorTypes;
         }
     }
 }
