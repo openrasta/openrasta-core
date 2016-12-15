@@ -1,4 +1,5 @@
-using System;
+<<<<<<< HEAD
+﻿using System;
 using OpenRasta.Web;
 
 namespace OpenRasta.Authentication
@@ -12,4 +13,20 @@ namespace OpenRasta.Authentication
 
         void Challenge(IResponse response);
     }
+=======
+﻿using System;
+using OpenRasta.Web;
+
+namespace OpenRasta.Authentication
+{
+    [Obsolete]
+    public interface IAuthenticationScheme
+    {
+        string Name { get; }
+
+        AuthenticationResult Authenticate(IRequest request);
+
+        void Challenge(IResponse response);
+    }
+>>>>>>> 507a922... Reintroduce IAuthentication
 }

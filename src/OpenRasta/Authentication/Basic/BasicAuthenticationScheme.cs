@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using OpenRasta.Web;
 
 namespace OpenRasta.Authentication.Basic

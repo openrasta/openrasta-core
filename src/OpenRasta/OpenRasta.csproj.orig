@@ -9,7 +9,11 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>OpenRasta</RootNamespace>
     <AssemblyName>OpenRasta</AssemblyName>
+<<<<<<< HEAD
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+=======
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+>>>>>>> 507a922... Reintroduce IAuthentication
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -21,8 +25,11 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+<<<<<<< HEAD
     <LangVersion>6</LangVersion>
     <GenerateSerializationAssemblies>On</GenerateSerializationAssemblies>
+=======
+>>>>>>> 507a922... Reintroduce IAuthentication
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -86,9 +93,13 @@
     <Compile Include="Codecs\ICodecRepository.cs" />
     <Compile Include="Codecs\IKeyedValuesMediaTypeReader.cs" />
     <Compile Include="Codecs\IMediaTypeReader.cs" />
+<<<<<<< HEAD
     <Compile Include="Codecs\IMediaTypeReaderAsync.cs" />
     <Compile Include="Codecs\IMediaTypeWriter.cs" />
     <Compile Include="Codecs\IMediaTypeWriterAsync.cs" />
+=======
+    <Compile Include="Codecs\IMediaTypeWriter.cs" />
+>>>>>>> 507a922... Reintroduce IAuthentication
     <Compile Include="Codecs\MediaTypeAttribute.cs" />
     <Compile Include="Codecs\MediaTypeDictionary.cs" />
     <Compile Include="Codecs\multipart\form-data\AbstractMultipartFormDataCodec.cs" />
@@ -106,6 +117,10 @@
     <Compile Include="CodeDom.Compiler\UnencodedOutputModifier.cs" />
     <Compile Include="Collections\Specialized\DependencyNode.cs" />
     <Compile Include="Collections\Specialized\DependencyTree.cs" />
+<<<<<<< HEAD
+=======
+    <Compile Include="Collections\TopologicalSort.cs" />
+>>>>>>> 507a922... Reintroduce IAuthentication
     <Compile Include="Collections\CollectionExtensions.cs" />
     <Compile Include="Collections\DictionaryBase.cs" />
     <Compile Include="Collections\EnumerableExtensions.cs" />
@@ -115,9 +130,14 @@
     <Compile Include="Collections\ObservableIterator.cs" />
     <Compile Include="Collections\ObservableIteratorExtensions.cs" />
     <Compile Include="Collections\ResumableIterator.cs" />
+<<<<<<< HEAD
     <Compile Include="Collections\Specialized\TopologicalSort.cs" />
     <Compile Include="Collections\Specialized\TopologicalTree.cs" />
     <Compile Include="Collections\Specialized\TopologicalNode.cs" />
+=======
+    <Compile Include="Collections\Specialized\DependencyGraph.cs" />
+    <Compile Include="Collections\Specialized\DependencyNodeV2.cs" />
+>>>>>>> 507a922... Reintroduce IAuthentication
     <Compile Include="Configuration\CodecDefinitionExtensions.cs" />
     <Compile Include="Configuration\CodecParentDefinitionExtensions.cs" />
     <Compile Include="Configuration\DefaultDependencyRegistrar.cs" />
@@ -239,7 +259,10 @@
     <Compile Include="IO\WrapperStream.cs" />
     <Compile Include="NullableExtensions.cs" />
     <Compile Include="ObjectPaths.cs" />
+<<<<<<< HEAD
     <Compile Include="OperationModel\AmbiguousRequestException.cs" />
+=======
+>>>>>>> 507a922... Reintroduce IAuthentication
     <Compile Include="OperationModel\CodecSelectors\RequestCodecSelector.cs" />
     <Compile Include="OperationModel\Diagnostics\OperationModelLogSource.cs" />
     <Compile Include="OperationModel\Filters\HttpMethodOperationFilter.cs" />
@@ -273,6 +296,7 @@
     <Compile Include="OperationModel\OperationExtensions.cs" />
     <Compile Include="OperationModel\OperationRequestCodecExtensions.cs" />
     <Compile Include="OperationModel\OutputMember.cs" />
+<<<<<<< HEAD
     <Compile Include="Pipeline\AbstractContributorMiddleware.cs" />
     <Compile Include="Pipeline\CatastrophicFailureMiddleware.cs" />
     <Compile Include="Pipeline\CleanupMiddleware.cs" />
@@ -287,6 +311,11 @@
     <Compile Include="Pipeline\CallGraph\ContributorNotification.cs" />
     <Compile Include="Pipeline\CallGraph\PipelineBuilder.cs" />
     <Compile Include="Pipeline\CallGraph\WeightedCallGraphGenerator.cs" />
+=======
+    <Compile Include="Pipeline\CallGraph\CallGraphGeneratorFactory.cs" />
+    <Compile Include="Pipeline\CallGraph\ContributorNotification.cs" />
+    <Compile Include="Pipeline\CallGraph\DefaultCallGraphGenerator.cs" />
+>>>>>>> 507a922... Reintroduce IAuthentication
     <Compile Include="Pipeline\CallGraph\IGenerateCallGraphs.cs" />
     <Compile Include="Pipeline\CallGraph\Notification.cs" />
     <Compile Include="Pipeline\CallGraph\TopologicalSortCallGraphGenerator.cs" />
@@ -300,10 +329,17 @@
     <Compile Include="Pipeline\Contributors\EndContributor.cs" />
     <Compile Include="Pipeline\Contributors\HandlerResolverContributor.cs" />
     <Compile Include="Pipeline\Contributors\HttpMethodOverriderContributor.cs" />
+<<<<<<< HEAD
     <Compile Include="Pipeline\Contributors\RequestCodecSelector.cs" />
     <Compile Include="Pipeline\Contributors\OperationCreatorContributor.cs" />
     <Compile Include="Pipeline\Contributors\OperationFilterContributor.cs" />
     <Compile Include="Pipeline\Contributors\RequestDecoderContributor.cs" />
+=======
+    <Compile Include="Pipeline\Contributors\OperationCodecSelectorContributor.cs" />
+    <Compile Include="Pipeline\Contributors\OperationCreatorContributor.cs" />
+    <Compile Include="Pipeline\Contributors\OperationFilterContributor.cs" />
+    <Compile Include="Pipeline\Contributors\OperationHydratorContributor.cs" />
+>>>>>>> 507a922... Reintroduce IAuthentication
     <Compile Include="Pipeline\Contributors\OperationInterceptorContributor.cs" />
     <Compile Include="Pipeline\Contributors\OperationInvokerContributor.cs" />
     <Compile Include="Pipeline\Contributors\OperationResultInvokerContributor.cs" />
@@ -312,10 +348,13 @@
     <Compile Include="Pipeline\Contributors\ResponseEntityWriterContributor.cs" />
     <Compile Include="Pipeline\Contributors\UriDecoratorsContributor.cs" />
     <Compile Include="Pipeline\Diagnostics\PipelineLogSource.cs" />
+<<<<<<< HEAD
     <Compile Include="Pipeline\PipelineBuildingExtensions.cs" />
     <Compile Include="Pipeline\TwoPhasedMiddleware.cs" />
     <Compile Include="Pipeline\IPipelineAsync.cs" />
     <Compile Include="Pipeline\IPipelineMiddleware.cs" />
+=======
+>>>>>>> 507a922... Reintroduce IAuthentication
     <Compile Include="Pipeline\IContextStore.cs" />
     <Compile Include="Pipeline\IContextStoreDependencyCleaner.cs" />
     <Compile Include="Pipeline\InMemory\TextWriterEnabledEntity.cs" />
@@ -323,16 +362,24 @@
     <Compile Include="Pipeline\IPipelineContributor.cs" />
     <Compile Include="Pipeline\IPipelineExecutionOrder.cs" />
     <Compile Include="Pipeline\IPipelineExecutionOrderAnd.cs" />
+<<<<<<< HEAD
     <Compile Include="Pipeline\IPipelineMiddlewareFactory.cs" />
+=======
+>>>>>>> 507a922... Reintroduce IAuthentication
     <Compile Include="Pipeline\KnownStages.cs" />
     <Compile Include="Pipeline\LegacyPipelineExtensions.cs" />
     <Compile Include="Pipeline\PipelineContinuation.cs" />
     <Compile Include="Pipeline\PipelineData.cs" />
     <Compile Include="Pipeline\PipelineExecutionOrderExtensions.cs" />
+<<<<<<< HEAD
     <Compile Include="Pipeline\Middleware.cs" />
     <Compile Include="Pipeline\PipelineRunner.cs" />
     <Compile Include="Pipeline\PipelineStage.cs" />
     <Compile Include="Pipeline\ResponseMiddleware.cs" />
+=======
+    <Compile Include="Pipeline\PipelineRunner.cs" />
+    <Compile Include="Pipeline\PipelineStage.cs" />
+>>>>>>> 507a922... Reintroduce IAuthentication
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RecursionException.cs" />
     <Compile Include="Reflection\ExpressionComparer.cs" />
@@ -559,8 +606,24 @@
   <ItemGroup>
     <EmbeddedResource Include="Resources\Files.resx" />
   </ItemGroup>
+<<<<<<< HEAD
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+=======
+  <ItemGroup>
+    <None Include="OpenRasta.nuspec">
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
   <ItemGroup>
     <Folder Include="Authentication" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+>>>>>>> 507a922... Reintroduce IAuthentication
 </Project>

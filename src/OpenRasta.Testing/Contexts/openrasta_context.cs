@@ -340,6 +340,11 @@ namespace OpenRasta.Testing.Contexts
         _lastNotification = action;
         return this;
       }
+
+        public void Initialize(bool validate)
+        {
+            Initialize();
+        }
     }
 
     protected void given_request_uriName(string uriName)

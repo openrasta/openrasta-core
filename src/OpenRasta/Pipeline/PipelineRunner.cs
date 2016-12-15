@@ -14,6 +14,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 using OpenRasta.DI;
@@ -24,6 +25,11 @@ using OpenRasta.Web;
 
 namespace OpenRasta.Pipeline
 {
+    public interface IPipelineInitializer
+    {
+        void Initialize(bool validate);
+    }
+
     public class PipelineRunner : IPipeline
     {
         readonly IList<IPipelineContributor> _contributors = new List<IPipelineContributor>();
@@ -52,10 +58,15 @@ namespace OpenRasta.Pipeline
             if (!IsInitialized)
                 throw new InvalidOperationException("The pipeline has not been initialized and cannot run.");
 
-            VerifyKnownStagesRegistered(_contributors);
+            PipelineExtensions.VerifyKnownStagesRegistered(_contributors);
         }
 
         public void Initialize()
+        {
+            Initialize(true);
+        }
+
+        public void Initialize(bool validate)
         {
             if (IsInitialized)
                 return;
@@ -66,7 +77,7 @@ namespace OpenRasta.Pipeline
                     PipelineLog.WriteDebug("Initialized contributor {0}.", item.GetType().Name);
                     _contributors.Add(item);
                 }
-
+                if (validate) _contributors.VerifyKnownStagesRegistered();
                 _callGraph = new CallGraphGeneratorFactory(_resolver)
                     .GetCallGraphGenerator()
                     .GenerateCallGraph(this.Contributors);
@@ -75,18 +86,6 @@ namespace OpenRasta.Pipeline
             }
             IsInitialized = true;
             PipelineLog.WriteInfo("Pipeline has been successfully initialized.");
-        }
-
-
-        static void VerifyKnownStagesRegistered(IList<IPipelineContributor> contributors)
-        {
-            var missingTypes =
-                typeof(KnownStages).GetNestedTypes()
-                    .Where(known => contributors.Where(known.IsInstanceOfType).Any() == false);
-            if (missingTypes.Any())
-            {
-                throw new DependentContributorMissingException(missingTypes);
-            }
         }
 
 
@@ -261,6 +260,7 @@ namespace OpenRasta.Pipeline
             throw new NotImplementedException("This code has moved. Try using a PipelineBuilder instad.");
         }
     }
+
 }
 
 #region Full license
