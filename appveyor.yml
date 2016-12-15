@@ -10,7 +10,7 @@ install:
         $branch = $env:APPVEYOR_REPO_BRANCH
         if ($branch -eq 'master') {
           $version = "$version-ci-$build"
-        } else if ($env:APPVEYOR_REPO_TAG) {
+        } elseif ($env:APPVEYOR_REPO_TAG) {
           $version = $env:APPVEYOR_REPO_TAG_NAME
         }
         else {
