@@ -44,6 +44,13 @@ OpenRasta adheres to [Semantic Versioning](http://semver.org/).
    now we check correctly.
 ### Security
 
+## [2.5.1050] - 2016-12-15
+### Fixed
+ - When we removed the authentication support from the out of the box experience,
+   we forgot that some people took dependencies on this essential step of the
+   pipeline. We apologised profusely and reintroduced
+    `KnownStages.IAuthentication` promptly.
+
 ## [2.5.1023] - 2016-08-24
 ### Changed
  - Made uri to handler method parameters mapping case-insensitive.
