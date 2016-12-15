@@ -9,7 +9,7 @@ using OpenRasta.Web;
 
 namespace OpenRasta.Pipeline.Contributors
 {
-    [Obsolete(ObsoletedContent.Authentication)]
+    [Obsolete]
     public class AuthenticationContributor : KnownStages.IAuthentication
     {
         readonly IDependencyResolver _resolver;

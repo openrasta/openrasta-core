@@ -4,7 +4,7 @@ using OpenRasta.Web;
 
 namespace OpenRasta.Authentication.Digest
 {
-    [Obsolete(ObsoletedContent.Authentication)]
+    [Obsolete]
     public class DigestAuthenticationScheme : IAuthenticationScheme
     {
         private readonly IDigestAuthenticator _digestAuthenticator;

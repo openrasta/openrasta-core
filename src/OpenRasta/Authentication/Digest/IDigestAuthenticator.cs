@@ -2,7 +2,7 @@
 
 namespace OpenRasta.Authentication.Digest
 {
-    [Obsolete(ObsoletedContent.Authentication)]
+    [Obsolete]
     public interface IDigestAuthenticator
     {
         string Realm { get; }

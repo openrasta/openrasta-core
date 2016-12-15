@@ -34,11 +34,23 @@ namespace PipelineRunner_Specification
             var pipeline = CreatePipeline(callGraphGeneratorType, new[]
             {
                 typeof(DummyContributor)
-            });
+            }, false);
             pipeline.Contributors.OfType<DummyContributor>().FirstOrDefault()
                 .ShouldNotBeNull();
         }
 
+        [TestCase(null)]
+        [TestCase(typeof(DefaultCallGraphGenerator))]
+        [TestCase(typeof(TopologicalSortCallGraphGenerator))]
+        public void valid_pipeline_is_required(Type callGraphGeneratorType)
+        {
+            Executing(()=>CreatePipeline(callGraphGeneratorType, new[]
+            {
+                typeof(DummyContributor)
+            })).ShouldThrow<DependentContributorMissingException>()
+            .ContributorTypes
+                .ShouldHaveCountOf(typeof(KnownStages).GetNestedTypes().Length - 1);
+        }
         public class DummyContributor : AfterContributor<KnownStages.IBegin>
         {
         }
@@ -51,7 +63,7 @@ namespace PipelineRunner_Specification
         [TestCase(typeof(TopologicalSortCallGraphGenerator))]
         public void the_contributor_list_always_contains_the_bootstrap_contributor(Type callGraphGeneratorType)
         {
-            var pipeline = CreatePipeline(callGraphGeneratorType, new Type[] { });
+            var pipeline = CreatePipeline(callGraphGeneratorType, new Type[] { }, false);
 
             pipeline.Contributors.OfType<KnownStages.IBegin>().FirstOrDefault()
                 .ShouldNotBeNull();
@@ -62,7 +74,7 @@ namespace PipelineRunner_Specification
         [TestCase(typeof(TopologicalSortCallGraphGenerator))]
         public void the_contributor_list_is_read_only(Type callGraphGeneratorType)
         {
-            CreatePipeline(callGraphGeneratorType, new Type[] { })
+            CreatePipeline(callGraphGeneratorType, new Type[] { }, false)
                 .Contributors.IsReadOnly
                 .ShouldBeTrue();
         }
@@ -79,7 +91,7 @@ namespace PipelineRunner_Specification
             {
                 typeof (SecondIsAfterFirstContributor),
                 typeof (FirstIsAfterBootstrapContributor)
-            });
+            }, false);
 
             pipeline.CallGraph.ShouldHaveSameElementsAs(new[]
             {
@@ -99,7 +111,7 @@ namespace PipelineRunner_Specification
                 typeof(SecondIsAfterFirstContributor),
                 typeof(ThirdIsBeforeFirstContributor),
                 typeof(FourthIsAfterThirdContributor)
-            });
+            }, false);
 
             pipeline.CallGraph.ShouldHaveSameElementsAs(new[]
             {
@@ -120,7 +132,7 @@ namespace PipelineRunner_Specification
                 typeof(SecondIsAfterFirstContributor),
                 typeof(ThirdIsBeforeFirstContributor),
                 typeof(FourthIsAfterThirdContributor)
-            });
+            }, false);
 
             pipeline.CallGraph.ShouldHaveSameElementsAs(new[]
             {
@@ -140,7 +152,7 @@ namespace PipelineRunner_Specification
             Executing(() => CreatePipeline(callGraphGeneratorType, new[]
             {
                 typeof(RecursiveA), typeof(RecursiveB)
-            })).ShouldThrow<RecursionException>();
+            }, false)).ShouldThrow<RecursionException>();
         }
 
         [TestCase(null)]
@@ -153,7 +165,7 @@ namespace PipelineRunner_Specification
                 typeof(ContributorA),
                 typeof(ContributorB),
                 typeof(ContributorC)
-            })).ShouldThrow<RecursionException>();
+            }, false)).ShouldThrow<RecursionException>();
         }
 
         public static PipelineContinuation DoNothing(ICommunicationContext c)
@@ -234,7 +246,7 @@ namespace PipelineRunner_Specification
             {
                 typeof(ContributorThatThrows),
                 typeof(FakeOperationResultInvoker)
-            });
+            }, false);
 
             var context = new InMemoryCommunicationContext();
             pipeline.Run(context);
@@ -276,7 +288,7 @@ namespace PipelineRunner_Specification
             var pipeline = CreatePipeline(callGraphGeneratorType, new[]
             {
                 typeof(WasCalledContributor)
-            });
+            }, false);
 
             pipeline.Run(new InMemoryCommunicationContext());
             WasCalledContributor.WasCalled.ShouldBeTrue();
@@ -311,7 +323,7 @@ namespace PipelineRunner_Specification
 
     public class pipelinerunner_context : context
     {
-        protected IPipeline CreatePipeline(Type callGraphGeneratorType, Type[] contributorTypes)
+        protected IPipeline CreatePipeline(Type callGraphGeneratorType, Type[] contributorTypes, bool validate=true)
         {
             var resolver = new InternalDependencyResolver();
             resolver.AddDependency<IPipelineContributor, BootstrapperContributor>();
@@ -324,7 +336,7 @@ namespace PipelineRunner_Specification
             foreach (var type in contributorTypes)
                 resolver.AddDependency(typeof(IPipelineContributor), type, DependencyLifetime.Singleton);
             var runner = new PipelineRunner(resolver) { PipelineLog = new TraceSourceLogger<PipelineLogSource>() };
-            runner.Initialize();
+            runner.Initialize(validate);
             return runner;
         }
     }

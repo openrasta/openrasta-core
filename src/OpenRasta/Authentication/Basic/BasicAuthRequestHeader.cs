@@ -4,7 +4,7 @@ using OpenRasta;
 
 namespace OpenRasta.Authentication.Basic
 {
-    [Obsolete(ObsoletedContent.Authentication)]
+    [Obsolete]
     public class BasicAuthRequestHeader
     {
         public string Username { get; private set; }

@@ -5,13 +5,13 @@ using OpenRasta;
 
 namespace OpenRasta.Authentication.Digest
 {
-    [Obsolete(ObsoletedContent.Authentication)]
+    [Obsolete]
     public enum DigestAlgorithm
     {
         MD5
     }
 
-    [Obsolete(ObsoletedContent.Authentication)]
+    [Obsolete]
     public class DigestAuthResponseChallenge
     {
         public string Realm { get; private set; } // realm=""
@@ -93,7 +93,7 @@ namespace OpenRasta.Authentication.Digest
         }
     }
 
-    [Obsolete(ObsoletedContent.Authentication)]
+    [Obsolete]
     public class DigestAuthRequestParameters
     {
         private const string SchemeName = "DIGEST";

@@ -78,7 +78,7 @@ namespace OpenRasta.Pipeline.CallGraph
         }
 
         public DependentContributorMissingException(IEnumerable<Type> contributorTypes)
-            : base($"Dependent contributor(s) missing, ensure they are added to the pipeline: "
+            : base("Dependent contributor(s) missing, ensure they are added to the pipeline: "
             + string.Join(", ", contributorTypes.Select(c=>c.Name)))
         {
             ContributorTypes = contributorTypes;

@@ -6,7 +6,7 @@ using OpenRasta.Web;
 
 namespace OpenRasta.Pipeline.Contributors
 {
-    [Obsolete(ObsoletedContent.Authentication)]
+    [Obsolete]
     public class AuthenticationChallengerContributor : IPipelineContributor
     {
         readonly IDependencyResolver _resolver;

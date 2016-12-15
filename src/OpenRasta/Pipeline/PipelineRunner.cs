@@ -54,7 +54,12 @@ namespace OpenRasta.Pipeline
             if (!IsInitialized)
                 throw new InvalidOperationException("The pipeline has not been initialized and cannot run.");
         }
+
         public void Initialize()
+        {
+            Initialize(true);
+        }
+        public void Initialize(bool validate)
         {
             if (IsInitialized)
                 return;
@@ -65,7 +70,7 @@ namespace OpenRasta.Pipeline
                     PipelineLog.WriteDebug("Initialized contributor {0}.", item.GetType().Name);
                     _contributors.Add(item);
                 }
-                VerifyKnownStagesRegistered(_contributors);
+                if (validate) VerifyKnownStagesRegistered(_contributors);
                 _callGraph = new CallGraphGeneratorFactory(_resolver)
                     .GetCallGraphGenerator()
                     .GenerateCallGraph(this);

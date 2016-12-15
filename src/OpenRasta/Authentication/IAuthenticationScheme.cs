@@ -3,7 +3,7 @@ using OpenRasta.Web;
 
 namespace OpenRasta.Authentication
 {
-    [Obsolete(ObsoletedContent.Authentication)]
+    [Obsolete]
     public interface IAuthenticationScheme
     {
         string Name { get; }
