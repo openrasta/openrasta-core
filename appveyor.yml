@@ -10,16 +10,21 @@ install:
         $branch = $env:APPVEYOR_REPO_BRANCH
         if ($branch -eq 'master') {
           $version = "$version-ci-$build"
-        } elseif ($env:APPVEYOR_REPO_TAG) {
+        } elseif ($env:APPVEYOR_REPO_TAG -eq 'true') {
           $version = $env:APPVEYOR_REPO_TAG_NAME
         }
         else {
-          $version = "$version-branch-$branch-$build"
+          $maxVersionLength = 20
+          $punctuationLength = 3
+          $maxBranchLength = $maxVersionLength - $punctuationLength - $version.Length-$build.Length
+          $shortBranch = $branch.Substring(0,($maxBranchLength,$branch.Length | measure -min).Minimum)
+          $version = "$version-b$shortBranch-$build"
         }
         Set-AppveyorBuildVariable -Name "AssemblyMajor" -Value "$major"
         Update-AppVeyorBuild -Version "$version"
+        echo "Version $version chosen"
 
-  - gem install chandler
+  - gem install chandler --no-ri --no-rdoc
   - ps: set-content ~/.netrc "machine api.github.com login $env:github_username password $env:github_password" -encoding ascii
   - ps: cp ~/.netrc ~/_netrc
   - chandler push
