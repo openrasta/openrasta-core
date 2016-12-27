@@ -12,6 +12,8 @@
 
 using System;
 using System.Linq;
+using System.Runtime.Remoting.Messaging;
+using System.Security.Cryptography.X509Certificates;
 using NUnit.Framework;
 using OpenRasta.DI;
 using OpenRasta.Hosting.InMemory;
@@ -318,8 +320,8 @@ namespace OpenRasta.Tests.Unit.Pipeline
         [TestCase(typeof(TopologicalSortCallGraphGenerator))]
         public void the_pipeline_must_have_been_initialized(Type callGraphGeneratorType)
         {
-            var pipeline = new PipelineRunner(new InternalDependencyResolver());
-            Executing(() => pipeline.RunAsync(new InMemoryCommunicationContext()).Wait())
+            var pipeline = CreatePipeline(callGraphGeneratorType, new Type[0], false, false);
+            Executing(() => pipeline.Run(new InMemoryCommunicationContext()))
                 .ShouldThrow<InvalidOperationException>();
         }
 
@@ -355,7 +357,11 @@ namespace OpenRasta.Tests.Unit.Pipeline
 
     public abstract class pipelinerunner_context<T> : context where T : class, IPipeline
     {
-        protected IPipeline CreatePipeline(Type callGraphGeneratorType, Type[] contributorTypes, bool validate = true)
+        protected IPipeline CreatePipeline(
+            Type callGraphGeneratorType,
+            Type[] contributorTypes,
+            bool validate = true,
+            bool initialize = true)
         {
             var resolver = new InternalDependencyResolver();
             resolver.AddDependencyInstance<IDependencyResolver>(resolver);
@@ -374,7 +380,7 @@ namespace OpenRasta.Tests.Unit.Pipeline
                 resolver.AddDependency(typeof(IPipelineContributor), type, DependencyLifetime.Singleton);
 
             var runner = resolver.Resolve<T>();
-            runner.Initialize(validate);
+            if (initialize) runner.Initialize(validate);
             return runner;
         }
     }

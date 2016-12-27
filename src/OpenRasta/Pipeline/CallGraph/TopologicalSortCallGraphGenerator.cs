@@ -11,10 +11,6 @@ namespace OpenRasta.Pipeline.CallGraph
 {
   public sealed class TopologicalSortCallGraphGenerator : IGenerateCallGraphs
   {
-      static TopologicalSortCallGraphGenerator()
-      {
-      }
-
       public IEnumerable<ContributorCall> GenerateCallGraph(IEnumerable<IPipelineContributor> contributors)
     {
       contributors = contributors.ToList();

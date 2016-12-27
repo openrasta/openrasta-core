@@ -33,5 +33,13 @@ namespace OpenRasta.Pipeline
               throw new DependentContributorMissingException(missingTypes);
           }
       }
+
+      public static void CheckPipelineInitialized(this IPipeline pipeline)
+      {
+#pragma warning disable 618
+          if (!pipeline.IsInitialized)
+#pragma warning restore 618
+              throw new InvalidOperationException("The pipeline has not been initialized and cannot run.");
+      }
   }
 }

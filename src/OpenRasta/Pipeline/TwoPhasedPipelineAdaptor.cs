@@ -12,7 +12,7 @@ namespace OpenRasta.Pipeline
     {
         readonly IGenerateCallGraphs _graphs;
         Func<ICommunicationContext, Task> _invoker;
-        public bool IsInitialized { get; }
+        public bool IsInitialized { get; set; }
         public IList<IPipelineContributor> Contributors { get; }
         public IEnumerable<ContributorCall> CallGraph { get; private set; }
 
@@ -38,6 +38,7 @@ namespace OpenRasta.Pipeline
             _invoker = (CallGraph = _graphs.GenerateCallGraph(Contributors))
                 .ToTwoPhasedMiddleware<KnownStages.IOperationResultInvocation>()
                 .Invoke;
+            IsInitialized = true;
         }
 
         public IPipelineExecutionOrder Notify(Func<ICommunicationContext, PipelineContinuation> notification)
@@ -52,6 +53,8 @@ namespace OpenRasta.Pipeline
 
         public Task RunAsync(ICommunicationContext env)
         {
+            this.CheckPipelineInitialized();
+
             if (env.PipelineData.PipelineStage == null)
                 env.PipelineData.PipelineStage = new PipelineStage(this);
             return _invoker(env);

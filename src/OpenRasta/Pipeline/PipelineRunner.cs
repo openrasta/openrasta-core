@@ -14,11 +14,10 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
-using OpenRasta.DI;
 using OpenRasta.Diagnostics;
+using OpenRasta.DI;
 using OpenRasta.Pipeline.CallGraph;
 using OpenRasta.Pipeline.Diagnostics;
 using OpenRasta.Web;
@@ -30,7 +29,7 @@ namespace OpenRasta.Pipeline
         void Initialize(bool validate);
     }
 
-    public class PipelineRunner : IPipeline
+    public class PipelineRunner : IPipeline, IPipelineAsync
     {
         readonly IList<IPipelineContributor> _contributors = new List<IPipelineContributor>();
         readonly IDependencyResolver _resolver;
@@ -52,14 +51,6 @@ namespace OpenRasta.Pipeline
         public ILogger Log { get; set; }
 
         public IEnumerable<ContributorCall> CallGraph => _callGraph;
-
-        void CheckPipelineIsInitialized()
-        {
-            if (!IsInitialized)
-                throw new InvalidOperationException("The pipeline has not been initialized and cannot run.");
-
-            PipelineExtensions.VerifyKnownStagesRegistered(_contributors);
-        }
 
         public void Initialize()
         {
@@ -99,7 +90,7 @@ namespace OpenRasta.Pipeline
         {
             if (context == null) throw new ArgumentNullException(nameof(context));
 
-            CheckPipelineIsInitialized();
+            this.CheckPipelineInitialized();
 
             if (context.PipelineData.PipelineStage == null)
                 context.PipelineData.PipelineStage = new PipelineStage(this);
