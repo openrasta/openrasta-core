@@ -16,6 +16,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using OpenRasta.Concordia;
 using OpenRasta.Diagnostics;
 using OpenRasta.DI;
 using OpenRasta.Pipeline.CallGraph;
@@ -24,11 +25,6 @@ using OpenRasta.Web;
 
 namespace OpenRasta.Pipeline
 {
-    public interface IPipelineInitializer
-    {
-        void Initialize(bool validate);
-    }
-
     public class PipelineRunner : IPipeline, IPipelineAsync
     {
         readonly IList<IPipelineContributor> _contributors = new List<IPipelineContributor>();
@@ -54,10 +50,10 @@ namespace OpenRasta.Pipeline
 
         public void Initialize()
         {
-            Initialize(true);
+            Initialize(new StartupProperties());
         }
 
-        public void Initialize(bool validate)
+        public void Initialize(StartupProperties startup)
         {
             if (IsInitialized)
                 return;
@@ -68,7 +64,7 @@ namespace OpenRasta.Pipeline
                     PipelineLog.WriteDebug("Initialized contributor {0}.", item.GetType().Name);
                     _contributors.Add(item);
                 }
-                if (validate) _contributors.VerifyKnownStagesRegistered();
+                if (startup.OpenRasta.Pipeline.Validate) _contributors.VerifyKnownStagesRegistered();
                 _callGraph = new CallGraphGeneratorFactory(_resolver)
                     .GetCallGraphGenerator()
                     .GenerateCallGraph(this.Contributors);

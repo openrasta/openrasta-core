@@ -118,6 +118,7 @@
     <Compile Include="Collections\Specialized\TopologicalSort.cs" />
     <Compile Include="Collections\Specialized\TopologicalTree.cs" />
     <Compile Include="Collections\Specialized\TopologicalNode.cs" />
+    <Compile Include="Concordia\StartupProperties.cs" />
     <Compile Include="Configuration\CodecDefinitionExtensions.cs" />
     <Compile Include="Configuration\CodecParentDefinitionExtensions.cs" />
     <Compile Include="Configuration\DefaultDependencyRegistrar.cs" />
@@ -277,6 +278,7 @@
     <Compile Include="Pipeline\CatastrophicFailureMiddleware.cs" />
     <Compile Include="Pipeline\CleanupMiddleware.cs" />
     <Compile Include="Pipeline\Contributors\ContextExtensions.cs" />
+    <Compile Include="Pipeline\IPipelineInitializer.cs" />
     <Compile Include="Pipeline\TwoPhasedPipelineAdaptor.cs" />
     <Compile Include="Pipeline\IPipelineBuilder.cs" />
     <Compile Include="Pipeline\IPipelineContributorAsync.cs" />

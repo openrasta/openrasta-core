@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using OpenRasta.Concordia;
 using OpenRasta.Web;
 
 namespace OpenRasta.Pipeline.CallGraph
@@ -55,7 +56,7 @@ namespace OpenRasta.Pipeline.CallGraph
         }
 
         [Obsolete]
-        public void Initialize(bool validate)
+        public void Initialize(StartupProperties props)
         {
             throw new NotImplementedException("Backward compatibility implementation, should never be called.");
         }

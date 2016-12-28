@@ -15,6 +15,7 @@ using System.Linq;
 using System.Runtime.Remoting.Messaging;
 using System.Security.Cryptography.X509Certificates;
 using NUnit.Framework;
+using OpenRasta.Concordia;
 using OpenRasta.DI;
 using OpenRasta.Hosting.InMemory;
 using OpenRasta.Pipeline;
@@ -380,7 +381,7 @@ namespace OpenRasta.Tests.Unit.Pipeline
                 resolver.AddDependency(typeof(IPipelineContributor), type, DependencyLifetime.Singleton);
 
             var runner = resolver.Resolve<T>();
-            if (initialize) runner.Initialize(validate);
+            if (initialize) runner.Initialize(new StartupProperties{OpenRasta={Pipeline={Validate = validate}}});
             return runner;
         }
     }

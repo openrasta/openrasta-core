@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using OpenRasta.Codecs;
 using OpenRasta.Collections;
+using OpenRasta.Concordia;
 using OpenRasta.DI;
 using OpenRasta.Diagnostics;
 using OpenRasta.Handlers;
@@ -341,7 +342,7 @@ namespace OpenRasta.Testing.Contexts
         return this;
       }
 
-        public void Initialize(bool validate)
+        public void Initialize(StartupProperties validate)
         {
             Initialize();
         }

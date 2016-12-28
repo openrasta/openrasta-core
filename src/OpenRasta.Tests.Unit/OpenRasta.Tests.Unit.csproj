@@ -70,6 +70,7 @@
     <Compile Include="Collections\CollectionExtensions_Specification.cs" />
     <Compile Include="Collections\ObservableIterator_Specification.cs" />
     <Compile Include="Collections\ResumableIterator_Specification.cs" />
+    <Compile Include="Concordia\startupProperties_with_values.cs" />
     <Compile Include="Configuration\configuration_context.cs" />
     <Compile Include="Configuration\contexts\configuration.cs" />
     <Compile Include="Configuration\fluent_extensions\ResourceExtension.cs" />
