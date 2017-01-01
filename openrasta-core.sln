@@ -17,6 +17,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		CHANGELOG.md = CHANGELOG.md
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{91366AA2-841F-4593-96A0-3A00A3D44584}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -35,6 +37,10 @@ Global
 		{EECBE19A-4725-4F13-AE7E-B68CD98AEB6E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EECBE19A-4725-4F13-AE7E-B68CD98AEB6E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EECBE19A-4725-4F13-AE7E-B68CD98AEB6E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{91366AA2-841F-4593-96A0-3A00A3D44584}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{91366AA2-841F-4593-96A0-3A00A3D44584}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{91366AA2-841F-4593-96A0-3A00A3D44584}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{91366AA2-841F-4593-96A0-3A00A3D44584}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

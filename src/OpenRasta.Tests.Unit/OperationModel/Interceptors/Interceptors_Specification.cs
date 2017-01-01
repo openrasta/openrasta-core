@@ -240,9 +240,9 @@ namespace OpenRasta.Tests.Unit.OperationModel.Interceptors
       throw new InvalidOperationException();
     }
 
-    public async Task ThrowOnTask()
+    public Task ThrowOnTask()
     {
-      throw new InvalidOperationException();
+      return Task.Run(()=>1+1).ContinueWith(task => {throw new InvalidOperationException();});
     }
   }
 
