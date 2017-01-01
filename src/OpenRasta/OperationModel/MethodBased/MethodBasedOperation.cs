@@ -10,22 +10,52 @@ using OpenRasta.TypeSystem;
 
 namespace OpenRasta.OperationModel.MethodBased
 {
-  public class MethodBasedOperation : IOperation, IOperationAsync
+  public abstract class AbstractMethodOperation
   {
-    readonly IMethod _method;
-    readonly IType _ownerType;
+    public IType OwnerType { get; }
+    public IMethod Method { get; }
 
-    readonly Dictionary<IParameter, IObjectBinder> _parameterBinders;
+    protected AbstractMethodOperation(IType ownerType, IMethod method, IObjectBinderLocator binderLocator)
+    {
+      OwnerType = ownerType;
+      Method = method;
+      Binders = method.InputMembers.ToDictionary(x => x, binderLocator.GetBinder);
+      Inputs = Binders.Select(x => new InputMember(x.Key, x.Value, x.Key.IsOptional));
+      ExtendedProperties = new NullBehaviorDictionary<object, object>();
+
+    }
+
+    public IDictionary ExtendedProperties { get; set; }
+
+    public IEnumerable<InputMember> Inputs { get; set; }
+
+    public IDictionary<IParameter, IObjectBinder> Binders { get; set; }
+    public string Name => Method.Name;
+
+    public IEnumerable<T> FindAttributes<T>() where T : class
+    {
+      return OwnerType.FindAttributes<T>().Concat(Method.FindAttributes<T>());
+    }
+
+    public T FindAttribute<T>() where T : class
+    {
+      return Method.FindAttribute<T>() ?? OwnerType.FindAttribute<T>();
+    }
+
+    public override string ToString()
+    {
+      return Method.ToString();
+    }
+  }
+
+  public class MethodBasedOperation : AbstractMethodOperation, IOperation, IOperationAsync
+  {
     IOperationInvoker _invoker;
 
     public MethodBasedOperation(IObjectBinderLocator binderLocator, IType ownerType, IMethod method)
+      : base(ownerType, method, binderLocator)
     {
-      _method = method;
-      _ownerType = ownerType;
-      _parameterBinders = method.InputMembers.ToDictionary(x => x, binderLocator.GetBinder);
-      Inputs = _parameterBinders.Select(x => new InputMember(x.Key, x.Value, x.Key.IsOptional));
-      ExtendedProperties = new NullBehaviorDictionary<object, object>();
-      _invoker = CreateInvoker(_method);
+      _invoker = CreateInvoker(base.Method);
     }
 
     static IOperationInvoker CreateInvoker(IMethod method)
@@ -41,27 +71,8 @@ namespace OpenRasta.OperationModel.MethodBased
       return new SyncOperationInvoker(method);
     }
 
-    public IDictionary ExtendedProperties { get; private set; }
-    public IEnumerable<InputMember> Inputs { get; private set; }
-
-    public string Name => _method.Name;
-
     public IDependencyResolver Resolver { private get; set; }
 
-    public override string ToString()
-    {
-      return _method.ToString();
-    }
-
-    public T FindAttribute<T>() where T : class
-    {
-      return _method.FindAttribute<T>() ?? _ownerType.FindAttribute<T>();
-    }
-
-    public IEnumerable<T> FindAttributes<T>() where T : class
-    {
-      return _ownerType.FindAttributes<T>().Concat(_method.FindAttributes<T>());
-    }
 
     public Task<IEnumerable<OutputMember>> InvokeAsync()
     {
@@ -69,13 +80,13 @@ namespace OpenRasta.OperationModel.MethodBased
       {
         var notReady = Inputs.WhosNotReady();
         throw new InvalidOperationException(
-          $"'{_method.Owner.Name}.{_method.Name} could not execute. " +
+          $"'{Method.Owner.Name}.{Method.Name} could not execute. " +
           $"These members have not been provided: {notReady.Select(x => x.Name).JoinString(", ")}");
       }
 
-      var handler = CreateInstance(_ownerType, Resolver);
+      var handler = CreateInstance(OwnerType, Resolver);
 
-      var bindingResults = from kv in _parameterBinders
+      var bindingResults = from kv in Binders
         let param = kv.Key
         let binder = kv.Value
         select binder.IsEmpty
@@ -106,7 +117,7 @@ namespace OpenRasta.OperationModel.MethodBased
         : typeForResolver.CreateInstance(resolver);
     }
 
-    IEnumerable<object> GetParameters(IEnumerable<BindingResult> results)
+    static IEnumerable<object> GetParameters(IEnumerable<BindingResult> results)
     {
       foreach (var result in results)
         if (!result.Successful)

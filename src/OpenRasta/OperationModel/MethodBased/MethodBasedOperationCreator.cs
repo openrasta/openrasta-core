@@ -32,10 +32,15 @@ namespace OpenRasta.OperationModel.MethodBased
                    let sourceMethods = handler.GetMethods()
                    let filteredMethods = _filterMethod(sourceMethods)
                    from method in filteredMethods
-                   select new MethodBasedOperation(_binderLocator, handler, method) { Resolver = _resolver } as IOperation;
+                   select CreateOperation(handler, method) as IOperation;
         }
 
-        IEnumerable<Func<IEnumerable<IMethod>, IEnumerable<IMethod>>> FilterMethods(IMethodFilter[] filters)
+      IOperation CreateOperation(IType handler, IMethod method)
+      {
+        return new MethodBasedOperation(_binderLocator, handler, method) { Resolver = _resolver };
+      }
+
+      IEnumerable<Func<IEnumerable<IMethod>, IEnumerable<IMethod>>> FilterMethods(IMethodFilter[] filters)
         {
             if (filters == null)
             {
