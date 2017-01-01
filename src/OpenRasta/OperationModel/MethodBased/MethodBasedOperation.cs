@@ -22,7 +22,6 @@ namespace OpenRasta.OperationModel.MethodBased
       Binders = method.InputMembers.ToDictionary(x => x, binderLocator.GetBinder);
       Inputs = Binders.Select(x => new InputMember(x.Key, x.Value, x.Key.IsOptional));
       ExtendedProperties = new NullBehaviorDictionary<object, object>();
-
     }
 
     public IDictionary ExtendedProperties { get; set; }
@@ -31,6 +30,7 @@ namespace OpenRasta.OperationModel.MethodBased
 
     public IDictionary<IParameter, IObjectBinder> Binders { get; set; }
     public string Name => Method.Name;
+    public IDependencyResolver Resolver { protected get; set; }
 
     public IEnumerable<T> FindAttributes<T>() where T : class
     {
@@ -45,6 +45,70 @@ namespace OpenRasta.OperationModel.MethodBased
     public override string ToString()
     {
       return Method.ToString();
+    }
+
+    protected IEnumerable<object> GetParameters()
+    {
+      CheckInputs();
+
+      var results = from kv in Binders
+        let param = kv.Key
+        let binder = kv.Value
+        select binder.IsEmpty
+          ? BindingResult.Success(param.DefaultValue)
+          : binder.BuildObject();
+
+      foreach (var result in results)
+        if (!result.Successful)
+          throw new InvalidOperationException("A parameter wasn't successfully created.");
+        else
+          yield return result.Instance;
+    }
+
+    /// <summary>
+    /// Returns an instance of the type, optionally through the container if it is supported.
+    /// </summary>
+    /// <param name="type"></param>
+    /// <param name="resolver"></param>
+    /// <returns></returns>
+    protected static object CreateInstance(IType type, IDependencyResolver resolver)
+    {
+      var typeForResolver = type as IResolverAwareType;
+      return resolver == null || typeForResolver == null
+        ? type.CreateInstance()
+        : typeForResolver.CreateInstance(resolver);
+    }
+
+    void CheckInputs()
+    {
+      if (Inputs.AllReady()) return;
+
+      var notReady = Inputs.WhosNotReady();
+      throw new InvalidOperationException(
+        $"'{Method.Owner.Name}.{Method.Name} could not execute. " +
+        $"These members have not been provided: {notReady.Select(x => x.Name).JoinString(", ")}");
+    }
+  }
+
+  public class SyncMethod : AbstractMethodOperation, IOperation
+  {
+    public SyncMethod(IType ownerType, IMethod method, IObjectBinderLocator binderLocator)
+      : base(ownerType, method, binderLocator)
+    {
+    }
+
+    public IEnumerable<OutputMember> Invoke()
+    {
+      var instance = CreateInstance(OwnerType, Resolver);
+      var parameters = GetParameters();
+      return new[]
+      {
+        new OutputMember()
+        {
+          Member = Method.OutputMembers.Single(),
+          Value = Method.Invoke(instance, parameters)
+        }
+      };
     }
   }
 
@@ -71,59 +135,19 @@ namespace OpenRasta.OperationModel.MethodBased
       return new SyncOperationInvoker(method);
     }
 
-    public IDependencyResolver Resolver { private get; set; }
-
 
     public Task<IEnumerable<OutputMember>> InvokeAsync()
     {
-      if (!Inputs.AllReady())
-      {
-        var notReady = Inputs.WhosNotReady();
-        throw new InvalidOperationException(
-          $"'{Method.Owner.Name}.{Method.Name} could not execute. " +
-          $"These members have not been provided: {notReady.Select(x => x.Name).JoinString(", ")}");
-      }
-
       var handler = CreateInstance(OwnerType, Resolver);
-
-      var bindingResults = from kv in Binders
-        let param = kv.Key
-        let binder = kv.Value
-        select binder.IsEmpty
-          ? BindingResult.Success(param.DefaultValue)
-          : binder.BuildObject();
-
-      var parameters = GetParameters(bindingResults);
+      var parameters = GetParameters();
 
       return _invoker.Invoke(handler, parameters.ToArray());
     }
 
+
     public IEnumerable<OutputMember> Invoke()
     {
       return InvokeAsync().GetAwaiter().GetResult();
-    }
-
-    /// <summary>
-    /// Returns an instance of the type, optionally through the container if it is supported.
-    /// </summary>
-    /// <param name="type"></param>
-    /// <param name="resolver"></param>
-    /// <returns></returns>
-    static object CreateInstance(IType type, IDependencyResolver resolver)
-    {
-      var typeForResolver = type as IResolverAwareType;
-      return resolver == null || typeForResolver == null
-        ? type.CreateInstance()
-        : typeForResolver.CreateInstance(resolver);
-    }
-
-    static IEnumerable<object> GetParameters(IEnumerable<BindingResult> results)
-    {
-      foreach (var result in results)
-        if (!result.Successful)
-          throw new InvalidOperationException("A parameter wasn't successfully created.");
-        else
-          yield return result.Instance;
     }
   }
 
@@ -141,15 +165,16 @@ namespace OpenRasta.OperationModel.MethodBased
 
     public Task<IEnumerable<OutputMember>> Invoke(object instance, object[] parameters)
     {
-      return _invoke(instance).ContinueWith(_ =>
-        (IEnumerable<OutputMember>) new[]
-        {
-          new OutputMember
+      return _invoke(instance)
+        .ContinueWith(_ =>
+          (IEnumerable<OutputMember>) new[]
           {
-            Member = _method.OutputMembers.Single(),
-            Value = _.Result
-          }
-        });
+            new OutputMember
+            {
+              Member = _method.OutputMembers.Single(),
+              Value = _.Result
+            }
+          });
     }
   }
 

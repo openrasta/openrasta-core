@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using OpenRasta.Binding;
 using OpenRasta.DI;
 using OpenRasta.TypeSystem;
@@ -37,7 +38,14 @@ namespace OpenRasta.OperationModel.MethodBased
 
       IOperation CreateOperation(IType handler, IMethod method)
       {
-        return new MethodBasedOperation(_binderLocator, handler, method) { Resolver = _resolver };
+
+        var output = method.OutputMembers.Single();
+        if (output.StaticType == typeof(Task))
+          return new MethodBasedOperation(_binderLocator, handler, method) { Resolver = _resolver };
+        if (output.StaticType.IsGenericType &&
+            output.StaticType.GetGenericTypeDefinition() == typeof(Task<>))
+          return  new MethodBasedOperation(_binderLocator, handler, method) { Resolver = _resolver };
+        return new SyncMethod(handler, method, _binderLocator) {Resolver = _resolver};
       }
 
       IEnumerable<Func<IEnumerable<IMethod>, IEnumerable<IMethod>>> FilterMethods(IMethodFilter[] filters)
