@@ -31,9 +31,8 @@ namespace OpenRasta.Tests.Unit.OperationModel.Hydrators
     protected void given_operations()
     {
       Operations = new MethodBasedOperationCreator(
-        new[] {new TypeExclusionMethodFilter<object>()},
-        Resolver,
-        new DefaultObjectBinderLocator()).CreateOperations(new[] {TypeSystem.FromClr<EntityReaderHandler>()}).ToList();
+        filters: new[] {new TypeExclusionMethodFilter<object>()},
+        resolver: Resolver).CreateOperations(new[] {TypeSystem.FromClr<EntityReaderHandler>()}).ToList();
     }
 
     protected RequestEntityReaderHydrator RequestEntityReader { get; set; }

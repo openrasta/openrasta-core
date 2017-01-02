@@ -2,51 +2,37 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace OpenRasta.OperationModel.Interceptors
 {
-  public class OperationWithInterceptors : IOperation, IOperationAsync
+  public class SyncOperationWithInterceptors : IOperation
   {
     readonly IEnumerable<IOperationInterceptor> _interceptors;
-    readonly IOperationAsync _inner;
-    Task<IEnumerable<OutputMember>> _task;
+    readonly IOperation _inner;
+    Func<IEnumerable<OutputMember>> _invocation;
 
-    public OperationWithInterceptors(IOperationAsync inner, IEnumerable<IOperationInterceptor> systemInterceptors)
+    public SyncOperationWithInterceptors(IOperation inner, IEnumerable<IOperationInterceptor> systemInterceptors)
     {
+
       _inner = inner;
-      _interceptors = systemInterceptors;
+      _interceptors = systemInterceptors.ToList();
+      _invocation = _interceptors.Aggregate((Func<IEnumerable<OutputMember>>) _inner.Invoke,
+        (next, interceptor) => interceptor.RewriteOperation(next));
     }
 
     public IDictionary ExtendedProperties => _inner.ExtendedProperties;
-
     public IEnumerable<InputMember> Inputs => _inner.Inputs;
-
     public string Name => _inner.Name;
+    public T FindAttribute<T>() where T : class => _inner.FindAttribute<T>();
+    public IEnumerable<T> FindAttributes<T>() where T : class => _inner.FindAttributes<T>();
+    public override string ToString() => _inner.ToString();
+
     public IEnumerable<OutputMember> Invoke()
     {
-      return InvokeAsync().GetAwaiter().GetResult();
-    }
-
-    public T FindAttribute<T>() where T : class => _inner.FindAttribute<T>();
-
-    public IEnumerable<T> FindAttributes<T>() where T : class => _inner.FindAttributes<T>();
-
-    public Task<IEnumerable<OutputMember>> InvokeAsync()
-    {
       ExecutePreConditions();
-
-      _task = Task.Run(()=>_inner.InvokeAsync());
-      var rewrite = _interceptors.Aggregate<IOperationInterceptor, Func<IEnumerable<OutputMember>>>(
-        () => _task.GetAwaiter().GetResult(),
-        (current, executingCondition) => executingCondition.RewriteOperation(current) ?? current);
-
-      return _task.ContinueWith(_ =>
-      {
-        var results = rewrite().ToList().AsEnumerable();
-        ExecutePostConditions(results);
-        return Task.FromResult(results);
-      }).Unwrap();
+      var results = _invocation().ToList();
+      ExecutePostConditions(results);
+      return results;
     }
 
     void ExecutePostConditions(IEnumerable<OutputMember> results)
@@ -54,7 +40,7 @@ namespace OpenRasta.OperationModel.Interceptors
       foreach (var postCondition in _interceptors)
       {
         TryExecute(() => postCondition.AfterExecute(_inner, results),
-          "The interceptor {0} stopped execution.".With(postCondition.GetType().Name));
+          $"The interceptor {postCondition.GetType().Name} stopped execution.");
       }
     }
 
@@ -72,7 +58,7 @@ namespace OpenRasta.OperationModel.Interceptors
       Exception exception = null;
       try
       {
-        bool isSuccessful = interception();
+        var isSuccessful = interception();
         if (!isSuccessful)
         {
           exception = new InterceptorException(exceptionMessage);

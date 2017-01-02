@@ -20,7 +20,7 @@ namespace OpenRasta.Tests.Unit.OperationModel.MethodBased
 
     protected void given_operation_creator(IMethodFilter[] filters)
     {
-      OperationCreator = new MethodBasedOperationCreator(filters, Resolver, new DefaultObjectBinderLocator());
+      OperationCreator = new MethodBasedOperationCreator(filters: filters, resolver: Resolver);
     }
 
     protected void given_handler<T>()

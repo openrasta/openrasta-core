@@ -31,7 +31,7 @@ namespace OpenRasta.Pipeline.Contributors
         {
             context.PipelineData.Operations = from op in context.PipelineData.Operations.Select(ConvertToAsync)
                                               let interceptors = _resolver.Resolve<IOperationInterceptorProvider>().GetInterceptors(op)
-                                              select (IOperationAsync)new OperationWithInterceptors(op, interceptors);
+                                              select (IOperationAsync)new SyncOperationWithInterceptors(op, interceptors);
 
             return PipelineContinuation.Continue;
         }

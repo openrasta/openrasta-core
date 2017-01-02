@@ -160,12 +160,4 @@ namespace OpenRasta.OperationModel.Hydrators
       return RequestReadResult.Success;
     }
   }
-
-  public enum RequestReadResult
-  {
-    BinderFailure,
-    CodecFailure,
-    Success,
-    NoneFound
-  }
 }

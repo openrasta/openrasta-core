@@ -69,11 +69,11 @@ namespace OpenRasta.Tests.Unit.OperationModel.Interceptors
     [Test]
     public void an_interceptor_throwing_an_exception_in_pre_condition_prevents_execution_from_continuing()
     {
-      given_mock_operation(op => op.Setup(x => x.InvokeAsync()).Throws<InvalidOperationException>());
-      given_mock_interceptor(i => i.Setup(x => x.BeforeExecute(It.IsAny<IOperation>())).Throws<ArgumentException>());
+      given_mock_operation(op => op.Setup(x => x.Invoke()).Throws<InvalidOperationException>());
+      given_mock_interceptor(i => i.BeforeExecute = op=>{throw new ArgumentException();});
       given_wrapper();
 
-      Executing(invoking_wrapped_operation)
+      Executing(()=>invoking_wrapped_operation())
         .ShouldThrow<InterceptorException>()
         .InnerException.ShouldBeOfType<ArgumentException>();
     }
@@ -81,11 +81,11 @@ namespace OpenRasta.Tests.Unit.OperationModel.Interceptors
     [Test]
     public void an_interceptor_returning_false_in_pre_condition_prevents_execution_from_continuing()
     {
-      given_mock_operation(op => op.Setup(x => x.InvokeAsync()).Throws<InvalidOperationException>());
-      given_mock_interceptor(i => i.Setup(x => x.BeforeExecute(It.IsAny<IOperation>())).Returns(false));
+      given_mock_operation(op => op.Setup(x => x.Invoke()).Throws<InvalidOperationException>());
+      given_mock_interceptor(i => i.BeforeExecute = op=>false);
       given_wrapper();
 
-      Executing(invoking_wrapped_operation)
+      Executing(()=>invoking_wrapped_operation())
         .ShouldThrow<InterceptorException>()
         .InnerException.ShouldBeNull();
     }
@@ -93,49 +93,35 @@ namespace OpenRasta.Tests.Unit.OperationModel.Interceptors
     [Test]
     public void an_interceptor_throwing_an_exception_in_post_condition_prevents_execution_from_continuing()
     {
-      given_mock_operation(op => op.Setup(x => x.InvokeAsync())
-        .Returns(Task.FromResult<IEnumerable<OutputMember>>(
-          new OutputMember[0]))
+      given_mock_operation(op => op.Setup(x => x.Invoke())
+        .Returns(new OutputMember[0])
         .Verifiable());
-      given_mock_interceptor(before => before.Returns(true),
-        after => after.Throws<ArgumentException>());
+      given_mock_interceptor(i => i.AfterExecute = (op, result) => { throw new ArgumentException(); });
 
       given_wrapper();
 
-      Executing(invoking_wrapped_operation)
+      Executing(()=>invoking_wrapped_operation())
         .ShouldThrow<InterceptorException>()
         .InnerException.ShouldBeOfType<ArgumentException>();
-      MockOperation.Verify(x => x.InvokeAsync());
+      MockOperation.Verify(x => x.Invoke());
     }
 
     [Test]
-    public void an_interceptor_returning_false_in_post_condition_prevents_execution_from_continuing()
+    public void   an_interceptor_returning_false_in_post_condition_prevents_execution_from_continuing()
     {
-      given_mock_operation(op => op.Setup(x => x.InvokeAsync())
-        .Returns(Task.FromResult<IEnumerable<OutputMember>>(new OutputMember[0]))
+      given_mock_operation(op => op.Setup(x => x.Invoke())
+        .Returns(new OutputMember[0])
         .Verifiable());
-      given_mock_interceptor(before => before.Returns(true),
-        after => after.Returns(false));
+      given_mock_interceptor(interceptor =>
+      {
+        interceptor.AfterExecute = (op, result) => false;
+      });
       given_wrapper();
 
-      Executing(invoking_wrapped_operation)
+      Executing(()=>invoking_wrapped_operation())
         .ShouldThrow<InterceptorException>()
         .InnerException.ShouldBeNull();
-      MockOperation.Verify(x => x.InvokeAsync());
-    }
-
-    [Test]
-    public async Task an_interceptor_can_replace_throwing_task()
-    {
-      var emptyResult = new OutputMember[1]
-        {new OutputMember() {Member = TypeSystem.FromClr(typeof(string)), Value = "Calm down dear!"}};
-
-      given_operation("ThrowOnTask");
-      given_mock_interceptor(() => emptyResult);
-      given_wrapper();
-      when_creating_wrapper();
-      await invoking_wrapped_operation();
-      InvokeResult.Single().Value.ShouldBe("Calm down dear!");
+      MockOperation.Verify(x => x.Invoke());
     }
 
     [Test]
@@ -147,18 +133,38 @@ namespace OpenRasta.Tests.Unit.OperationModel.Interceptors
       given_mock_interceptor(() => emptyResult);
       given_wrapper();
       when_creating_wrapper();
-      await invoking_wrapped_operation();
+      invoking_wrapped_operation();
 
       InvokeResult.Single().Value.ShouldBe("Calm down dear!");
     }
   }
 
-  public abstract class interceptors_context<T> : operation_context<T>
+  public class MockInterceptor : IOperationInterceptor
+  {
+    public Func<IOperation, bool> BeforeExecute { get; set; } = op => true;
+    public Func<IOperation, IEnumerable<OutputMember>, bool> AfterExecute { get; set; } = (op,output) => true;
+    public Func<Func<IEnumerable<OutputMember>>, Func<IEnumerable<OutputMember>>> RewriteOperation = input => input;
+    bool IOperationInterceptor.BeforeExecute(IOperation operation)
+    {
+      return this.BeforeExecute(operation);
+    }
+
+    Func<IEnumerable<OutputMember>> IOperationInterceptor.RewriteOperation(Func<IEnumerable<OutputMember>> operationBuilder)
+    {
+      return RewriteOperation(operationBuilder);
+    }
+
+    bool IOperationInterceptor.AfterExecute(IOperation operation, IEnumerable<OutputMember> outputMembers)
+    {
+      return AfterExecute(operation, outputMembers);
+    }
+  }
+  public abstract class interceptors_context<T> : sync_operation_context<T>
   {
     SystemAndAttributesOperationInterceptorProvider InterceptorProvider;
     protected IEnumerable<IOperationInterceptor> Interceptors;
-    protected OperationWithInterceptors WrappedOperation;
-    protected Mock<IOperationAsync> MockOperation;
+    protected IOperation WrappedOperation;
+    protected Mock<IOperation> MockOperation;
     protected IEnumerable<OutputMember> InvokeResult;
 
     protected void when_creating_interceptors()
@@ -173,41 +179,26 @@ namespace OpenRasta.Tests.Unit.OperationModel.Interceptors
 
     protected void given_mock_interceptor(Func<IEnumerable<OutputMember>> overriddenMethod)
     {
-      given_mock_interceptor(i =>
-      {
-        i.Setup(x => x.BeforeExecute(It.IsAny<IOperation>())).Returns(true);
-        i.Setup(x => x.AfterExecute(It.IsAny<IOperation>(), It.IsAny<IEnumerable<OutputMember>>())).Returns(true);
-        i.Setup(x => x.RewriteOperation(It.IsAny<Func<IEnumerable<OutputMember>>>())).Returns(overriddenMethod);
-      });
+      given_mock_interceptor(i => i.RewriteOperation = op=>overriddenMethod);
     }
 
-    protected void given_mock_interceptor(Action<ISetup<OperationInterceptor, bool>> before,
-      Action<ISetup<OperationInterceptor, bool>> after)
+    protected void given_mock_interceptor(Action<MockInterceptor> interceptorConfig)
     {
-      given_mock_interceptor(i =>
-      {
-        before(i.Setup(x => x.BeforeExecute(It.IsAny<IOperation>())));
-        after(i.Setup(x => x.AfterExecute(It.IsAny<IOperation>(), It.IsAny<IEnumerable<OutputMember>>())));
-      });
-    }
-
-    protected void given_mock_interceptor(Action<Mock<OperationInterceptor>> interceptorConfig)
-    {
-      var mock = new Mock<OperationInterceptor>();
+      var mock = new MockInterceptor();
       interceptorConfig(mock);
-      Interceptors = new[] {mock.Object};
+      Interceptors = new[] { mock };
     }
 
-    protected void given_mock_operation(Action<Mock<IOperationAsync>> mockConfig)
+    protected void given_mock_operation(Action<Mock<IOperation>> mockConfig)
     {
-      MockOperation = new Mock<IOperationAsync>();
+      MockOperation = new Mock<IOperation>();
       mockConfig(MockOperation);
       Operation = MockOperation.Object;
     }
 
-    protected async Task invoking_wrapped_operation()
+    protected void invoking_wrapped_operation()
     {
-      InvokeResult = await WrappedOperation.InvokeAsync();
+      InvokeResult = WrappedOperation.Invoke();
     }
 
 
@@ -223,7 +214,7 @@ namespace OpenRasta.Tests.Unit.OperationModel.Interceptors
 
     protected void when_creating_wrapper()
     {
-      WrappedOperation = new OperationWithInterceptors(Operation, Interceptors);
+      WrappedOperation = new SyncOperationWithInterceptors(Operation, Interceptors);
     }
   }
 
@@ -235,14 +226,9 @@ namespace OpenRasta.Tests.Unit.OperationModel.Interceptors
       return 0;
     }
 
-    public Task ThrowOnCall()
+    public void ThrowOnCall()
     {
       throw new InvalidOperationException();
-    }
-
-    public Task ThrowOnTask()
-    {
-      return Task.Run(()=>1+1).ContinueWith(task => {throw new InvalidOperationException();});
     }
   }
 

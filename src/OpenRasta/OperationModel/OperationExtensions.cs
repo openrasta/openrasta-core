@@ -1,6 +1,7 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
-
+using OpenRasta.OperationModel.Interceptors;
 using OpenRasta.TypeSystem;
 
 namespace OpenRasta.OperationModel
@@ -46,5 +47,16 @@ namespace OpenRasta.OperationModel
         {
             return members.Where(x => !x.IsOptional);
         }
+
+      public static IOperationAsync AsAsync(this IOperation operation)
+      {
+        return new SyncToAsycOperation(operation);
+      }
+
+      public static IOperation Intercept(this IOperation operation,
+        Func<IOperation, IEnumerable<IOperationInterceptor>> interceptors)
+      {
+        return new SyncOperationWithInterceptors(operation, interceptors(operation));
+      }
     }
 }
