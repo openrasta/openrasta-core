@@ -6,13 +6,10 @@ OpenRasta adheres to [Semantic Versioning](http://semver.org/).
 ### Added
  - A new pipeline with "double tap" semantics, which makes most of the old pipeline
    look like an old picture, keen memories but visibly dated.
- - Support for async contributors, with the new `.Use` method on IPipeline.
- - Obsoleting `Abort`, you should instead throw an exception from the contributor: aborting
-   was meant only for exceptional circumstances, and surely that's what 
-   exceptions are for.
-   `Finished` was always a bit of a lie. You reached the end of the line or you didn't,
-   and that's all that ever really mattered.
- - Codecs can now implement `IMediaTypeReaderAsync`
+ - Things don't always happen when we want them too, so everything has been made
+   async. This includes async contributors with `IPipelineContributorAsync`, async
+   handlers (just return `Task` or `Task<T>`), codecs with `IMediaTypeReaderAsync`
+   and `IMediaTypeWriterAsync`, and async interceptor with `IOperationInterceptorAsync`
 
 ### Changed
  - Cool kids have moved on, so we follow. .net 4.5 is now a minimum.
@@ -35,6 +32,12 @@ OpenRasta adheres to [Semantic Versioning](http://semver.org/).
    want to know anything about the pipeline.
  - `IOperationHydrator` is no more. If you have your own, we'll respect that,
    but we'd rather you used our new and shiny `IRequestEntityReader`.
+ - PipelineContinuation is moslty gone, it wasn't really meant to be used externally.
+   We made `Abort` obsolete, you should instead throw an exception from the
+   contributor, for those moments exceptional stuff happens. Even `Finished` was
+   a bit of a lie. You reached the end of the line or you didn't, and that's all
+   that ever really mattered. The responsible developer is very sorry and promised
+   he will never lie again.
 
 ### Removed
 ### Fixed
