@@ -9,12 +9,12 @@ namespace OpenRasta.OperationModel
         /// <summary>
         /// Gets The codec used to read the request.
         /// </summary>
-        public static CodecMatch GetRequestCodec(this IOperation operation)
+        public static CodecMatch GetRequestCodec(this IOperationAsync operation)
         {
             return operation.ExtendedProperties[REQUEST_CODEC] as CodecMatch;
         }
 
-        public static void SetRequestCodec(this IOperation operation, CodecMatch codecMatch)
+        public static void SetRequestCodec(this IOperationAsync operation, CodecMatch codecMatch)
         {
             operation.ExtendedProperties[REQUEST_CODEC] = codecMatch;
         }

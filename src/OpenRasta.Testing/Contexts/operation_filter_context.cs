@@ -11,8 +11,8 @@ namespace OpenRasta.Testing.Contexts
     where TFilter : IOperationProcessor
   {
     protected TFilter Filter { get; set; }
-    protected IEnumerable<IOperation> FilteredOperations { get; set; }
-    protected IEnumerable<IOperation> Operations { get; set; }
+    protected IEnumerable<IOperationAsync> FilteredOperations { get; set; }
+    protected IEnumerable<IOperationAsync> Operations { get; set; }
 
     protected void given_filter()
     {
@@ -24,7 +24,7 @@ namespace OpenRasta.Testing.Contexts
     protected void given_operations()
     {
       Operations = new MethodBasedOperationCreator(
-          filters: new[] {new TypeExclusionMethodFilter<object>()},
+          filters: new IMethodFilter[] {new TypeExclusionMethodFilter<object>()},
           resolver: Resolver).CreateOperations(new[] {TypeSystem.FromClr<THandler>()})
         .ToList();
     }

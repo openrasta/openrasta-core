@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -9,12 +7,9 @@ namespace OpenRasta.OperationModel
 {
   public class OperationExecutor : IOperationExecutor
   {
-    static readonly ConcurrentDictionary<Type, Func<object, Task<OperationResult>>> _accessor
-      = new ConcurrentDictionary<Type, Func<object, Task<OperationResult>>>();
-
-    public async Task<OperationResult> Execute(IEnumerable<IOperation> operations)
+    public async Task<OperationResult> Execute(IEnumerable<IOperationAsync> operations)
     {
-      var operation = operations.Cast<IOperationAsync>().First();
+      var operation = operations.First();
       var result = (await operation.InvokeAsync()).Select(_=>_.Value).FirstOrDefault();
 
       return ToOperationResult(result);

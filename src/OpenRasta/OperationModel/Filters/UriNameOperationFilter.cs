@@ -18,10 +18,9 @@ namespace OpenRasta.OperationModel.Filters
 
         public ILogger<OperationModelLogSource> Log { get; set; }
 
-        public IEnumerable<IOperation> Process(IEnumerable<IOperation> operations)
+        public IEnumerable<IOperationAsync> Process(IEnumerable<IOperationAsync> operations)
         {
-            if (_commContext.PipelineData.SelectedResource == null
-                || string.IsNullOrEmpty(_commContext.PipelineData.SelectedResource.UriName))
+            if (string.IsNullOrEmpty(_commContext.PipelineData.SelectedResource?.UriName))
             {
                 Log.NoResourceOrUriName();
                 return operations;
@@ -32,7 +31,7 @@ namespace OpenRasta.OperationModel.Filters
             return attribOperations.Count > 0 ? attribOperations : operations;
         }
 
-        IEnumerable<IOperation> OperationsWithMatchingAttribute(IEnumerable<IOperation> operations)
+        IEnumerable<IOperationAsync> OperationsWithMatchingAttribute(IEnumerable<IOperationAsync> operations)
         {
             return from operation in operations
                    let attribute = operation.FindAttribute<HttpOperationAttribute>()

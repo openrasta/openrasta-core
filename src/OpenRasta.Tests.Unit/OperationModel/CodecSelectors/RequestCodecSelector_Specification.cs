@@ -34,7 +34,7 @@ namespace OpenRasta.Tests.Unit.OperationModel.CodecSelectors
 
         }
 
-        IOperation then_operation_should_be_selected(string methodName)
+        IOperationAsync then_operation_should_be_selected(string methodName)
         {
             return FilteredOperations.FirstOrDefault(x => x.Name == methodName).ShouldNotBeNull();
         }
@@ -98,7 +98,7 @@ namespace OpenRasta.Tests.Unit.OperationModel.CodecSelectors
                     .ShouldBe<ApplicationXWwwFormUrlencodedKeyedValuesCodec>();
         }
 
-        void given_operation_property(Func<IOperation, bool> predicate, string propertyName, string propertyValue)
+        void given_operation_property(Func<IOperationAsync, bool> predicate, string propertyName, string propertyValue)
         {
             Operations.First(predicate).Inputs.First().Binder.SetProperty(
                 propertyName, 

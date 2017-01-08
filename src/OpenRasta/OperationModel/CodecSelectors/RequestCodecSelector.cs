@@ -26,7 +26,7 @@ namespace OpenRasta.OperationModel.CodecSelectors
 
         public ILogger Logger { get; set; }
 
-        public IEnumerable<IOperation> Process(IEnumerable<IOperation> operations)
+        public IEnumerable<IOperationAsync> Process(IEnumerable<IOperationAsync> operations)
         {
             if (_request.Entity.ContentLength.IsNullOr(0))
                 return LogSelected(operations.Where(operation => operation.Inputs.AllReady()));
@@ -67,7 +67,7 @@ namespace OpenRasta.OperationModel.CodecSelectors
             return MediaType.ApplicationOctetStream;
         }
 
-        IEnumerable<IOperation> LogSelected(IEnumerable<IOperation> selectedOps)
+        IEnumerable<IOperationAsync> LogSelected(IEnumerable<IOperationAsync> selectedOps)
         {
             foreach (var op in selectedOps)
             {

@@ -42,7 +42,7 @@ namespace OpenRasta.OperationModel.Hydrators.Diagnostics
             logger.WriteDebug("Key {0} was not successfully assigned.", keyValues.Key);
         }
 
-        public static void OperationFound(this ILogger<CodecLogSource> logger, IOperation operation)
+        public static void OperationFound(this ILogger<CodecLogSource> logger, IOperationAsync operation)
         {
             if (operation.GetRequestCodec() != null)
                 logger.WriteInfo("Operation {0} was selected with a codec score of {1}", operation, operation.GetRequestCodec().Score);

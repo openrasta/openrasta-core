@@ -4,6 +4,6 @@ namespace OpenRasta.OperationModel
 {
     public interface IOperationProcessor
     {
-        IEnumerable<IOperation> Process(IEnumerable<IOperation> operations);        
+        IEnumerable<IOperationAsync> Process(IEnumerable<IOperationAsync> operations);
     }
 }

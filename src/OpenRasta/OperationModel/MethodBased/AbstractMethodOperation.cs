@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using OpenRasta.Binding;
-using OpenRasta.Collections;
 using OpenRasta.DI;
 using OpenRasta.TypeSystem;
 
@@ -11,8 +9,8 @@ namespace OpenRasta.OperationModel.MethodBased
 {
   public abstract class AbstractMethodOperation
   {
-    public IType OwnerType { get; }
-    public IMethod Method { get; }
+    protected IType OwnerType { get; }
+    protected IMethod Method { get; }
 
     protected AbstractMethodOperation(IMethod method, IObjectBinderLocator binderLocator)
     {
@@ -21,10 +19,8 @@ namespace OpenRasta.OperationModel.MethodBased
       Method = method;
       Binders = method.InputMembers.ToDictionary(x => x, binderLocator.GetBinder);
       Inputs = Binders.Select(x => new InputMember(x.Key, x.Value, x.Key.IsOptional));
-      ExtendedProperties = new NullBehaviorDictionary<object, object>();
     }
 
-    public IDictionary ExtendedProperties { get; }
     public IEnumerable<InputMember> Inputs { get; }
     IDictionary<IParameter, IObjectBinder> Binders { get; }
     public string Name => Method.Name;

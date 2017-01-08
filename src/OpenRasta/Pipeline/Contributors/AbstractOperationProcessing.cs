@@ -4,7 +4,6 @@ using System.Linq;
 using OpenRasta.DI;
 using OpenRasta.OperationModel;
 using OpenRasta.Web;
-using OpenRasta.Pipeline;
 
 namespace OpenRasta.Pipeline.Contributors
 {
@@ -21,16 +20,16 @@ namespace OpenRasta.Pipeline.Contributors
 
         public virtual PipelineContinuation ProcessOperations(ICommunicationContext context)
         {
-            context.PipelineData.Operations = ProcessOperations(context.PipelineData.Operations).ToList();
-            if (context.PipelineData.Operations.Count() == 0)
+            context.PipelineData.OperationsAsync = ProcessOperations(context.PipelineData.OperationsAsync).ToList();
+            if (!context.PipelineData.OperationsAsync.Any())
                 return OnOperationsEmpty(context);
-            return OnOperationProcessingComplete(context.PipelineData.Operations) ?? PipelineContinuation.Continue;
+            return OnOperationProcessingComplete(context.PipelineData.OperationsAsync) ?? PipelineContinuation.Continue;
         }
 
-        public virtual IEnumerable<IOperation> ProcessOperations(IEnumerable<IOperation> operations)
+        public virtual IEnumerable<IOperationAsync> ProcessOperations(IEnumerable<IOperationAsync> operations)
         {
             var chain = GetMethods().Chain();
-            return chain == null ? new IOperation[0] : chain(operations);
+            return chain == null ? new IOperationAsync[0] : chain(operations);
         }
 
         public virtual void Initialize(IPipeline pipelineRunner)
@@ -40,7 +39,7 @@ namespace OpenRasta.Pipeline.Contributors
 
         protected abstract void InitializeWhen(IPipelineExecutionOrder pipeline);
 
-        protected virtual PipelineContinuation? OnOperationProcessingComplete(IEnumerable<IOperation> ops)
+        protected virtual PipelineContinuation? OnOperationProcessingComplete(IEnumerable<IOperationAsync> ops)
         {
             return null;
         }
@@ -52,7 +51,7 @@ namespace OpenRasta.Pipeline.Contributors
             return PipelineContinuation.RenderNow;
         }
 
-        IEnumerable<Func<IEnumerable<IOperation>, IEnumerable<IOperation>>> GetMethods()
+        IEnumerable<Func<IEnumerable<IOperationAsync>, IEnumerable<IOperationAsync>>> GetMethods()
         {
             var operationProcessors = _resolver.ResolveAll<TProcessor>();
 

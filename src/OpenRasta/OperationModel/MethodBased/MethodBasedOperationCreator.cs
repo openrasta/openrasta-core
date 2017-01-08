@@ -12,7 +12,9 @@ namespace OpenRasta.OperationModel.MethodBased
   public class MethodBasedOperationCreator : IOperationCreator
   {
     readonly IObjectBinderLocator _binderLocator;
+#pragma warning disable 618
     readonly Func<IOperation,IEnumerable<IOperationInterceptor>> _syncInterceptorProvider = op=>Enumerable.Empty<IOperationInterceptor>();
+#pragma warning restore 618
     readonly Func<IEnumerable<IMethod>, IEnumerable<IMethod>> _filterMethod = method => method;
     readonly IDependencyResolver _resolver;
 
@@ -37,16 +39,15 @@ namespace OpenRasta.OperationModel.MethodBased
         _syncInterceptorProvider = syncInterceptorProvider.GetInterceptors;
       if (filters != null)
         _filterMethod = FilterMethods(filters).Chain();
-
     }
 
-    public IEnumerable<IOperation> CreateOperations(IEnumerable<IType> handlers)
+    public IEnumerable<IOperationAsync> CreateOperations(IEnumerable<IType> handlers)
     {
       return from handler in handlers
         let sourceMethods = handler.GetMethods()
         let filteredMethods = _filterMethod(sourceMethods)
         from method in filteredMethods
-        select CreateOperation(method) as IOperation;
+        select CreateOperation(method);
     }
 
     public IOperationAsync CreateOperation(IMethod method)

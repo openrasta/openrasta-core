@@ -9,6 +9,7 @@ namespace OpenRasta.OperationModel.MethodBased
 {
   public class AsyncMethod : AbstractMethodOperation, IOperationAsync
   {
+    public IDictionary<string,object> ExtendedProperties { get; } = new Dictionary<string, object>();
     public AsyncMethod(IMethod method, IObjectBinderLocator binderLocator = null)
       : base(method, binderLocator)
     {

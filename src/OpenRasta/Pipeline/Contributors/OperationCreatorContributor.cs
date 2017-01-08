@@ -4,7 +4,6 @@ using OpenRasta.Diagnostics;
 using OpenRasta.OperationModel;
 using OpenRasta.Pipeline.Diagnostics;
 using OpenRasta.Web;
-using OpenRasta.Pipeline;
 
 namespace OpenRasta.Pipeline.Contributors
 {
@@ -18,7 +17,7 @@ namespace OpenRasta.Pipeline.Contributors
       Logger = NullLogger<PipelineLogSource>.Instance;
     }
 
-    ILogger<PipelineLogSource> Logger { get; set; }
+    ILogger<PipelineLogSource> Logger { get; }
 
     public void Initialize(IPipeline pipelineRunner)
     {
@@ -29,10 +28,12 @@ namespace OpenRasta.Pipeline.Contributors
     {
       if (context.PipelineData.SelectedHandlers == null) return PipelineContinuation.Continue;
 
-      context.PipelineData.Operations = _creator.CreateOperations(context.PipelineData.SelectedHandlers).ToList();
-      LogOperations(context.PipelineData.Operations);
+      var ops = _creator.CreateOperations(context.PipelineData.SelectedHandlers).ToList();
+      context.PipelineData.OperationsAsync = ops;
 
-      if (context.PipelineData.Operations.Any()) return PipelineContinuation.Continue;
+      LogOperations(context.PipelineData.OperationsAsync);
+
+      if (context.PipelineData.OperationsAsync.Any()) return PipelineContinuation.Continue;
 
       context.OperationResult = CreateMethodNotAllowed(context);
       return PipelineContinuation.RenderNow;
@@ -44,17 +45,10 @@ namespace OpenRasta.Pipeline.Contributors
         context.PipelineData.ResourceKey);
     }
 
-    void LogOperations(IEnumerable<IOperation> operations)
+    void LogOperations(IEnumerable<IOperationAsync> operations)
     {
-      if (operations.Any())
-      {
-        foreach (var operation in operations)
-          Logger.WriteDebug("Created operation named {0} with signature {1}", operation.Name, operation.ToString());
-      }
-      else
-      {
-        Logger.WriteDebug("No operation was created.");
-      }
+      foreach (var operation in operations)
+        Logger.WriteDebug("Created operation named {0} with signature {1}", operation.Name, operation.ToString());
     }
   }
 }

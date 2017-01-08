@@ -1,22 +1,27 @@
-﻿using System.Collections;
+﻿#pragma warning disable 618
+using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace OpenRasta.OperationModel.Interceptors
 {
-  public class SyncToAsycOperation : IOperationAsync
+  public class SyncToAsycOperation : IOperationAsync, IOperation
   {
     readonly IOperation _inner;
 
     public SyncToAsycOperation(IOperation inner)
     {
       _inner = inner;
+      ExtendedProperties = new DictionaryWrapper(inner.ExtendedProperties)
+      {
+        {"async", true},
+      };
     }
 
     public T FindAttribute<T>() where T : class => _inner.FindAttribute<T>();
     public IEnumerable<T> FindAttributes<T>() where T : class => _inner.FindAttributes<T>();
     public IEnumerable<InputMember> Inputs => _inner.Inputs;
-    public IDictionary ExtendedProperties => _inner.ExtendedProperties;
+    public IDictionary<string, object> ExtendedProperties { get; }
     public string Name => _inner.Name;
     public override string ToString() => _inner.ToString();
 
@@ -29,5 +34,9 @@ namespace OpenRasta.OperationModel.Interceptors
     {
       return Task.FromResult(_inner.Invoke());
     }
+
+    IDictionary IOperation.ExtendedProperties => _inner.ExtendedProperties;
   }
 }
+
+#pragma warning restore 618

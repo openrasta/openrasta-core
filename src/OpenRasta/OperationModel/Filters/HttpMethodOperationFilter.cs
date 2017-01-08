@@ -18,7 +18,7 @@ namespace OpenRasta.OperationModel.Filters
 
         public ILogger Log { get; set; }
 
-        public IEnumerable<IOperation> Process(IEnumerable<IOperation> operations)
+        public IEnumerable<IOperationAsync> Process(IEnumerable<IOperationAsync> operations)
         {
             operations = operations.ToList();
             var operationWithMatchingName = OperationsWithMatchingName(operations);
@@ -28,7 +28,7 @@ namespace OpenRasta.OperationModel.Filters
             return operationWithMatchingName.Union(operationWithMatchingAttribute);
         }
 
-        IEnumerable<IOperation> OperationsWithMatchingAttribute(IEnumerable<IOperation> operations)
+        IEnumerable<IOperationAsync> OperationsWithMatchingAttribute(IEnumerable<IOperationAsync> operations)
         {
             return from operation in operations
                    let httpAttribute = operation.FindAttribute<HttpOperationAttribute>()
@@ -36,7 +36,7 @@ namespace OpenRasta.OperationModel.Filters
                    select operation;
         }
 
-        IEnumerable<IOperation> OperationsWithMatchingName(IEnumerable<IOperation> operations)
+        IEnumerable<IOperationAsync> OperationsWithMatchingName(IEnumerable<IOperationAsync> operations)
         {
             return from operation in operations
                    where operation.Name.StartsWith(_request.HttpMethod, StringComparison.OrdinalIgnoreCase)

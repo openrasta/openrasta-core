@@ -26,7 +26,7 @@ namespace OpenRasta.OperationModel.Filters
         IErrorCollector Errors { get; set; }
         ILogger Logger { get; set; }
 
-        public IEnumerable<IOperation> Process(IEnumerable<IOperation> operations)
+        public IEnumerable<IOperationAsync> Process(IEnumerable<IOperationAsync> operations)
         {
             int acceptedMethods = 0;
 
@@ -107,12 +107,12 @@ namespace OpenRasta.OperationModel.Filters
             Logger.WriteInfo("Found {0} potential operations to resolve.", operationCount);
         }
 
-        void LogAcceptNoUriParameters(IOperation operation)
+        void LogAcceptNoUriParameters(IOperationAsync operation)
         {
             Logger.WriteDebug("Empty parameter list, selected method {0}.", operation);
         }
 
-        void LogOperationAccepted(NameValueCollection uriParameterMatches, IOperation operation)
+        void LogOperationAccepted(NameValueCollection uriParameterMatches, IOperationAsync operation)
         {
             Logger.WriteDebug(
                 "Accepted operation {0} with {1} matched parameters for uri parameter list {2}.", 

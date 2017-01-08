@@ -1,4 +1,5 @@
-﻿using System;
+﻿#pragma warning disable 618
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,11 +10,10 @@ namespace OpenRasta.OperationModel.Interceptors
   {
     readonly IEnumerable<IOperationInterceptor> _interceptors;
     readonly IOperation _inner;
-    Func<IEnumerable<OutputMember>> _invocation;
+    readonly Func<IEnumerable<OutputMember>> _invocation;
 
     public SyncOperationWithInterceptors(IOperation inner, IEnumerable<IOperationInterceptor> systemInterceptors)
     {
-
       _inner = inner;
       _interceptors = systemInterceptors.ToList();
       _invocation = _interceptors.Aggregate((Func<IEnumerable<OutputMember>>) _inner.Invoke,
@@ -75,3 +75,5 @@ namespace OpenRasta.OperationModel.Interceptors
     }
   }
 }
+
+#pragma warning restore 618

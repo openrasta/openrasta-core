@@ -13,25 +13,11 @@ namespace OpenRasta.Pipeline.Contributors
 {
   public class RequestDecoderContributor : KnownStages.IRequestDecoding
   {
-    Func<IEnumerable<IOperation>, Task<Tuple<RequestReadResult,IOperation>>> DecodeRequest;
+    readonly Func<IEnumerable<IOperationAsync>, Task<Tuple<RequestReadResult,IOperationAsync>>> DecodeRequest;
     public RequestDecoderContributor(IDependencyResolver resolver)
     {
-      if (resolver.HasDependency<IOperationHydrator>())
-        DecodeRequest = WrapLegacyHydrator(resolver.Resolve<IOperationHydrator>);
-      DecodeRequest = _ => resolver.Resolve<IRequestEntityReader>().Read(_);
+      DecodeRequest = ops => resolver.Resolve<IRequestEntityReader>().Read(ops);
     }
-
-    Func<IEnumerable<IOperation>, Task<Tuple<RequestReadResult,IOperation>>> WrapLegacyHydrator(Func<IOperationHydrator> resolve)
-    {
-      return operations =>
-      {
-        var op = resolve().Process(operations).FirstOrDefault();
-        return op != null
-          ? Task.FromResult(Tuple.Create(RequestReadResult.Success, op))
-          : Task.FromResult(Tuple.Create<RequestReadResult, IOperation>(RequestReadResult.NoneFound, null));
-      };
-    }
-
 
     public void Initialize(IPipeline pipelineRunner)
     {
@@ -40,13 +26,13 @@ namespace OpenRasta.Pipeline.Contributors
 
     async Task<PipelineContinuation> ReadRequestEntityBody(ICommunicationContext ctx)
     {
-      var operation = await DecodeRequest(ctx.PipelineData.Operations);
+      var operation = await DecodeRequest(ctx.PipelineData.OperationsAsync);
 
-      ctx.PipelineData.Operations = operation.Item1 != RequestReadResult.Success
-        ? Enumerable.Empty<IOperation>()
+      ctx.PipelineData.OperationsAsync = operation.Item1 != RequestReadResult.Success
+        ? Enumerable.Empty<IOperationAsync>()
         : new[] {operation.Item2};
 
-      return ctx.PipelineData.Operations.Any()
+      return ctx.PipelineData.OperationsAsync.Any()
         ? PipelineContinuation.Continue
         : ctx.Respond<OperationResult.BadRequest>();
     }

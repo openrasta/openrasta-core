@@ -17,7 +17,7 @@ namespace OpenRasta.Tests.Unit.OperationModel.Hydrators
 {
   public abstract class request_entity_reader_context : operation_context<EntityReaderHandler>
   {
-    protected IEnumerable<IOperation> Operations { get; set; }
+    protected IEnumerable<IOperationAsync> Operations { get; set; }
 
     protected void given_filter()
     {
@@ -71,6 +71,6 @@ namespace OpenRasta.Tests.Unit.OperationModel.Hydrators
         .ShouldBeTrue();
     }
 
-    protected IOperation ResultOperation { get; private set; }
+    protected IOperationAsync ResultOperation { get; private set; }
   }
 }

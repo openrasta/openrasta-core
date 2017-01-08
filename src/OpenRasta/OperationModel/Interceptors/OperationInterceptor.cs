@@ -3,7 +3,9 @@ using System.Collections.Generic;
 
 namespace OpenRasta.OperationModel.Interceptors
 {
-    public abstract class OperationInterceptor : IOperationInterceptor
+#pragma warning disable 618
+
+  public abstract class OperationInterceptor : IOperationInterceptor
     {
         public virtual bool AfterExecute(IOperation operation, IEnumerable<OutputMember> outputMembers)
         {
@@ -20,4 +22,5 @@ namespace OpenRasta.OperationModel.Interceptors
             return operationBuilder;
         }
     }
+#pragma warning restore 618
 }

@@ -1,4 +1,6 @@
 using System;
+using System.Linq;
+using System.Reflection;
 
 namespace OpenRasta.TypeSystem
 {
@@ -34,5 +36,16 @@ namespace OpenRasta.TypeSystem
     {
         return typeSystem.FromClr(typeof(T));
     }
+
+  public static IMethod From(this ITypeSystem typeSystem, MethodInfo method)
+  {
+    return typeSystem
+      .FromClr(method.DeclaringType)
+      .GetMethods()
+      .First(m => m.Name == method.Name
+                  && m.InputMembers.Select(i => i.StaticType)
+                    .SequenceEqual(
+                      method.GetParameters().Select(p => p.ParameterType)));
+  }
 }
 }

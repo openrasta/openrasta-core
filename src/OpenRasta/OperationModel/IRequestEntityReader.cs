@@ -7,6 +7,6 @@ namespace OpenRasta.OperationModel
 {
   public interface IRequestEntityReader
   {
-    Task<Tuple<RequestReadResult, IOperation>> Read(IEnumerable<IOperation> operation);
+    Task<Tuple<RequestReadResult, IOperationAsync>> Read(IEnumerable<IOperationAsync> operation);
   }
 }

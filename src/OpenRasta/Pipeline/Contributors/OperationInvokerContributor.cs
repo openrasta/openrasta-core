@@ -27,7 +27,7 @@ namespace OpenRasta.Pipeline.Contributors
       var executor = _resolver.Resolve<IOperationExecutor>();
       try
       {
-        context.OperationResult = await executor.Execute(context.PipelineData.Operations);
+        context.OperationResult = await executor.Execute(context.PipelineData.OperationsAsync);
       }
       catch (InterceptorException) when (context.OperationResult != null)
       {

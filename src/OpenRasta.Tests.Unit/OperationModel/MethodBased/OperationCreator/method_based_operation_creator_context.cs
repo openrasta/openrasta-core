@@ -11,7 +11,7 @@ namespace OpenRasta.Tests.Unit.OperationModel.MethodBased
   public abstract class method_based_operation_creator_context : operation_creator_context<MethodBasedOperationCreator>
   {
     protected IList<IType> Handlers { get; set; }
-    protected IEnumerable<IOperation> Operations { get; set; }
+    protected IEnumerable<IOperationAsync> Operations { get; set; }
 
     protected void then_operation_count_should_be(int count)
     {

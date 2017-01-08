@@ -37,7 +37,7 @@ namespace OperationCreationContributor_Specification
             given_contributor();
             when_sending_notification();
             then_contributor_returns(PipelineContinuation.Continue);
-            Context.PipelineData.Operations.ShouldBeNull();
+            Context.PipelineData.Operations.ShouldBeEmpty();
         }
     }
 
@@ -69,14 +69,14 @@ namespace OperationCreationContributor_Specification
             when_sending_notification();
 
             then_contributor_returns(PipelineContinuation.Continue);
-            Context.PipelineData.Operations.ShouldHaveCountOf(1)
+            Context.PipelineData.OperationsAsync.ShouldHaveCountOf(1)
                 .ShouldHaveSameElementsAs(Operations);
         }
     }
 
     public abstract class operation_creation_context : contributor_context<OperationCreatorContributor>
     {
-        public List<IOperation> Operations { get; set; }
+        public List<IOperationAsync> Operations { get; set; }
 
 
         protected void given_operation_creator_returns_null()
@@ -87,16 +87,16 @@ namespace OperationCreationContributor_Specification
         protected void given_operation_creator_returns(int count)
         {
             var mock = new Mock<IOperationCreator>();
-            Operations = count >= 0 ? Enumerable.Range(0, count).Select<int, IOperation>(i => CreateMockOperation()).ToList() : null;
+            Operations = count >= 0 ? Enumerable.Range(0, count).Select(i => CreateMockOperation()).ToList() : null;
             mock.Setup(x => x.CreateOperations(It.IsAny<IEnumerable<IType>>()))
                 .Returns(Operations);
             Resolver.AddDependencyInstance(typeof(IOperationCreator), mock.Object, DependencyLifetime.Singleton);
 
         }
 
-        IOperation CreateMockOperation()
+        IOperationAsync CreateMockOperation()
         {
-            var operation = new Mock<IOperation>();
+            var operation = new Mock<IOperationAsync>();
             operation.Setup(x => x.ToString()).Returns("Fake method");
             operation.SetupGet(x => x.Name).Returns("OperationName");
             return operation.Object;

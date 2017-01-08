@@ -48,9 +48,18 @@ namespace OpenRasta.OperationModel
             return members.Where(x => !x.IsOptional);
         }
 
+#pragma warning disable 618
       public static IOperationAsync AsAsync(this IOperation operation)
       {
         return new SyncToAsycOperation(operation);
+      }
+
+      public static IOperation SyncOperation(this IOperationAsync operation)
+      {
+        object sync;
+        return operation.ExtendedProperties.TryGetValue("openrasta.SyncOperation", out sync)
+          ? (IOperation)sync
+          : null;
       }
 
       public static IOperation Intercept(this IOperation operation,
@@ -58,5 +67,6 @@ namespace OpenRasta.OperationModel
       {
         return new SyncOperationWithInterceptors(operation, interceptors(operation));
       }
+#pragma warning restore 618
     }
 }

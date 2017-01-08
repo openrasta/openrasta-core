@@ -5,6 +5,6 @@ namespace OpenRasta.OperationModel
 {
     public interface IOperationCreator
     {
-        IEnumerable<IOperation> CreateOperations(IEnumerable<IType> handlers);
+        IEnumerable<IOperationAsync> CreateOperations(IEnumerable<IType> handlers);
     }
 }

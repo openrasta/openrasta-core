@@ -7,19 +7,14 @@ namespace OpenRasta.TypeSystem
 {
     public static class TypeSystems
     {
-        static readonly ITypeSystem _default = new ReflectionBasedTypeSystem(
-            new SurrogateBuilderProvider(
-                new ISurrogateBuilder[]
-                {
-                    new DateTimeSurrogate(), 
-                    new ListIndexerSurrogateBuilder(), 
-                    new CollectionIndexerSurrogateBuilder()
-                }), 
-            new PathManager());
-
-        public static ITypeSystem Default
-        {
-            get { return _default; }
-        }
+      public static ITypeSystem Default { get; } = new ReflectionBasedTypeSystem(
+          new SurrogateBuilderProvider(
+            new ISurrogateBuilder[]
+            {
+              new DateTimeSurrogate(),
+              new ListIndexerSurrogateBuilder(),
+              new CollectionIndexerSurrogateBuilder()
+            }),
+          new PathManager());
     }
 }
