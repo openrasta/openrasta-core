@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using OpenRasta.OperationModel;
 using OpenRasta.OperationModel.Interceptors;
 
-namespace Tests.OperationModel.Interceptors
+namespace Tests.OperationModel.Interceptors.Support
 {
   public class AntiMatterAttribute : Attribute, IOperationInterceptorAsync
   {

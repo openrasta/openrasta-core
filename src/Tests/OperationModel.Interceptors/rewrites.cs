@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using Shouldly;
+using Tests.OperationModel.Interceptors.Support;
 using Xunit;
 
 namespace Tests.OperationModel.Interceptors

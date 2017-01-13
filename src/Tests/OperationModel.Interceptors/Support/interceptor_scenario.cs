@@ -5,7 +5,7 @@ using OpenRasta.OperationModel;
 using OpenRasta.OperationModel.MethodBased;
 using OpenRasta.TypeSystem;
 
-namespace Tests.OperationModel.Interceptors
+namespace Tests.OperationModel.Interceptors.Support
 {
   public abstract class interceptor_scenario
   {

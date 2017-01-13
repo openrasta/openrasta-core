@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace Tests.OperationModel.Interceptors
+namespace Tests.OperationModel.Interceptors.Support
 {
   public class GeneralProductsGuaranteeHandler
   {
@@ -9,6 +9,7 @@ namespace Tests.OperationModel.Interceptors
     {
       return Task.FromResult(false);
     }
+
     [AntiMatter]
     public Task<bool> AttackWithAntiMatter()
     {
@@ -20,9 +21,5 @@ namespace Tests.OperationModel.Interceptors
     {
       return Task.FromResult(false);
     }
-    /*public Task<bool> HullMalfunction()
-    {
-
-    }*/
   }
 }

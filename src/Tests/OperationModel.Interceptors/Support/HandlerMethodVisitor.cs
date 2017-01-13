@@ -1,7 +1,7 @@
 ﻿using System.Linq.Expressions;
 using System.Reflection;
 
-namespace Tests.OperationModel.Interceptors
+namespace Tests.OperationModel.Interceptors.Support
 {
   public class HandlerMethodVisitor : ExpressionVisitor
   {
