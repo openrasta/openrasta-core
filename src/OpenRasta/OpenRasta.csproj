@@ -241,6 +241,7 @@
     <Compile Include="NullableExtensions.cs" />
     <Compile Include="ObjectPaths.cs" />
     <Compile Include="OperationModel\AmbiguousRequestException.cs" />
+    <Compile Include="OperationModel\AsyncOperationWithInterceptors.cs" />
     <Compile Include="OperationModel\CodecSelectors\RequestCodecSelector.cs" />
     <Compile Include="OperationModel\Diagnostics\OperationModelLogSource.cs" />
     <Compile Include="OperationModel\Diagnostics\OperationModelLogSourceExtensions.cs" />

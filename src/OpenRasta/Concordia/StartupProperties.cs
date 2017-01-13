@@ -48,7 +48,7 @@ namespace OpenRasta.Concordia
         Pipeline = new PipelineProperties(startupProperties);
       }
 
-      public PipelineProperties Pipeline { get; set; }
+      public PipelineProperties Pipeline { get; private set; }
     }
 
     public class PipelineProperties : AbstractProperties

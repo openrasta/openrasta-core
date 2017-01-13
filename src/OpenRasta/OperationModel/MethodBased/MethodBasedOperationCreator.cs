@@ -13,17 +13,21 @@ namespace OpenRasta.OperationModel.MethodBased
   {
     readonly IObjectBinderLocator _binderLocator;
 #pragma warning disable 618
-    readonly Func<IOperation,IEnumerable<IOperationInterceptor>> _syncInterceptorProvider = op=>Enumerable.Empty<IOperationInterceptor>();
+
+    readonly Func<IOperation, IEnumerable<IOperationInterceptor>> _syncInterceptorProvider =
+      op => Enumerable.Empty<IOperationInterceptor>();
+
 #pragma warning restore 618
     readonly Func<IEnumerable<IMethod>, IEnumerable<IMethod>> _filterMethod = method => method;
     readonly IDependencyResolver _resolver;
 
     //// TODO: Remove when support for arrays is added to containers
+    // ReSharper disable once UnusedMember.Global
     public MethodBasedOperationCreator(IDependencyResolver resolver, IObjectBinderLocator binderLocator)
       : this(binderLocator,
-             resolver,
-             resolver.ResolveAll<IMethodFilter>().ToArray(),
-             resolver.Resolve<IOperationInterceptorProvider>())
+        resolver,
+        resolver.ResolveAll<IMethodFilter>().ToArray(),
+        resolver.Resolve<IOperationInterceptorProvider>())
     {
     }
 
@@ -37,6 +41,7 @@ namespace OpenRasta.OperationModel.MethodBased
       _binderLocator = binderLocator ?? new DefaultObjectBinderLocator();
       if (syncInterceptorProvider != null)
         _syncInterceptorProvider = syncInterceptorProvider.GetInterceptors;
+
       if (filters != null)
         _filterMethod = FilterMethods(filters).Chain();
     }
@@ -51,6 +56,11 @@ namespace OpenRasta.OperationModel.MethodBased
     }
 
     public IOperationAsync CreateOperation(IMethod method)
+    {
+      return CreateOperationCore(method).Intercept();
+    }
+
+    IOperationAsync CreateOperationCore(IMethod method)
     {
       var output = method.OutputMembers.Single();
       if (IsTask(output))

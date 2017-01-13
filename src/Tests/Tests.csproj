@@ -54,8 +54,15 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="OperationModel.Interceptors\interceptor_does_nothing.cs" />
-    <Compile Include="Tests.cs" />
+    <Compile Include="OperationModel.Interceptors\no_rewriting.cs" />
+    <Compile Include="OperationModel.Interceptors\rewrites.cs" />
+    <Compile Include="OperationModel.Interceptors\throws.cs" />
+    <Compile Include="OperationModel.Interceptors\Support\AntiMatterAttribute.cs" />
+    <Compile Include="OperationModel.Interceptors\Support\GeneralProductsGuaranteeHandler.cs" />
+    <Compile Include="OperationModel.Interceptors\Support\HandlerMethodVisitor.cs" />
+    <Compile Include="OperationModel.Interceptors\Support\interceptor_scenario.cs" />
+    <Compile Include="OperationModel.Interceptors\Support\NominalFunctionAttribute.cs" />
+    <Compile Include="OperationModel.Interceptors\Support\UnknownLaserFlawAttribute.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
