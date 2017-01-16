@@ -15,6 +15,7 @@ namespace OpenRasta.Hosting.AspNet
     public class AspNetHost : IHost
     {
         private readonly object _syncRoot = new object();
+
         public AspNetHost()
         {
         }
@@ -38,7 +39,7 @@ namespace OpenRasta.Hosting.AspNet
             get
             {
                 if (_configurationSource == null)
-                    lock(_syncRoot)
+                    lock (_syncRoot)
                     {
                         if (_configurationSource == null)
                         {
@@ -49,10 +50,7 @@ namespace OpenRasta.Hosting.AspNet
                     }
                 return _configurationSource;
             }
-            set
-            {
-                _configurationSource = value;
-            }
+            set { _configurationSource = value; }
         }
 
         public IDependencyResolverAccessor ResolverAccessor
@@ -60,11 +58,12 @@ namespace OpenRasta.Hosting.AspNet
             get
             {
                 if (_resolver == null)
-                    lock(_syncRoot)
+                    lock (_syncRoot)
                     {
                         if (_resolver == null)
                         {
-                            var resolver = ConfigurationSource as IDependencyResolverAccessor ?? FindTypeInProject<IDependencyResolverAccessor>();
+                            var resolver = ConfigurationSource as IDependencyResolverAccessor ??
+                                           FindTypeInProject<IDependencyResolverAccessor>();
                             Thread.MemoryBarrier();
                             _resolver = resolver;
                         }
@@ -81,7 +80,7 @@ namespace OpenRasta.Hosting.AspNet
             {
                 try
                 {
-                    using(RedirectToLoadedAssembliesToShutUpPolicyRedirection())
+                    using (RedirectToLoadedAssembliesToShutUpPolicyRedirection())
                     {
                         var configType = assembly.GetTypes()
                             .FirstOrDefault(t => typeof(T).IsAssignableFrom(t));
@@ -103,10 +102,11 @@ namespace OpenRasta.Hosting.AspNet
             AppDomain.CurrentDomain.AssemblyResolve += ResolveToAlreadyLoaded;
             return new ActionOnDispose(() => AppDomain.CurrentDomain.AssemblyResolve -= ResolveToAlreadyLoaded);
         }
+
         class ActionOnDispose : IDisposable
         {
             readonly Action _onDispose;
-            
+
             bool _disposed;
 
             public ActionOnDispose(Action onDispose)
@@ -123,6 +123,7 @@ namespace OpenRasta.Hosting.AspNet
                 }
             }
         }
+
         static Assembly ResolveToAlreadyLoaded(object sender, ResolveEventArgs args)
         {
             return AppDomain.CurrentDomain.GetAssemblies().FirstOrDefault(_ => _.FullName == args.Name);
@@ -159,7 +160,8 @@ namespace OpenRasta.Hosting.AspNet
             resolver.AddDependency<IContextStore, AspNetContextStore>(DependencyLifetime.Singleton);
             resolver.AddDependency<OpenRastaRewriterHandler>(DependencyLifetime.Transient);
             resolver.AddDependency<OpenRastaIntegratedHandler>(DependencyLifetime.Transient);
-            resolver.AddDependency<ILogger<AspNetLogSource>, TraceSourceLogger<AspNetLogSource>>(DependencyLifetime.Transient);
+            resolver.AddDependency<ILogger<AspNetLogSource>, TraceSourceLogger<AspNetLogSource>>(DependencyLifetime
+                .Transient);
             return true;
         }
 

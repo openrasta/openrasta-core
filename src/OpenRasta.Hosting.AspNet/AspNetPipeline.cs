@@ -5,16 +5,16 @@ using System.Web;
 
 namespace OpenRasta.Hosting.AspNet
 {
-    public abstract class Iis
+    public abstract class AspNetPipeline
     {
-        public abstract IEnumerable<HttpHandlerRegistration> Handlers { get; }
+        protected abstract IEnumerable<HttpHandlerRegistration> Handlers { get; }
 
         public bool IsHandlerAlreadyRegisteredForRequest(string httpVerb, Uri requestUri)
         {
             return Handlers.Any(x => x.Matches(httpVerb, requestUri));
         }
 
-        public bool IsHandlerRegistrationValid(HttpHandlerRegistration registration)
+        protected static bool IsHandlerRegistrationValid(HttpHandlerRegistration registration)
         {
             return !string.IsNullOrEmpty(registration.Path) && registration.Path != "*" && !registration.Type.Contains(typeof(DefaultHttpHandler).FullName);
         }

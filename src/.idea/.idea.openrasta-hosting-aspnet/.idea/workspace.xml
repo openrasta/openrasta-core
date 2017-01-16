@@ -1,0 +1,850 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="9b8ffd18-aa7b-4bf3-959f-0c0f10910567" name="Default" comment="" />
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="TRACKING_ENABLED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="CreatePatchCommitExecutor">
+    <option name="PATCH_PATH" value="" />
+  </component>
+  <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
+  <component name="FileEditorManager">
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file leaf-file-name="OpenRastaModule.cs" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/OpenRasta.Hosting.AspNet/OpenRastaModule.cs">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="304">
+              <caret line="78" column="13" lean-forward="false" selection-start-line="78" selection-start-column="13" selection-end-line="78" selection-end-column="13" />
+              <folding>
+                <marker date="1484584916000" expanded="true" signature="6:209" ph="..." />
+                <marker date="1484584916000" expanded="true" signature="245:6723" ph="{...}" />
+                <marker date="1484584916000" expanded="true" signature="354:6721" ph="{...}" />
+                <marker date="1484584916000" expanded="true" signature="788:901" ph="{...}" />
+                <marker date="1484584916000" expanded="true" signature="972:1540" ph="{...}" />
+                <marker date="1484584916000" expanded="true" signature="998:1530" ph="{...}" />
+                <marker date="1484584916000" expanded="true" signature="1678:1895" ph="{...}" />
+                <marker date="1484584916000" expanded="true" signature="1942:2124" ph="{...}" />
+                <marker date="1484584916000" expanded="true" signature="2502:2901" ph="{...}" />
+                <marker date="1484584916000" expanded="true" signature="2590:2740" ph="{...}" />
+                <marker date="1484584916000" expanded="true" signature="2771:2859" ph="{...}" />
+                <marker date="1484584916000" expanded="true" signature="2961:3061" ph="{...}" />
+                <marker date="1484584916000" expanded="true" signature="3148:3424" ph="{...}" />
+                <marker date="1484584916000" expanded="true" signature="3516:4567" ph="{...}" />
+                <marker date="1484584916000" expanded="true" signature="3570:3660" ph="{...}" />
+                <marker date="1484584916000" expanded="true" signature="4231:4321" ph="{...}" />
+                <marker date="1484584916000" expanded="true" signature="4608:5297" ph="{...}" />
+                <marker date="1484584916000" expanded="true" signature="5363:5466" ph="{...}" />
+                <marker date="1484584916000" expanded="true" signature="5537:5645" ph="{...}" />
+                <marker date="1484584916000" expanded="true" signature="5704:5763" ph="{...}" />
+                <marker date="1484584916000" expanded="true" signature="5845:6029" ph="{...}" />
+                <marker date="1484584916000" expanded="true" signature="6100:6181" ph="{...}" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="AspNetHost_Specification.cs" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/OpenRasta.Hosting.AspNet.Tests.Integration/AspNetHost_Specification.cs">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="192">
+              <caret line="14" column="23" lean-forward="false" selection-start-line="14" selection-start-column="23" selection-end-line="14" selection-end-column="23" />
+              <folding>
+                <marker date="1484322184000" expanded="true" signature="6:186" ph="..." />
+                <marker date="1484322184000" expanded="true" signature="222:3106" ph="{...}" />
+                <marker date="1484322184000" expanded="true" signature="300:1097" ph="{...}" />
+                <marker date="1484322184000" expanded="true" signature="358:583" ph="{...}" />
+                <marker date="1484322184000" expanded="true" signature="661:1091" ph="{...}" />
+                <marker date="1484322184000" expanded="true" signature="1180:1785" ph="{...}" />
+                <marker date="1484322184000" expanded="true" signature="1244:1485" ph="{...}" />
+                <marker date="1484322184000" expanded="true" signature="1560:1779" ph="{...}" />
+                <marker date="1484322184000" expanded="true" signature="1858:2445" ph="{...}" />
+                <marker date="1484322184000" expanded="true" signature="1912:2153" ph="{...}" />
+                <marker date="1484322184000" expanded="true" signature="2228:2439" ph="{...}" />
+                <marker date="1484322184000" expanded="true" signature="2472:2619" ph="{...}" />
+                <marker date="1484322184000" expanded="true" signature="2653:3104" ph="{...}" />
+                <marker date="1484322184000" expanded="true" signature="2713:2778" ph="{...}" />
+                <marker date="1484322184000" expanded="true" signature="2853:3098" ph="{...}" />
+                <marker date="1484322184000" expanded="true" signature="2922:3087" ph="{...}" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="server_context.cs" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/OpenRasta.Hosting.AspNet.Tests.Integration/server_context.cs">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="210">
+              <caret line="29" column="37" lean-forward="false" selection-start-line="29" selection-start-column="37" selection-end-line="29" selection-end-column="37" />
+              <folding>
+                <marker date="1484585122000" expanded="true" signature="6:187" ph="..." />
+                <marker date="1484585122000" expanded="true" signature="241:3418" ph="{...}" />
+                <marker date="1484585122000" expanded="true" signature="301:3416" ph="{...}" />
+                <marker date="1484585122000" expanded="true" signature="347:465" ph="{...}" />
+                <marker date="1484585122000" expanded="true" signature="666:863" ph="{...}" />
+                <marker date="1484585122000" expanded="true" signature="890:936" ph="{...}" />
+                <marker date="1484585122000" expanded="true" signature="994:1075" ph="{...}" />
+                <marker date="1484585122000" expanded="true" signature="1135:1205" ph="{...}" />
+                <marker date="1484585122000" expanded="true" signature="1306:1405" ph="{...}" />
+                <marker date="1484585122000" expanded="true" signature="1526:1717" ph="{...}" />
+                <marker date="1484585122000" expanded="true" signature="1828:2043" ph="{...}" />
+                <marker date="1484585122000" expanded="true" signature="2142:2993" ph="{...}" />
+                <marker date="1484585122000" expanded="true" signature="2494:2727" ph="{...}" />
+                <marker date="1484585122000" expanded="true" signature="2743:2843" ph="{...}" />
+                <marker date="1484585122000" expanded="true" signature="2886:2983" ph="{...}" />
+                <marker date="1484585122000" expanded="true" signature="3062:3302" ph="{...}" />
+                <marker date="1484585122000" expanded="true" signature="3349:3410" ph="{...}" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="HttpListenerController.cs" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/OpenRasta.Hosting.AspNet/AspNetHttpListener/HttpListenerController.cs">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="496">
+              <caret line="31" column="9" lean-forward="true" selection-start-line="31" selection-start-column="9" selection-end-line="31" selection-end-column="9" />
+              <folding>
+                <marker date="1484322184000" expanded="true" signature="80:1030" ph="{...}" />
+                <marker date="1484322184000" expanded="true" signature="87:191" ph="/* code originally based on xml-rpc.net under MIT license ... */" />
+                <marker date="1484322184000" expanded="true" signature="231:1028" ph="{...}" />
+                <marker date="1484322184000" expanded="true" signature="433:552" ph="{...}" />
+                <marker date="1484322184000" expanded="true" signature="647:949" ph="{...}" />
+                <marker date="1484322184000" expanded="true" signature="977:1022" ph="{...}" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="exception_thrown.cs" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/OpenRasta.Hosting.AspNet.Tests.Integration/exception_thrown.cs">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="112">
+              <caret line="10" column="17" lean-forward="false" selection-start-line="10" selection-start-column="17" selection-end-line="10" selection-end-column="17" />
+              <folding>
+                <marker date="1484322184000" expanded="true" signature="6:163" ph="..." />
+                <marker date="1484322184000" expanded="true" signature="217:1209" ph="{...}" />
+                <marker date="1484322184000" expanded="true" signature="277:935" ph="{...}" />
+                <marker date="1484322184000" expanded="true" signature="317:595" ph="{...}" />
+                <marker date="1484322184000" expanded="true" signature="661:929" ph="{...}" />
+                <marker date="1484322184000" expanded="true" signature="966:1207" ph="{...}" />
+                <marker date="1484322184000" expanded="true" signature="1000:1069" ph="{...}" />
+                <marker date="1484322184000" expanded="true" signature="1153:1201" ph="{...}" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="HandlerRegistration_Specification.cs" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/OpenRasta.Hosting.AspNet.Tests.Integration/HandlerRegistration_Specification.cs">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="224">
+              <caret line="54" column="20" lean-forward="false" selection-start-line="54" selection-start-column="20" selection-end-line="54" selection-end-column="20" />
+              <folding>
+                <marker date="1484322184000" expanded="true" signature="6:133" ph="..." />
+                <marker date="1484322184000" expanded="true" signature="187:1891" ph="{...}" />
+                <marker date="1484322184000" expanded="true" signature="244:983" ph="{...}" />
+                <marker date="1484322184000" expanded="true" signature="306:493" ph="{...}" />
+                <marker date="1484322184000" expanded="true" signature="554:730" ph="{...}" />
+                <marker date="1484322184000" expanded="true" signature="800:976" ph="{...}" />
+                <marker date="1484322184000" expanded="true" signature="1038:1889" ph="{...}" />
+                <marker date="1484322184000" expanded="true" signature="1108:1295" ph="{...}" />
+                <marker date="1484322184000" expanded="true" signature="1372:1580" ph="{...}" />
+                <marker date="1484322184000" expanded="true" signature="1682:1883" ph="{...}" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="AspNetHost.cs" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/OpenRasta.Hosting.AspNet/AspNetHost.cs">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="178">
+              <caret line="177" column="46" lean-forward="false" selection-start-line="177" selection-start-column="46" selection-end-line="177" selection-end-column="46" />
+              <folding>
+                <marker date="1484581418000" expanded="true" signature="6:256" ph="..." />
+                <marker date="1484581418000" expanded="true" signature="292:6246" ph="{...}" />
+                <marker date="1484581418000" expanded="true" signature="330:6244" ph="{...}" />
+                <marker date="1484581418000" expanded="true" signature="423:443" ph="{...}" />
+                <marker date="1484581418000" expanded="true" signature="760:844" ph="{...}" />
+                <marker date="1484581418000" expanded="true" signature="1016:1611" ph="{...}" />
+                <marker date="1484581418000" expanded="true" signature="1042:1551" ph="{...}" />
+                <marker date="1484581418000" expanded="true" signature="1223:1470" ph="{...}" />
+                <marker date="1484581418000" expanded="true" signature="1672:2281" ph="{...}" />
+                <marker date="1484581418000" expanded="true" signature="1698:2271" ph="{...}" />
+                <marker date="1484581418000" expanded="true" signature="1857:2201" ph="{...}" />
+                <marker date="1484581418000" expanded="true" signature="2345:3208" ph="{...}" />
+                <marker date="1484581418000" expanded="true" signature="2563:3173" ph="{...}" />
+                <marker date="1484581418000" expanded="true" signature="2597:3101" ph="{...}" />
+                <marker date="1484581418000" expanded="true" signature="2697:3083" ph="{...}" />
+                <marker date="1484581418000" expanded="true" signature="2931:3061" ph="{...}" />
+                <marker date="1484581418000" expanded="true" signature="3140:3159" ph="{...}" />
+                <marker date="1484581418000" expanded="true" signature="3290:3502" ph="{...}" />
+                <marker date="1484581418000" expanded="true" signature="3547:3961" ph="{...}" />
+                <marker date="1484581418000" expanded="true" signature="3680:3748" ph="{...}" />
+                <marker date="1484581418000" expanded="true" signature="3783:3951" ph="{...}" />
+                <marker date="1484581418000" expanded="true" signature="3829:3937" ph="{...}" />
+                <marker date="1484581418000" expanded="true" signature="4047:4172" ph="{...}" />
+                <marker date="1484581418000" expanded="true" signature="4240:4759" ph="{...}" />
+                <marker date="1484581418000" expanded="true" signature="4295:4749" ph="{...}" />
+                <marker date="1484581418000" expanded="true" signature="4836:5017" ph="{...}" />
+                <marker date="1484581418000" expanded="true" signature="5094:5571" ph="{...}" />
+                <marker date="1484581418000" expanded="true" signature="5665:5783" ph="{...}" />
+                <marker date="1484581418000" expanded="true" signature="5884:6000" ph="{...}" />
+                <marker date="1484581418000" expanded="true" signature="6054:6105" ph="{...}" />
+                <marker date="1484581418000" expanded="true" signature="6158:6238" ph="{...}" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
+  </component>
+  <component name="FindInProjectRecents">
+    <findStrings>
+      <find>UseIn</find>
+    </findStrings>
+  </component>
+  <component name="IdeDocumentHistory">
+    <option name="CHANGED_PATHS">
+      <list>
+        <option value="$PROJECT_DIR$/OpenRasta.Hosting.AspNet/Iis.cs" />
+        <option value="$PROJECT_DIR$/OpenRasta.Hosting.AspNet/Iis6.cs" />
+        <option value="$PROJECT_DIR$/OpenRasta.Hosting.AspNet/Iis7.cs" />
+        <option value="$PROJECT_DIR$/OpenRasta.Hosting.AspNet/AspNetPipeline.cs" />
+        <option value="$USER_HOME$/.local/share/JetBrains/Shared/v08/DecompilerCache/decompiler/BB707CFD-D5B3-4B5D-BEE1-24BAE63A2B3F/43/74379f1b/IHttpHandlerFactory.cs" />
+        <option value="$PROJECT_DIR$/OpenRasta.Hosting.AspNet/OpenRastaHandler.cs" />
+        <option value="$PROJECT_DIR$/OpenRasta.Hosting.AspNet/ClassicPipeline.cs" />
+        <option value="$PROJECT_DIR$/OpenRasta.Hosting.AspNet/IntegratedPipeline.cs" />
+        <option value="$PROJECT_DIR$/OpenRasta.Hosting.AspNet/AspNetHost.cs" />
+        <option value="$PROJECT_DIR$/OpenRasta.Hosting.AspNet/OpenRastaModule.cs" />
+        <option value="$PROJECT_DIR$/OpenRasta.Hosting.AspNet.Tests.Integration/server_context.cs" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectFrameBounds">
+    <option name="y" value="23" />
+    <option name="width" value="1280" />
+    <option name="height" value="731" />
+  </component>
+  <component name="ProjectView">
+    <navigator currentView="SolutionExplorer" proportions="" version="1">
+      <flattenPackages />
+      <showMembers />
+      <showModules />
+      <showLibraryContents />
+      <hideEmptyPackages />
+      <abbreviatePackageNames />
+      <autoscrollToSource />
+      <autoscrollFromSource />
+      <sortByType />
+      <manualOrder />
+      <foldersAlwaysOnTop value="true" />
+    </navigator>
+    <panes>
+      <pane id="SolutionExplorer">
+        <subPane>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" />
+              <option name="myItemType" value="com.jetbrains.resharper.projectView.solutionExplorer.SolutionExplorerViewPane$ProjectViewPaneTreeStructure$createRoot$1" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="openrasta-hosting-aspnet (2 projects)" />
+              <option name="myItemType" value="com.jetbrains.resharper.projectView.solutionExplorer.SolutionExplorerNodeRider" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="OpenRasta.Hosting.AspNet.Tests.Integration" />
+              <option name="myItemType" value="com.jetbrains.resharper.projectView.solutionExplorer.SolutionExplorerNodeRider" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" />
+              <option name="myItemType" value="com.jetbrains.resharper.projectView.solutionExplorer.SolutionExplorerViewPane$ProjectViewPaneTreeStructure$createRoot$1" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="openrasta-hosting-aspnet (2 projects)" />
+              <option name="myItemType" value="com.jetbrains.resharper.projectView.solutionExplorer.SolutionExplorerNodeRider" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" />
+              <option name="myItemType" value="com.jetbrains.resharper.projectView.solutionExplorer.SolutionExplorerViewPane$ProjectViewPaneTreeStructure$createRoot$1" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="openrasta-hosting-aspnet (2 projects)" />
+              <option name="myItemType" value="com.jetbrains.resharper.projectView.solutionExplorer.SolutionExplorerNodeRider" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Solution Items" />
+              <option name="myItemType" value="com.jetbrains.resharper.projectView.solutionExplorer.SolutionExplorerNodeRider" />
+            </PATH_ELEMENT>
+          </PATH>
+        </subPane>
+        <option name="show-file-system" value="false" />
+        <option name="show-all-items" value="false" />
+      </pane>
+    </panes>
+  </component>
+  <component name="PropertiesComponent">
+    <property name="SearchEverywhereHistoryKey" value="HttpHandlerRe&#9;null&#9;null&#10;Integrated&#9;null&#9;null" />
+    <property name="settings.editor.selected.configurable" value="preferences.lookFeel" />
+  </component>
+  <component name="RunManager" selected=".NET Project.Default">
+    <configuration default="true" type="DotNetProject" factoryName=".NET Project">
+      <option name="PROJECT_PATH" value="" />
+      <option name="PROJECT_KIND" value="None" />
+      <option name="PROJECT_TFM" value="" />
+      <option name="EXE_PATH" value="" />
+      <option name="PROGRAM_PARAMETERS" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="USE_MONO" value="0" />
+      <option name="USE_EXTERNAL_CONSOLE" value="0" />
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="false" name="Default" type="DotNetProject" factoryName=".NET Project">
+      <option name="PROJECT_PATH" value="" />
+      <option name="PROJECT_KIND" value="None" />
+      <option name="PROJECT_TFM" value="" />
+      <option name="EXE_PATH" value="" />
+      <option name="PROGRAM_PARAMETERS" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="USE_MONO" value="0" />
+      <option name="USE_EXTERNAL_CONSOLE" value="0" />
+      <envs />
+      <method />
+    </configuration>
+    <list size="1">
+      <item index="0" class="java.lang.String" itemvalue=".NET Project.Default" />
+    </list>
+  </component>
+  <component name="ShelveChangesManager" show_recycled="false">
+    <option name="remove_strategy" value="false" />
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="9b8ffd18-aa7b-4bf3-959f-0c0f10910567" name="Default" comment="" />
+      <created>1484326529472</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1484326529472</updated>
+      <workItem from="1484326530891" duration="1176000" />
+      <workItem from="1484562413640" duration="10366000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TimeTrackingManager">
+    <option name="totallyTimeSpent" value="11542000" />
+  </component>
+  <component name="TodoView">
+    <todo-panel id="selected-file">
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+    <todo-panel id="all">
+      <are-packages-shown value="true" />
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+  </component>
+  <component name="ToolWindowManager">
+    <frame x="0" y="23" width="1280" height="731" extended-state="0" />
+    <editor active="true" />
+    <layout>
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Errors in solution" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32956383" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32917318" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="UnitTesting" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32917318" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="NuGet" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32761312" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Change Signature" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.2536349" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Build" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32917318" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.39937598" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+    </layout>
+  </component>
+  <component name="VcsContentAnnotationSettings">
+    <option name="myLimit" value="2678400000" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <option name="time" value="2" />
+    </breakpoint-manager>
+    <watches-manager />
+  </component>
+  <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/OpenRasta.Hosting.AspNet/OpenRastaModule.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <marker date="1484584916000" expanded="true" signature="6:209" ph="..." />
+            <marker date="1484584916000" expanded="true" signature="245:6723" ph="{...}" />
+            <marker date="1484584916000" expanded="true" signature="354:6721" ph="{...}" />
+            <marker date="1484584916000" expanded="true" signature="788:901" ph="{...}" />
+            <marker date="1484584916000" expanded="true" signature="972:1540" ph="{...}" />
+            <marker date="1484584916000" expanded="true" signature="998:1530" ph="{...}" />
+            <marker date="1484584916000" expanded="true" signature="1678:1895" ph="{...}" />
+            <marker date="1484584916000" expanded="true" signature="1942:2124" ph="{...}" />
+            <marker date="1484584916000" expanded="true" signature="2502:2901" ph="{...}" />
+            <marker date="1484584916000" expanded="true" signature="2590:2740" ph="{...}" />
+            <marker date="1484584916000" expanded="true" signature="2771:2859" ph="{...}" />
+            <marker date="1484584916000" expanded="true" signature="2961:3061" ph="{...}" />
+            <marker date="1484584916000" expanded="true" signature="3148:3424" ph="{...}" />
+            <marker date="1484584916000" expanded="true" signature="3516:4567" ph="{...}" />
+            <marker date="1484584916000" expanded="true" signature="3570:3660" ph="{...}" />
+            <marker date="1484584916000" expanded="true" signature="4231:4321" ph="{...}" />
+            <marker date="1484584916000" expanded="true" signature="4608:5297" ph="{...}" />
+            <marker date="1484584916000" expanded="true" signature="5363:5466" ph="{...}" />
+            <marker date="1484584916000" expanded="true" signature="5537:5645" ph="{...}" />
+            <marker date="1484584916000" expanded="true" signature="5704:5763" ph="{...}" />
+            <marker date="1484584916000" expanded="true" signature="5845:6029" ph="{...}" />
+            <marker date="1484584916000" expanded="true" signature="6100:6181" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/OpenRasta.Hosting.AspNet/OpenRastaHandler.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <marker date="1484577506000" expanded="true" signature="6:37" ph="..." />
+            <marker date="1484577506000" expanded="true" signature="73:674" ph="{...}" />
+            <marker date="1484577506000" expanded="true" signature="181:672" ph="{...}" />
+            <marker date="1484577506000" expanded="true" signature="302:588" ph="{...}" />
+            <marker date="1484577506000" expanded="true" signature="646:666" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/OpenRasta.Hosting.AspNet/packages.config">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/OpenRasta.Hosting.AspNet/OpenRastaRewriterHandler.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="384">
+          <caret line="24" column="60" lean-forward="false" selection-start-line="24" selection-start-column="60" selection-end-line="24" selection-end-column="60" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/OpenRasta.Hosting.AspNet/OpenRastaIntegratedHandler.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="112">
+          <caret line="7" column="55" lean-forward="false" selection-start-line="7" selection-start-column="55" selection-end-line="7" selection-end-column="55" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/.local/share/JetBrains/Shared/v08/DecompilerCache/decompiler/B8482871-3EEB-4390-8392-77739764AEB2/57/58f1bcc4/HttpTaskAsyncHandler.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="176">
+          <caret line="11" column="52" lean-forward="false" selection-start-line="11" selection-start-column="52" selection-end-line="11" selection-end-column="52" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/.local/share/JetBrains/Shared/v08/DecompilerCache/decompiler/B8482871-3EEB-4390-8392-77739764AEB2/fa/2cf47d71/IHttpAsyncHandler.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="128">
+          <caret line="8" column="19" lean-forward="false" selection-start-line="8" selection-start-column="19" selection-end-line="8" selection-end-column="19" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/OpenRasta.Hosting.AspNet/AspNetRequest.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="352">
+          <caret line="22" column="15" lean-forward="false" selection-start-line="22" selection-start-column="15" selection-end-line="22" selection-end-column="15" />
+          <folding>
+            <marker date="1484322184000" expanded="true" signature="0:293" ph="License" />
+            <marker date="1484322184000" expanded="true" signature="16:282" ph="/* Authors: ... */" />
+            <marker date="1484322184000" expanded="true" signature="301:409" ph="..." />
+            <marker date="1484322184000" expanded="true" signature="445:1742" ph="{...}" />
+            <marker date="1484322184000" expanded="true" signature="489:1740" ph="{...}" />
+            <marker date="1484322184000" expanded="true" signature="574:1181" ph="{...}" />
+            <marker date="1484322184000" expanded="true" signature="759:878" ph="/* TODO: Finish off the new input stream that goes to the ... */" />
+            <marker date="1484322184000" expanded="true" signature="1407:1544" ph="{...}" />
+            <marker date="1484322184000" expanded="true" signature="1765:2833" ph="/* Permission is hereby granted, free of charge, to any person obtaining ... */" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/OpenRasta.Hosting.AspNet/AspNetRequest.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="352">
+          <caret line="22" column="15" lean-forward="false" selection-start-line="22" selection-start-column="15" selection-end-line="22" selection-end-column="15" />
+          <folding>
+            <marker date="1484322184000" expanded="true" signature="0:293" ph="License" />
+            <marker date="1484322184000" expanded="true" signature="16:282" ph="/* Authors: ... */" />
+            <marker date="1484322184000" expanded="true" signature="301:409" ph="..." />
+            <marker date="1484322184000" expanded="true" signature="445:1742" ph="{...}" />
+            <marker date="1484322184000" expanded="true" signature="489:1740" ph="{...}" />
+            <marker date="1484322184000" expanded="true" signature="574:1181" ph="{...}" />
+            <marker date="1484322184000" expanded="true" signature="759:878" ph="/* TODO: Finish off the new input stream that goes to the ... */" />
+            <marker date="1484322184000" expanded="true" signature="1407:1544" ph="{...}" />
+            <marker date="1484322184000" expanded="true" signature="1765:2833" ph="/* Permission is hereby granted, free of charge, to any person obtaining ... */" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/OpenRasta.Hosting.AspNet/packages.config">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/OpenRasta.Hosting.AspNet/OpenRastaIntegratedHandler.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="112">
+          <caret line="7" column="55" lean-forward="false" selection-start-line="7" selection-start-column="55" selection-end-line="7" selection-end-column="55" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/.local/share/JetBrains/Shared/v08/DecompilerCache/decompiler/B8482871-3EEB-4390-8392-77739764AEB2/fa/2cf47d71/IHttpAsyncHandler.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="128">
+          <caret line="8" column="19" lean-forward="false" selection-start-line="8" selection-start-column="19" selection-end-line="8" selection-end-column="19" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/.local/share/JetBrains/Shared/v08/DecompilerCache/decompiler/B8482871-3EEB-4390-8392-77739764AEB2/57/58f1bcc4/HttpTaskAsyncHandler.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="176">
+          <caret line="11" column="52" lean-forward="false" selection-start-line="11" selection-start-column="52" selection-end-line="11" selection-end-column="52" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/OpenRasta.Hosting.AspNet/HttpHandlerRegistration.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-80">
+          <caret line="7" column="17" lean-forward="false" selection-start-line="7" selection-start-column="17" selection-end-line="7" selection-end-column="17" />
+          <folding>
+            <marker date="1484562642000" expanded="true" signature="6:104" ph="..." />
+            <marker date="1484562642000" expanded="true" signature="140:1086" ph="{...}" />
+            <marker date="1484562642000" expanded="true" signature="183:1084" ph="{...}" />
+            <marker date="1484562642000" expanded="true" signature="303:525" ph="{...}" />
+            <marker date="1484562642000" expanded="true" signature="747:1078" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/.local/share/JetBrains/Shared/v08/DecompilerCache/decompiler/BB707CFD-D5B3-4B5D-BEE1-24BAE63A2B3F/43/74379f1b/IHttpHandlerFactory.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="240">
+          <caret line="15" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="15" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/.local/share/JetBrains/Shared/v08/DecompilerCache/decompiler/BB707CFD-D5B3-4B5D-BEE1-24BAE63A2B3F/c3/d063e0cb/HttpRuntime.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="114">
+          <caret line="177" column="46" lean-forward="false" selection-start-line="177" selection-start-column="23" selection-end-line="177" selection-end-column="46" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/OpenRasta.Hosting.AspNet/OpenRastaHandler.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="176">
+          <caret line="11" column="72" lean-forward="false" selection-start-line="11" selection-start-column="72" selection-end-line="11" selection-end-column="72" />
+          <folding>
+            <marker date="1484577506000" expanded="true" signature="6:37" ph="..." />
+            <marker date="1484577506000" expanded="true" signature="73:674" ph="{...}" />
+            <marker date="1484577506000" expanded="true" signature="181:672" ph="{...}" />
+            <marker date="1484577506000" expanded="true" signature="302:588" ph="{...}" />
+            <marker date="1484577506000" expanded="true" signature="646:666" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/OpenRasta.Hosting.AspNet/OpenRastaRewriterHandler.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="34">
+          <caret line="6" column="17" lean-forward="false" selection-start-line="6" selection-start-column="17" selection-end-line="6" selection-end-column="17" />
+          <folding>
+            <marker date="1484577201000" expanded="true" signature="6:66" ph="..." />
+            <marker date="1484577201000" expanded="true" signature="102:797" ph="{...}" />
+            <marker date="1484577201000" expanded="true" signature="161:795" ph="{...}" />
+            <marker date="1484577201000" expanded="true" signature="209:268" ph="{...}" />
+            <marker date="1484577201000" expanded="true" signature="408:789" ph="{...}" />
+            <marker date="1484577201000" expanded="true" signature="488:779" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/OpenRasta.Hosting.AspNet/IntegratedPipeline.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="736">
+          <caret line="46" column="13" lean-forward="false" selection-start-line="46" selection-start-column="13" selection-end-line="46" selection-end-column="13" />
+          <folding>
+            <marker date="1484580708000" expanded="true" signature="6:116" ph="..." />
+            <marker date="1484580708000" expanded="true" signature="152:2491" ph="{...}" />
+            <marker date="1484580708000" expanded="true" signature="207:2489" ph="{...}" />
+            <marker date="1484580708000" expanded="true" signature="485:667" ph="{...}" />
+            <marker date="1484580708000" expanded="true" signature="827:2483" ph="{...}" />
+            <marker date="1484580708000" expanded="true" signature="887:1706" ph="{...}" />
+            <marker date="1484580708000" expanded="true" signature="1737:1781" ph="{...}" />
+            <marker date="1484580708000" expanded="true" signature="1828:2473" ph="{...}" />
+            <marker date="1484580708000" expanded="true" signature="2378:2459" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/OpenRasta.Hosting.AspNet/ClassicPipeline.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="130">
+          <caret line="11" column="111" lean-forward="false" selection-start-line="11" selection-start-column="111" selection-end-line="11" selection-end-column="111" />
+          <folding>
+            <marker date="1484577530000" expanded="true" signature="6:122" ph="..." />
+            <marker date="1484577530000" expanded="true" signature="158:933" ph="{...}" />
+            <marker date="1484577530000" expanded="true" signature="210:931" ph="{...}" />
+            <marker date="1484577530000" expanded="true" signature="562:925" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/OpenRasta.Hosting.AspNet/AspNetPipeline.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="176">
+          <caret line="11" column="89" lean-forward="false" selection-start-line="11" selection-start-column="89" selection-end-line="11" selection-end-column="89" />
+          <folding>
+            <marker date="1484576476000" expanded="true" signature="6:84" ph="..." />
+            <marker date="1484576476000" expanded="true" signature="120:714" ph="{...}" />
+            <marker date="1484576476000" expanded="true" signature="163:712" ph="{...}" />
+            <marker date="1484576476000" expanded="true" signature="342:433" ph="{...}" />
+            <marker date="1484576476000" expanded="true" signature="529:706" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/OpenRasta.Hosting.AspNet/openrasta-hosting-aspnet.nuspec">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-183">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/OpenRasta.Hosting.AspNet/web.config.uninstall.xdt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/OpenRasta.Hosting.AspNet/web.config.install.xdt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-78">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/OpenRasta.Hosting.AspNet/AspNetHost.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="178">
+          <caret line="177" column="46" lean-forward="false" selection-start-line="177" selection-start-column="46" selection-end-line="177" selection-end-column="46" />
+          <folding>
+            <marker date="1484581418000" expanded="true" signature="6:256" ph="..." />
+            <marker date="1484581418000" expanded="true" signature="292:6246" ph="{...}" />
+            <marker date="1484581418000" expanded="true" signature="330:6244" ph="{...}" />
+            <marker date="1484581418000" expanded="true" signature="423:443" ph="{...}" />
+            <marker date="1484581418000" expanded="true" signature="760:844" ph="{...}" />
+            <marker date="1484581418000" expanded="true" signature="1016:1611" ph="{...}" />
+            <marker date="1484581418000" expanded="true" signature="1042:1551" ph="{...}" />
+            <marker date="1484581418000" expanded="true" signature="1223:1470" ph="{...}" />
+            <marker date="1484581418000" expanded="true" signature="1672:2281" ph="{...}" />
+            <marker date="1484581418000" expanded="true" signature="1698:2271" ph="{...}" />
+            <marker date="1484581418000" expanded="true" signature="1857:2201" ph="{...}" />
+            <marker date="1484581418000" expanded="true" signature="2345:3208" ph="{...}" />
+            <marker date="1484581418000" expanded="true" signature="2563:3173" ph="{...}" />
+            <marker date="1484581418000" expanded="true" signature="2597:3101" ph="{...}" />
+            <marker date="1484581418000" expanded="true" signature="2697:3083" ph="{...}" />
+            <marker date="1484581418000" expanded="true" signature="2931:3061" ph="{...}" />
+            <marker date="1484581418000" expanded="true" signature="3140:3159" ph="{...}" />
+            <marker date="1484581418000" expanded="true" signature="3290:3502" ph="{...}" />
+            <marker date="1484581418000" expanded="true" signature="3547:3961" ph="{...}" />
+            <marker date="1484581418000" expanded="true" signature="3680:3748" ph="{...}" />
+            <marker date="1484581418000" expanded="true" signature="3783:3951" ph="{...}" />
+            <marker date="1484581418000" expanded="true" signature="3829:3937" ph="{...}" />
+            <marker date="1484581418000" expanded="true" signature="4047:4172" ph="{...}" />
+            <marker date="1484581418000" expanded="true" signature="4240:4759" ph="{...}" />
+            <marker date="1484581418000" expanded="true" signature="4295:4749" ph="{...}" />
+            <marker date="1484581418000" expanded="true" signature="4836:5017" ph="{...}" />
+            <marker date="1484581418000" expanded="true" signature="5094:5571" ph="{...}" />
+            <marker date="1484581418000" expanded="true" signature="5665:5783" ph="{...}" />
+            <marker date="1484581418000" expanded="true" signature="5884:6000" ph="{...}" />
+            <marker date="1484581418000" expanded="true" signature="6054:6105" ph="{...}" />
+            <marker date="1484581418000" expanded="true" signature="6158:6238" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/OpenRasta.Hosting.AspNet/OpenRastaModule.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="304">
+          <caret line="78" column="13" lean-forward="false" selection-start-line="78" selection-start-column="13" selection-end-line="78" selection-end-column="13" />
+          <folding>
+            <marker date="1484584916000" expanded="true" signature="6:209" ph="..." />
+            <marker date="1484584916000" expanded="true" signature="245:6723" ph="{...}" />
+            <marker date="1484584916000" expanded="true" signature="354:6721" ph="{...}" />
+            <marker date="1484584916000" expanded="true" signature="788:901" ph="{...}" />
+            <marker date="1484584916000" expanded="true" signature="972:1540" ph="{...}" />
+            <marker date="1484584916000" expanded="true" signature="998:1530" ph="{...}" />
+            <marker date="1484584916000" expanded="true" signature="1678:1895" ph="{...}" />
+            <marker date="1484584916000" expanded="true" signature="1942:2124" ph="{...}" />
+            <marker date="1484584916000" expanded="true" signature="2502:2901" ph="{...}" />
+            <marker date="1484584916000" expanded="true" signature="2590:2740" ph="{...}" />
+            <marker date="1484584916000" expanded="true" signature="2771:2859" ph="{...}" />
+            <marker date="1484584916000" expanded="true" signature="2961:3061" ph="{...}" />
+            <marker date="1484584916000" expanded="true" signature="3148:3424" ph="{...}" />
+            <marker date="1484584916000" expanded="true" signature="3516:4567" ph="{...}" />
+            <marker date="1484584916000" expanded="true" signature="3570:3660" ph="{...}" />
+            <marker date="1484584916000" expanded="true" signature="4231:4321" ph="{...}" />
+            <marker date="1484584916000" expanded="true" signature="4608:5297" ph="{...}" />
+            <marker date="1484584916000" expanded="true" signature="5363:5466" ph="{...}" />
+            <marker date="1484584916000" expanded="true" signature="5537:5645" ph="{...}" />
+            <marker date="1484584916000" expanded="true" signature="5704:5763" ph="{...}" />
+            <marker date="1484584916000" expanded="true" signature="5845:6029" ph="{...}" />
+            <marker date="1484584916000" expanded="true" signature="6100:6181" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/OpenRasta.Hosting.AspNet.Tests.Integration/exception_thrown.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="112">
+          <caret line="10" column="17" lean-forward="false" selection-start-line="10" selection-start-column="17" selection-end-line="10" selection-end-column="17" />
+          <folding>
+            <marker date="1484322184000" expanded="true" signature="6:163" ph="..." />
+            <marker date="1484322184000" expanded="true" signature="217:1209" ph="{...}" />
+            <marker date="1484322184000" expanded="true" signature="277:935" ph="{...}" />
+            <marker date="1484322184000" expanded="true" signature="317:595" ph="{...}" />
+            <marker date="1484322184000" expanded="true" signature="661:929" ph="{...}" />
+            <marker date="1484322184000" expanded="true" signature="966:1207" ph="{...}" />
+            <marker date="1484322184000" expanded="true" signature="1000:1069" ph="{...}" />
+            <marker date="1484322184000" expanded="true" signature="1153:1201" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/OpenRasta.Hosting.AspNet.Tests.Integration/HandlerRegistration_Specification.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="224">
+          <caret line="54" column="20" lean-forward="false" selection-start-line="54" selection-start-column="20" selection-end-line="54" selection-end-column="20" />
+          <folding>
+            <marker date="1484322184000" expanded="true" signature="6:133" ph="..." />
+            <marker date="1484322184000" expanded="true" signature="187:1891" ph="{...}" />
+            <marker date="1484322184000" expanded="true" signature="244:983" ph="{...}" />
+            <marker date="1484322184000" expanded="true" signature="306:493" ph="{...}" />
+            <marker date="1484322184000" expanded="true" signature="554:730" ph="{...}" />
+            <marker date="1484322184000" expanded="true" signature="800:976" ph="{...}" />
+            <marker date="1484322184000" expanded="true" signature="1038:1889" ph="{...}" />
+            <marker date="1484322184000" expanded="true" signature="1108:1295" ph="{...}" />
+            <marker date="1484322184000" expanded="true" signature="1372:1580" ph="{...}" />
+            <marker date="1484322184000" expanded="true" signature="1682:1883" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/OpenRasta.Hosting.AspNet.Tests.Integration/AspNetHost_Specification.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="192">
+          <caret line="14" column="23" lean-forward="false" selection-start-line="14" selection-start-column="23" selection-end-line="14" selection-end-column="23" />
+          <folding>
+            <marker date="1484322184000" expanded="true" signature="6:186" ph="..." />
+            <marker date="1484322184000" expanded="true" signature="222:3106" ph="{...}" />
+            <marker date="1484322184000" expanded="true" signature="300:1097" ph="{...}" />
+            <marker date="1484322184000" expanded="true" signature="358:583" ph="{...}" />
+            <marker date="1484322184000" expanded="true" signature="661:1091" ph="{...}" />
+            <marker date="1484322184000" expanded="true" signature="1180:1785" ph="{...}" />
+            <marker date="1484322184000" expanded="true" signature="1244:1485" ph="{...}" />
+            <marker date="1484322184000" expanded="true" signature="1560:1779" ph="{...}" />
+            <marker date="1484322184000" expanded="true" signature="1858:2445" ph="{...}" />
+            <marker date="1484322184000" expanded="true" signature="1912:2153" ph="{...}" />
+            <marker date="1484322184000" expanded="true" signature="2228:2439" ph="{...}" />
+            <marker date="1484322184000" expanded="true" signature="2472:2619" ph="{...}" />
+            <marker date="1484322184000" expanded="true" signature="2653:3104" ph="{...}" />
+            <marker date="1484322184000" expanded="true" signature="2713:2778" ph="{...}" />
+            <marker date="1484322184000" expanded="true" signature="2853:3098" ph="{...}" />
+            <marker date="1484322184000" expanded="true" signature="2922:3087" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/OpenRasta.Hosting.AspNet.Tests.Integration/server_context.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="210">
+          <caret line="29" column="37" lean-forward="false" selection-start-line="29" selection-start-column="37" selection-end-line="29" selection-end-column="37" />
+          <folding>
+            <marker date="1484585122000" expanded="true" signature="6:187" ph="..." />
+            <marker date="1484585122000" expanded="true" signature="241:3418" ph="{...}" />
+            <marker date="1484585122000" expanded="true" signature="301:3416" ph="{...}" />
+            <marker date="1484585122000" expanded="true" signature="347:465" ph="{...}" />
+            <marker date="1484585122000" expanded="true" signature="666:863" ph="{...}" />
+            <marker date="1484585122000" expanded="true" signature="890:936" ph="{...}" />
+            <marker date="1484585122000" expanded="true" signature="994:1075" ph="{...}" />
+            <marker date="1484585122000" expanded="true" signature="1135:1205" ph="{...}" />
+            <marker date="1484585122000" expanded="true" signature="1306:1405" ph="{...}" />
+            <marker date="1484585122000" expanded="true" signature="1526:1717" ph="{...}" />
+            <marker date="1484585122000" expanded="true" signature="1828:2043" ph="{...}" />
+            <marker date="1484585122000" expanded="true" signature="2142:2993" ph="{...}" />
+            <marker date="1484585122000" expanded="true" signature="2494:2727" ph="{...}" />
+            <marker date="1484585122000" expanded="true" signature="2743:2843" ph="{...}" />
+            <marker date="1484585122000" expanded="true" signature="2886:2983" ph="{...}" />
+            <marker date="1484585122000" expanded="true" signature="3062:3302" ph="{...}" />
+            <marker date="1484585122000" expanded="true" signature="3349:3410" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/OpenRasta.Hosting.AspNet/AspNetHttpListener/HttpListenerController.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="496">
+          <caret line="31" column="9" lean-forward="true" selection-start-line="31" selection-start-column="9" selection-end-line="31" selection-end-column="9" />
+          <folding>
+            <marker date="1484322184000" expanded="true" signature="80:1030" ph="{...}" />
+            <marker date="1484322184000" expanded="true" signature="87:191" ph="/* code originally based on xml-rpc.net under MIT license ... */" />
+            <marker date="1484322184000" expanded="true" signature="231:1028" ph="{...}" />
+            <marker date="1484322184000" expanded="true" signature="433:552" ph="{...}" />
+            <marker date="1484322184000" expanded="true" signature="647:949" ph="{...}" />
+            <marker date="1484322184000" expanded="true" signature="977:1022" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+  </component>
+</project>

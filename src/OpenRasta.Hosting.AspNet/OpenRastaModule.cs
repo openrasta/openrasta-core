@@ -1,13 +1,3 @@
-#region License
-/* Authors:
- *      Sebastien Lambla (seb@serialseb.com)
- * Copyright:
- *      (C) 2007-2009 Caffeine IT & naughtyProd Ltd (http://www.caffeine-it.com)
- * License:
- *      This file is distributed under the terms of the MIT License found at the end of this file.
- */
-#endregion
-
 using System;
 using System.Threading;
 using System.Web;
@@ -20,20 +10,23 @@ using OpenRasta.Web;
 
 namespace OpenRasta.Hosting.AspNet
 {
+    // ReSharper disable once ClassNeverInstantiated.Global
     public class OpenRastaModule : IHttpModule
     {
-        internal const string COMM_CONTEXT_KEY = "__OR_COMM_CONTEXT";
+        const string COMM_CONTEXT_KEY = "__OR_COMM_CONTEXT";
         internal const string ORIGINAL_PATH_KEY = "__ORIGINAL_PATH";
-        internal const string SERVER_SOFTWARE_KEY = "SERVER_SOFTWARE";
 
-        internal static HostManager HostManager;
-        static readonly object _syncRoot = new object();
-        Action _dispose;
+        public static HostManager HostManager => HostManagerImplementation.Value;
+
+        static readonly Lazy<HostManager> HostManagerImplementation =
+            new Lazy<HostManager>(CreateHost, LazyThreadSafetyMode.PublicationOnly);
+
         bool _disposed;
 
         static OpenRastaModule()
         {
             Host = new AspNetHost();
+            Log = NullLogger<AspNetLogSource>.Instance;
         }
 
         public static AspNetCommunicationContext CommunicationContext
@@ -42,20 +35,19 @@ namespace OpenRasta.Hosting.AspNet
             {
                 var context = HttpContext.Current;
                 if (context.Items.Contains(COMM_CONTEXT_KEY))
-                    return (AspNetCommunicationContext)context.Items[COMM_CONTEXT_KEY];
+                    return (AspNetCommunicationContext) context.Items[COMM_CONTEXT_KEY];
                 var orContext = new AspNetCommunicationContext(Log,
-                                                               context,
-                                                               new AspNetRequest(context),
-                                                               new AspNetResponse(context) { Log = Log });
+                    context,
+                    new AspNetRequest(context),
+                    new AspNetResponse(context) {Log = Log});
                 context.Items[COMM_CONTEXT_KEY] = orContext;
                 return orContext;
             }
         }
 
-        public static AspNetHost Host { get; private set; }
-        public static Iis Iis { get; set; }
+        public static AspNetHost Host { get; }
 
-        protected static ILogger<AspNetLogSource> Log { get; set; }
+        static ILogger<AspNetLogSource> Log { get; set; }
 
         public void Dispose()
         {
@@ -70,99 +62,49 @@ namespace OpenRasta.Hosting.AspNet
             app.EndRequest += HandleHttpApplicationEndRequestEvent;
         }
 
-        static void TryInitializeHosting()
+        static readonly Lazy<AspNetPipeline> _pipeline = new Lazy<AspNetPipeline>(() =>
+            HttpRuntime.UsingIntegratedPipeline
+                ? (AspNetPipeline) new IntegratedPipeline()
+                : new ClassicPipeline(), LazyThreadSafetyMode.PublicationOnly);
+
+        static AspNetPipeline Pipeline => _pipeline.Value;
+
+        static HostManager CreateHost()
         {
-            if (HostManager == null)
+            var hostManager = HostManager.RegisterHost(Host);
+            try
             {
-                lock (_syncRoot)
-                {
-                    Thread.MemoryBarrier();
-                    if (HostManager == null)
-                    {
-                        var hostManager = HostManager.RegisterHost(Host);
-                        Thread.MemoryBarrier();
-                        HostManager = hostManager;
-                        try
-                        {
-                            Host.RaiseStart();
-                            Log = HostManager.Resolver.Resolve<ILogger<AspNetLogSource>>();
-                        }
-                        catch
-                        {
-                            HostManager.UnregisterHost(Host);
-                            HostManager = null;
-                        }
-                    }
-                }
+                Host.RaiseStart();
+                Log = hostManager.Resolver.Resolve<ILogger<AspNetLogSource>>() ?? Log;
             }
-        }
-
-        static bool HandlerAlreadyMapped(string method, Uri path)
-        {
-            return Iis.IsHandlerAlreadyRegisteredForRequest(method, path);
-        }
-
-        static void VerifyIisDetected(HttpContext context)
-        {
-            TryInitializeHosting();
-            if (Iis == null)
+            catch
             {
-                lock (_syncRoot)
-                {
-                    if (Iis == null)
-                    {
-                        if (context == null)
-                            throw new InvalidOperationException();
-                        Iis iisVersion = null;
-                        string serverSoftwareHeader = context.Request.ServerVariables[SERVER_SOFTWARE_KEY];
-
-                        int slashPos = serverSoftwareHeader != null ? serverSoftwareHeader.IndexOf('/') : -1;
-                        if (slashPos != -1)
-                        {
-                            string productName = serverSoftwareHeader.Substring(0, slashPos);
-                            Version parsedVersion;
-                            try
-                            {
-                                parsedVersion = new Version(serverSoftwareHeader.Substring(slashPos + 1, serverSoftwareHeader.Length - slashPos - 1).Trim());
-                            }
-                            catch
-                            {
-                                parsedVersion = null;
-                            }
-
-                            if (productName.EqualsOrdinalIgnoreCase("microsoft-iis") &&
-                                parsedVersion != null &&
-                                parsedVersion.Major >= 7)
-                            {
-                                iisVersion = new Iis7();
-                            }
-                        }
-
-                        Iis = iisVersion ?? new Iis6();
-                        Log.IisDetected(Iis, serverSoftwareHeader);
-                    }
-                }
+                HostManager.UnregisterHost(Host);
+                throw;
             }
+            return hostManager;
         }
+
+        bool HandlerAlreadyMapped(string method, Uri path)
+        {
+            return Pipeline.IsHandlerAlreadyRegisteredForRequest(method, path);
+        }
+
 
         static void HandleHttpApplicationEndRequestEvent(object sender, EventArgs e)
         {
-            if (HttpContext.Current.Items.Contains(ORIGINAL_PATH_KEY))
-            {
-                var commContext = (ICommunicationContext)((HttpApplication)sender).Context.Items[COMM_CONTEXT_KEY];
+            if (!HttpContext.Current.Items.Contains(ORIGINAL_PATH_KEY)) return;
 
-                Host.RaiseIncomingRequestProcessed(commContext);
-            }
+            var commContext = (ICommunicationContext) ((HttpApplication) sender).Context.Items[COMM_CONTEXT_KEY];
+            Host.RaiseIncomingRequestProcessed(commContext);
         }
 
-        static void HandleHttpApplicationPostResolveRequestCacheEvent(object sender, EventArgs e)
+        void HandleHttpApplicationPostResolveRequestCacheEvent(object sender, EventArgs e)
         {
-            VerifyIisDetected(HttpContext.Current);
-            
-            if (ShouldIgnoreRequest())
+            if (ShouldIgnoreRequestEarly())
             {
                 Log.IgnoredRequest();
-                return; 
+                return;
             }
 
             //else continue processing with OpenRasta
@@ -171,7 +113,8 @@ namespace OpenRasta.Hosting.AspNet
             var context = CommunicationContext;
             var stage = context.PipelineData.PipelineStage;
             if (stage == null)
-                context.PipelineData.PipelineStage = stage = new PipelineStage(HostManager.Resolver.Resolve<IPipeline>());
+                context.PipelineData.PipelineStage = stage =
+                    new PipelineStage(HostManager.Resolver.Resolve<IPipeline>());
             stage.SuspendAfter<KnownStages.IUriMatching>();
             Host.RaiseIncomingRequestReceived(context);
 
@@ -180,78 +123,65 @@ namespace OpenRasta.Hosting.AspNet
                 Log.IgnoredRequest();
                 return;
             }
-            ;
+
             HttpContext.Current.Items[ORIGINAL_PATH_KEY] = HttpContext.Current.Request.Path;
-            // TODO: This is to make the pipeline recognize the request by extension for handler processing. I *think* that's not necessary in integrated but have no memory of what is supposed to happen....
+
             HttpContext.Current.RewritePath(VirtualPathUtility.ToAppRelative("~/ignoreme.rastahook"), false);
             Log.PathRewrote();
         }
 
-        private static bool ShouldIgnoreRequest()
+        bool ShouldIgnoreRequestEarly()
         {
-            if (HostingEnvironment.VirtualPathProvider.FileExists(HttpContext.Current.Request.Path))
+            if (RequestIsForExistingFile(HttpContext.Current.Request.Path))
                 return true;
 
-            if (!HandleRootPath && HttpContext.Current.Request.Path == "/")
+            if (HandleRootPath == false && RequestIsRootPath(HttpContext.Current.Request.Path))
                 return true;
 
-            if (!HandleDirectories && HttpContext.Current.Request.Path != "/" &&
-                HostingEnvironment.VirtualPathProvider.DirectoryExists(HttpContext.Current.Request.Path))
+            if (HandleDirectories == false && RequestIsRootPath(HttpContext.Current.Request.Path) == false &&
+                RequestIsForExistingDirectory(HttpContext.Current.Request.Path))
                 return true;
 
-            if (!OverrideHttpHandlers &&
+            if (OverrideHttpHandlers == false &&
                 HandlerAlreadyMapped(HttpContext.Current.Request.HttpMethod, HttpContext.Current.Request.Url))
                 return true;
+
             return false;
         }
 
-        private static bool OperationResultSetByCode(AspNetCommunicationContext context)
+        static bool RequestIsForExistingFile(string requestPath)
         {
-            if (context.OperationResult == null) return false;
-            if (context.OperationResult.StatusCode != 404) return true;
-
-            var notFound = context.OperationResult as OperationResult.NotFound;
-            return notFound != null && notFound.Reason != NotFoundReason.NotMapped;
+            return HostingEnvironment.VirtualPathProvider.FileExists(requestPath);
         }
 
-        private static bool ResourceFound(AspNetCommunicationContext context)
+        static bool RequestIsForExistingDirectory(string requestPath)
+        {
+            return HostingEnvironment.VirtualPathProvider.DirectoryExists(requestPath);
+        }
+
+        static bool RequestIsRootPath(string requestPath)
+        {
+            return requestPath == "/";
+        }
+
+        static bool OperationResultSetByCode(AspNetCommunicationContext context)
+        {
+            return context.OperationResult != null
+                   && (context.OperationResult as OperationResult.NotFound)?.Reason != NotFoundReason.NotMapped;
+        }
+
+        static bool ResourceFound(AspNetCommunicationContext context)
         {
             return context.PipelineData.ResourceKey != null;
         }
 
-        protected static bool OverrideHttpHandlers
-        {
-            get { return WebConfigurationManager.AppSettings["openrasta.hosting.aspnet.paths.handlers"] == "all"; }
+        static bool OverrideHttpHandlers => WebConfigurationManager.AppSettings[
+                                                "openrasta.hosting.aspnet.paths.handlers"] == "all";
 
-        }
+        static bool HandleDirectories => WebConfigurationManager.AppSettings[
+                                             "openrasta.hosting.aspnet.paths.directories"] == "all";
 
-        protected static bool HandleDirectories
-        {
-            get { return WebConfigurationManager.AppSettings["openrasta.hosting.aspnet.paths.directories"] == "all"; }
-        }
-
-        protected static bool HandleRootPath
-        {
-            get { return WebConfigurationManager.AppSettings["openrasta.hosting.aspnet.paths.root"] != "disable"; }
-        }
+        static bool HandleRootPath => WebConfigurationManager.AppSettings[
+                                          "openrasta.hosting.aspnet.paths.root"] != "disable";
     }
 }
-
-#region Full license
-// Permission is hereby granted, free of charge, to any person obtaining
-// a copy of this software and associated documentation files (the
-// "Software"), to deal in the Software without restriction, including
-// without limitation the rights to use, copy, modify, merge, publish,
-// distribute, sublicense, and/or sell copies of the Software, and to
-// permit persons to whom the Software is furnished to do so, subject to
-// the following conditions:
-// The above copyright notice and this permission notice shall be
-// included in all copies or substantial portions of the Software.
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
-// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
-// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-#endregion
