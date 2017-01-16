@@ -103,11 +103,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="HttpListenerController.cs" pinned="false" current-in-tab="true">
+      <file leaf-file-name="HttpListenerController.cs" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/OpenRasta.Hosting.AspNet/AspNetHttpListener/HttpListenerController.cs">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="496">
-              <caret line="31" column="9" lean-forward="true" selection-start-line="31" selection-start-column="9" selection-end-line="31" selection-end-column="9" />
+            <state relative-caret-position="325">
+              <caret line="31" column="9" lean-forward="false" selection-start-line="31" selection-start-column="9" selection-end-line="31" selection-end-column="9" />
               <folding>
                 <marker date="1484322184000" expanded="true" signature="80:1030" ph="{...}" />
                 <marker date="1484322184000" expanded="true" signature="87:191" ph="/* code originally based on xml-rpc.net under MIT license ... */" />
@@ -116,6 +116,26 @@
                 <marker date="1484322184000" expanded="true" signature="647:949" ph="{...}" />
                 <marker date="1484322184000" expanded="true" signature="977:1022" ph="{...}" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="appveyor.yml" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/../appveyor.yml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-176">
+              <caret line="0" column="1" lean-forward="false" selection-start-line="0" selection-start-column="1" selection-end-line="0" selection-end-column="1" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="VERSION" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/../VERSION">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="0">
+              <caret line="0" column="8" lean-forward="false" selection-start-line="0" selection-start-column="8" selection-end-line="0" selection-end-column="8" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -223,6 +243,9 @@
         <option value="$PROJECT_DIR$/OpenRasta.Hosting.AspNet/AspNetHost.cs" />
         <option value="$PROJECT_DIR$/OpenRasta.Hosting.AspNet/OpenRastaModule.cs" />
         <option value="$PROJECT_DIR$/OpenRasta.Hosting.AspNet.Tests.Integration/server_context.cs" />
+        <option value="$PROJECT_DIR$/OpenRasta.Hosting.AspNet/AspNetHttpListener/HttpListenerController.cs" />
+        <option value="$PROJECT_DIR$/../appveyor.yml" />
+        <option value="$PROJECT_DIR$/../VERSION" />
       </list>
     </option>
   </component>
@@ -339,12 +362,12 @@
       <option name="presentableId" value="Default" />
       <updated>1484326529472</updated>
       <workItem from="1484326530891" duration="1176000" />
-      <workItem from="1484562413640" duration="10366000" />
+      <workItem from="1484562413640" duration="10967000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="11542000" />
+    <option name="totallyTimeSpent" value="12143000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -833,8 +856,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/OpenRasta.Hosting.AspNet/AspNetHttpListener/HttpListenerController.cs">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="496">
-          <caret line="31" column="9" lean-forward="true" selection-start-line="31" selection-start-column="9" selection-end-line="31" selection-end-column="9" />
+        <state relative-caret-position="325">
+          <caret line="31" column="9" lean-forward="false" selection-start-line="31" selection-start-column="9" selection-end-line="31" selection-end-column="9" />
           <folding>
             <marker date="1484322184000" expanded="true" signature="80:1030" ph="{...}" />
             <marker date="1484322184000" expanded="true" signature="87:191" ph="/* code originally based on xml-rpc.net under MIT license ... */" />
@@ -843,6 +866,22 @@
             <marker date="1484322184000" expanded="true" signature="647:949" ph="{...}" />
             <marker date="1484322184000" expanded="true" signature="977:1022" ph="{...}" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../VERSION">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="8" lean-forward="false" selection-start-line="0" selection-start-column="8" selection-end-line="0" selection-end-column="8" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../appveyor.yml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-176">
+          <caret line="0" column="1" lean-forward="false" selection-start-line="0" selection-start-column="1" selection-end-line="0" selection-end-column="1" />
+          <folding />
         </state>
       </provider>
     </entry>
