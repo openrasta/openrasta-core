@@ -64,9 +64,6 @@
     <EmbeddedResource Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Pages\" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\OpenRasta.Hosting.AspNet\OpenRasta.Hosting.AspNet.csproj">
       <Project>{288a707d-78b1-464f-87f2-63d6652c3bc8}</Project>
       <Name>OpenRasta.Hosting.AspNet</Name>
