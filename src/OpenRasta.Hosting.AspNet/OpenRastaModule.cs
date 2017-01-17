@@ -51,7 +51,7 @@ namespace OpenRasta.Hosting.AspNet
 
         public void Dispose()
         {
-            // Note we do not unsubscrie from events on HttpApplication as that instance is going down and it'd cause an exception.
+            // Note we do not unsubscribe from events on HttpApplication as that instance is going down and it'd cause an exception.
             if (_disposed) return;
             _disposed = true;
         }
@@ -126,7 +126,7 @@ namespace OpenRasta.Hosting.AspNet
 
             HttpContext.Current.Items[ORIGINAL_PATH_KEY] = HttpContext.Current.Request.Path;
 
-            HttpContext.Current.RewritePath(VirtualPathUtility.ToAppRelative("~/ignoreme.rastahook"), false);
+            HttpContext.Current.RewritePath(VirtualPathUtility.ToAppRelative("~/openrasta.axd"), false);
             Log.PathRewrote();
         }
 
