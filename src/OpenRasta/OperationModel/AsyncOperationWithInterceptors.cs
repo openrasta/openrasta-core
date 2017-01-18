@@ -34,6 +34,8 @@ namespace OpenRasta.OperationModel
 
     public string Name => _inner.Name;
 
+    public override string ToString() => _inner.ToString();
+
     public Task<IEnumerable<OutputMember>> InvokeAsync()
     {
       return _invoker(_inner);
