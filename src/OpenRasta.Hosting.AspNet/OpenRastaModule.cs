@@ -6,14 +6,21 @@ using System.Web.Configuration;
 using System.Web.Hosting;
 using OpenRasta.DI;
 using OpenRasta.Diagnostics;
+using OpenRasta.Hosting.AspNet;
 using OpenRasta.Pipeline;
 using OpenRasta.Web;
 
+[assembly: PreApplicationStartMethod(typeof(OpenRastaModule), nameof(OpenRastaModule.Initialize))]
 namespace OpenRasta.Hosting.AspNet
 {
     // ReSharper disable once ClassNeverInstantiated.Global
     public class OpenRastaModule : IHttpModule
     {
+        public static void Initialize()
+        {
+            HttpApplication.RegisterModule(typeof(OpenRastaModule));
+
+        }
         const string COMM_CONTEXT_KEY = "__OR_COMM_CONTEXT";
         internal const string ORIGINAL_PATH_KEY = "__ORIGINAL_PATH";
 
@@ -100,10 +107,11 @@ namespace OpenRasta.Hosting.AspNet
 
             if (!HttpContext.Current.Items.Contains(ORIGINAL_PATH_KEY)) return;
             var commContext = (ICommunicationContext) ((HttpApplication) sender).Context.Items[COMM_CONTEXT_KEY];
-            Host.RaiseIncomingRequestProcessed(commContext);
+            if (commContext.PipelineData.ContainsKey("openrasta.hosting.aspnet.handled"))
+                Host.RaiseIncomingRequestProcessed(commContext);
         }
 
-        void HandleHttpApplicationPmEvent(object sender, EventArgs e)
+        void HandleHttpApplicationPostResolveRequestCacheEvent(object sender, EventArgs e)
         {
             if (ShouldIgnoreRequestEarly())
             {
@@ -115,6 +123,7 @@ namespace OpenRasta.Hosting.AspNet
 
             Log.StartPreExecution();
             var context = CommunicationContext;
+            context.PipelineData["openrasta.hosting.aspnet.handled"] = true;
             var stage = context.PipelineData.PipelineStage;
             if (stage == null)
                 context.PipelineData.PipelineStage = stage =
@@ -128,9 +137,7 @@ namespace OpenRasta.Hosting.AspNet
                 return;
             }
 
-            HttpContext.Current.Items[ORIGINAL_PATH_KEY] = HttpContext.Current.Request.Path;
-
-            HttpContext.Current.RewritePath(VirtualPathUtility.ToAppRelative("~/openrasta.axd"), false);
+            Pipeline.HandoverToPipeline();
             Log.PathRewrote();
         }
 

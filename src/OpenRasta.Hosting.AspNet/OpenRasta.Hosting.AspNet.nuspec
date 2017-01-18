@@ -21,8 +21,4 @@
             <frameworkAssembly assemblyName="System.Web" targetFramework="" />
         </frameworkAssemblies>
     </metadata>
-    <files>
-        <file src="web.config.install.xdt" target="content\web.config.install.xdt" />
-        <file src="web.config.uninstall.xdt" target="content\web.config.uninstall.xdt" />
-    </files>
 </package>

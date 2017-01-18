@@ -34,9 +34,7 @@
       <HintPath>..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    
     <Reference Include="OpenRasta, Version=2.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\packa    <Reference Include="OpenRasta, Version=2.0.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\packages\openrasta-core.2.6.0-ci-1051\lib\net45\OpenRasta.dll</HintPath>
     </Reference>
     <Reference Include="OpenRasta.Testing">

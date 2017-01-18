@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using System.Web;
 
 namespace OpenRasta.Hosting.AspNet
 {
@@ -20,6 +21,12 @@ namespace OpenRasta.Hosting.AspNet
         }
 
         protected override IEnumerable<HttpHandlerRegistration> Handlers => _handlers.Value;
+
+
+        public override void HandoverToPipeline()
+        {
+            HttpContext.Current.RemapHandler(new OpenRastaHandler(this));
+        }
 
         IEnumerable<HttpHandlerRegistration> GetNativeHandlers()
         {

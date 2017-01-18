@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using System.Web;
 using System.Web.Configuration;
 
 namespace OpenRasta.Hosting.AspNet
@@ -12,6 +13,17 @@ namespace OpenRasta.Hosting.AspNet
             new Lazy<IEnumerable<HttpHandlerRegistration>>(ReadHandlers, LazyThreadSafetyMode.PublicationOnly);
 
         protected override IEnumerable<HttpHandlerRegistration> Handlers => _handlers.Value;
+
+        public override void HandoverFromPipeline()
+        {
+            HttpContext.Current.RewritePath((string) HttpContext.Current.Items[OpenRastaModule.ORIGINAL_PATH_KEY],
+                false);
+        }
+
+        public override void HandoverToPipeline()
+        {
+            HttpContext.Current.RewritePath(VirtualPathUtility.ToAppRelative("~/openrasta.axd"), false);
+        }
 
         static IEnumerable<HttpHandlerRegistration> ReadHandlers()
         {

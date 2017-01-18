@@ -47,8 +47,8 @@ namespace OpenRasta.Hosting.AspNet
         IDependencyResolverAccessor CreateResolverAccessor()
         {
             return (ConfigurationSource as IDependencyResolverAccessor) ??
-                   FindTypeInProject<IDependencyResolverAccessor>();
-        }
+                                           FindTypeInProject<IDependencyResolverAccessor>();
+                        }
 
         public static T FindTypeInProject<T>() where T : class
         {
@@ -95,10 +95,10 @@ namespace OpenRasta.Hosting.AspNet
             public void Dispose()
             {
                 if (_disposed) return;
-                _disposed = true;
-                _onDispose();
+                    _disposed = true;
+                    _onDispose();
+                }
             }
-        }
 
         static Assembly ResolveToAlreadyLoaded(object sender, ResolveEventArgs args)
         {
@@ -134,8 +134,7 @@ namespace OpenRasta.Hosting.AspNet
         public bool ConfigureRootDependencies(IDependencyResolver resolver)
         {
             resolver.AddDependency<IContextStore, AspNetContextStore>(DependencyLifetime.Singleton);
-            resolver.AddDependency<OpenRastaRewriterHandler>(DependencyLifetime.Transient);
-            resolver.AddDependency<OpenRastaIntegratedHandler>(DependencyLifetime.Transient);
+            resolver.AddDependency<OpenRastaHandler>(DependencyLifetime.Transient);
             resolver.AddDependency<ILogger<AspNetLogSource>, TraceSourceLogger<AspNetLogSource>>(DependencyLifetime
                 .Transient);
             return true;

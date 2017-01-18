@@ -16,7 +16,16 @@ namespace OpenRasta.Hosting.AspNet
 
         protected static bool IsHandlerRegistrationValid(HttpHandlerRegistration registration)
         {
-            return !string.IsNullOrEmpty(registration.Path) && registration.Path != "*" && !registration.Type.Contains(typeof(DefaultHttpHandler).FullName);
+            return !string.IsNullOrEmpty(registration.Path) && registration.Path != "*" &&
+                   !registration.Type.Contains(typeof(DefaultHttpHandler).FullName);
+        }
+
+        public virtual void HandoverFromPipeline()
+        {
+        }
+
+        public virtual void HandoverToPipeline()
+        {
         }
     }
 }

@@ -67,27 +67,12 @@
     <Compile Include="ClassicPipeline.cs" />
     <Compile Include="IntegratedPipeline.cs" />
     <Compile Include="OpenRastaHandler.cs" />
-    <Compile Include="OpenRastaIntegratedHandler.cs" />
     <Compile Include="OpenRastaModule.cs" />
-    <Compile Include="OpenRastaRewriterHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="..\..\..\core\openrasta-core.sln">
-      <Link>openrasta-core.sln</Link>
-    </Content>
-    <Content Include="packages.config" />
-    <Content Include="web.config.uninstall.xdt">
-      <SubType>Designer</SubType>
-    </Content>
-    <None Include="OpenRasta.Hosting.AspNet.nuspec">
   </ItemGroup>
   <ItemGroup>
     <Content Include="OpenRasta.Hosting.AspNet.nuspec" />
     <Content Include="packages.config" />
-    <Content Include="web.config.install.xdt">
-      <SubType>Designer</SubType>
-    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

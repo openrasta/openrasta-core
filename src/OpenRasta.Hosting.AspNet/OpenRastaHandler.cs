@@ -1,20 +1,29 @@
-using System.Web;
-using OpenRasta.DI;
+﻿using System.Web;
+using OpenRasta.Diagnostics;
 
 namespace OpenRasta.Hosting.AspNet
 {
-    // ReSharper disable once UnusedMember.Global
-    public class OpenRastaHandler : IHttpHandlerFactory
+    public class OpenRastaHandler : IHttpHandler
     {
-        public IHttpHandler GetHandler(HttpContext context, string requestType, string url, string pathTranslated)
+        readonly AspNetPipeline _pipeline;
+
+        public OpenRastaHandler(AspNetPipeline pipeline)
         {
-            if (context.Items[OpenRastaModule.ORIGINAL_PATH_KEY] != null)
-                return OpenRastaModule.HostManager.Resolver.Resolve<OpenRastaRewriterHandler>();
-            return OpenRastaModule.HostManager.Resolver.Resolve<OpenRastaIntegratedHandler>();
+            _pipeline = pipeline;
+            Log = NullLogger.Instance;
         }
 
-        public void ReleaseHandler(IHttpHandler handler)
+        public bool IsReusable => true;
+
+        public ILogger Log { get; set; }
+
+        public void ProcessRequest(HttpContext context)
         {
+            _pipeline.HandoverFromPipeline();
+            using (Log.Operation(this, "Request for {0}".With(context.Request.Url)))
+        {
+                OpenRastaModule.Host.RaiseIncomingRequestReceived(OpenRastaModule.CommunicationContext);
+            }
         }
     }
-        }
+}
