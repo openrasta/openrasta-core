@@ -24,6 +24,5 @@
     <files>
         <file src="web.config.install.xdt" target="content\web.config.install.xdt" />
         <file src="web.config.uninstall.xdt" target="content\web.config.uninstall.xdt" />
-        <file src="bin\release\OpenRasta.Hosting.AspNet.dll" target="lib\net45\OpenRasta.Hosting.AspNet.dll" />
     </files>
 </package>

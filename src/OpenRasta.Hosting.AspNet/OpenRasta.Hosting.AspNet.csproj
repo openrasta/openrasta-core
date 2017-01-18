@@ -81,10 +81,10 @@
       <SubType>Designer</SubType>
     </Content>
     <None Include="OpenRasta.Hosting.AspNet.nuspec">
-      <SubType>Designer</SubType>
-    </None>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="OpenRasta.Hosting.AspNet.nuspec" />
+    <Content Include="packages.config" />
     <Content Include="web.config.install.xdt">
       <SubType>Designer</SubType>
     </Content>
