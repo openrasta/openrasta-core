@@ -18,7 +18,7 @@
     </modules>
     <handlers>
       <add name="OpenRastaHandler" xdt:Transform="Remove" xdt:Locator="Match(name)" />
-      <add name="OpenRastaHandler" verb="*" path="*.rastahook" type="OpenRasta.Hosting.AspNet.OpenRastaHandler, OpenRasta.Hosting.AspNet, Version=2.0.0.0, Culture=neutral" xdt:Transform="Insert" />
+      <add name="OpenRastaHandler" verb="*" path="openrasta.axd" type="OpenRasta.Hosting.AspNet.OpenRastaHandler, OpenRasta.Hosting.AspNet, Version=2.0.0.0, Culture=neutral" xdt:Transform="Insert" />
     </handlers>
   </system.webServer>
 </configuration>

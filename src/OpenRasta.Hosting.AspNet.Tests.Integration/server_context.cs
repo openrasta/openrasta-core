@@ -9,7 +9,7 @@ using OpenRasta.Web;
 
 namespace OpenRasta.Hosting.AspNet.Tests.Integration
 {
-    public class aspnet_server_context : context
+    public abstract class aspnet_server_context : context
     {
         protected override void SetUp()
         {
