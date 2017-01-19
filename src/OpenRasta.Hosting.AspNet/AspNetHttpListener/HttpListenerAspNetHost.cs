@@ -19,7 +19,7 @@ namespace OpenRasta.Hosting.AspNet.AspNetHttpListener
             _virtualDir = vdir;
             _physicalDir = pdir;
             _listener = new System.Net.HttpListener();
-            foreach (string prefix in prefixes)
+            foreach (var prefix in prefixes)
                 _listener.Prefixes.Add(prefix);
         }
 
