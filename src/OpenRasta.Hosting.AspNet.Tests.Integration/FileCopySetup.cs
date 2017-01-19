@@ -7,11 +7,11 @@ using OpenRasta.Collections;
 using OpenRasta.Hosting.AspNet.Tests.Integration;
 using OpenRasta.IO;
 
-[SetUpFixture]
 public class FileCopySetup
 {
     public static DirectoryInfo TempFolder;
-    static FileCopySetup()
+    [OneTimeSetUp]
+    public void CreateFolder()
     {
         TempFolder = PrepareFolderStructure();
     }
@@ -57,7 +57,7 @@ public class FileCopySetup
 
         return tempRoot;
     }
-    [TearDown]
+    [OneTimeTearDown]
     public void DeleteFiles()
     {
         try
