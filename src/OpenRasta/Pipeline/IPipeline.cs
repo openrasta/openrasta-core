@@ -13,6 +13,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using OpenRasta.Concordia;
 using OpenRasta.Web;
 
 namespace OpenRasta.Pipeline

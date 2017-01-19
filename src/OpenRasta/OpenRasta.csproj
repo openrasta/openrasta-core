@@ -345,6 +345,7 @@
     <Compile Include="Pipeline\PipelineRunner.cs" />
     <Compile Include="Pipeline\PipelineStage.cs" />
     <Compile Include="Pipeline\ResponseMiddleware.cs" />
+    <Compile Include="Pipeline\YieldingMiddleware.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RecursionException.cs" />
     <Compile Include="Reflection\ExpressionComparer.cs" />

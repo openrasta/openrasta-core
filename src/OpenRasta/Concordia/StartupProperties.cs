@@ -63,6 +63,7 @@ namespace OpenRasta.Concordia
         get { return Get("openrasta.pipeline.validate", true); }
         set { Set("openrasta.pipeline.validate", value); }
       }
+      
     }
   }
 }

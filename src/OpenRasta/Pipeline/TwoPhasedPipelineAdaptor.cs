@@ -13,9 +13,10 @@ namespace OpenRasta.Pipeline
   {
     readonly IGenerateCallGraphs _graphs;
     Func<ICommunicationContext, Task> _invoker;
-    public bool IsInitialized { get; set; }
+    public bool IsInitialized { get; private set; }
     public IList<IPipelineContributor> Contributors { get; }
     public IEnumerable<ContributorCall> CallGraph { get; private set; }
+    public StartupProperties StartupProperties { get; private set; }
 
     public TwoPhasedPipelineAdaptor(IDependencyResolver resolver)
     {
@@ -43,11 +44,13 @@ namespace OpenRasta.Pipeline
       IsInitialized = true;
     }
 
+
     public IPipelineExecutionOrder Notify(Func<ICommunicationContext, PipelineContinuation> notification)
     {
       throw new NotImplementedException("Should never be called here, ever!");
     }
 
+    [Obsolete("Don't do it.")]
     public void Run(ICommunicationContext context)
     {
       RunAsync(context).GetAwaiter().GetResult();

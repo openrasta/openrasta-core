@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using OpenRasta.Codecs;
 using OpenRasta.OperationModel;
 using OpenRasta.TypeSystem;
@@ -36,6 +37,8 @@ namespace OpenRasta.Pipeline
     const string SELECTED_HANDLERS = OR_PIPELINE + "SelectedHandlers";
     const string SELECTED_RESOURCE = OR_PIPELINE + "SelectedResource";
     const string OPERATIONS_ASYNC = "openrasta.operations";
+    const string SUSPEND = "openrasta.pipeline.stages.suspend";
+    const string RESUME = "openrasta.pipeline.stages.resume";
 
     /// <summary>
     /// Gets the type of the handler selected when matching a request against the registerd resource.
@@ -49,12 +52,20 @@ namespace OpenRasta.Pipeline
     [Obsolete]
     public IEnumerable<IOperation> Operations
     {
-      get
-      {
-        return OperationsAsync?.Select(op => op.SyncOperation()).Where(op => op != null);
-      }
+      get { return OperationsAsync?.Select(op => op.SyncOperation()).Where(op => op != null); }
     }
 
+    public TaskCompletionSource<object> Suspend
+    {
+      get { return SafeGet<TaskCompletionSource<object>>(SUSPEND); }
+      set { base[SUSPEND] = value; }
+    }
+
+    public TaskCompletionSource<object> Resume
+    {
+      get { return SafeGet<TaskCompletionSource<object>>(RESUME);}
+      set { base[RESUME] = value; }
+    }
     public IEnumerable<IOperationAsync> OperationsAsync
     {
       get { return SafeGet<IEnumerable<IOperationAsync>>(OPERATIONS_ASYNC) ?? Enumerable.Empty<IOperationAsync>(); }

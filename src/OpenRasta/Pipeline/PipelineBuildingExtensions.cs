@@ -13,7 +13,8 @@ namespace OpenRasta.Pipeline
 
       var responsePipeline = all
         .TakeWhile(_ => _.Target is TResponseType == false)
-        .Select(CreateResponseMiddleware).BuildPipeline();
+        .Select(CreateResponseMiddleware)
+        .BuildPipeline();
 
       var requerstPipeline = all
         .SkipWhile(_ => _.Target is TResponseType == false)
@@ -28,15 +29,16 @@ namespace OpenRasta.Pipeline
     }
 
 
-
     static IPipelineMiddlewareFactory CreateResponseMiddleware(ContributorCall contrib)
     {
       return new ResponseMiddleware(contrib.Action);
-
     }
 
     static IPipelineMiddlewareFactory CreateRequestMiddleware(ContributorCall contrib)
     {
+      if (contrib.Target is KnownStages.IUriMatching)
+        return new YieldingMiddleware(new RequestMiddleware(contrib.Action));
+
       return new RequestMiddleware(contrib.Action);
     }
   }
