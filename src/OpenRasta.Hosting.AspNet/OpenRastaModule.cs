@@ -10,17 +10,19 @@ using OpenRasta.Hosting.AspNet;
 using OpenRasta.Pipeline;
 using OpenRasta.Web;
 
-[assembly: PreApplicationStartMethod(typeof(OpenRastaModule), nameof(OpenRastaModule.Initialize))]
+[assembly: PreApplicationStartMethod(typeof(OpenRastaModuleLoader), "Load")]
 namespace OpenRasta.Hosting.AspNet
 {
+    public static class OpenRastaModuleLoader
+    {
+        public static void Load()
+        {
+            HttpApplication.RegisterModule(typeof(OpenRastaModule));
+        }
+    }
     // ReSharper disable once ClassNeverInstantiated.Global
     public class OpenRastaModule : IHttpModule
     {
-        public static void Initialize()
-        {
-            HttpApplication.RegisterModule(typeof(OpenRastaModule));
-
-        }
         const string COMM_CONTEXT_KEY = "__OR_COMM_CONTEXT";
         internal const string ORIGINAL_PATH_KEY = "__ORIGINAL_PATH";
 
