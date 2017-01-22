@@ -13,13 +13,6 @@ using OpenRasta.Web;
 [assembly: PreApplicationStartMethod(typeof(OpenRastaModuleLoader), "Load")]
 namespace OpenRasta.Hosting.AspNet
 {
-    public static class OpenRastaModuleLoader
-    {
-        public static void Load()
-        {
-            HttpApplication.RegisterModule(typeof(OpenRastaModule));
-        }
-    }
     // ReSharper disable once ClassNeverInstantiated.Global
     public class OpenRastaModule : IHttpModule
     {

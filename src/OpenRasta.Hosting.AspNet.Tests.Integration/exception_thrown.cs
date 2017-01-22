@@ -1,10 +1,7 @@
-﻿using System;
-using System.Net;
-using AspNetHost_Specification;
+﻿using System.Net;
 using NUnit.Framework;
 using OpenRasta.Configuration;
 using OpenRasta.Testing;
-using OpenRasta.Web;
 
 namespace OpenRasta.Hosting.AspNet.Tests.Integration
 {
@@ -27,19 +24,6 @@ namespace OpenRasta.Hosting.AspNet.Tests.Integration
             GivenARequest("GET", "/customer/success");
             TheResponse.StatusCode.ShouldBe(HttpStatusCode.OK);
 
-        }
-    }
-
-    public class ThrowHandler
-    {
-        public object Get()
-        {
-            throw new NotImplementedException();
-        }
-        [HttpOperation(ForUriName="success")]
-        public object GetSuccessful()
-        {
-            return "hello";
         }
     }
 }

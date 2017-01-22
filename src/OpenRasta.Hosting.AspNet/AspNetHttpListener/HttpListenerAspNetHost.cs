@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Net;
 using System.Threading;
 using System.Web;
@@ -25,7 +26,7 @@ namespace OpenRasta.Hosting.AspNet.AspNetHttpListener
 
         public void ExecuteConfig(Action t)
         {
-            ((Config)OpenRastaModule.Host.ConfigurationSource).ConfigurationLambda = () =>
+            ((DelegateConfiguration)OpenRastaModule.Host.ConfigurationSource).ConfigurationLambda = () =>
                 {
                     using (OpenRastaConfiguration.Manual)
                     {
@@ -56,14 +57,15 @@ namespace OpenRasta.Hosting.AspNet.AspNetHttpListener
             {
                 HttpRuntime.ProcessRequest(workerRequest);
             }
-            catch
+            catch(Exception e)
             {
+                Trace.WriteLine(e.ToString());
             }
         }
 
         public void Start()
         {
-            OpenRastaModule.Host.ConfigurationSource = new Config();
+            OpenRastaModule.Host.ConfigurationSource = new DelegateConfiguration();
             _listener.Start();
             QueueNextRequestWait();
         }
@@ -79,7 +81,7 @@ namespace OpenRasta.Hosting.AspNet.AspNetHttpListener
             ThreadPool.QueueUserWorkItem(s => ProcessRequest());
         }
 
-        class Config : IConfigurationSource
+        class DelegateConfiguration : IConfigurationSource
         {
             public Action ConfigurationLambda;
 

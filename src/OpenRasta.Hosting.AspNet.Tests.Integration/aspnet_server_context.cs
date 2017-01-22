@@ -11,13 +11,6 @@ namespace OpenRasta.Hosting.AspNet.Tests.Integration
 {
     public abstract class aspnet_server_context : context
     {
-        protected override void SetUp()
-        {
-            base.SetUp();
-            TheResponseAsString = null;
-            TheResponse = null;
-        }
-
         readonly HttpListenerController _http;
         public HttpWebResponse TheResponse;
         public string TheResponseAsString;
@@ -25,9 +18,11 @@ namespace OpenRasta.Hosting.AspNet.Tests.Integration
 
         public aspnet_server_context()
         {
+            TheResponseAsString = null;
+            TheResponse = null;
             SelectPort();
 
-            _http = new HttpListenerController(new[] {"http://+:" + _port + "/"}, "/", FileCopySetup.TempFolder.FullName);
+            _http = new HttpListenerController(new[] {"http://+:" + _port + "/"}, "/", TempFolder.FullName);
             _http.Start();
         }
 
@@ -39,8 +34,7 @@ namespace OpenRasta.Hosting.AspNet.Tests.Integration
         [TestFixtureTearDown]
         public void tear()
         {
-            if (_http != null)
-                _http.Stop();
+            _http?.Stop();
         }
 
         public void GivenARequest(string verb, string uri)

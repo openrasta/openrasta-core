@@ -51,12 +51,18 @@
     <Compile Include="..\CommonInfo.cs">
       <Link>CommonInfo.cs</Link>
     </Compile>
-    <Compile Include="AspNetHost_Specification.cs" />
+    <Compile Include="when_issueing_a_get_for_a_resource.cs" />
+    <Compile Include="Customer.cs" />
+    <Compile Include="CustomerHandler.cs" />
     <Compile Include="exception_thrown.cs" />
-    <Compile Include="FileCopySetup.cs" />
-    <Compile Include="HandlerRegistration_Specification.cs" />
+    <Compile Include="context.cs" />
+    <Compile Include="when_matching_verbs.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="server_context.cs" />
+    <Compile Include="aspnet_server_context.cs" />
+    <Compile Include="ThrowHandler.cs" />
+    <Compile Include="when_accessing_an_unmapped_uri.cs" />
+    <Compile Include="when_accessing_a_uri_meant_for_a_handler.cs" />
+    <Compile Include="when_matching_paths.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Web.config" />

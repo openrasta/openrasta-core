@@ -34,7 +34,7 @@ namespace OpenRasta.Hosting.AspNet
             try
             {
                 var configManagerType = Type.GetType("Microsoft.Web.Administration.WebConfigurationManager, " +
-                                                     MICROSOFT_WEB_ADMINISTRATION);
+                                                     MICROSOFT_WEB_ADMINISTRATION, false);
                 var configurationSectionType = Type.GetType(
                     "Microsoft.Web.Administration.ConfigurationSection, " + MICROSOFT_WEB_ADMINISTRATION);
                 var method = configManagerType?.GetMethod("GetSection", new[] {typeof(string)});
