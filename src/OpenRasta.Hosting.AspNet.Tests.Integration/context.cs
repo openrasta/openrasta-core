@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using NUnit.Framework;
@@ -30,14 +31,14 @@ namespace OpenRasta.Hosting.AspNet.Tests.Integration
                 var source = file;
                 var destination = Path.Combine(Path.Combine(tempFolder.FullName, "bin"), Path.GetFileName(source));
 
-                Console.WriteLine("Copying " + file);
+                Trace.WriteLine("Copying " + file);
                 File.Copy(source, destination);
             }
             using (var webConfig = assembly.GetManifestResourceStream("OpenRasta.Hosting.AspNet.Tests.Integration.Web.config"))
             {
                 var content = webConfig.ReadToEnd();
 
-                File.WriteAllBytes(Path.Combine(tempFolder.FullName, "web.config"), content);
+                File.WriteAllBytes(Path.Combine(tempFolder.FullName, "Web.config"), content);
             }
 
             return tempFolder;

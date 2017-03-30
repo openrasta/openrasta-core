@@ -1,6 +1,6 @@
 ﻿using System;
 using NUnit.Framework;
-using OpenRasta.Testing;
+using Shouldly;
 
 namespace OpenRasta.Hosting.AspNet.Tests.Integration
 {

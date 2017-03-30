@@ -11,6 +11,7 @@ using OpenRasta.Pipeline;
 using OpenRasta.Web;
 
 [assembly: PreApplicationStartMethod(typeof(OpenRastaModuleLoader), "Load")]
+
 namespace OpenRasta.Hosting.AspNet
 {
     // ReSharper disable once ClassNeverInstantiated.Global

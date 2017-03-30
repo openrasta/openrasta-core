@@ -4,7 +4,6 @@ using System.Net;
 using System.Text;
 using NUnit.Framework;
 using OpenRasta.Hosting.AspNet.AspNetHttpListener;
-using OpenRasta.Testing;
 using OpenRasta.Web;
 
 namespace OpenRasta.Hosting.AspNet.Tests.Integration

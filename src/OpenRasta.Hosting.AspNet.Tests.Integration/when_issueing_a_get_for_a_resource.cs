@@ -2,8 +2,7 @@
 using System.Text;
 using NUnit.Framework;
 using OpenRasta.Configuration;
-using OpenRasta.Testing;
-using OpenRasta.Web;
+using Shouldly;
 
 namespace OpenRasta.Hosting.AspNet.Tests.Integration
 {
