@@ -43,9 +43,9 @@ namespace OpenRasta.Pipeline
 
     public void Initialize(StartupProperties startup)
     {
-      this.StartupProperties = startup;
       if (IsInitialized)
         return;
+      StartupProperties = startup;
       using (PipelineLog.Operation(this, "Initializing the pipeline."))
       {
         foreach (var item in _resolver.ResolveAll<IPipelineContributor>())
@@ -66,7 +66,7 @@ namespace OpenRasta.Pipeline
 
     public StartupProperties StartupProperties { get; set; }
 
-
+    [Obsolete("Don't do it this will deadlock.")]
     public void Run(ICommunicationContext context)
     {
       RunAsync(context).GetAwaiter().GetResult();

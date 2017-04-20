@@ -1,85 +1,72 @@
-#region License
-/* Authors:
- *      Sebastien Lambla (seb@serialseb.com)
- * Copyright:
- *      (C) 2007-2009 Caffeine IT & naughtyProd Ltd (http://www.caffeine-it.com)
- * License:
- *      This file is distributed under the terms of the MIT License found at the end of this file.
- */
-#endregion
-
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using OpenRasta.Configuration.MetaModel;
 using OpenRasta.DI;
 
 namespace OpenRasta.Configuration
 {
-    public static class OpenRastaConfiguration
+  public static class OpenRastaConfiguration
+  {
+    static bool _isBeingConfigured;
+
+    /// <summary>
+    /// Creates a manual configuration of the resources supported by the application.
+    /// </summary>
+    public static IDisposable Manual
     {
-        static bool _isBeingConfigured;
+      get
+      {
+        if (_isBeingConfigured)
+          throw new InvalidOperationException("Configuration is already happening on another thread.");
 
-        /// <summary>
-        /// Creates a manual configuration of the resources supported by the application.
-        /// </summary>
-        public static IDisposable Manual
-        {
-            get
-            {
-                if (_isBeingConfigured)
-                    throw new InvalidOperationException("Configuration is already happening on another thread.");
+        _isBeingConfigured = true;
 
-                _isBeingConfigured = true;
+        return new FluentConfigurator();
+      }
+    }
 
-                return new FluentConfigurator();
-            }
-        }
-
-        static void FinishConfiguration()
-        {
-            if (!_isBeingConfigured)
-                throw new InvalidOperationException(
-                    "Something went horribly wrong and the Configuration is deemed finish when it didn't even start!");
+    static void FinishConfiguration()
+    {
+      if (!_isBeingConfigured)
+        throw new InvalidOperationException(
+          "Something went horribly wrong and the Configuration is deemed finish when it didn't even start!");
 
 #pragma warning disable 618
-            DependencyManager.Pipeline.Initialize();
+      DependencyManager.Pipeline.Initialize();
 #pragma warning restore 618
-            _isBeingConfigured = false;
-        }
-
-        class FluentConfigurator : IDisposable
-        {
-            bool _disposed;
-
-            ~FluentConfigurator()
-            {
-                Debug.Assert(_disposed, "The FluentConfigurator wasn't disposed properly.");
-            }
-
-            public void Dispose()
-            {
-                GC.SuppressFinalize(this);
-                var exceptions = new List<OpenRastaConfigurationException>();
-                try
-                {
-                    var metaModelRepository = DependencyManager.GetService<IMetaModelRepository>();
-
-                    metaModelRepository.Process();
-                }
-                finally
-                {
-                    FinishConfiguration();
-                    _disposed = true;
-                    if (exceptions.Count > 0)
-                        throw new OpenRastaConfigurationException(exceptions);
-                }
-            }
-        }
+      _isBeingConfigured = false;
     }
+
+    class FluentConfigurator : IDisposable
+    {
+      bool _disposed;
+
+      ~FluentConfigurator()
+      {
+        Debug.Assert(_disposed, "The FluentConfigurator wasn't disposed properly.");
+      }
+
+      public void Dispose()
+      {
+        GC.SuppressFinalize(this);
+        try
+        {
+          var metaModelRepository = DependencyManager.GetService<IMetaModelRepository>();
+
+          metaModelRepository.Process();
+        }
+        finally
+        {
+          FinishConfiguration();
+          _disposed = true;
+        }
+      }
+    }
+  }
 }
 
 #region Full license
+
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
 // "Software"), to deal in the Software without restriction, including
@@ -96,4 +83,5 @@ namespace OpenRasta.Configuration
 // LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
 #endregion

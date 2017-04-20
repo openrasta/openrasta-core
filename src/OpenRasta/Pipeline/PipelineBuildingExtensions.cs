@@ -1,12 +1,46 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Remoting.Contexts;
-using OpenRasta.Pipeline.Contributors;
 
 namespace OpenRasta.Pipeline
 {
   public static class PipelineBuildingExtensions
   {
+    static readonly List<Type> MiddelwareStageTypes = new List<Type>
+    {
+      typeof(KnownStages.IBegin),
+      typeof(KnownStages.IUriMatching),
+      typeof(KnownStages.IAuthentication),
+      typeof(KnownStages.IRequestDecoding),
+      typeof(KnownStages.IOperationExecution),
+      typeof(KnownStages.IResponseCoding),
+      typeof(KnownStages.IEnd)
+    };
+    public static IEnumerable<KeyValuePair<Type,IEnumerable<IPipelineMiddlewareFactory>>> ToMiddlewareStages(this IEnumerable<ContributorCall> callStack)
+    {
+      var factories = new List<IPipelineMiddlewareFactory>();
+      var responsePhase = false;
+
+      foreach (var contrib in callStack)
+      {
+        factories.Add(responsePhase
+          ? CreateResponseMiddleware(contrib)
+          : CreateRequestMiddleware(contrib));
+        var stageType = MiddelwareStageTypes.FirstOrDefault(knownType => knownType.IsInstanceOfType(contrib.Target));
+        if (stageType != null)
+        {
+          yield return new KeyValuePair<Type, IEnumerable<IPipelineMiddlewareFactory>>(
+            stageType,
+            new List<IPipelineMiddlewareFactory>(factories));
+          factories.Clear();
+        }
+        responsePhase = responsePhase || contrib.Target is KnownStages.IOperationExecution;
+      }
+
+      if (factories.Any())
+        throw new InvalidOperationException("Somehow there is a contributor after IEnd. That's absurd.");
+    }
+
     public static IPipelineMiddleware ToTwoPhasedMiddleware<TResponseType>(this IEnumerable<ContributorCall> callGraph)
     {
       var all = callGraph.Reverse().ToList();

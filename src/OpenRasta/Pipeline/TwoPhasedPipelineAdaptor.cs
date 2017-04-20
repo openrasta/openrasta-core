@@ -11,7 +11,7 @@ namespace OpenRasta.Pipeline
 {
   public class TwoPhasedPipelineAdaptor : IPipeline, IPipelineAsync
   {
-    readonly IGenerateCallGraphs _graphs;
+    readonly IGenerateCallGraphs _callGrapher;
     Func<ICommunicationContext, Task> _invoker;
     public bool IsInitialized { get; private set; }
     public IList<IPipelineContributor> Contributors { get; }
@@ -20,7 +20,7 @@ namespace OpenRasta.Pipeline
 
     public TwoPhasedPipelineAdaptor(IDependencyResolver resolver)
     {
-      _graphs = resolver.HasDependency<IGenerateCallGraphs>()
+      _callGrapher = resolver.HasDependency<IGenerateCallGraphs>()
         ? resolver.Resolve<IGenerateCallGraphs>()
         : new WeightedCallGraphGenerator();
       Contributors = resolver.ResolveAll<IPipelineContributor>()
@@ -38,7 +38,7 @@ namespace OpenRasta.Pipeline
       if (startup.OpenRasta.Pipeline.Validate)
         Contributors.VerifyKnownStagesRegistered();
 
-      _invoker = (CallGraph = _graphs.GenerateCallGraph(Contributors))
+      _invoker = (CallGraph = _callGrapher.GenerateCallGraph(Contributors))
         .ToTwoPhasedMiddleware<KnownStages.IOperationResultInvocation>()
         .Invoke;
       IsInitialized = true;
@@ -50,7 +50,7 @@ namespace OpenRasta.Pipeline
       throw new NotImplementedException("Should never be called here, ever!");
     }
 
-    [Obsolete("Don't do it.")]
+    [Obsolete("Don't do it this will deadlock.")]
     public void Run(ICommunicationContext context)
     {
       RunAsync(context).GetAwaiter().GetResult();

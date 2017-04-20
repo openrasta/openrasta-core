@@ -17,7 +17,7 @@ namespace OpenRasta.Pipeline
     {
       Task IPipelineMiddleware.Invoke(ICommunicationContext context)
       {
-        return Task.FromResult(0);
+        return Task.FromResult(true);
       }
     }
 

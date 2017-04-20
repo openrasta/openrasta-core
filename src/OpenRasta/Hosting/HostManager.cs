@@ -200,7 +200,7 @@ namespace OpenRasta.Hosting
         if (pipelineAsync != null)
           context.PipelineData["openrasta.pipeline.completion"] = pipelineAsync.RunAsync(context);
         else
-          pipeline.Run(context);
+          pipeline.Run(context); 
       });
     }
 
