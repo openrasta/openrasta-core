@@ -72,17 +72,15 @@ namespace OpenRasta.Hosting.AspNet
     async Task Invoke(object sender, EventArgs e)
     {
       var env = OpenRastaModule.CommunicationContext;
-      await _middleware.Invoke(env);
+      var yielder = env.Yielder(_yielderName);
+      var yielded = await Yielding.DidItYield(_middleware.Invoke(env), yielder.Task);
+
+      if (!yielded)
+        return;
+
       var notFound = env.OperationResult as OperationResult.NotFound;
-      if (notFound?.Reason == NotFoundReason.NotMapped)
-      {
-        var tcs = env.Yielder(_yielderName);
-        tcs.SetResult(false);
-      }
-      else
-      {
+      if (notFound?.Reason != NotFoundReason.NotMapped)
         OpenRastaModuleAsync.Pipeline.HandoverToPipeline();
-      }
     }
 
     public BeginEventHandler Begin => _eventHandler.BeginEventHandler;
