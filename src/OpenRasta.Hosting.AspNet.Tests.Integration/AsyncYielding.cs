@@ -62,72 +62,41 @@ namespace OpenRasta.Hosting.AspNet.Tests.Integration
     }
 
     [Test]
-    public async Task not_yielding_same_thread()
+    public async Task middleware_not_yielding_same_thread()
     {
-      var yielded = new TaskCompletionSource<bool>();
-      var resumer = new TaskCompletionSource<bool>();
+      var didItYield = await InvokeTillYield(
+        new BypassingCodeMiddleware(),
+        new YieldingMiddleware(nameof(YieldingMiddleware)),
+        new CodeMiddleware(()=>Resumed = true)
+      );
 
-      bool resumed = false;
 
-      var pipeline = bypassingCode(
-        () => yieldingCode(
-          () => yielded.SetResult(true),
-          () => resumer.Task,
-          () => Task.Run(() => code(() => resumed = true))));
-      var didIt = await Yielding.DidItYield(pipeline, yielded.Task);
+      didItYield.ShouldBeFalse();
+      Resumed.ShouldBeFalse();
 
-      didIt.ShouldBeFalse();
+      await Resume();
 
-      resumed.ShouldBeFalse();
-
-      resumer.SetResult(true);
-      await pipeline;
-
-      resumed.ShouldBeFalse();
+      Resumed.ShouldBeFalse();
     }
 
     [Test]
     public async Task not_yielding_different_thread()
     {
-      var yielded = new TaskCompletionSource<bool>();
-      var resumer = new TaskCompletionSource<bool>();
 
-      bool resumed = false;
+      var didItYield = await InvokeTillYield(
+        new OtherThreadMiddleware(),
+        new BypassingCodeMiddleware(),
+        new YieldingMiddleware(nameof(YieldingMiddleware)),
+        new CodeMiddleware(()=>Resumed = true)
+      );
 
-      var pipeline = Task.Run(
-        () => bypassingCode(
-          () => yieldingCode(
-            () => yielded.SetResult(true),
-            () => resumer.Task,
-            () => code(() => resumed = true))));
-      var didIt = await Yielding.DidItYield(pipeline, yielded.Task);
 
-      didIt.ShouldBeFalse();
+      didItYield.ShouldBeFalse();
+      Resumed.ShouldBeFalse();
 
-      resumed.ShouldBeFalse();
+      await Resume();
 
-      resumer.SetResult(true);
-      await pipeline;
-
-      resumed.ShouldBeFalse();
-    }
-
-    Task bypassingCode(Func<Task> next)
-    {
-      return Task.FromResult(true);
-    }
-
-    async Task yieldingCode(Action yield, Func<Task> resumer, Func<Task> next)
-    {
-      yield();
-      await resumer();
-      await next();
-    }
-
-    Task code(Action onCode = null)
-    {
-      onCode?.Invoke();
-      return Task.FromResult(true);
+      Resumed.ShouldBeFalse();
     }
 
 
@@ -140,7 +109,7 @@ namespace OpenRasta.Hosting.AspNet.Tests.Integration
       Resumed = false;
     }
 
-    public bool Resumed { get; set; }
+    bool Resumed { get; set; }
     async Task Resume()
     {
       Env.Resumer(nameof(YieldingMiddleware)).SetResult(true);
@@ -156,7 +125,7 @@ namespace OpenRasta.Hosting.AspNet.Tests.Integration
         Env.Yielder(nameof(YieldingMiddleware)).Task);
     }
 
-    public Task Operation { get; set; }
+    Task Operation { get; set; }
   }
 
   class BypassingCodeMiddleware : IPipelineMiddleware, IPipelineMiddlewareFactory
