@@ -22,8 +22,8 @@ namespace OpenRasta.Hosting.AspNet
 
         public override void HandoverToPipeline()
         {
-//            HttpContext.Current.RewritePath(VirtualPathUtility.ToAppRelative("~/openrasta.axd"), false);
-            HttpContext.Current.RemapHandler(new OpenRastaHandler(this));
+            HttpContext.Current.RewritePath(VirtualPathUtility.ToAppRelative("~/openrasta.axd"), false);
+//            HttpContext.Current.RemapHandler(new OpenRastaHandler(this));
         }
 
         static IEnumerable<HttpHandlerRegistration> ReadHandlers()

@@ -6,7 +6,7 @@ namespace OpenRasta.Hosting.AspNet
     {
         public static void Load()
         {
-            HttpApplication.RegisterModule(typeof(OpenRastaModule));
+            HttpApplication.RegisterModule(typeof(OpenRastaModuleAsync));
         }
     }
 }

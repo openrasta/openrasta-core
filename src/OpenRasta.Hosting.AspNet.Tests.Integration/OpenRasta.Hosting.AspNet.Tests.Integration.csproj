@@ -51,6 +51,7 @@
     <Compile Include="..\CommonInfo.cs">
       <Link>CommonInfo.cs</Link>
     </Compile>
+    <Compile Include="AsyncYielding.cs" />
     <Compile Include="when_issueing_a_get_for_a_resource.cs" />
     <Compile Include="Customer.cs" />
     <Compile Include="CustomerHandler.cs" />

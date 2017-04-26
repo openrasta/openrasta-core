@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Linq;
 using System.Net;
+using System.Reflection;
 using System.Threading;
 using System.Web;
 using System.Web.Compilation;
@@ -24,8 +25,6 @@ namespace OpenRasta.Hosting.AspNet.AspNetHttpListener
       _listener = new System.Net.HttpListener();
       foreach (var prefix in prefixes)
         _listener.Prefixes.Add(prefix);
-      foreach (var app in ApplicationManager.GetApplicationManager().GetRunningApplications())
-        Trace.WriteLine(app.ID);
     }
 
     public void ExecuteConfig(Action t)
@@ -70,7 +69,12 @@ namespace OpenRasta.Hosting.AspNet.AspNetHttpListener
     public void Start()
     {
       OpenRastaModule.Host.ConfigurationSource = new DelegateConfiguration();
-      var list = BuildManager.GetReferencedAssemblies();
+      var list = BuildManager.GetReferencedAssemblies().Cast<Assembly>().ToList();
+      foreach (var asm in list)
+      {
+        Trace.WriteLine(asm.FullName);
+      }
+
       _listener.Start();
       QueueNextRequestWait();
     }

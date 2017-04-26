@@ -64,6 +64,7 @@
     <Compile Include="IntegratedPipeline.cs" />
     <Compile Include="OpenRastaHandler.cs" />
     <Compile Include="OpenRastaModule.cs" />
+    <Compile Include="OpenRastaModuleAsync.cs" />
     <Compile Include="OpenRastaModuleLoader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
