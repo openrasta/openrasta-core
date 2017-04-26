@@ -14,34 +14,27 @@ namespace OpenRasta.Hosting.AspNet
   {
     public void Dispose()
     {
-
     }
 
     public static AspNetPipeline Pipeline => _pipeline.Value;
+
     static readonly Lazy<AspNetPipeline> _pipeline = new Lazy<AspNetPipeline>(() =>
       HttpRuntime.UsingIntegratedPipeline
         ? (AspNetPipeline) new IntegratedPipeline()
         : new ClassicPipeline(), LazyThreadSafetyMode.PublicationOnly);
 
     static readonly string[] YieldingStages = {nameof(KnownStages.IUriMatching)};
+
     public void Init(HttpApplication context)
     {
       Host = HostManager.RegisterHost(new AspNetHost());
 
-      var factories = Compose(InjectYields(LoadNamedFactories()));
+      var factories = InjectYields(LoadNamedFactories()).Compose();
 
       var postResolve = new PipelineStageAsync(YieldingStages[0], factories);
 
-      context.AddOnPostResolveRequestCacheAsync(postResolve.Begin,postResolve.End);
+      context.AddOnPostResolveRequestCacheAsync(postResolve.Begin, postResolve.End);
       //context.AddOnEndRequestAsync();
-    }
-
-    IPipelineMiddleware Compose(IEnumerable<IPipelineMiddlewareFactory> factories)
-    {
-
-      factories = factories.Reverse().ToList();
-      return factories.Skip(1).Aggregate(Middleware.Identity,
-        (next, factory) => factory.Compose(next));
     }
 
     IEnumerable<KeyValuePair<string, IPipelineMiddlewareFactory>> LoadNamedFactories()
@@ -57,11 +50,12 @@ namespace OpenRasta.Hosting.AspNet
         yield return factory.Value;
         if (YieldingStages.Contains(factory.Key))
           yield return new YieldingMiddleware(factory.Key);
-
       }
     }
+
     public HostManager Host { get; set; }
   }
+
   class PipelineStageAsync
   {
     readonly string _yielderName;
@@ -96,7 +90,7 @@ namespace OpenRasta.Hosting.AspNet
   }
 
   // A -> B -> Yield -> Resume -> C
-  class YieldingMiddleware : IPipelineMiddleware, IPipelineMiddlewareFactory
+  public class YieldingMiddleware : IPipelineMiddleware, IPipelineMiddlewareFactory
   {
     readonly string _yieldName;
 
@@ -104,10 +98,14 @@ namespace OpenRasta.Hosting.AspNet
     {
       _yieldName = yieldName;
     }
+
     public async Task Invoke(ICommunicationContext env)
     {
       var yielder = env.Yielder(_yieldName);
-      await yielder.Task;
+      var resumer = env.Resumer(_yieldName);
+
+      yielder.SetResult(true);
+      await resumer.Task;
       await Next.Invoke(env);
     }
 
@@ -130,16 +128,35 @@ namespace OpenRasta.Hosting.AspNet
       return completedTask == yielded;
     }
   }
-  static class CommContextExtensions
+
+  public static class MiddlewareExtensions
+  {
+    public static IPipelineMiddleware Compose(this IEnumerable<IPipelineMiddlewareFactory> factories)
+    {
+      factories = factories.Reverse().ToList();
+      return factories
+        .Aggregate(Middleware.Identity,
+          (next, factory) => factory.Compose(next));
+    }
+  }
+
+  public static class CommContextExtensions
   {
     public static TaskCompletionSource<bool> Yielder(this ICommunicationContext env, string name)
     {
-      return (TaskCompletionSource<bool>) env.PipelineData[$"openrasta.hosting.aspnet.yielders.{name}"];
+      var key = $"openrasta.hosting.aspnet.yielders.{name}";
+      if (env.PipelineData.ContainsKey(key) == false)
+        env.PipelineData[key] = new TaskCompletionSource<bool>();
+      return (TaskCompletionSource<bool>) env.PipelineData[key];
     }
 
     public static TaskCompletionSource<bool> Resumer(this ICommunicationContext env, string name)
     {
-      return (TaskCompletionSource<bool>) env.PipelineData[$"openrasta.hosting.aspnet.resumers.{name}"];
+      var key = $"openrasta.hosting.aspnet.resumers.{name}";
+
+      if (env.PipelineData.ContainsKey(key) == false)
+        env.PipelineData[key] = new TaskCompletionSource<bool>();
+      return (TaskCompletionSource<bool>) env.PipelineData[key];
     }
   }
 }
