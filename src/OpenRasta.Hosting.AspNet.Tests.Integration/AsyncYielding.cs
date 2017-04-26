@@ -20,7 +20,7 @@ namespace OpenRasta.Hosting.AspNet.Tests.Integration
         () => yielded.SetResult(true),
         () => resumer.Task,
         () => code(()=>resumed = true));
-      var didIt = await didItYield(pipeline, yielded.Task);
+      var didIt = await Yielding.DidItYield(pipeline, yielded.Task);
 
       didIt.ShouldBeTrue();
       resumed.ShouldBeFalse();
@@ -43,7 +43,7 @@ namespace OpenRasta.Hosting.AspNet.Tests.Integration
           () => yielded.SetResult(true),
           () => resumer.Task,
           () => code(()=>resumed = true)));
-      var didIt = await didItYield(pipeline, yielded.Task);
+      var didIt = await Yielding.DidItYield(pipeline, yielded.Task);
 
       didIt.ShouldBeTrue();
       resumed.ShouldBeFalse();
@@ -66,7 +66,7 @@ namespace OpenRasta.Hosting.AspNet.Tests.Integration
         () => yielded.SetResult(true),
         () => resumer.Task,
         () => Task.Run(() => code(()=>resumed = true)));
-      var didIt = await didItYield(pipeline, yielded.Task);
+      var didIt = await Yielding.DidItYield(pipeline, yielded.Task);
 
       didIt.ShouldBeTrue();
       resumed.ShouldBeFalse();
@@ -89,7 +89,7 @@ namespace OpenRasta.Hosting.AspNet.Tests.Integration
           () => yielded.SetResult(true),
           () => resumer.Task,
           () => Task.Run(() => code(()=>resumed = true))));
-      var didIt = await didItYield(pipeline, yielded.Task);
+      var didIt = await Yielding.DidItYield(pipeline, yielded.Task);
 
       didIt.ShouldBeFalse();
 
@@ -115,7 +115,7 @@ namespace OpenRasta.Hosting.AspNet.Tests.Integration
             () => yielded.SetResult(true),
             () => resumer.Task,
             () => code(()=>resumed = true))));
-      var didIt = await didItYield(pipeline, yielded.Task);
+      var didIt = await Yielding.DidItYield(pipeline, yielded.Task);
 
       didIt.ShouldBeFalse();
 
@@ -125,14 +125,6 @@ namespace OpenRasta.Hosting.AspNet.Tests.Integration
       await pipeline;
 
       resumed.ShouldBeFalse();
-    }
-
-    async Task<bool> didItYield(Task pipeline, Task yielded)
-    {
-      if (pipeline.IsCompleted) return false;
-      if (yielded.IsCompleted) return true;
-      var completedTask = await Task.WhenAny(yielded, pipeline);
-      return completedTask == yielded;
     }
 
     Task bypassingCode(Func<Task> next)

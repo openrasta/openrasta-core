@@ -120,11 +120,26 @@ namespace OpenRasta.Hosting.AspNet
     IPipelineMiddleware Next { get; set; }
   }
 
+  public static class Yielding
+  {
+    public static async Task<bool> DidItYield(Task pipeline, Task yielded)
+    {
+      if (pipeline.IsCompleted) return false;
+      if (yielded.IsCompleted) return true;
+      var completedTask = await Task.WhenAny(yielded, pipeline);
+      return completedTask == yielded;
+    }
+  }
   static class CommContextExtensions
   {
     public static TaskCompletionSource<bool> Yielder(this ICommunicationContext env, string name)
     {
       return (TaskCompletionSource<bool>) env.PipelineData[$"openrasta.hosting.aspnet.yielders.{name}"];
+    }
+
+    public static TaskCompletionSource<bool> Resumer(this ICommunicationContext env, string name)
+    {
+      return (TaskCompletionSource<bool>) env.PipelineData[$"openrasta.hosting.aspnet.resumers.{name}"];
     }
   }
 }
