@@ -44,25 +44,21 @@ namespace OpenRasta.Hosting.AspNet.Tests.Integration
     }
 
     [Test]
-    public async Task yielding_before_code_on_other_thread()
+    public async Task middleware_yielding_before_code_on_other_thread()
     {
-      var yielded = new TaskCompletionSource<bool>();
-      var resumer = new TaskCompletionSource<bool>();
+      var didItYield = await InvokeTillYield(
+        new YieldingMiddleware(nameof(YieldingMiddleware)),
+        new OtherThreadMiddleware(),
+        new CodeMiddleware(()=>Resumed = true)
+      );
 
-      bool resumed = false;
 
-      var pipeline = yieldingCode(
-        () => yielded.SetResult(true),
-        () => resumer.Task,
-        () => Task.Run(() => code(() => resumed = true)));
-      var didIt = await Yielding.DidItYield(pipeline, yielded.Task);
+      didItYield.ShouldBeTrue();
+      Resumed.ShouldBeFalse();
 
-      didIt.ShouldBeTrue();
-      resumed.ShouldBeFalse();
+      await Resume();
 
-      resumer.SetResult(true);
-      await pipeline;
-      resumed.ShouldBeTrue();
+      Resumed.ShouldBeTrue();
     }
 
     [Test]
