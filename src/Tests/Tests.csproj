@@ -64,14 +64,15 @@
     <Compile Include="OperationModel.Interceptors\Support\NominalFunctionAttribute.cs" />
     <Compile Include="OperationModel.Interceptors\Support\UnknownLaserFlawAttribute.cs" />
     <Compile Include="Pipeline.Middleware\Infrastructrure\middleware_context.cs" />
-    <Compile Include="Pipeline.Middleware\request\pipeline_in_continue_contrib_aborts.cs" />
-    <Compile Include="Pipeline.Middleware\request\pipeline_in_continue_contrib_render_now.cs" />
-    <Compile Include="Pipeline.Middleware\request\pipeline_in_continue_contrib_success.cs" />
-    <Compile Include="Pipeline.Middleware\request\pipeline_in_render_now.cs" />
-    <Compile Include="Pipeline.Middleware\response\pipeline_in_abort_contrib_aborts.cs" />
-    <Compile Include="Pipeline.Middleware\response\pipeline_in_abort_contrib_success.cs" />
-    <Compile Include="Pipeline.Middleware\response\pipeline_in_continue_contrib_aborts.cs" />
-    <Compile Include="Pipeline.Middleware\response\pipeline_in_render_now.cs" />
+    <Compile Include="Pipeline.Middleware\RequestContributor\pipeline_in_abort.cs" />
+    <Compile Include="Pipeline.Middleware\RequestContributor\pipeline_in_continue_contrib_aborts.cs" />
+    <Compile Include="Pipeline.Middleware\RequestContributor\pipeline_in_continue_contrib_render_now.cs" />
+    <Compile Include="Pipeline.Middleware\RequestContributor\pipeline_in_continue_contrib_success.cs" />
+    <Compile Include="Pipeline.Middleware\RequestContributor\pipeline_in_render_now.cs" />
+    <Compile Include="Pipeline.Middleware\ResponseContributor\pipeline_in_abort_contrib_aborts.cs" />
+    <Compile Include="Pipeline.Middleware\ResponseContributor\pipeline_in_abort_contrib_success.cs" />
+    <Compile Include="Pipeline.Middleware\ResponseContributor\pipeline_in_continue_contrib_aborts.cs" />
+    <Compile Include="Pipeline.Middleware\ResponseContributor\pipeline_in_render_now.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

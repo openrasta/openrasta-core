@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Security.Authentication.ExtendedProtection.Configuration;
+using OpenRasta.Pipeline;
 
 namespace OpenRasta.Concordia
 {
@@ -15,7 +17,8 @@ namespace OpenRasta.Concordia
 
     protected T Get<T>(string key, T defaultValue = default(T))
     {
-      if (Properties.ContainsKey(key) == false) return defaultValue;
+
+      if (Properties.ContainsKey(key) == false) return (T)(Properties[key] = defaultValue);
       return (T) Properties[key];
     }
 
@@ -63,7 +66,14 @@ namespace OpenRasta.Concordia
         get { return Get("openrasta.pipeline.validate", true); }
         set { Set("openrasta.pipeline.validate", value); }
       }
-      
+
+      public IDictionary<
+        Func<ContributorCall,bool>,
+        Func<IPipelineMiddlewareFactory,IPipelineMiddlewareFactory>> MiddlewareInterceptors
+      {
+        get { return Get("openrasta.pipeline.yields", new Dictionary<Func<ContributorCall, bool>, Func<IPipelineMiddlewareFactory, IPipelineMiddlewareFactory>>()); }
+        set { Set("openrasta.pipeline.validate", value); }
+      }
     }
   }
 }

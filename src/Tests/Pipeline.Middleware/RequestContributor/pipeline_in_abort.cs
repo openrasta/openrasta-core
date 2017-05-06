@@ -6,18 +6,18 @@ using Xunit;
 
 namespace Tests.Pipeline.Middleware.request
 {
-  public class pipeline_in_continue_contrib_success : middleware_context
+  public class pipeline_in_abort : middleware_context
   {
     [Fact]
-    public async Task contributor_executed()
+    public async Task contributor_not_executed()
     {
-      Env.PipelineData.PipelineStage.CurrentState = PipelineContinuation.Continue;
+      Env.PipelineData.PipelineStage.CurrentState = PipelineContinuation.Abort;
 
       var middleware = new RequestMiddleware(Contributor(e => Task.FromResult(PipelineContinuation.Continue)));
       await middleware.Invoke(Env);
 
-      ContributorCalled.ShouldBeTrue();
-      Env.PipelineData.PipelineStage.CurrentState.ShouldBe(PipelineContinuation.Continue);
+      ContributorCalled.ShouldBeFalse();
+      Env.PipelineData.PipelineStage.CurrentState = PipelineContinuation.Abort;
 
     }
   }

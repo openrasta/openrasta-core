@@ -6,12 +6,12 @@ using Xunit;
 
 namespace Tests.Pipeline.Middleware.response
 {
-  public class pipeline_in_abort_contrib_aborts : middleware_context
+  public class pipeline_in_continue_contrib_aborts : middleware_context
   {
     [Fact]
-    public async Task contributor_executed()
+    public async Task middleware_throws()
     {
-      Env.PipelineData.PipelineStage.CurrentState = PipelineContinuation.Abort;
+      Env.PipelineData.PipelineStage.CurrentState = PipelineContinuation.Continue;
 
       var middleware = new ResponseMiddleware(Contributor(e => Task.FromResult(PipelineContinuation.Abort)));
       middleware.Invoke(Env).ShouldThrow<PipelineAbortedException>();

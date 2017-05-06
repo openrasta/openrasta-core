@@ -325,7 +325,7 @@
     <Compile Include="Pipeline\Contributors\UriDecoratorsContributor.cs" />
     <Compile Include="Pipeline\Diagnostics\PipelineLogSource.cs" />
     <Compile Include="Pipeline\PipelineBuildingExtensions.cs" />
-    <Compile Include="Pipeline\TwoPhasedMiddleware.cs" />
+    <Compile Include="Pipeline\ThreePhasedMiddleware.cs" />
     <Compile Include="Pipeline\IPipelineAsync.cs" />
     <Compile Include="Pipeline\IPipelineMiddleware.cs" />
     <Compile Include="Pipeline\IContextStore.cs" />

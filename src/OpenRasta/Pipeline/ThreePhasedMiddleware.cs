@@ -4,19 +4,22 @@ using OpenRasta.Web;
 
 namespace OpenRasta.Pipeline
 {
-  public class TwoPhasedMiddleware : IPipelineMiddleware
+  public class ThreePhasedMiddleware : IPipelineMiddleware
   {
+    readonly IPipelineMiddleware _preRequestPipeline;
     readonly IPipelineMiddleware _requestPipeline;
     readonly IPipelineMiddleware _responsePipeline;
     readonly IPipelineMiddleware _catastrophicFail;
     readonly IPipelineMiddleware _cleanup;
 
-    public TwoPhasedMiddleware(
+    public ThreePhasedMiddleware(
+      IPipelineMiddleware preRequestPipeline,
       IPipelineMiddleware requestPipeline,
       IPipelineMiddleware responsePipeline,
       IPipelineMiddleware catastrophicFail,
       IPipelineMiddleware cleanup)
     {
+      _preRequestPipeline = preRequestPipeline;
       _requestPipeline = requestPipeline;
       _responsePipeline = responsePipeline;
       _catastrophicFail = catastrophicFail;
@@ -24,14 +27,24 @@ namespace OpenRasta.Pipeline
     }
     public async Task Invoke(ICommunicationContext env)
     {
-      await InvokeSafe(_requestPipeline,env);
-      await InvokeSafe(_responsePipeline, env);
-      if (env.PipelineData.PipelineStage.CurrentState == PipelineContinuation.Abort)
+      try
+      {
+        await _preRequestPipeline.Invoke(env);
+        await InvokeSafe(_requestPipeline, env);
+        await _responsePipeline.Invoke(env);
+      }
+      catch (Exception e)
+      {
+        env.ServerErrors.Add(new Error { Exception = e});
         await _catastrophicFail.Invoke(env);
-      await _cleanup.Invoke(env);
+      }
+      finally
+      {
+        await _cleanup.Invoke(env);
+      }
     }
 
-    async Task InvokeSafe(IPipelineMiddleware middleware, ICommunicationContext env)
+    static async Task InvokeSafe(IPipelineMiddleware middleware, ICommunicationContext env)
     {
       try
       {

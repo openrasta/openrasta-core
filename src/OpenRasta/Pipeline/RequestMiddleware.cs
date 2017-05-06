@@ -26,11 +26,6 @@ namespace OpenRasta.Pipeline
         = env.PipelineData.PipelineStage.CurrentState
           = await Contributor(env);
 
-#pragma warning disable 618
-      if (currentState == PipelineContinuation.Abort)
-#pragma warning restore 618
-        throw new PipelineAbortedException();
-
       await Next.Invoke(env);
     }
   }
