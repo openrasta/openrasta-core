@@ -68,6 +68,10 @@
     <Compile Include="Pipeline.Middleware\request\pipeline_in_continue_contrib_render_now.cs" />
     <Compile Include="Pipeline.Middleware\request\pipeline_in_continue_contrib_success.cs" />
     <Compile Include="Pipeline.Middleware\request\pipeline_in_render_now.cs" />
+    <Compile Include="Pipeline.Middleware\response\pipeline_in_abort_contrib_aborts.cs" />
+    <Compile Include="Pipeline.Middleware\response\pipeline_in_abort_contrib_success.cs" />
+    <Compile Include="Pipeline.Middleware\response\pipeline_in_continue_contrib_aborts.cs" />
+    <Compile Include="Pipeline.Middleware\response\pipeline_in_render_now.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -78,9 +82,6 @@
       <Project>{3D251617-2581-4D9C-A639-5CFB0BB09420}</Project>
       <Name>OpenRasta</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Pipeline.Middleware\response" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

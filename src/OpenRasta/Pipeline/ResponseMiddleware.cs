@@ -13,10 +13,13 @@ namespace OpenRasta.Pipeline
 
     public override async Task Invoke(ICommunicationContext env)
     {
-      env.PipelineData.PipelineStage.CurrentState
-        = await Contributor(env);
-      if (env.PipelineData.PipelineStage.CurrentState == PipelineContinuation.Abort)
+      var contribState = await Contributor(env);
+
+      if (contribState == PipelineContinuation.Abort)
+      {
+        env.PipelineData.PipelineStage.CurrentState = PipelineContinuation.Abort;
         throw new PipelineAbortedException();
+      }
       await Next.Invoke(env);
     }
   }
