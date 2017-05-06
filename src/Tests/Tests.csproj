@@ -63,7 +63,16 @@
     <Compile Include="OperationModel.Interceptors\Support\interceptor_scenario.cs" />
     <Compile Include="OperationModel.Interceptors\Support\NominalFunctionAttribute.cs" />
     <Compile Include="OperationModel.Interceptors\Support\UnknownLaserFlawAttribute.cs" />
+    <Compile Include="Pipeline.Middleware\Conversion\pre_execute.cs" />
+    <Compile Include="Pipeline.Middleware\Conversion\request.cs" />
+    <Compile Include="Pipeline.Middleware\Conversion\response.cs" />
+    <Compile Include="Pipeline.Middleware\Infrastructrure\DoNothingContributor.cs" />
     <Compile Include="Pipeline.Middleware\Infrastructrure\middleware_context.cs" />
+    <Compile Include="Pipeline.Middleware\Infrastructrure\OperationResultContributor.cs" />
+    <Compile Include="Pipeline.Middleware\Infrastructrure\UriContributor.cs" />
+    <Compile Include="Pipeline.Middleware\PreExecuteContributor\contributor_aborts.cs" />
+    <Compile Include="Pipeline.Middleware\PreExecuteContributor\contributor_continues.cs" />
+    <Compile Include="Pipeline.Middleware\PreExecuteContributor\contributor_RenderNow.cs" />
     <Compile Include="Pipeline.Middleware\RequestContributor\pipeline_in_abort.cs" />
     <Compile Include="Pipeline.Middleware\RequestContributor\pipeline_in_continue_contrib_aborts.cs" />
     <Compile Include="Pipeline.Middleware\RequestContributor\pipeline_in_continue_contrib_render_now.cs" />

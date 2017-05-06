@@ -54,13 +54,15 @@ namespace OpenRasta.Pipeline
     public static IEnumerable<IPipelineMiddlewareFactory> ToMiddleware(
       this IEnumerable<ContributorCall> callGraph,
       IDictionary<Func<ContributorCall, bool>, Func<IPipelineMiddlewareFactory, IPipelineMiddlewareFactory>>
-        interceptors)
+        interceptors = null)
     {
       Func<ContributorCall, IPipelineMiddlewareFactory> converter = CreatePreExecuteMiddleware;
 
       foreach (var contributorCall in callGraph)
       {
-        var middleware = AttemptInterception(interceptors,contributorCall,converter(contributorCall));
+        var middleware = converter(contributorCall);
+        if (interceptors != null)
+          middleware = AttemptInterception(interceptors,contributorCall,middleware);
 
         yield return middleware;
 

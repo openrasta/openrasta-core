@@ -4,7 +4,7 @@ using Shouldly;
 using Tests.Pipeline.Middleware.Infrastructrure;
 using Xunit;
 
-namespace Tests.Pipeline.Middleware.response
+namespace Tests.Pipeline.Middleware.ResponseContributor
 {
   public class pipeline_in_continue_contrib_aborts : middleware_context
   {

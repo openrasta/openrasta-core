@@ -4,7 +4,7 @@ using Shouldly;
 using Tests.Pipeline.Middleware.Infrastructrure;
 using Xunit;
 
-namespace Tests.Pipeline.Middleware.request
+namespace Tests.Pipeline.Middleware.RequestContributor
 {
   public class pipeline_in_abort : middleware_context
   {
@@ -17,7 +17,7 @@ namespace Tests.Pipeline.Middleware.request
       await middleware.Invoke(Env);
 
       ContributorCalled.ShouldBeFalse();
-      Env.PipelineData.PipelineStage.CurrentState = PipelineContinuation.Abort;
+      Env.PipelineData.PipelineStage.CurrentState.ShouldBe(PipelineContinuation.Abort);
 
     }
   }
