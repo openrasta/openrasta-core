@@ -63,6 +63,11 @@
     <Compile Include="OperationModel.Interceptors\Support\interceptor_scenario.cs" />
     <Compile Include="OperationModel.Interceptors\Support\NominalFunctionAttribute.cs" />
     <Compile Include="OperationModel.Interceptors\Support\UnknownLaserFlawAttribute.cs" />
+    <Compile Include="Pipeline.Middleware\Infrastructrure\middleware_context.cs" />
+    <Compile Include="Pipeline.Middleware\request\pipeline_in_continue_contrib_aborts.cs" />
+    <Compile Include="Pipeline.Middleware\request\pipeline_in_continue_contrib_render_now.cs" />
+    <Compile Include="Pipeline.Middleware\request\pipeline_in_continue_contrib_success.cs" />
+    <Compile Include="Pipeline.Middleware\request\pipeline_in_render_now.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -75,7 +80,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Pipeline" />
+    <Folder Include="Pipeline.Middleware\response" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

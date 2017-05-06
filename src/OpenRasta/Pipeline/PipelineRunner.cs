@@ -80,7 +80,7 @@ namespace OpenRasta.Pipeline
       this.CheckPipelineInitialized();
 
       if (context.PipelineData.PipelineStage == null)
-        context.PipelineData.PipelineStage = new PipelineStage(this);
+        context.PipelineData.PipelineStage = new PipelineStage(((IPipeline) this).CallGraph);
       await RunCallGraph(context, context.PipelineData.PipelineStage);
     }
 

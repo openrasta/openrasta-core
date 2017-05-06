@@ -10,17 +10,17 @@ namespace OpenRasta.Pipeline
         public PipelineStage OwnerStage { get; set; }
         readonly ResumableIterator<ContributorCall, Type> _enumerator;
 
-        public PipelineStage(IPipeline pipeline)
+        public PipelineStage(IEnumerable<ContributorCall> callGraph)
         {
           CurrentState = PipelineContinuation.Continue;
             _enumerator = new ResumableIterator<ContributorCall, Type>(
-                new List<ContributorCall>(pipeline.CallGraph).GetEnumerator(),
+                new List<ContributorCall>(callGraph).GetEnumerator(),
                 x => x.Target?.GetType(),
                 (contributorType, key) => key != null && key.IsAssignableFrom(contributorType));
         }
 
         public PipelineStage(IPipeline pipeline, PipelineStage ownerStage)
-            : this(pipeline)
+            : this(pipeline.CallGraph)
         {
             OwnerStage = ownerStage;
         }

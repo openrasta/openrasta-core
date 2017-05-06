@@ -28,7 +28,8 @@ namespace OpenRasta.Hosting
       Host.IncomingRequestProcessed += HandleIncomingRequestProcessed;
     }
 
-    public IHost Host { get; private set; }
+
+    public IHost Host { get; }
     public bool IsConfigured { get; private set; }
 
     public IDependencyResolver Resolver { get; private set; }

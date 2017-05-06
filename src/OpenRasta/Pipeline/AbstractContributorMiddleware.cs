@@ -6,7 +6,7 @@ namespace OpenRasta.Pipeline
 {
   public abstract class AbstractContributorMiddleware : IPipelineMiddlewareFactory, IPipelineMiddleware
   {
-    protected IPipelineMiddleware Next { get; private set; }
+    protected IPipelineMiddleware Next { get; private set; } = Middleware.Identity;
     protected Func<ICommunicationContext, Task<PipelineContinuation>> Contributor { get; }
     public abstract Task Invoke(ICommunicationContext env);
 

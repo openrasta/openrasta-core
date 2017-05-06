@@ -61,7 +61,7 @@ namespace OpenRasta.Pipeline
       this.CheckPipelineInitialized();
 
       if (env.PipelineData.PipelineStage == null)
-        env.PipelineData.PipelineStage = new PipelineStage(this);
+        env.PipelineData.PipelineStage = new PipelineStage(((IPipeline) this).CallGraph);
       return _invoker(env);
     }
 

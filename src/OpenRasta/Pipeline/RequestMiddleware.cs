@@ -17,7 +17,10 @@ namespace OpenRasta.Pipeline
       var currentState = env.PipelineData.PipelineStage.CurrentState;
 
       if (currentState != PipelineContinuation.Continue)
+      {
+        await Next.Invoke(env);
         return;
+      }
 
       currentState
         = env.PipelineData.PipelineStage.CurrentState
