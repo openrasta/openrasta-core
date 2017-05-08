@@ -3,6 +3,7 @@ using System;
 using System.Linq;
 using System.Runtime.Remoting.Messaging;
 using System.Security.Cryptography.X509Certificates;
+using System.Threading.Tasks;
 using NUnit.Framework;
 using OpenRasta.Concordia;
 using OpenRasta.DI;
@@ -243,14 +244,13 @@ namespace OpenRasta.Tests.Unit.Pipeline
     }
   }
 
-  [TestFixture(TypeArgs = new[] {typeof(PipelineRunner)})]
   [TestFixture(TypeArgs = new[] {typeof(ThreePhasedPipelineAdaptor)})]
   public class when_contributor_throws<T> : pipelinerunner_context<T> where T : class, IPipeline
   {
     [TestCase(null)]
     [TestCase(typeof(WeightedCallGraphGenerator))]
     [TestCase(typeof(TopologicalSortCallGraphGenerator))]
-    public void error_is_collected_and_500_returned(Type callGraphGeneratorType)
+    public async Task error_is_collected_and_500_returned(Type callGraphGeneratorType)
     {
       var pipeline = CreatePipeline(callGraphGeneratorType, new[]
       {
@@ -260,7 +260,8 @@ namespace OpenRasta.Tests.Unit.Pipeline
       }, false);
 
       var context = new InMemoryCommunicationContext();
-      pipeline.Run(context);
+
+      await ((IPipelineAsync)pipeline).RunAsync(context);
       context.Response.StatusCode.ShouldBe(500);
       context.ServerErrors.ShouldHaveCountOf(1);
     }

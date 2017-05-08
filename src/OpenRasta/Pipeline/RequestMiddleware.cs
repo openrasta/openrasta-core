@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using OpenRasta.Web;
+using OpenRasta.Web.Internal;
 
 namespace OpenRasta.Pipeline
 {
@@ -22,10 +23,16 @@ namespace OpenRasta.Pipeline
         return;
       }
 
-      currentState
-        = env.PipelineData.PipelineStage.CurrentState
-          = await Contributor(env);
-
+      try
+      {
+        currentState
+          = env.PipelineData.PipelineStage.CurrentState
+            = await Contributor(env);
+      }
+      catch (Exception e)
+      {
+        env.Abort(e);
+      }
       await Next.Invoke(env);
     }
   }

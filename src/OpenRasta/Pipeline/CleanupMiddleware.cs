@@ -3,13 +3,19 @@ using OpenRasta.Web;
 
 namespace OpenRasta.Pipeline
 {
-  public class CleanupMiddleware : IPipelineMiddleware
+  public class CleanupMiddleware : AbstractMiddleware
   {
-    public Task Invoke(ICommunicationContext env)
+    public override async Task Invoke(ICommunicationContext env)
     {
-      env.Request.Entity?.Dispose();
-      env.Response.Entity?.Dispose();
-      return Task.FromResult(0);
+      try
+      {
+        await Next.Invoke(env);
+      }
+      finally
+      {
+        env.Request.Entity?.Dispose();
+        env.Response.Entity?.Dispose();
+      }
     }
   }
 }

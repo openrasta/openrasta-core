@@ -54,6 +54,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DI\current_instance.cs" />
     <Compile Include="OperationModel.Interceptors\no_rewriting.cs" />
     <Compile Include="OperationModel.Interceptors\rewrites.cs" />
     <Compile Include="OperationModel.Interceptors\throws.cs" />

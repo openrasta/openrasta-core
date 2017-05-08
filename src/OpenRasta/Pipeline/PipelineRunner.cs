@@ -10,9 +10,11 @@ using OpenRasta.DI;
 using OpenRasta.Pipeline.CallGraph;
 using OpenRasta.Pipeline.Diagnostics;
 using OpenRasta.Web;
+using OpenRasta.Web.Internal;
 
 namespace OpenRasta.Pipeline
 {
+  [Obsolete("Runner is no longer supported")]
   public class PipelineRunner : IPipeline, IPipelineAsync
   {
     readonly IList<IPipelineContributor> _contributors = new List<IPipelineContributor>();
@@ -165,16 +167,7 @@ namespace OpenRasta.Pipeline
     protected virtual void AbortPipeline(ICommunicationContext context)
     {
       PipelineLog.WriteError("Aborting the pipeline and rendering the errors.");
-      context.OperationResult = new OperationResult.InternalServerError
-      {
-        Title = "The request could not be processed because of a fatal error. See log below.",
-        ResponseResource = context.ServerErrors
-      };
-      context.PipelineData.ResponseCodec = null;
-      context.Response.Entity.Instance = context.ServerErrors;
-      context.Response.Entity.Codec = null;
-      context.Response.Entity.ContentLength = null;
-
+      context.Abort();
       Log.WriteError("An error has occurred and the processing of the request has stopped.\r\n{0}",
         context.ServerErrors.Aggregate(string.Empty, (str, error) => str + "\r\n" + error.ToString()));
     }

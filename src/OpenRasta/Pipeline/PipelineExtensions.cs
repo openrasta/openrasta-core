@@ -2,44 +2,30 @@
 using System.Collections.Generic;
 using System.Linq;
 using OpenRasta.Pipeline.CallGraph;
-using OpenRasta.Web;
 
 namespace OpenRasta.Pipeline
 {
   public static class PipelineExtensions
   {
-      static readonly Type[] RequiredKnownStages = typeof(KnownStages).GetNestedTypes();
+    static readonly Type[] RequiredKnownStages = typeof(KnownStages).GetNestedTypes();
 
-      public static void Abort(this ICommunicationContext env)
+    public static void VerifyKnownStagesRegistered(this IEnumerable<IPipelineContributor> contributors)
     {
-      env.PipelineData.PipelineStage.CurrentState = PipelineContinuation.Abort;
-      env.OperationResult = new OperationResult.InternalServerError
+      var missingTypes = RequiredKnownStages
+        .Where(known => contributors.Where(known.IsInstanceOfType).Any() == false)
+        .ToArray();
+      if (missingTypes.Any())
       {
-        Title = "The request could not be processed because of a fatal error. See log below.",
-        ResponseResource = env.ServerErrors
-      };
-      env.PipelineData.ResponseCodec = null;
-      env.Response.Entity.Instance = env.ServerErrors;
-      env.Response.Entity.Codec = null;
-      env.Response.Entity.ContentLength = null;
+        throw new DependentContributorMissingException(missingTypes);
+      }
     }
 
-      public static void VerifyKnownStagesRegistered(this IEnumerable<IPipelineContributor> contributors)
-      {
-          var missingTypes = RequiredKnownStages
-                  .Where(known => contributors.Where(known.IsInstanceOfType).Any() == false);
-          if (missingTypes.Any())
-          {
-              throw new DependentContributorMissingException(missingTypes);
-          }
-      }
-
-      public static void CheckPipelineInitialized(this IPipeline pipeline)
-      {
+    public static void CheckPipelineInitialized(this IPipeline pipeline)
+    {
 #pragma warning disable 618
-          if (!pipeline.IsInitialized)
+      if (!pipeline.IsInitialized)
+        throw new InvalidOperationException("The pipeline has not been initialized and cannot run.");
 #pragma warning restore 618
-              throw new InvalidOperationException("The pipeline has not been initialized and cannot run.");
-      }
+    }
   }
 }
