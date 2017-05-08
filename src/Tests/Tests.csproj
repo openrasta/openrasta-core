@@ -54,7 +54,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DI\current_instance.cs" />
+    <Compile Include="DI\current_instance_set_on_single_thread.cs" />
+    <Compile Include="DI\set_on_current_thread_following_on_task.cs" />
     <Compile Include="OperationModel.Interceptors\no_rewriting.cs" />
     <Compile Include="OperationModel.Interceptors\rewrites.cs" />
     <Compile Include="OperationModel.Interceptors\throws.cs" />

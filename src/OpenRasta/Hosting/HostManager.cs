@@ -153,6 +153,7 @@ namespace OpenRasta.Hosting
       var resolverSet = false;
       try
       {
+        throw new InvalidOperationException("This is the last piece of all wrongness. Fix it!");
         DependencyManager.SetResolver(Resolver);
         resolverSet = true;
         action();
