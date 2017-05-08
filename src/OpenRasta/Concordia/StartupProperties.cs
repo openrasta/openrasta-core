@@ -69,10 +69,10 @@ namespace OpenRasta.Concordia
 
       public IDictionary<
         Func<ContributorCall,bool>,
-        Func<IPipelineMiddlewareFactory,IPipelineMiddlewareFactory>> MiddlewareInterceptors
+        Func<IPipelineMiddlewareFactory>> ContributorTrailers
       {
-        get { return Get("openrasta.pipeline.yields", new Dictionary<Func<ContributorCall, bool>, Func<IPipelineMiddlewareFactory, IPipelineMiddlewareFactory>>()); }
-        set { Set("openrasta.pipeline.validate", value); }
+        get { return Get("openrasta.pipeline.trailers", new Dictionary<Func<ContributorCall, bool>, Func<IPipelineMiddlewareFactory>>()); }
+        set { Set("openrasta.pipeline.trailers", value); }
       }
     }
   }

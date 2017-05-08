@@ -16,9 +16,9 @@ namespace Tests.Pipeline.Middleware.Conversion
         new ContributorCall(new UriContributor(), OpenRasta.Pipeline.Middleware.IdentitySingleTap, "uri"),
         new ContributorCall(new DoNothingContributor(), OpenRasta.Pipeline.Middleware.IdentitySingleTap, "stuff")
       };
-      var middlewareChain = calls.ToMiddleware();
-      middlewareChain.First().ShouldBeOfType<PreExecuteMiddleware>();
-      middlewareChain.Skip(1).First().ShouldBeOfType<RequestMiddleware>();
+      var middlewareChain = calls.ToMiddleware().ToArray();
+      middlewareChain[0].ShouldBeOfType<PreExecuteMiddleware>();
+      middlewareChain[1].ShouldBeOfType<RequestMiddleware>();
     }
   }
 }

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using OpenRasta.Concordia;
 using OpenRasta.Configuration;
 using OpenRasta.DI;
 using OpenRasta.Diagnostics;
@@ -37,7 +38,7 @@ namespace OpenRasta.Hosting
 
     public static HostManager RegisterHost(IHost host)
     {
-      if (host == null) throw new ArgumentNullException("host");
+      if (host == null) throw new ArgumentNullException(nameof(host));
 
       Log.WriteInfo("Registering host of type {0}", host.GetType());
 
@@ -61,14 +62,6 @@ namespace OpenRasta.Hosting
         }
       }
       managerToDispose?.Dispose();
-    }
-
-    public void InvalidateConfiguration()
-    {
-      lock (_syncRoot)
-      {
-        IsConfigured = false;
-      }
     }
 
     public void SetupCommunicationContext(ICommunicationContext context)
@@ -199,9 +192,9 @@ namespace OpenRasta.Hosting
         var pipeline = Resolver.Resolve<IPipeline>();
         var pipelineAsync = pipeline as IPipelineAsync;
         if (pipelineAsync != null)
-          context.PipelineData["openrasta.pipeline.completion"] = pipelineAsync.RunAsync(context);
+          context.PipelineData[Keys.Request.PipelineTask] = pipelineAsync.RunAsync(context);
         else
-          pipeline.Run(context); 
+          pipeline.Run(context);
       });
     }
 
@@ -216,4 +209,5 @@ namespace OpenRasta.Hosting
       ThreadScopedAction(() => Resolver.HandleIncomingRequestProcessed());
     }
   }
+
 }

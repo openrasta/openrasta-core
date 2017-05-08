@@ -39,7 +39,8 @@ namespace OpenRasta.Pipeline
         Contributors.VerifyKnownStagesRegistered();
 
       _invoker = (CallGraph = _callGrapher.GenerateCallGraph(Contributors))
-        .ToThreePhasedMiddleware(startup.OpenRasta.Pipeline.MiddlewareInterceptors)
+        .ToMiddleware(startup.OpenRasta.Pipeline.ContributorTrailers)
+        .Compose()
         .Invoke;
       IsInitialized = true;
     }

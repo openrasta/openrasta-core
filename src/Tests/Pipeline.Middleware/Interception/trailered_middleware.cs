@@ -10,10 +10,10 @@ using Xunit;
 
 namespace Tests.Pipeline.Middleware.Interception
 {
-  public class intercepted_middleware
+  public class trailered_middleware
   {
     [Fact]
-    public void middleware_is_intercepted()
+    public void middleware_is_trailered()
     {
       var calls = new[]
       {
@@ -21,20 +21,15 @@ namespace Tests.Pipeline.Middleware.Interception
       };
       var middlewareChain = calls.ToMiddleware(new Dictionary<Func<ContributorCall, bool>, Func<IPipelineMiddlewareFactory>>
       {
-        [call=>call.Target is DoNothingContributor] = () => new WrapperMiddleware()
+        [call=>call.Target is DoNothingContributor] = () => new TrailerMiddleware()
       }).ToArray();
       middlewareChain[0].ShouldBeOfType<PreExecuteMiddleware>();
-      middlewareChain[1].ShouldBeOfType<WrapperMiddleware>();
+      middlewareChain[1].ShouldBeOfType<TrailerMiddleware>();
     }
   }
 
-  public class WrapperMiddleware : IPipelineMiddlewareFactory
+  public class TrailerMiddleware : IPipelineMiddlewareFactory
   {
-
-    public WrapperMiddleware()
-    {
-    }
-
     public IPipelineMiddleware Compose(IPipelineMiddleware next)
     {
       return new InBetweenMiddleware(next);

@@ -70,6 +70,7 @@
     <Compile Include="Pipeline.Middleware\Infrastructrure\middleware_context.cs" />
     <Compile Include="Pipeline.Middleware\Infrastructrure\OperationResultContributor.cs" />
     <Compile Include="Pipeline.Middleware\Infrastructrure\UriContributor.cs" />
+    <Compile Include="Pipeline.Middleware\Interception\trailered_middleware.cs" />
     <Compile Include="Pipeline.Middleware\PreExecuteContributor\contributor_aborts.cs" />
     <Compile Include="Pipeline.Middleware\PreExecuteContributor\contributor_continues.cs" />
     <Compile Include="Pipeline.Middleware\PreExecuteContributor\contributor_RenderNow.cs" />

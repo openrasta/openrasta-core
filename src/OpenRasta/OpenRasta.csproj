@@ -118,6 +118,7 @@
     <Compile Include="Collections\Specialized\TopologicalSort.cs" />
     <Compile Include="Collections\Specialized\TopologicalTree.cs" />
     <Compile Include="Collections\Specialized\TopologicalNode.cs" />
+    <Compile Include="Concordia\Keys.cs" />
     <Compile Include="Concordia\StartupProperties.cs" />
     <Compile Include="Configuration\CodecDefinitionExtensions.cs" />
     <Compile Include="Configuration\CodecParentDefinitionExtensions.cs" />

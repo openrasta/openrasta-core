@@ -53,7 +53,7 @@ namespace OpenRasta.Pipeline
 
     public static IEnumerable<IPipelineMiddlewareFactory> ToMiddleware(
       this IEnumerable<ContributorCall> callGraph,
-      IDictionary<Func<ContributorCall, bool>, Func<IPipelineMiddlewareFactory, IPipelineMiddlewareFactory>>
+      IDictionary<Func<ContributorCall, bool>, Func<IPipelineMiddlewareFactory>>
         interceptors = null)
     {
       Func<ContributorCall, IPipelineMiddlewareFactory> converter = CreatePreExecuteMiddleware;
@@ -61,52 +61,19 @@ namespace OpenRasta.Pipeline
       foreach (var contributorCall in callGraph)
       {
         var middleware = converter(contributorCall);
-        if (interceptors != null)
-          middleware = AttemptInterception(interceptors,contributorCall,middleware);
 
         yield return middleware;
+        if (interceptors != null)
+          foreach (var followups in interceptors
+            .Where(pair => pair.Key(contributorCall))
+            .Select(pair => pair.Value))
+            yield return followups();
 
         if (contributorCall.Target is KnownStages.IUriMatching)
           converter = CreateRequestMiddleware;
         if (contributorCall.Target is KnownStages.IOperationResultInvocation)
           converter = CreateResponseMiddleware;
-
       }
-    }
-    public static IPipelineMiddleware ToThreePhasedMiddleware(this IEnumerable<ContributorCall> callGraph, IDictionary<Func<ContributorCall, bool>, Func<IPipelineMiddlewareFactory, IPipelineMiddlewareFactory>> interceptors)
-    {
-      var all = callGraph.Reverse().ToList();
-
-      var responsePipeline = (
-          from contrib in all.TakeWhile(_ => _.Target is KnownStages.IOperationResultInvocation == false)
-          let middleware = CreateResponseMiddleware(contrib)
-          select AttemptInterception(interceptors,contrib,middleware)
-      ).BuildPipeline();
-
-      var requestPipeline = all
-        .SkipWhile(_ => _.Target is KnownStages.IOperationResultInvocation == false)
-        .Select(CreateRequestMiddleware)
-        .BuildPipeline();
-
-      var preExecutePipeline = all
-        .SkipWhile(_ => _.Target is KnownStages.IUriMatching == false)
-        .Select(CreatePreExecuteMiddleware)
-        .BuildPipeline();
-
-      return new ThreePhasedMiddleware(
-        preExecutePipeline,
-        requestPipeline,
-        responsePipeline,
-        new CatastrophicFailureMiddleware(),
-        new CleanupMiddleware());
-    }
-
-    static IPipelineMiddlewareFactory AttemptInterception(IDictionary<Func<ContributorCall, bool>, Func<IPipelineMiddlewareFactory, IPipelineMiddlewareFactory>> interceptors, ContributorCall contrib, IPipelineMiddlewareFactory middleware)
-    {
-      return interceptors
-        .Where(i => i.Key(contrib))
-        .Select(i => i.Value)
-        .Aggregate(middleware, (factory, interceptor) => interceptor(factory));
     }
 
     static IPipelineMiddlewareFactory CreatePreExecuteMiddleware(ContributorCall contrib)
