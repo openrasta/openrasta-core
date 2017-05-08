@@ -49,9 +49,11 @@ namespace OpenRasta.Concordia
         : base(startupProperties)
       {
         Pipeline = new PipelineProperties(startupProperties);
+        Errors = new ErrorProperties(startupProperties);
       }
 
       public PipelineProperties Pipeline { get; private set; }
+      public ErrorProperties Errors { get; }
     }
 
     public class PipelineProperties : AbstractProperties
@@ -73,6 +75,19 @@ namespace OpenRasta.Concordia
       {
         get { return Get("openrasta.pipeline.trailers", new Dictionary<Func<ContributorCall, bool>, Func<IPipelineMiddlewareFactory>>()); }
         set { Set("openrasta.pipeline.trailers", value); }
+      }
+    }
+
+    public class ErrorProperties : AbstractProperties
+    {
+      public ErrorProperties(IDictionary<string, object> properties) : base(properties)
+      {
+      }
+
+      public bool HandleCatastrophicExceptions
+      {
+        get { return Get(Keys.HandleExceptions, true); }
+        set { Set(Keys.HandleExceptions, value); }
       }
     }
   }

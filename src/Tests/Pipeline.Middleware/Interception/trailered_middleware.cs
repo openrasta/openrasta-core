@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using OpenRasta.Pipeline;
 using OpenRasta.Web;
 using Shouldly;
+using Tests.Pipeline.Middleware.Examples;
 using Tests.Pipeline.Middleware.Infrastructrure;
 using Xunit;
 

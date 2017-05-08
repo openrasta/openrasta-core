@@ -9,7 +9,7 @@ using OpenRasta.Web;
 
 namespace OpenRasta.Pipeline
 {
-  public class TwoPhasedPipelineAdaptor : IPipeline, IPipelineAsync
+  public class ThreePhasedPipelineAdaptor : IPipeline, IPipelineAsync
   {
     readonly IGenerateCallGraphs _callGrapher;
     Func<ICommunicationContext, Task> _invoker;
@@ -18,7 +18,7 @@ namespace OpenRasta.Pipeline
     public IEnumerable<ContributorCall> CallGraph { get; private set; }
     public StartupProperties StartupProperties { get; private set; }
 
-    public TwoPhasedPipelineAdaptor(IDependencyResolver resolver)
+    public ThreePhasedPipelineAdaptor(IDependencyResolver resolver)
     {
       _callGrapher = resolver.HasDependency<IGenerateCallGraphs>()
         ? resolver.Resolve<IGenerateCallGraphs>()
@@ -38,8 +38,16 @@ namespace OpenRasta.Pipeline
       if (startup.OpenRasta.Pipeline.Validate)
         Contributors.VerifyKnownStagesRegistered();
 
-      _invoker = (CallGraph = _callGrapher.GenerateCallGraph(Contributors))
-        .ToMiddleware(startup.OpenRasta.Pipeline.ContributorTrailers)
+      var defaults = new List<IPipelineMiddlewareFactory>();
+      if (startup.OpenRasta.Errors.HandleCatastrophicExceptions)
+      {
+        defaults.Add(new CatastrophicFailureMiddleware());
+      }
+
+      var contributorMiddleware = (CallGraph = _callGrapher.GenerateCallGraph(Contributors))
+        .ToMiddleware(startup.OpenRasta.Pipeline.ContributorTrailers);
+      _invoker =
+        defaults.Concat(contributorMiddleware)
         .Compose()
         .Invoke;
       IsInitialized = true;

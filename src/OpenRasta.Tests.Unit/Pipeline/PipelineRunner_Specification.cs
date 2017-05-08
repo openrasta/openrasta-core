@@ -16,7 +16,7 @@ using OpenRasta.Web;
 namespace OpenRasta.Tests.Unit.Pipeline
 {
   [TestFixture(TypeArgs = new[] {typeof(PipelineRunner)})]
-  [TestFixture(TypeArgs = new[] {typeof(TwoPhasedPipelineAdaptor)})]
+  [TestFixture(TypeArgs = new[] {typeof(ThreePhasedPipelineAdaptor)})]
   public class when_creating_the_pipeline<T> : pipelinerunner_context<T> where T : class, IPipeline
   {
     [TestCase(null)]
@@ -54,7 +54,7 @@ namespace OpenRasta.Tests.Unit.Pipeline
   }
 
   [TestFixture(TypeArgs = new[] {typeof(PipelineRunner)})]
-  [TestFixture(TypeArgs = new[] {typeof(TwoPhasedPipelineAdaptor)})]
+  [TestFixture(TypeArgs = new[] {typeof(ThreePhasedPipelineAdaptor)})]
   public class when_accessing_the_contributors<T> : pipelinerunner_context<T> where T : class, IPipeline
   {
     [TestCase(null)]
@@ -82,7 +82,7 @@ namespace OpenRasta.Tests.Unit.Pipeline
 
 
   [TestFixture(TypeArgs = new[] {typeof(PipelineRunner)})]
-  [TestFixture(TypeArgs = new[] {typeof(TwoPhasedPipelineAdaptor)})]
+  [TestFixture(TypeArgs = new[] {typeof(ThreePhasedPipelineAdaptor)})]
   public class when_building_the_call_graph<T> : pipelinerunner_context<T> where T : class, IPipeline
   {
     [TestCase(null)]
@@ -244,7 +244,7 @@ namespace OpenRasta.Tests.Unit.Pipeline
   }
 
   [TestFixture(TypeArgs = new[] {typeof(PipelineRunner)})]
-  [TestFixture(TypeArgs = new[] {typeof(TwoPhasedPipelineAdaptor)})]
+  [TestFixture(TypeArgs = new[] {typeof(ThreePhasedPipelineAdaptor)})]
   public class when_contributor_throws<T> : pipelinerunner_context<T> where T : class, IPipeline
   {
     [TestCase(null)]
@@ -254,6 +254,7 @@ namespace OpenRasta.Tests.Unit.Pipeline
     {
       var pipeline = CreatePipeline(callGraphGeneratorType, new[]
       {
+        typeof(FakeUriMatcher),
         typeof(ContributorThatThrows),
         typeof(FakeOperationResultInvoker)
       }, false);
@@ -264,6 +265,13 @@ namespace OpenRasta.Tests.Unit.Pipeline
       context.ServerErrors.ShouldHaveCountOf(1);
     }
 
+    public class FakeUriMatcher : KnownStages.IUriMatching
+    {
+      public void Initialize(IPipeline pipelineRunner)
+      {
+        pipelineRunner.Use(async env => PipelineContinuation.Continue).After<KnownStages.IBegin>();
+      }
+    }
     public class FakeOperationResultInvoker : KnownStages.IOperationResultInvocation
     {
       public void Initialize(IPipeline pipelineRunner)
@@ -281,13 +289,15 @@ namespace OpenRasta.Tests.Unit.Pipeline
     {
       public void Initialize(IPipeline pipelineRunner)
       {
-        pipelineRunner.Notify(ctx => { throw new NotImplementedException(); }).After<KnownStages.IBegin>();
+        pipelineRunner
+          .Notify(ctx => { throw new InvalidOperationException("This naughty contrib throws"); })
+          .After<KnownStages.IUriMatching>();
       }
     }
   }
 
   [TestFixture(TypeArgs = new[] {typeof(PipelineRunner)})]
-  [TestFixture(TypeArgs = new[] {typeof(TwoPhasedPipelineAdaptor)})]
+  [TestFixture(TypeArgs = new[] {typeof(ThreePhasedPipelineAdaptor)})]
   public class when_executing_the_pipeline<T> : pipelinerunner_context<T> where T : class, IPipeline
   {
     [TestCase(null)]

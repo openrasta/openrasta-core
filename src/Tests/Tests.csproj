@@ -66,10 +66,10 @@
     <Compile Include="Pipeline.Middleware\Conversion\pre_execute.cs" />
     <Compile Include="Pipeline.Middleware\Conversion\request.cs" />
     <Compile Include="Pipeline.Middleware\Conversion\response.cs" />
-    <Compile Include="Pipeline.Middleware\Infrastructrure\DoNothingContributor.cs" />
+    <Compile Include="Pipeline.Middleware\Examples\DoNothingContributor.cs" />
+    <Compile Include="Pipeline.Middleware\Examples\OperationResultContributor.cs" />
+    <Compile Include="Pipeline.Middleware\Examples\UriMatchingContributor.cs" />
     <Compile Include="Pipeline.Middleware\Infrastructrure\middleware_context.cs" />
-    <Compile Include="Pipeline.Middleware\Infrastructrure\OperationResultContributor.cs" />
-    <Compile Include="Pipeline.Middleware\Infrastructrure\UriContributor.cs" />
     <Compile Include="Pipeline.Middleware\Interception\trailered_middleware.cs" />
     <Compile Include="Pipeline.Middleware\PreExecuteContributor\contributor_aborts.cs" />
     <Compile Include="Pipeline.Middleware\PreExecuteContributor\contributor_continues.cs" />

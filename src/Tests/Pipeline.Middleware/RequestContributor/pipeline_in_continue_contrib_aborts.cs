@@ -12,11 +12,14 @@ namespace Tests.Pipeline.Middleware.RequestContributor
     public async Task pipeline_is_Abort()
     {
       Env.PipelineData.PipelineStage.CurrentState = PipelineContinuation.Continue;
-      var middleware = new RequestMiddleware(Contributor(e => Task.FromResult(PipelineContinuation.Abort)));
+      var middleware = new RequestMiddleware(Contributor(e => Task.FromResult(PipelineContinuation.Abort)))
+        .Compose(Next);
 
       await middleware.Invoke(Env);
 
       ContributorCalled.ShouldBeTrue();
+      NextCalled.ShouldBeTrue();
+
       Env.PipelineData.PipelineStage.CurrentState.ShouldBe(PipelineContinuation.Abort);
     }
   }

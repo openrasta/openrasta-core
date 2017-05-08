@@ -1,6 +1,6 @@
 ﻿using OpenRasta.Pipeline;
 
-namespace Tests.Pipeline.Middleware.Infrastructrure
+namespace Tests.Pipeline.Middleware.Examples
 {
   class OperationResultContributor : KnownStages.IOperationResultInvocation
   {

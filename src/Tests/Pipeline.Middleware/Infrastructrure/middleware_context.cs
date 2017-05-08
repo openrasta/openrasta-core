@@ -21,20 +21,40 @@ namespace Tests.Pipeline.Middleware.Infrastructrure
           }
         }
       };
+      Next = new NextMiddleware(() => NextCalled = true);
     }
 
-    public InMemoryCommunicationContext Env { get; set; }
+    protected NextMiddleware Next { get; private set; }
+
+    protected InMemoryCommunicationContext Env { get; }
+
 
     protected Func<ICommunicationContext, Task<PipelineContinuation>> Contributor(
       Func<ICommunicationContext, Task<PipelineContinuation>> contributor)
     {
       return env =>
       {
-        this.ContributorCalled = true;
+        ContributorCalled = true;
         return contributor(env);
       };
     }
 
-    public bool ContributorCalled { get; set; }
+    protected bool ContributorCalled { get; set; }
+    protected bool NextCalled { get; set; }
+
+    protected class NextMiddleware : AbstractMiddleware
+    {
+      readonly Action _onCall;
+
+      public NextMiddleware(Action onCall)
+      {
+        _onCall = onCall;
+      }
+      public override Task Invoke(ICommunicationContext env)
+      {
+        _onCall();
+        return Next.Invoke(env);
+      }
+    }
   }
 }

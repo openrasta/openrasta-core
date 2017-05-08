@@ -65,7 +65,7 @@ namespace OpenRasta.Configuration
       SetUriResolver<TemplatedUriResolver>();
       SetCodecRepository<CodecRepository>();
       SetHandlerRepository<HandlerRepository>();
-      SetPipeline<TwoPhasedPipelineAdaptor>();
+      SetPipeline<ThreePhasedPipelineAdaptor>();
       SetLogger<TraceSourceLogger>();
       SetErrorCollector<OperationContextErrorCollector>();
       SetObjectBinderLocator<DefaultObjectBinderLocator>();

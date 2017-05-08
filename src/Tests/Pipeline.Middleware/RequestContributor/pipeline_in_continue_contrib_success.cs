@@ -13,10 +13,14 @@ namespace Tests.Pipeline.Middleware.RequestContributor
     {
       Env.PipelineData.PipelineStage.CurrentState = PipelineContinuation.Continue;
 
-      var middleware = new RequestMiddleware(Contributor(e => Task.FromResult(PipelineContinuation.Continue)));
+      var middleware = new RequestMiddleware(
+          Contributor(e => Task.FromResult(PipelineContinuation.Continue)))
+        .Compose(Next);
       await middleware.Invoke(Env);
 
       ContributorCalled.ShouldBeTrue();
+      NextCalled.ShouldBeTrue();
+
       Env.PipelineData.PipelineStage.CurrentState.ShouldBe(PipelineContinuation.Continue);
     }
   }

@@ -292,7 +292,7 @@
     <Compile Include="Pipeline\Contributors\ContextExtensions.cs" />
     <Compile Include="Pipeline\IPipelineInitializer.cs" />
     <Compile Include="Pipeline\PreExecuteMiddleware.cs" />
-    <Compile Include="Pipeline\TwoPhasedPipelineAdaptor.cs" />
+    <Compile Include="Pipeline\ThreePhasedPipelineAdaptor.cs" />
     <Compile Include="Pipeline\IPipelineBuilder.cs" />
     <Compile Include="Pipeline\IPipelineContributorAsync.cs" />
     <Compile Include="Pipeline\PipelineAbortedException.cs" />

@@ -189,12 +189,8 @@ namespace OpenRasta.Hosting
         SetupCommunicationContext(context);
         Resolver.AddDependencyInstance<IHost>(Host, DependencyLifetime.PerRequest);
 
-        var pipeline = Resolver.Resolve<IPipeline>();
-        var pipelineAsync = pipeline as IPipelineAsync;
-        if (pipelineAsync != null)
-          context.PipelineData[Keys.Request.PipelineTask] = pipelineAsync.RunAsync(context);
-        else
-          pipeline.Run(context);
+        var pipeline = Resolver.Resolve<IPipelineAsync>();
+        context.PipelineData[Keys.Request.PipelineTask] = e.RunTask = pipeline.RunAsync(context);
       });
     }
 
@@ -209,5 +205,4 @@ namespace OpenRasta.Hosting
       ThreadScopedAction(() => Resolver.HandleIncomingRequestProcessed());
     }
   }
-
 }

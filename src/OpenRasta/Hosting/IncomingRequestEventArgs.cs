@@ -1,31 +1,33 @@
 using System;
+using System.Threading.Tasks;
 using OpenRasta.Web;
 
 namespace OpenRasta.Hosting
 {
-    public abstract class IncomingRequestEventArgs : EventArgs
+  public abstract class IncomingRequestEventArgs : EventArgs
+  {
+    public IncomingRequestEventArgs(ICommunicationContext context)
     {
-        public IncomingRequestEventArgs(ICommunicationContext context)
-        {
-            Context = context;
-        }
-
-        public ICommunicationContext Context { get; set; }
+      Context = context;
     }
 
-    public class IncomingRequestProcessedEventArgs : IncomingRequestEventArgs
-    {
-        public IncomingRequestProcessedEventArgs(ICommunicationContext context)
-            : base(context)
-        {
-        }
-    }
+    public ICommunicationContext Context { get; set; }
+    public Task RunTask { get; set; }
+  }
 
-    public class IncomingRequestReceivedEventArgs : IncomingRequestEventArgs
+  public class IncomingRequestProcessedEventArgs : IncomingRequestEventArgs
+  {
+    public IncomingRequestProcessedEventArgs(ICommunicationContext context)
+      : base(context)
     {
-        public IncomingRequestReceivedEventArgs(ICommunicationContext context)
-            : base(context)
-        {
-        }
     }
+  }
+
+  public class IncomingRequestReceivedEventArgs : IncomingRequestEventArgs
+  {
+    public IncomingRequestReceivedEventArgs(ICommunicationContext context)
+      : base(context)
+    {
+    }
+  }
 }

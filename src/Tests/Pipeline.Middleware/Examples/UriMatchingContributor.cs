@@ -1,8 +1,8 @@
 ﻿using OpenRasta.Pipeline;
 
-namespace Tests.Pipeline.Middleware.Infrastructrure
+namespace Tests.Pipeline.Middleware.Examples
 {
-  class DoNothingContributor : IPipelineContributor
+  class UriMatchingContributor : KnownStages.IUriMatching
   {
     public void Initialize(IPipeline pipelineRunner)
     {

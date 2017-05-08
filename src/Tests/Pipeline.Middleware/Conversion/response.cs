@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using OpenRasta.Pipeline;
 using Shouldly;
+using Tests.Pipeline.Middleware.Examples;
 using Tests.Pipeline.Middleware.Infrastructrure;
 using Xunit;
 
@@ -14,7 +15,7 @@ namespace Tests.Pipeline.Middleware.Conversion
       var calls = new ContributorCall[]
       {
         new ContributorCall(new DoNothingContributor(), OpenRasta.Pipeline.Middleware.IdentitySingleTap, "before"),
-        new ContributorCall(new UriContributor(), OpenRasta.Pipeline.Middleware.IdentitySingleTap, "uri"),
+        new ContributorCall(new UriMatchingContributor(), OpenRasta.Pipeline.Middleware.IdentitySingleTap, "uri"),
         new ContributorCall(new DoNothingContributor(), OpenRasta.Pipeline.Middleware.IdentitySingleTap, "request"),
         new ContributorCall(new OperationResultContributor(), OpenRasta.Pipeline.Middleware.IdentitySingleTap, "result"),
         new ContributorCall(new DoNothingContributor(), OpenRasta.Pipeline.Middleware.IdentitySingleTap, "request")

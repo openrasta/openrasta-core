@@ -11,11 +11,13 @@ namespace Tests.Pipeline.Middleware.PreExecuteContributor
     [Fact]
     public void middleware_throws()
     {
-
-      var middleware = new PreExecuteMiddleware(Contributor(e => Task.FromResult(PipelineContinuation.Abort)));
+      var middleware = new PreExecuteMiddleware(Contributor(e => Task.FromResult(PipelineContinuation.Abort)))
+        .Compose(Next);
       middleware.Invoke(Env).ShouldThrow<PipelineAbortedException>();
 
       ContributorCalled.ShouldBeTrue();
+      NextCalled.ShouldBeFalse();
+
       Env.PipelineData.PipelineStage.CurrentState.ShouldBe(PipelineContinuation.Abort);
     }
   }
