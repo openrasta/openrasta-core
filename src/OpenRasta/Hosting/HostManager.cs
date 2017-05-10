@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using OpenRasta.Concordia;
 using OpenRasta.Configuration;
 using OpenRasta.DI;
@@ -96,7 +97,7 @@ namespace OpenRasta.Hosting
     {
       IsConfigured = false;
       AssignResolver();
-      ThreadScopedAction(() =>
+      CallWithDependencyResolver(() =>
       {
         RegisterRootDependencies();
 
@@ -148,20 +149,29 @@ namespace OpenRasta.Hosting
         throw new OpenRastaConfigurationException("Root dependencies configuration by host has failed.");
     }
 
-    void ThreadScopedAction(Action action)
+    async Task CallWithDependencyResolver(Func<Task> action)
     {
-      var resolverSet = false;
+      DependencyManager.SetResolver(Resolver);
       try
       {
-        throw new InvalidOperationException("This is the last piece of all wrongness. Fix it!");
-        DependencyManager.SetResolver(Resolver);
-        resolverSet = true;
+        await action();
+      }
+      finally
+      {
+        DependencyManager.UnsetResolver();
+      }
+    }
+
+    void CallWithDependencyResolver(Action action)
+    {
+      DependencyManager.SetResolver(Resolver);
+      try
+      {
         action();
       }
       finally
       {
-        if (resolverSet)
-          DependencyManager.UnsetResolver();
+        DependencyManager.UnsetResolver();
       }
     }
 
@@ -183,7 +193,7 @@ namespace OpenRasta.Hosting
     {
       VerifyConfiguration();
       Log.WriteDebug("Incoming host request for " + e.Context.Request.Uri);
-      ThreadScopedAction(() =>
+      var task = CallWithDependencyResolver(() =>
       {
         // register the required dependency in the web context
         var context = e.Context;
@@ -191,8 +201,9 @@ namespace OpenRasta.Hosting
         Resolver.AddDependencyInstance<IHost>(Host, DependencyLifetime.PerRequest);
 
         var pipeline = Resolver.Resolve<IPipelineAsync>();
-        context.PipelineData[Keys.Request.PipelineTask] = e.RunTask = pipeline.RunAsync(context);
+        return pipeline.RunAsync(context);
       });
+      e.Context.PipelineData[Keys.Request.PipelineTask] = e.RunTask = task;
     }
 
     protected virtual void HandleHostStart(object sender, EventArgs e)
@@ -203,7 +214,7 @@ namespace OpenRasta.Hosting
     protected virtual void HandleIncomingRequestProcessed(object sender, IncomingRequestProcessedEventArgs e)
     {
       Log.WriteDebug("Request finished.");
-      ThreadScopedAction(() => Resolver.HandleIncomingRequestProcessed());
+      CallWithDependencyResolver(() => Resolver.HandleIncomingRequestProcessed());
     }
   }
 }
