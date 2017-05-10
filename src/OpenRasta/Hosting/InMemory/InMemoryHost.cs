@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using OpenRasta.Configuration;
 using OpenRasta.DI;
 using OpenRasta.Pipeline;
@@ -25,7 +26,7 @@ namespace OpenRasta.Hosting.InMemory
 
     public event EventHandler Start;
     public event EventHandler Stop;
-    public string ApplicationVirtualPath { get; set; }
+    public string ApplicationVirtualPath { get; private set; }
     public HostManager HostManager { get; private set; }
     public IDependencyResolver Resolver { get; private set; }
 
@@ -38,7 +39,13 @@ namespace OpenRasta.Hosting.InMemory
       _isDisposed = true;
     }
 
+    [Obsolete("Please use the async version, this one may and will deadlock")]
     public IResponse ProcessRequest(IRequest request)
+    {
+      return ProcessRequestAsync(request).Result;
+    }
+
+    public async Task<IResponse> ProcessRequestAsync(IRequest request)
     {
       CheckNotDisposed();
       var ambientContext = new AmbientContext();
@@ -52,7 +59,7 @@ namespace OpenRasta.Hosting.InMemory
       {
         using (new ContextScope(ambientContext))
         {
-          RaiseIncomingRequestReceived(context);
+          await RaiseIncomingRequestReceived(context);
         }
       }
       finally
@@ -63,8 +70,8 @@ namespace OpenRasta.Hosting.InMemory
         }
       }
       return context.Response;
-    }
 
+    }
     void IDisposable.Dispose()
     {
       Close();
@@ -90,9 +97,11 @@ namespace OpenRasta.Hosting.InMemory
       IncomingRequestProcessed.Raise(this, new IncomingRequestProcessedEventArgs(context));
     }
 
-    protected virtual void RaiseIncomingRequestReceived(ICommunicationContext context)
+    protected virtual Task RaiseIncomingRequestReceived(ICommunicationContext context)
     {
-      IncomingRequestReceived.Raise(this, new IncomingRequestReceivedEventArgs(context));
+      var incomingRequestReceivedEventArgs = new IncomingRequestReceivedEventArgs(context);
+      IncomingRequestReceived.Raise(this, incomingRequestReceivedEventArgs);
+      return incomingRequestReceivedEventArgs.RunTask;
     }
 
     protected virtual void RaiseStart()
