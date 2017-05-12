@@ -343,19 +343,6 @@ namespace OpenRasta.Tests.Unit.Pipeline
     }
   }
 
-  public interface IPipelineFactory
-  {
-    IPipeline Pipeline(IDependencyResolver resolver);
-  }
-
-  public class PipelineRunnerFactory : IPipelineFactory
-  {
-    public IPipeline Pipeline(IDependencyResolver resolver)
-    {
-      return new PipelineRunner(resolver);
-    }
-  }
-
   public abstract class pipelinerunner_context<T> : context where T : class, IPipeline
   {
     protected IPipeline CreatePipeline(
