@@ -34,7 +34,7 @@
       <HintPath>..\packages\NUnit.3.6.1\lib\net45\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="OpenRasta, Version=2.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\packages\openrasta-core.2.6.0-ci-1074\lib\net45\OpenRasta.dll</HintPath>
+      <HintPath>..\packages\openrasta-core.2.6.0-ci-1084\lib\net45\OpenRasta.dll</HintPath>
     </Reference>
     <Reference Include="Shouldly, Version=2.8.2.0, Culture=neutral, PublicKeyToken=6042cbcb05cbc941">
       <HintPath>..\packages\Shouldly.2.8.2\lib\net40\Shouldly.dll</HintPath>
@@ -51,7 +51,6 @@
     <Compile Include="..\CommonInfo.cs">
       <Link>CommonInfo.cs</Link>
     </Compile>
-    <Compile Include="AsyncYielding.cs" />
     <Compile Include="when_issueing_a_get_for_a_resource.cs" />
     <Compile Include="Customer.cs" />
     <Compile Include="CustomerHandler.cs" />

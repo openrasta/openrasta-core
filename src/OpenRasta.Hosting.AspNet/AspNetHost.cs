@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Compilation;
 using OpenRasta.Configuration;
@@ -143,9 +144,11 @@ namespace OpenRasta.Hosting.AspNet
       IncomingRequestProcessed.Raise(this, new IncomingRequestProcessedEventArgs(context));
     }
 
-    protected internal virtual void RaiseIncomingRequestReceived(ICommunicationContext context)
+    protected internal virtual Task RaiseIncomingRequestReceived(ICommunicationContext context)
     {
-      IncomingRequestReceived.Raise(this, new IncomingRequestReceivedEventArgs(context));
+      var incomingRequestReceivedEventArgs = new IncomingRequestReceivedEventArgs(context);
+      IncomingRequestReceived.Raise(this, incomingRequestReceivedEventArgs);
+      return incomingRequestReceivedEventArgs.RunTask;
     }
 
     protected internal virtual void RaiseStart()

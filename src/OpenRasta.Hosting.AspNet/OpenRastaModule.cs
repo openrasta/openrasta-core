@@ -112,32 +112,33 @@ namespace OpenRasta.Hosting.AspNet
 
     void HandleHttpApplicationPostResolveRequestCacheEvent(object sender, EventArgs e)
     {
-      if (ShouldIgnoreRequestEarly())
-      {
-        Log.IgnoredRequest();
-        return;
-      }
-
-      //else continue processing with OpenRasta
-
-      Log.StartPreExecution();
-      var context = CommunicationContext;
-      context.PipelineData["openrasta.hosting.aspnet.handled"] = true;
-      var stage = context.PipelineData.PipelineStage;
-      if (stage == null)
-        context.PipelineData.PipelineStage = stage =
-          new PipelineStage(HostManager.Resolver.Resolve<IPipeline>());
-      stage.SuspendAfter<KnownStages.IUriMatching>();
-      Host.RaiseIncomingRequestReceived(context);
-
-      if (!ResourceFound(context) && !OperationResultSetByCode(context))
-      {
-        Log.IgnoredRequest();
-        return;
-      }
-
-      Pipeline.HandoverToPipeline();
-      Log.PathRewrote();
+      throw new NotImplementedException("The OpenRastaModule should be removed");
+//      if (ShouldIgnoreRequestEarly())
+//      {
+//        Log.IgnoredRequest();
+//        return;
+//      }
+//
+//      //else continue processing with OpenRasta
+//
+//      Log.StartPreExecution();
+//      var context = CommunicationContext;
+//      context.PipelineData["openrasta.hosting.aspnet.handled"] = true;
+//      var stage = context.PipelineData.PipelineStage;
+//      if (stage == null)
+//        context.PipelineData.PipelineStage = stage =
+//          new PipelineStage(HostManager.Resolver.Resolve<IPipeline>().Contributors);
+//      stage.SuspendAfter<KnownStages.IUriMatching>();
+//      Host.RaiseIncomingRequestReceived(context);
+//
+//      if (!ResourceFound(context) && !OperationResultSetByCode(context))
+//      {
+//        Log.IgnoredRequest();
+//        return;
+//      }
+//
+//      Pipeline.HandoverToPipeline();
+//      Log.PathRewrote();
     }
 
     bool ShouldIgnoreRequestEarly()

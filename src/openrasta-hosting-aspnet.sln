@@ -1,4 +1,4 @@
-
+﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2015
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenRasta.Hosting.AspNet.Tests.Integration", "OpenRasta.Hosting.AspNet.Tests.Integration\OpenRasta.Hosting.AspNet.Tests.Integration.csproj", "{A1255B7C-690D-47A3-A2E7-61CF37ED2DFB}"
@@ -14,6 +14,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		..\CHANGELOG.md = ..\CHANGELOG.md
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{AB4D9F9E-E229-439C-89A1-FDA380862203}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -28,6 +30,10 @@ Global
 		{288A707D-78B1-464F-87F2-63D6652C3BC8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{288A707D-78B1-464F-87F2-63D6652C3BC8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{288A707D-78B1-464F-87F2-63D6652C3BC8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AB4D9F9E-E229-439C-89A1-FDA380862203}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AB4D9F9E-E229-439C-89A1-FDA380862203}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AB4D9F9E-E229-439C-89A1-FDA380862203}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AB4D9F9E-E229-439C-89A1-FDA380862203}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

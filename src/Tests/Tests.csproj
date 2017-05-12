@@ -4,16 +4,17 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{288A707D-78B1-464F-87F2-63D6652C3BC8}</ProjectGuid>
+    <ProjectGuid>{AB4D9F9E-E229-439C-89A1-FDA380862203}</ProjectGuid>
+    <ProjectTypeGuids>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>OpenRasta.Hosting.AspNet</RootNamespace>
-    <AssemblyName>OpenRasta.Hosting.AspNet</AssemblyName>
+    <RootNamespace>Tests</RootNamespace>
+    <AssemblyName>Tests</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -23,6 +24,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -32,49 +34,46 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="OpenRasta, Version=2.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\openrasta-core.2.6.0-ci-1074\lib\net45\OpenRasta.dll</HintPath>
+    </Reference>
+    <Reference Include="OpenRasta, Version=2.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\openrasta-core.2.6.0-ci-1083\lib\net45\OpenRasta.dll</HintPath>
+    </Reference>
+    <Reference Include="OpenRasta, Version=2.0.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\packages\openrasta-core.2.6.0-ci-1084\lib\net45\OpenRasta.dll</HintPath>
     </Reference>
+    <Reference Include="Shouldly, Version=2.8.2.0, Culture=neutral, PublicKeyToken=6042cbcb05cbc941">
+      <HintPath>..\packages\Shouldly.2.8.2\lib\net40\Shouldly.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
-    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Web" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="xunit.abstractions, Version=2.0.0.0, Culture=neutral, PublicKeyToken=8d05b1bb7a6fdb6c">
+      <HintPath>..\packages\xunit.abstractions.2.0.0\lib\net35\xunit.abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="xunit.assert, Version=2.1.0.3179, Culture=neutral, PublicKeyToken=8d05b1bb7a6fdb6c">
+      <HintPath>..\packages\xunit.assert.2.1.0\lib\dotnet\xunit.assert.dll</HintPath>
+    </Reference>
+    <Reference Include="xunit.core, Version=2.1.0.3179, Culture=neutral, PublicKeyToken=8d05b1bb7a6fdb6c">
+      <HintPath>..\packages\xunit.extensibility.core.2.1.0\lib\dotnet\xunit.core.dll</HintPath>
+    </Reference>
+    <Reference Include="xunit.execution.desktop, Version=2.1.0.3179, Culture=neutral, PublicKeyToken=8d05b1bb7a6fdb6c">
+      <HintPath>..\packages\xunit.extensibility.execution.2.1.0\lib\net45\xunit.execution.desktop.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\CommonInfo.cs">
-      <Link>CommonInfo.cs</Link>
-    </Compile>
-    <Compile Include="AspNetCommunicationContext.cs" />
-    <Compile Include="AspNetContextStore.cs" />
-    <Compile Include="AspNetHost.cs" />
-    <Compile Include="AspNetHttpListener\HttpListenerAspNetHost.cs" />
-    <Compile Include="AspNetHttpListener\HttpListenerController.cs" />
-    <Compile Include="AspNetHttpListener\HttpListenerWorkerRequest.cs" />
-    <Compile Include="AspNetLogSource.cs" />
-    <Compile Include="AspNetLogSourceExtensions.cs" />
-    <Compile Include="AspNetRequest.cs" />
-    <Compile Include="AspNetResponse.cs" />
-    <Compile Include="HttpHandlerRegistration.cs" />
-    <Compile Include="AspNetPipeline.cs" />
-    <Compile Include="ClassicPipeline.cs" />
-    <Compile Include="IntegratedPipeline.cs" />
-    <Compile Include="OpenRastaHandler.cs" />
-    <Compile Include="OpenRastaModule.cs" />
-    <Compile Include="OpenRastaModuleAsync.cs" />
-    <Compile Include="OpenRastaModuleLoader.cs" />
-    <Compile Include="PipelineStageAsync.cs" />
+    <Compile Include="AsyncYielding.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="YieldBeforeMiddleware.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="OpenRasta.Hosting.AspNet.nuspec" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\OpenRasta.Hosting.AspNet\OpenRasta.Hosting.AspNet.csproj">
+      <Project>{288A707D-78B1-464F-87F2-63D6652C3BC8}</Project>
+      <Name>OpenRasta.Hosting.AspNet</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

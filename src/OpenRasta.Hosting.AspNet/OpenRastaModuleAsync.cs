@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.NetworkInformation;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
@@ -49,72 +48,14 @@ namespace OpenRasta.Hosting.AspNet
       {
         yield return factory.Value;
         if (YieldingStages.Contains(factory.Key))
-          yield return new YieldingMiddleware(factory.Key);
+          yield return new YieldBeforeMiddleware(factory.Key);
       }
     }
 
     public HostManager Host { get; set; }
   }
 
-  class PipelineStageAsync
-  {
-    readonly string _yielderName;
-    readonly IPipelineMiddleware _middleware;
-    readonly EventHandlerTaskAsyncHelper _eventHandler;
-
-    public PipelineStageAsync(string yielderName, IPipelineMiddleware middleware)
-    {
-      _yielderName = yielderName;
-      _middleware = middleware;
-      _eventHandler = new EventHandlerTaskAsyncHelper(Invoke);
-    }
-
-    async Task Invoke(object sender, EventArgs e)
-    {
-      var env = OpenRastaModule.CommunicationContext;
-      var yielder = env.Yielder(_yielderName);
-      var yielded = await Yielding.DidItYield(_middleware.Invoke(env), yielder.Task);
-
-      if (!yielded)
-        return;
-
-      var notFound = env.OperationResult as OperationResult.NotFound;
-      if (notFound?.Reason != NotFoundReason.NotMapped)
-        OpenRastaModuleAsync.Pipeline.HandoverToPipeline();
-    }
-
-    public BeginEventHandler Begin => _eventHandler.BeginEventHandler;
-    public EndEventHandler End => _eventHandler.EndEventHandler;
-  }
-
   // A -> B -> Yield -> Resume -> C
-  public class YieldingMiddleware : IPipelineMiddleware, IPipelineMiddlewareFactory
-  {
-    readonly string _yieldName;
-
-    public YieldingMiddleware(string yieldName)
-    {
-      _yieldName = yieldName;
-    }
-
-    public async Task Invoke(ICommunicationContext env)
-    {
-      var yielder = env.Yielder(_yieldName);
-      var resumer = env.Resumer(_yieldName);
-
-      yielder.SetResult(true);
-      await resumer.Task;
-      await Next.Invoke(env);
-    }
-
-    public IPipelineMiddleware Compose(IPipelineMiddleware next)
-    {
-      Next = next;
-      return this;
-    }
-
-    IPipelineMiddleware Next { get; set; }
-  }
 
   public static class Yielding
   {
@@ -127,16 +68,6 @@ namespace OpenRasta.Hosting.AspNet
     }
   }
 
-  public static class MiddlewareExtensions
-  {
-    public static IPipelineMiddleware Compose(this IEnumerable<IPipelineMiddlewareFactory> factories)
-    {
-      factories = factories.Reverse().ToList();
-      return factories
-        .Aggregate(Middleware.Identity,
-          (next, factory) => factory.Compose(next));
-    }
-  }
 
   public static class CommContextExtensions
   {
