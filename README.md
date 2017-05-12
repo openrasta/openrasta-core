@@ -2,7 +2,7 @@
 [![Build status](https://ci.appveyor.com/api/projects/status/9hs2nqmpwrxs2ksi?svg=true)](https://ci.appveyor.com/project/OpenRasta/openrasta-core)
 [![Coverity Scan Build Status](https://scan.coverity.com/projects/2837/badge.svg)](https://scan.coverity.com/projects/2837)
 [![NuGet Version](http://img.shields.io/nuget/v/openrasta-core.svg)](https://www.nuget.org/packages/openrasta-core/)
-
+[![Gitter chat](https://badges.gitter.im/openrasta/general.png)](https://gitter.im/openrasta/general)
 Cutting Edge nuget packages
 [https://ci.appveyor.com/nuget/openrasta-core](https://ci.appveyor.com/nuget/openrasta-core)
 
