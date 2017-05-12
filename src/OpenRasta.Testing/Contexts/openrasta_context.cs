@@ -336,7 +336,7 @@ namespace OpenRasta.Testing.Contexts
         return this;
       }
 
-      public IPipelineExecutionOrder Use(Func<ICommunicationContext, Task<PipelineContinuation>> action)
+      public IPipelineExecutionOrder NotifyAsync(Func<ICommunicationContext, Task<PipelineContinuation>> action)
       {
         _lastNotification = action;
         return this;

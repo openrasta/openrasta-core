@@ -19,7 +19,7 @@ namespace OpenRasta.Handlers
         public void AddResourceHandler(object resourceKey, IType handlerType)
         {
             if (resourceKey == null) throw new ArgumentNullException("resourceKey");
-            if (resourceKey is Type) throw new ArgumentException("Cannot register a type as the key. Use an IType instead.", "resourceKey");
+            if (resourceKey is Type) throw new ArgumentException("Cannot register a type as the key. NotifyAsync an IType instead.", "resourceKey");
             var list = GetOrCreate(resourceKey);
             list.Add(handlerType);
         }
@@ -32,7 +32,7 @@ namespace OpenRasta.Handlers
         public IEnumerable<IType> GetHandlerTypesFor(object resourceKey)
         {
             if (resourceKey is Type)
-                throw new ArgumentException("Type keys are not allowed. Use an IType instead.");
+                throw new ArgumentException("Type keys are not allowed. NotifyAsync an IType instead.");
             return GetOrCreate(resourceKey);
         }
 

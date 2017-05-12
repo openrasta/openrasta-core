@@ -5,7 +5,7 @@ using OpenRasta.TypeSystem;
 
 namespace OpenRasta.OperationModel
 {
-  [Obsolete("Use IOperationAsync", false)]
+  [Obsolete("NotifyAsync IOperationAsync", false)]
   public interface IOperation : IAttributeProvider
   {
     IEnumerable<InputMember> Inputs { get; }

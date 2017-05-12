@@ -216,12 +216,7 @@ namespace OpenRasta.Pipeline
         PipelineLog.WriteInfo("{0} {1}", pos++, contributor.ContributorTypeName);
     }
 
-    public IPipelineExecutionOrder Use(Func<ICommunicationContext, Task<PipelineContinuation>> action)
-    {
-      throw new NotImplementedException("Shouldn't be called here ever.");
-    }
-
-    public IPipelineExecutionOrder Notify(Func<ICommunicationContext, Task> action)
+    public IPipelineExecutionOrder NotifyAsync(Func<ICommunicationContext, Task<PipelineContinuation>> action)
     {
       throw new NotImplementedException("Shouldn't be called here ever.");
     }

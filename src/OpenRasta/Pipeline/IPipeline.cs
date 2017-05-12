@@ -21,7 +21,7 @@ namespace OpenRasta.Pipeline
   /// <summary>
   /// Represents an instance of an OpenRasta pipeline
   /// </summary>
-  public interface IPipeline : IPipelineBuilder, IPipelineInitializer
+  public interface IPipeline : IPipelineBuilder//, IPipelineInitializer
   {
     [Obsolete("[SRP] - You should not be needing this. If you do, please fill in an issue on github")]
     bool IsInitialized { get; }

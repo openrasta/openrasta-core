@@ -6,6 +6,6 @@ namespace OpenRasta.Pipeline
 {
   public interface IPipelineBuilder
   {
-    IPipelineExecutionOrder Use(Func<ICommunicationContext, Task<PipelineContinuation>> action);
+    IPipelineExecutionOrder NotifyAsync(Func<ICommunicationContext, Task<PipelineContinuation>> action);
   }
 }

@@ -38,7 +38,7 @@ namespace OpenRasta.Web
             TypeSystem = TypeSystems.Default;
         }
         /// <exception cref="InvalidOperationException">Cannot add a Uri mapping once the configuration has been done.</exception>
-        /// <exception cref="ArgumentException">Cannot use a Type as the resourceKey. Use an <see cref="IType"/> instead or assign the <see cref="TypeSystem"/> property.</exception>
+        /// <exception cref="ArgumentException">Cannot use a Type as the resourceKey. NotifyAsync an <see cref="IType"/> instead or assign the <see cref="TypeSystem"/> property.</exception>
         public void Add(UriRegistration registration)
         {
             if (_templates.IsReadOnly)

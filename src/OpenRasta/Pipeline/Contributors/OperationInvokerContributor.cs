@@ -19,7 +19,7 @@ namespace OpenRasta.Pipeline.Contributors
 
     public void Initialize(IPipeline pipelineRunner)
     {
-      pipelineRunner.Use(ExecuteOperations).After<KnownStages.IRequestDecoding>();
+      pipelineRunner.NotifyAsync(ExecuteOperations).After<KnownStages.IRequestDecoding>();
     }
 
     async Task<PipelineContinuation> ExecuteOperations(ICommunicationContext context)

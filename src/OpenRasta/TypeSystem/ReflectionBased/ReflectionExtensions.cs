@@ -376,11 +376,11 @@ namespace OpenRasta.TypeSystem.ReflectionBased
         /// <param name="type"></param>
         /// <param name="interfaceType"></param>
         /// <returns></returns>
-        /// <exception cref="ArgumentException"><paramref name="interfaceType"/> is not an interface. Use the <see cref="InheritsFrom"/> method instead.</exception>
+        /// <exception cref="ArgumentException"><paramref name="interfaceType"/> is not an interface. NotifyAsync the <see cref="InheritsFrom"/> method instead.</exception>
         public static bool Implements(this Type type, Type interfaceType)
         {
             if (!interfaceType.IsInterface)
-                throw new ArgumentException("interfaceType is not an interface. Use InheritsFrom instead.", "interfaceType");
+                throw new ArgumentException("interfaceType is not an interface. NotifyAsync InheritsFrom instead.", "interfaceType");
             if (type == null)
                 return false;
             return type.FindInterface(interfaceType) != null;

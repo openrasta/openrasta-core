@@ -21,7 +21,7 @@ namespace OpenRasta.Pipeline.Contributors
 
     public void Initialize(IPipeline pipelineRunner)
     {
-      pipelineRunner.Use(ReadRequestEntityBody).After<KnownStages.ICodecRequestSelection>();
+      pipelineRunner.NotifyAsync(ReadRequestEntityBody).After<KnownStages.ICodecRequestSelection>();
     }
 
     async Task<PipelineContinuation> ReadRequestEntityBody(ICommunicationContext ctx)

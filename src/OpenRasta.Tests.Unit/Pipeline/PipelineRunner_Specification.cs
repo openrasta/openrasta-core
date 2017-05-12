@@ -270,7 +270,7 @@ namespace OpenRasta.Tests.Unit.Pipeline
     {
       public void Initialize(IPipeline pipelineRunner)
       {
-        pipelineRunner.Use(async env => PipelineContinuation.Continue).After<KnownStages.IBegin>();
+        pipelineRunner.NotifyAsync(async env => PipelineContinuation.Continue).After<KnownStages.IBegin>();
       }
     }
     public class FakeOperationResultInvoker : KnownStages.IOperationResultInvocation
@@ -379,9 +379,18 @@ namespace OpenRasta.Tests.Unit.Pipeline
         resolver.AddDependency(typeof(IPipelineContributor), type, DependencyLifetime.Singleton);
 
       var runner = resolver.Resolve<T>();
+
       if (initialize)
       {
-        runner.Initialize(new StartupProperties {OpenRasta = {Pipeline = {Validate = validate}}});
+        IPipelineInitializer runnerAsInitialiser;
+        if ((runnerAsInitialiser = runner as IPipelineInitializer) != null)
+        {
+          runnerAsInitialiser.Initialize(new StartupProperties {OpenRasta = {Pipeline = {Validate = validate}}});
+        }
+        else
+        {
+          runner.Initialize();
+        }
       }
       return runner;
     }

@@ -36,7 +36,7 @@ namespace OpenRasta.Pipeline.CallGraph
             throw new NotImplementedException("Backward compatibility implementation, should never be called.");
         }
 
-        public IPipelineExecutionOrder Use(Func<ICommunicationContext, Task<PipelineContinuation>> action)
+        public IPipelineExecutionOrder NotifyAsync(Func<ICommunicationContext, Task<PipelineContinuation>> action)
         {
             var notification = new Notification(action, Contributors);
             ContributorRegistrations.Add(notification);
