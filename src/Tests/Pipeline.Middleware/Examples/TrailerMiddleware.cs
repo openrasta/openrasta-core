@@ -1,6 +1,6 @@
 ﻿using OpenRasta.Pipeline;
 
-namespace Tests.Pipeline.Middleware.Interception
+namespace Tests.Pipeline.Middleware.Examples
 {
   public class TrailerMiddleware : IPipelineMiddlewareFactory
   {

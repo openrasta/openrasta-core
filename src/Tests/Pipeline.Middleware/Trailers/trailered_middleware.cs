@@ -4,10 +4,9 @@ using System.Linq;
 using OpenRasta.Pipeline;
 using Shouldly;
 using Tests.Pipeline.Middleware.Examples;
-using Tests.Pipeline.Middleware.Infrastructrure;
 using Xunit;
 
-namespace Tests.Pipeline.Middleware.Interception
+namespace Tests.Pipeline.Middleware.Trailers
 {
   public class trailered_middleware
   {

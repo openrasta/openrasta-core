@@ -2,7 +2,7 @@
 using OpenRasta.Pipeline;
 using OpenRasta.Web;
 
-namespace Tests.Pipeline.Middleware.Interception
+namespace Tests.Pipeline.Middleware.Examples
 {
   public class SimpleMiddleware : IPipelineMiddleware
   {
