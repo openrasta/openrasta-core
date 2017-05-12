@@ -23,7 +23,7 @@ namespace OpenRasta.Pipeline
 
     public static IPipelineMiddleware Compose(this IEnumerable<IPipelineMiddlewareFactory> components)
     {
-      return components.Aggregate(Identity, (next, factory) => factory.Compose(next));
+      return components.Reverse().Aggregate(Identity, (next, factory) => factory.Compose(next));
     }
   }
 }
