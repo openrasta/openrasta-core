@@ -61,7 +61,7 @@ namespace OpenRasta.Hosting.AspNet.Tests.Integration
       var destinationUri = new Uri("http://127.0.0.1:" + _port + uri);
 
       WebRequest request = WebRequest.Create(destinationUri);
-      request.Timeout = Debugger.IsAttached ? int.MaxValue :  (int)TimeSpan.FromSeconds(5).TotalMilliseconds;
+      request.Timeout = Debugger.IsAttached ? int.MaxValue :  (int)TimeSpan.FromSeconds(30).TotalMilliseconds;
       request.Method = verb;
       request.ContentLength = content?.Length ?? 0;
       if (request.ContentLength > 0)
