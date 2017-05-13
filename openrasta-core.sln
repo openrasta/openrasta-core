@@ -2,7 +2,7 @@
 Microsoft Visual Studio Solution File, Format Version 14.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26214.1
-MinimumVisualStudioVersion = 15.0.26124.0  
+MinimumVisualStudioVersion = 15.0.26124.0
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenRasta", "src\OpenRasta\OpenRasta.csproj", "{3D251617-2581-4D9C-A639-5CFB0BB09420}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenRasta.Testing", "src\OpenRasta.Testing\OpenRasta.Testing.csproj", "{434205BD-81FF-44BE-9911-7597DDEB3EAB}"
