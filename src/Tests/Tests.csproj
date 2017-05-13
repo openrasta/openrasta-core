@@ -58,6 +58,8 @@
     <Compile Include="DI\declaration_on_task_access_on_continuation.cs" />
     <Compile Include="Hosting.InMemory\no_resolver.cs" />
     <Compile Include="Hosting.InMemory\custom_resolver.cs" />
+    <Compile Include="Infrastructure\context.cs" />
+    <Compile Include="Infrastructure\TestExtensions.cs" />
     <Compile Include="OperationModel.Interceptors\no_rewriting.cs" />
     <Compile Include="OperationModel.Interceptors\rewrites.cs" />
     <Compile Include="OperationModel.Interceptors\throws.cs" />
@@ -67,6 +69,14 @@
     <Compile Include="OperationModel.Interceptors\Support\interceptor_scenario.cs" />
     <Compile Include="OperationModel.Interceptors\Support\NominalFunctionAttribute.cs" />
     <Compile Include="OperationModel.Interceptors\Support\UnknownLaserFlawAttribute.cs" />
+    <Compile Include="Pipeline.Initializer\AfterContributor.cs" />
+    <Compile Include="Pipeline.Initializer\BeforeContributor.cs" />
+    <Compile Include="Pipeline.Initializer\pipelinerunner_context.cs" />
+    <Compile Include="Pipeline.Initializer\when_creating_the_pipeline.cs" />
+    <Compile Include="Pipeline.Initializer\when_accessing_the_contributors.cs" />
+    <Compile Include="Pipeline.Initializer\when_building_the_call_graph.cs" />
+    <Compile Include="Pipeline.Initializer\when_contributor_throws.cs" />
+    <Compile Include="Pipeline.Initializer\when_executing_the_pipeline.cs" />
     <Compile Include="Pipeline.Middleware\composition.cs" />
     <Compile Include="Pipeline.Middleware\Conversion\pre_execute.cs" />
     <Compile Include="Pipeline.Middleware\Conversion\request.cs" />

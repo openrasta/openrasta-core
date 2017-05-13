@@ -9,14 +9,13 @@ using OpenRasta.Web;
 
 namespace OpenRasta.Pipeline
 {
-  public class ThreePhasedPipelineAdaptor : IPipeline, IPipelineAsync
+  public class ThreePhasedPipelineAdaptor : IPipeline, IPipelineAsync, IPipelineInitializer
   {
     readonly IGenerateCallGraphs _callGrapher;
     Func<ICommunicationContext, Task> _invoker;
     public bool IsInitialized { get; private set; }
-    public IList<IPipelineContributor> Contributors { get; }
+    public IList<IPipelineContributor> Contributors { get; private set; }
     public IEnumerable<ContributorCall> CallGraph { get; private set; }
-    public StartupProperties StartupProperties { get; private set; }
 
     public ThreePhasedPipelineAdaptor(IDependencyResolver resolver)
     {
@@ -32,7 +31,7 @@ namespace OpenRasta.Pipeline
       Initialize(new StartupProperties());
     }
 
-    public void Initialize(StartupProperties startup)
+    public IPipelineAsync Initialize(StartupProperties startup)
     {
       if (startup.OpenRasta.Pipeline.Validate)
         Contributors.VerifyKnownStagesRegistered();
@@ -42,14 +41,16 @@ namespace OpenRasta.Pipeline
       {
         defaults.Add(new CatastrophicFailureMiddleware());
       }
+      CallGraph = _callGrapher.GenerateCallGraph(Contributors).ToList();
+      var contributorMiddleware = CallGraph.ToMiddleware(startup.OpenRasta.Pipeline.ContributorTrailers);
+      Contributors = CallGraph.Select(call => call.Target).ToList().AsReadOnly();
 
-      var contributorMiddleware = (CallGraph = _callGrapher.GenerateCallGraph(Contributors))
-        .ToMiddleware(startup.OpenRasta.Pipeline.ContributorTrailers);
       _invoker =
         defaults.Concat(contributorMiddleware)
         .Compose()
         .Invoke;
       IsInitialized = true;
+      return this;
     }
 
 
@@ -63,6 +64,8 @@ namespace OpenRasta.Pipeline
     {
       RunAsync(context).GetAwaiter().GetResult();
     }
+
+    IEnumerable<IPipelineContributor> IPipelineAsync.Contributors => Contributors;
 
     public Task RunAsync(ICommunicationContext env)
     {

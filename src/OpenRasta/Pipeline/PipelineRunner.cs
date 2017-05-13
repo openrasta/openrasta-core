@@ -75,6 +75,8 @@ namespace OpenRasta.Pipeline
     }
 
 
+    IEnumerable<IPipelineContributor> IPipelineAsync.Contributors => Contributors;
+
     public async Task RunAsync(ICommunicationContext context)
     {
       if (context == null) throw new ArgumentNullException(nameof(context));

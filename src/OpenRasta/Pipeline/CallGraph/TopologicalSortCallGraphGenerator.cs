@@ -22,7 +22,6 @@ namespace OpenRasta.Pipeline.CallGraph
       {
         var contributorBuilder = new ContributorInitializer(contributors);
         var builder = new CompatibilityContributorInitializer(contributorBuilder);
-        builder.ContributorRegistrations.Clear();
 
         contributor.Initialize(builder);
 
