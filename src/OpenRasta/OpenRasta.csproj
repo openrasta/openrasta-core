@@ -288,6 +288,7 @@
     <Compile Include="OperationModel\OperationRequestCodecExtensions.cs" />
     <Compile Include="OperationModel\OutputMember.cs" />
     <Compile Include="Pipeline\AbstractContributorMiddleware.cs" />
+    <Compile Include="Pipeline\CallGraph\ContributorInitializer.cs" />
     <Compile Include="Pipeline\CatastrophicFailureMiddleware.cs" />
     <Compile Include="Pipeline\CleanupMiddleware.cs" />
     <Compile Include="Pipeline\Contributors\ContextExtensions.cs" />
@@ -301,7 +302,7 @@
     <Compile Include="Pipeline\RequestMiddleware.cs" />
     <Compile Include="Pipeline\CallGraph\CallGraphGeneratorFactory.cs" />
     <Compile Include="Pipeline\CallGraph\ContributorNotification.cs" />
-    <Compile Include="Pipeline\CallGraph\PipelineBuilder.cs" />
+    <Compile Include="Pipeline\CallGraph\CompatibilityContributorInitializer.cs" />
     <Compile Include="Pipeline\CallGraph\WeightedCallGraphGenerator.cs" />
     <Compile Include="Pipeline\CallGraph\IGenerateCallGraphs.cs" />
     <Compile Include="Pipeline\CallGraph\Notification.cs" />

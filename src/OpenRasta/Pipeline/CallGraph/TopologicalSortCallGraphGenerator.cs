@@ -20,16 +20,17 @@ namespace OpenRasta.Pipeline.CallGraph
 
       foreach (var contributor in contributors.Where(x => x != bootstrapper))
       {
-        var builder = new PipelineBuilder(contributors);
+        var contributorBuilder = new ContributorInitializer(contributors);
+        var builder = new CompatibilityContributorInitializer(contributorBuilder);
         builder.ContributorRegistrations.Clear();
 
         contributor.Initialize(builder);
 
         nodes.AddRange(
-          builder.ContributorRegistrations
+          contributorBuilder.ContributorRegistrations
               .DefaultIfEmpty(new Notification(
                   Middleware.IdentitySingleTap,
-                  builder.Contributors))
+                  contributorBuilder.Contributors))
               .Select(reg => new TopologicalNode<ContributorNotification>(
                   new ContributorNotification(contributor, reg))));
       }

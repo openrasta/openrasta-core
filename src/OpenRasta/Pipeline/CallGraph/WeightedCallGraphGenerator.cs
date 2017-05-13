@@ -17,14 +17,15 @@ namespace OpenRasta.Pipeline.CallGraph
 
       foreach (var contrib in contributors.Where(x => x != bootstrapper))
       {
-        var builder = new PipelineBuilder(contributors);
+        var contributorBuilder = new ContributorInitializer(contributors);
+        var builder = new CompatibilityContributorInitializer(contributorBuilder);
 
         builder.ContributorRegistrations.Clear();
 
         contrib.Initialize(builder);
 
         var contributorRegistrations =
-          builder.ContributorRegistrations.DefaultIfEmpty(new Notification(Middleware.IdentitySingleTap, contributors)).ToList();
+          contributorBuilder.ContributorRegistrations.DefaultIfEmpty(new Notification(Middleware.IdentitySingleTap, contributors)).ToList();
         foreach (var registration in contributorRegistrations)
         {
           tree.CreateNode(new ContributorNotification(contrib, registration));

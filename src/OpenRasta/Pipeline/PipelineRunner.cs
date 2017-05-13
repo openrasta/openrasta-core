@@ -223,7 +223,7 @@ namespace OpenRasta.Pipeline
 
     public IPipelineExecutionOrder Notify(Func<ICommunicationContext, PipelineContinuation> action)
     {
-      throw new NotImplementedException("This code has moved. Try using a PipelineBuilder instad.");
+      throw new NotImplementedException("This code has moved. Try using a CompatibilityContributorInitializer instad.");
     }
   }
 }
