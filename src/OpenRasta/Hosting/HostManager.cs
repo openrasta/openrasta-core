@@ -14,6 +14,9 @@ namespace OpenRasta.Hosting
   {
     static readonly IDictionary<IHost, HostManager> _registrations = new Dictionary<IHost, HostManager>();
     readonly object _syncRoot = new object();
+    readonly Action _startDisposer;
+    StartupProperties _startupProperties;
+    IPipelineAsync _pipeline;
 
     static HostManager()
     {
@@ -25,11 +28,20 @@ namespace OpenRasta.Hosting
     HostManager(IHost host)
     {
       Host = host;
-      Host.Start += HandleHostStart;
+      var withStartup = host as IHostStartWithStartupProperties;
+      if (withStartup != null)
+      {
+        withStartup.Start += HandleHostStartWithProps;
+        _startDisposer = () => withStartup.Start -= HandleHostStartWithProps;
+      }
+      else
+      {
+        Host.Start += HandleHostStart;
+        _startDisposer = () => Host.Start -= HandleHostStart;
+      }
       Host.IncomingRequestReceived += HandleHostIncomingRequestReceived;
       Host.IncomingRequestProcessed += HandleIncomingRequestProcessed;
     }
-
 
     public IHost Host { get; }
     public bool IsConfigured { get; private set; }
@@ -75,12 +87,11 @@ namespace OpenRasta.Hosting
 
     public void Dispose()
     {
-      Host.Start -= HandleHostStart;
+      _startDisposer();
       Host.IncomingRequestReceived -= HandleHostIncomingRequestReceived;
       Host.IncomingRequestProcessed -= HandleIncomingRequestProcessed;
 
-      var disposableResolver = Resolver as IDisposable;
-      disposableResolver?.Dispose();
+      (Resolver as IDisposable)?.Dispose();
     }
 
     void AssignResolver()
@@ -93,10 +104,12 @@ namespace OpenRasta.Hosting
       Log.WriteDebug("Using dependency resolver of type {0}", Resolver.GetType());
     }
 
-    void Configure()
+    void Configure(StartupProperties startupProperties)
     {
       IsConfigured = false;
+      _startupProperties = startupProperties;
       AssignResolver();
+      Resolver.AddDependencyInstance<IHost>(Host, DependencyLifetime.Singleton);
       CallWithDependencyResolver(() =>
       {
         RegisterRootDependencies();
@@ -109,8 +122,16 @@ namespace OpenRasta.Hosting
 
         ExecuteConfigurationSource();
 
+        BuildPipeline();
+
         IsConfigured = true;
       });
+    }
+
+    void BuildPipeline()
+    {
+      _pipeline = Resolver.Resolve<IPipelineInitializer>().Initialize(_startupProperties);
+
     }
 
     void ExecuteConfigurationSource()
@@ -175,12 +196,12 @@ namespace OpenRasta.Hosting
       }
     }
 
-    void VerifyConfiguration()
+    void VerifyConfiguration(StartupProperties startupProperties)
     {
       if (!IsConfigured)
         lock (_syncRoot)
           if (!IsConfigured)
-            Configure();
+            Configure(startupProperties);
     }
 
     void VerifyContextStoreRegistered()
@@ -191,24 +212,25 @@ namespace OpenRasta.Hosting
 
     protected virtual void HandleHostIncomingRequestReceived(object sender, IncomingRequestEventArgs e)
     {
-      VerifyConfiguration();
       Log.WriteDebug("Incoming host request for " + e.Context.Request.Uri);
       var task = CallWithDependencyResolver(() =>
       {
         // register the required dependency in the web context
         var context = e.Context;
         SetupCommunicationContext(context);
-        Resolver.AddDependencyInstance<IHost>(Host, DependencyLifetime.PerRequest);
 
-        var pipeline = Resolver.Resolve<IPipelineAsync>();
-        return pipeline.RunAsync(context);
+        return _pipeline.RunAsync(context);
       });
       e.Context.PipelineData[Keys.Request.PipelineTask] = e.RunTask = task;
     }
 
+    void HandleHostStartWithProps(object sender, StartupProperties e)
+    {
+      VerifyConfiguration(e);
+    }
     protected virtual void HandleHostStart(object sender, EventArgs e)
     {
-      VerifyConfiguration();
+      VerifyConfiguration(new StartupProperties());
     }
 
     protected virtual void HandleIncomingRequestProcessed(object sender, IncomingRequestProcessedEventArgs e)

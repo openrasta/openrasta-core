@@ -225,6 +225,7 @@ namespace OpenRasta.Configuration
         typeof(IRequestEntityReader),
         typeof(RequestEntityReaderHydrator),
         DependencyLifetime.Transient);
+      resolver.AddDependency<IPipelineInitializer, ThreePhasedPipelineAdaptor>();
     }
 
     protected virtual void AddCSharpCodeSnippetModifiers()

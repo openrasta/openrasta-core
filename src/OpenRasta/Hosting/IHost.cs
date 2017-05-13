@@ -1,4 +1,5 @@
 using System;
+using OpenRasta.Concordia;
 using OpenRasta.DI;
 
 namespace OpenRasta.Hosting
@@ -14,4 +15,9 @@ namespace OpenRasta.Hosting
         bool ConfigureLeafDependencies(IDependencyResolver resolver);
         IDependencyResolverAccessor ResolverAccessor { get; }
     }
+
+  public interface IHostStartWithStartupProperties
+  {
+    event EventHandler<StartupProperties> Start;
+  }
 }
