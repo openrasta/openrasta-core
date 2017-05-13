@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
+using System.Web.Configuration;
+using System.Web.Hosting;
 using OpenRasta.Concordia;
 using OpenRasta.Diagnostics;
-using OpenRasta.DI;
 using OpenRasta.Pipeline;
 using OpenRasta.Web;
 
@@ -17,7 +19,7 @@ namespace OpenRasta.Hosting.AspNet
     }
 
     public static AspNetPipeline Pipeline => _pipeline.Value;
-    public static ILogger Log = NullLogger<AspNetLogSource>.Instance;
+    public static ILogger Log = new TraceSourceLogger(new TraceSource("openrasta"));
 
     static readonly Lazy<AspNetPipeline> _pipeline = new Lazy<AspNetPipeline>(() =>
       HttpRuntime.UsingIntegratedPipeline
@@ -46,8 +48,7 @@ namespace OpenRasta.Hosting.AspNet
       Host = HostManager.RegisterHost(aspNetHost);
       aspNetHost.RaiseStart();
 
-      Log = Host.Resolver.Resolve<ILogger<AspNetLogSource>>() ?? Log;
-      _postResolveStep = new PipelineStageAsync(nameof(KnownStages.IUriMatching), aspNetHost);
+      _postResolveStep = new PipelineStageAsync(nameof(KnownStages.IUriMatching), aspNetHost, _pipeline);
 
       context.AddOnPostResolveRequestCacheAsync(_postResolveStep.Begin, _postResolveStep.End);
     }

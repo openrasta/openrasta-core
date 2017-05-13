@@ -26,6 +26,7 @@ namespace OpenRasta.Hosting.AspNet
         {
         }
 
+
         public virtual void HandoverToPipeline(string yielderName, Task runTask, ICommunicationContext env)
         {
         }
