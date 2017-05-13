@@ -1,3 +1,7 @@
+configuration: Release
+platform: Any CPU
+image: Visual Studio 2017
+
 install:
   - set PATH=C:\Ruby23\bin;%PATH%
   - ps: $AllProtocols = [System.Net.SecurityProtocolType]'Ssl3,Tls,Tls11,Tls12'
@@ -32,11 +36,6 @@ assembly_info:
   assembly_version: $(AssemblyMajor).0.0.0
   assembly_file_version: '{version}'
   assembly_informational_version: '{version}'
-
-configuration: Release
-
-platform: Any CPU
-
 
 before_build:
   - cmd: set PATH=C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\MSBuild\15.0\Bin;C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\MSBuild\15.0\Bin;C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional\MSBuild\15.0\Bin;%PATH%
