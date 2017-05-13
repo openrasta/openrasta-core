@@ -1,221 +1,50 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using OpenRasta.Concordia;
-using OpenRasta.Diagnostics;
 using OpenRasta.DI;
-using OpenRasta.Pipeline.CallGraph;
-using OpenRasta.Pipeline.Diagnostics;
 using OpenRasta.Web;
-using OpenRasta.Web.Internal;
 
 namespace OpenRasta.Pipeline
 {
   [Obsolete("Runner is no longer supported")]
-  public class PipelineRunner : IPipeline, IPipelineAsync
+  public class PipelineRunner : IPipeline
   {
-    readonly IList<IPipelineContributor> _contributors = new List<IPipelineContributor>();
-    readonly IDependencyResolver _resolver;
-    IEnumerable<ContributorCall> _callGraph;
-
+    // ReSharper disable once UnusedParameter.Local - Compatibility Shim
     public PipelineRunner(IDependencyResolver resolver)
     {
-      Contributors = new ReadOnlyCollection<IPipelineContributor>(_contributors);
-
-      _resolver = resolver;
-
-      PipelineLog = NullLogger<PipelineLogSource>.Instance;
-      Log = NullLogger.Instance;
+      throw new NotImplementedException("Runner is no longer supported");
     }
 
-    public IList<IPipelineContributor> Contributors { get; private set; }
-    public bool IsInitialized { get; private set; }
-    public ILogger<PipelineLogSource> PipelineLog { get; set; }
-    public ILogger Log { get; set; }
+    public IList<IPipelineContributor> Contributors => null;
 
-    public IEnumerable<ContributorCall> CallGraph => _callGraph;
+    public bool IsInitialized => false;
+
+    public IEnumerable<ContributorCall> CallGraph { get; } = Enumerable.Empty<ContributorCall>();
 
     public void Initialize()
     {
-      Initialize(new StartupProperties());
+      throw new NotImplementedException("Runner is no longer supported");
     }
-
-    public void Initialize(StartupProperties startup)
-    {
-      if (IsInitialized)
-        return;
-      StartupProperties = startup;
-      using (PipelineLog.Operation(this, "Initializing the pipeline."))
-      {
-        foreach (var item in _resolver.ResolveAll<IPipelineContributor>())
-        {
-          PipelineLog.WriteDebug("Initialized contributor {0}.", item.GetType().Name);
-          _contributors.Add(item);
-        }
-        if (startup.OpenRasta.Pipeline.Validate) _contributors.VerifyKnownStagesRegistered();
-        _callGraph = new CallGraphGeneratorFactory(_resolver)
-          .GetCallGraphGenerator()
-          .GenerateCallGraph(this.Contributors);
-
-        LogContributorCallChainCreated(_callGraph);
-      }
-      IsInitialized = true;
-      PipelineLog.WriteInfo("Pipeline has been successfully initialized.");
-    }
-
-    public StartupProperties StartupProperties { get; set; }
 
     [Obsolete("Don't do it this will deadlock.")]
     public void Run(ICommunicationContext context)
     {
-      RunAsync(context).GetAwaiter().GetResult();
+      throw new NotImplementedException("Runner is no longer supported");
     }
 
 
-    IEnumerable<IPipelineContributor> IPipelineAsync.Contributors => Contributors;
-
-    public async Task RunAsync(ICommunicationContext context)
-    {
-      if (context == null) throw new ArgumentNullException(nameof(context));
-
-      this.CheckPipelineInitialized();
-
-      if (context.PipelineData.PipelineStage == null)
-        context.PipelineData.PipelineStage = new PipelineStage(((IPipeline) this).CallGraph);
-      await RunCallGraph(context, context.PipelineData.PipelineStage);
-    }
-
-    async Task RunCallGraph(ICommunicationContext context, PipelineStage stage)
-    {
-      foreach (var contrib in stage)
-      {
-        if (!CanBeExecuted(contrib))
-          continue;
-        stage.CurrentState = await ExecuteContributor(context, contrib);
-        switch (stage.CurrentState)
-        {
-          case PipelineContinuation.Abort:
-          {
-            AbortPipeline(context);
-            goto case PipelineContinuation.RenderNow;
-          }
-          case PipelineContinuation.RenderNow:
-          {
-            await RenderNow(context, stage);
-            break;
-          }
-          case PipelineContinuation.Finished:
-          {
-            FinishPipeline(context);
-            return;
-          }
-        }
-      }
-    }
-
-    async Task RenderNow(ICommunicationContext context, PipelineStage stage)
-    {
-      PipelineLog.WriteDebug("Pipeline is in RenderNow mode.");
-      if (!stage.ResumeFrom<KnownStages.IOperationResultInvocation>())
-      {
-        if (stage.OwnerStage != null)
-        {
-          PipelineLog.WriteError("Trying to launch nested pipeline to render error failed.");
-          AttemptCatastrophicErrorNotification(context);
-          return;
-        }
-        using (
-          PipelineLog.Operation(this,
-            "Rendering contributor has already been executed. Calling a nested pipeline to render the error.")
-        )
-        {
-          var nestedPipeline = new PipelineStage(this, stage);
-          if (!nestedPipeline.ResumeFrom<KnownStages.IOperationResultInvocation>())
-            throw new InvalidOperationException(
-              "Could not find an IOperationResultInvocation in the new pipeline.");
-
-          await RunCallGraph(context, nestedPipeline);
-        }
-      }
-    }
-
-
-    static void AttemptCatastrophicErrorNotification(ICommunicationContext context)
-    {
-      try
-      {
-        string fatalError =
-          "An error in one of the rendering components of OpenRasta prevents the error message from being sent back.";
-        context.Response.StatusCode = 500;
-        context.Response.Entity.ContentLength = fatalError.Length;
-        context.Response.Entity.Stream.Write(Encoding.ASCII.GetBytes(fatalError), 0, fatalError.Length);
-        context.Response.WriteHeaders();
-      }
-      catch
-      {
-      }
-    }
-
-    bool CanBeExecuted(ContributorCall call)
-    {
-      if (call.Action != null) return true;
-      PipelineLog.WriteWarning("Contributor call for {0} had a null Action.", call.ContributorTypeName);
-      return false;
-    }
-
-    protected virtual void AbortPipeline(ICommunicationContext context)
-    {
-      PipelineLog.WriteError("Aborting the pipeline and rendering the errors.");
-      context.Abort();
-      Log.WriteError("An error has occurred and the processing of the request has stopped.\r\n{0}",
-        context.ServerErrors.Aggregate(string.Empty, (str, error) => str + "\r\n" + error.ToString()));
-    }
-
-    protected virtual async Task<PipelineContinuation> ExecuteContributor(ICommunicationContext context,
+    // ReSharper disable once UnusedMember.Global - Compatibility Shim
+    protected virtual Task<PipelineContinuation> ExecuteContributor(ICommunicationContext context,
       ContributorCall call)
     {
-      using (
-        PipelineLog.Operation(this,
-          "Executing contributor {0}.{1}".With(call.ContributorTypeName, call.Action.Method.Name)))
-      {
-        PipelineContinuation nextStep;
-        try
-        {
-          nextStep = await call.Action(context);
-        }
-        catch (Exception e)
-        {
-          context.Response.StatusCode = 500;
-          context.ServerErrors.Add(new Error
-          {
-            Title = "Fatal error",
-            Message = "An exception was thrown while processing a pipeline contributor",
-            Exception = e
-          });
-          nextStep = PipelineContinuation.Abort;
-        }
-        return nextStep;
-      }
+      throw new NotImplementedException("Runner is no longer supported");
     }
 
+    // ReSharper disable once UnusedMember.Global - Compatibility Shim
     protected virtual void FinishPipeline(ICommunicationContext context)
     {
-      context.Request.Entity?.Dispose();
-
-      context.Response.Entity?.Dispose();
-
-      PipelineLog.WriteInfo("Pipeline finished.");
-    }
-
-    void LogContributorCallChainCreated(IEnumerable<ContributorCall> callGraph)
-    {
-      PipelineLog.WriteInfo("Contributor call chain has been processed and results in the following pipeline:");
-      int pos = 0;
-      foreach (var contributor in callGraph)
-        PipelineLog.WriteInfo("{0} {1}", pos++, contributor.ContributorTypeName);
+      throw new NotImplementedException("Runner is no longer supported");
     }
 
     public IPipelineExecutionOrder NotifyAsync(Func<ICommunicationContext, Task<PipelineContinuation>> action)
