@@ -4,7 +4,7 @@ namespace OpenRasta.Pipeline
 {
     public interface IPipelineInitializer
     {
-        void Initialize(StartupProperties properties);
+        IPipelineAsync Initialize(StartupProperties properties);
     }
 
 }
