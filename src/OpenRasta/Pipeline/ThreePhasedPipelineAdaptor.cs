@@ -20,9 +20,8 @@ namespace OpenRasta.Pipeline
 
     public ThreePhasedPipelineAdaptor(IDependencyResolver resolver)
     {
-      _callGrapher = resolver.HasDependency<IGenerateCallGraphs>()
-        ? resolver.Resolve<IGenerateCallGraphs>()
-        : new WeightedCallGraphGenerator();
+      _callGrapher =new CallGraphGeneratorFactory(resolver)
+        .GetCallGraphGenerator();
       Contributors = resolver.ResolveAll<IPipelineContributor>()
         .ToList()
         .AsReadOnly();
