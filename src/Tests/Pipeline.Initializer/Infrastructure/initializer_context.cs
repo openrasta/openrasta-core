@@ -6,9 +6,9 @@ using OpenRasta.Pipeline.CallGraph;
 using OpenRasta.Pipeline.Contributors;
 using Tests.Infrastructure;
 
-namespace Tests.Pipeline.Initializer
+namespace Tests.Pipeline.Initializer.Infrastructure
 {
-  public abstract class pipelinerunner_context : context
+  public abstract class initializer_context : context
   {
     protected static IPipelineAsync CreatePipeline(
       Type callGraphGeneratorType,

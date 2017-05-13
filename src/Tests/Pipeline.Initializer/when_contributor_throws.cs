@@ -4,11 +4,12 @@ using OpenRasta.Hosting.InMemory;
 using OpenRasta.Pipeline;
 using OpenRasta.Pipeline.CallGraph;
 using Shouldly;
+using Tests.Pipeline.Initializer.Infrastructure;
 using Xunit;
 
 namespace Tests.Pipeline.Initializer
 {
-  public class when_contributor_throws : pipelinerunner_context
+  public class when_contributor_throws : initializer_context
   {
     [Theory]
     [InlineData(null)]

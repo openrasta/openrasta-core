@@ -6,11 +6,13 @@ using OpenRasta.Pipeline.Contributors;
 using OpenRasta.Web;
 using Shouldly;
 using Tests.Infrastructure;
+using Tests.Pipeline.Initializer.Examples;
+using Tests.Pipeline.Initializer.Infrastructure;
 using Xunit;
 
 namespace Tests.Pipeline.Initializer
 {
-  public class when_building_the_call_graph : pipelinerunner_context
+  public class when_building_the_call_graph : initializer_context
   {
     [Theory]
     [InlineData(null)]

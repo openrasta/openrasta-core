@@ -1,9 +1,9 @@
 ﻿using OpenRasta.Pipeline;
 using OpenRasta.Web;
 
-namespace Tests.Pipeline.Initializer
+namespace Tests.Pipeline.Initializer.Examples
 {
-  public class BeforeContributor<T> : IPipelineContributor where T : IPipelineContributor
+  public class AfterContributor<T> : IPipelineContributor where T : IPipelineContributor
   {
     PipelineContinuation DoNothing(ICommunicationContext c)
     {
@@ -12,7 +12,7 @@ namespace Tests.Pipeline.Initializer
 
     public virtual void Initialize(IPipeline pipelineRunner)
     {
-      pipelineRunner.Notify(DoNothing).Before<T>();
+      pipelineRunner.Notify(DoNothing).After<T>();
     }
   }
 }

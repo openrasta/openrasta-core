@@ -5,11 +5,12 @@ using OpenRasta.Pipeline;
 using OpenRasta.Pipeline.CallGraph;
 using OpenRasta.Web;
 using Shouldly;
+using Tests.Pipeline.Initializer.Infrastructure;
 using Xunit;
 
 namespace Tests.Pipeline.Initializer
 {
-  public class when_executing_the_pipeline : pipelinerunner_context
+  public class when_executing_the_pipeline : initializer_context
   {
     [Theory]
     [InlineData(null)]
