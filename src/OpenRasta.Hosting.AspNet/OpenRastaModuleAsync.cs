@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 using OpenRasta.Concordia;
+using OpenRasta.Diagnostics;
 using OpenRasta.DI;
 using OpenRasta.Pipeline;
 using OpenRasta.Web;
@@ -18,52 +17,39 @@ namespace OpenRasta.Hosting.AspNet
     }
 
     public static AspNetPipeline Pipeline => _pipeline.Value;
+    public static ILogger Log = NullLogger<AspNetLogSource>.Instance;
 
     static readonly Lazy<AspNetPipeline> _pipeline = new Lazy<AspNetPipeline>(() =>
       HttpRuntime.UsingIntegratedPipeline
         ? (AspNetPipeline) new IntegratedPipeline()
         : new ClassicPipeline(), LazyThreadSafetyMode.PublicationOnly);
 
-    static readonly string[] YieldingStages = {nameof(KnownStages.IUriMatching)};
+    PipelineStageAsync _postResolveStep;
 
     public void Init(HttpApplication context)
     {
-      Host = HostManager.RegisterHost(new AspNetHost());
-
-      var initializer = Host.Resolver.Resolve<IPipelineInitializer>();
-
-      initializer.Initialize(new StartupProperties
+      var startupProperties = new StartupProperties
       {
         OpenRasta =
         {
-          Pipeline = { ContributorTrailers =
+          Pipeline =
           {
-            [call=>call.Target is KnownStages.IUriMatching] = ()=> new YieldBeforeMiddleware(nameof(KnownStages.IUriMatching))
-          }}
+            ContributorTrailers =
+            {
+              [call => call.Target is KnownStages.IUriMatching] =
+              () => new YieldBeforeNextMiddleware(nameof(KnownStages.IUriMatching))
+            }
+          }
         }
-      });
-      var factories = InjectYields(LoadNamedFactories()).Compose();
+      };
+      var aspNetHost = new AspNetHost(startupProperties);
+      Host = HostManager.RegisterHost(aspNetHost);
+      aspNetHost.RaiseStart();
 
-      var postResolve = new PipelineStageAsync(YieldingStages[0], factories);
+      Log = Host.Resolver.Resolve<ILogger<AspNetLogSource>>() ?? Log;
+      _postResolveStep = new PipelineStageAsync(nameof(KnownStages.IUriMatching), aspNetHost);
 
-      context.AddOnPostResolveRequestCacheAsync(postResolve.Begin, postResolve.End);
-      //context.AddOnEndRequestAsync();
-    }
-
-    IEnumerable<KeyValuePair<string, IPipelineMiddlewareFactory>> LoadNamedFactories()
-    {
-      throw new NotImplementedException();
-    }
-
-    IEnumerable<IPipelineMiddlewareFactory> InjectYields(
-      IEnumerable<KeyValuePair<string, IPipelineMiddlewareFactory>> namedFactories)
-    {
-      foreach (var factory in namedFactories)
-      {
-        yield return factory.Value;
-        if (YieldingStages.Contains(factory.Key))
-          yield return new YieldBeforeMiddleware(factory.Key);
-      }
+      context.AddOnPostResolveRequestCacheAsync(_postResolveStep.Begin, _postResolveStep.End);
     }
 
     public HostManager Host { get; set; }

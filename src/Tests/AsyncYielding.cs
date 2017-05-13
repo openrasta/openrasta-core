@@ -14,7 +14,7 @@ namespace OpenRasta.Hosting.AspNet.Tests.Integration
     public async Task middleware_yielding_same_thread()
     {
       var didItYield = await InvokeTillYield(
-        new YieldBeforeMiddleware(nameof(YieldBeforeMiddleware)),
+        new YieldBeforeNextMiddleware(nameof(YieldBeforeNextMiddleware)),
         new CodeMiddleware(() => Resumed = true));
 
       didItYield.ShouldBeTrue();
@@ -30,7 +30,7 @@ namespace OpenRasta.Hosting.AspNet.Tests.Integration
     {
       var didItYield = await InvokeTillYield(
         new OtherThreadMiddleware(),
-        new YieldBeforeMiddleware(nameof(YieldBeforeMiddleware)),
+        new YieldBeforeNextMiddleware(nameof(YieldBeforeNextMiddleware)),
         new CodeMiddleware(()=>Resumed = true)
         );
 
@@ -47,7 +47,7 @@ namespace OpenRasta.Hosting.AspNet.Tests.Integration
     public async Task middleware_yielding_before_code_on_other_thread()
     {
       var didItYield = await InvokeTillYield(
-        new YieldBeforeMiddleware(nameof(YieldBeforeMiddleware)),
+        new YieldBeforeNextMiddleware(nameof(YieldBeforeNextMiddleware)),
         new OtherThreadMiddleware(),
         new CodeMiddleware(()=>Resumed = true)
       );
@@ -66,7 +66,7 @@ namespace OpenRasta.Hosting.AspNet.Tests.Integration
     {
       var didItYield = await InvokeTillYield(
         new BypassingCodeMiddleware(),
-        new YieldBeforeMiddleware(nameof(YieldBeforeMiddleware)),
+        new YieldBeforeNextMiddleware(nameof(YieldBeforeNextMiddleware)),
         new CodeMiddleware(()=>Resumed = true)
       );
 
@@ -86,7 +86,7 @@ namespace OpenRasta.Hosting.AspNet.Tests.Integration
       var didItYield = await InvokeTillYield(
         new OtherThreadMiddleware(),
         new BypassingCodeMiddleware(),
-        new YieldBeforeMiddleware(nameof(YieldBeforeMiddleware)),
+        new YieldBeforeNextMiddleware(nameof(YieldBeforeNextMiddleware)),
         new CodeMiddleware(()=>Resumed = true)
       );
 
@@ -111,7 +111,7 @@ namespace OpenRasta.Hosting.AspNet.Tests.Integration
     bool Resumed { get; set; }
     async Task Resume()
     {
-      Env.Resumer(nameof(YieldBeforeMiddleware)).SetResult(true);
+      Env.Resumer(nameof(YieldBeforeNextMiddleware)).SetResult(true);
       await Operation;
     }
 
@@ -121,7 +121,7 @@ namespace OpenRasta.Hosting.AspNet.Tests.Integration
 
       return await Yielding.DidItYield(
         Operation,
-        Env.Yielder(nameof(YieldBeforeMiddleware)).Task);
+        Env.Yielder(nameof(YieldBeforeNextMiddleware)).Task);
     }
 
     Task Operation { get; set; }

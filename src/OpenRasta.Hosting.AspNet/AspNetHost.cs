@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Compilation;
+using OpenRasta.Concordia;
 using OpenRasta.Configuration;
 using OpenRasta.DI;
 using OpenRasta.Diagnostics;
@@ -13,12 +14,25 @@ using OpenRasta.Web;
 
 namespace OpenRasta.Hosting.AspNet
 {
-  public class AspNetHost : IHost
+  public class AspNetHost : IHost, IHostStartWithStartupProperties
   {
+    readonly StartupProperties _properties;
     public event EventHandler<IncomingRequestProcessedEventArgs> IncomingRequestProcessed;
     public event EventHandler<IncomingRequestReceivedEventArgs> IncomingRequestReceived;
 
-    public event EventHandler Start;
+    event EventHandler _legacyStart;
+    event EventHandler<StartupProperties> _start;
+    event EventHandler IHost.Start
+    {
+      add => _legacyStart += value;
+      remove => _legacyStart -= value;
+    }
+    event EventHandler<StartupProperties> IHostStartWithStartupProperties.Start
+    {
+      add => _start += value;
+      remove => _start -= value;
+    }
+
     public event EventHandler Stop;
 
     public string ApplicationVirtualPath => HttpRuntime.AppDomainAppVirtualPath;
@@ -29,10 +43,11 @@ namespace OpenRasta.Hosting.AspNet
     readonly Lazy<IDependencyResolverAccessor> _resolverAccessor;
 
 
-    public AspNetHost()
+    public AspNetHost(StartupProperties properties)
     {
+      _properties = properties;
       _resolverAccessor = new Lazy<IDependencyResolverAccessor>(CreateResolverAccessor);
-      _configSourceFactory = new Lazy<IConfigurationSource>(FindTypeInProject<IConfigurationSource>);
+      _configSourceFactory = new Lazy<IConfigurationSource>(ConfigurationSourceLocator);
     }
 
     public IConfigurationSource ConfigurationSource
@@ -46,8 +61,11 @@ namespace OpenRasta.Hosting.AspNet
     IDependencyResolverAccessor CreateResolverAccessor()
     {
       return (ConfigurationSource as IDependencyResolverAccessor)
-             ?? FindTypeInProject<IDependencyResolverAccessor>();
+             ?? DependencyResolverAccessorLocator();
     }
+
+    public static Func<IConfigurationSource> ConfigurationSourceLocator = FindTypeInProject<IConfigurationSource>;
+    public static Func<IDependencyResolverAccessor> DependencyResolverAccessorLocator = FindTypeInProject<IDependencyResolverAccessor>;
 
     public static T FindTypeInProject<T>() where T : class
     {
@@ -133,7 +151,6 @@ namespace OpenRasta.Hosting.AspNet
     public bool ConfigureRootDependencies(IDependencyResolver resolver)
     {
       resolver.AddDependency<IContextStore, AspNetContextStore>(DependencyLifetime.Singleton);
-      resolver.AddDependency<OpenRastaHandler>(DependencyLifetime.Transient);
       resolver.AddDependency<ILogger<AspNetLogSource>, TraceSourceLogger<AspNetLogSource>>(DependencyLifetime
         .Transient);
       return true;
@@ -153,12 +170,15 @@ namespace OpenRasta.Hosting.AspNet
 
     protected internal virtual void RaiseStart()
     {
-      Start.Raise(this);
+      _legacyStart.Raise(this);
+      var start = _start;
+      start?.Invoke(this, _properties);
     }
 
     protected internal virtual void RaiseStop()
     {
       Stop.Raise(this);
     }
+
   }
 }

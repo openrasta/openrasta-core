@@ -2,8 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Configuration;
+using OpenRasta.Web;
 
 namespace OpenRasta.Hosting.AspNet
 {
@@ -20,7 +22,7 @@ namespace OpenRasta.Hosting.AspNet
                 false);
         }
 
-        public override void HandoverToPipeline()
+        public override void HandoverToPipeline(string yielderName, Task runTask, ICommunicationContext env)
         {
             HttpContext.Current.RewritePath(VirtualPathUtility.ToAppRelative("~/openrasta.axd"), false);
 //            HttpContext.Current.RemapHandler(new OpenRastaHandler(this));

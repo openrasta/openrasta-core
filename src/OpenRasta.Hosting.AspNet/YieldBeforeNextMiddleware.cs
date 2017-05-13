@@ -4,11 +4,11 @@ using OpenRasta.Web;
 
 namespace OpenRasta.Hosting.AspNet
 {
-  public class YieldBeforeMiddleware : IPipelineMiddleware, IPipelineMiddlewareFactory
+  public class YieldBeforeNextMiddleware : IPipelineMiddleware, IPipelineMiddlewareFactory
   {
     readonly string _yieldName;
 
-    public YieldBeforeMiddleware(string yieldName)
+    public YieldBeforeNextMiddleware(string yieldName)
     {
       _yieldName = yieldName;
     }
@@ -19,8 +19,9 @@ namespace OpenRasta.Hosting.AspNet
       var resumer = env.Resumer(_yieldName);
 
       yielder.SetResult(true);
-      await resumer.Task;
-      await Next.Invoke(env);
+      var shoulContinue = await resumer.Task;
+      if (shoulContinue)
+        await Next.Invoke(env);
     }
 
     public IPipelineMiddleware Compose(IPipelineMiddleware next)

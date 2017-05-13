@@ -4,6 +4,7 @@ using System.Threading;
 using System.Web;
 using System.Web.Configuration;
 using System.Web.Hosting;
+using OpenRasta.Concordia;
 using OpenRasta.DI;
 using OpenRasta.Diagnostics;
 using OpenRasta.Hosting.AspNet;
@@ -20,20 +21,10 @@ namespace OpenRasta.Hosting.AspNet
     const string COMM_CONTEXT_KEY = "__OR_COMM_CONTEXT";
     internal const string ORIGINAL_PATH_KEY = "__ORIGINAL_PATH";
 
-    public static HostManager HostManager => HostManagerImplementation.Value;
-
-    static readonly Lazy<HostManager> HostManagerImplementation =
-      new Lazy<HostManager>(CreateHost, LazyThreadSafetyMode.PublicationOnly);
-
     bool _disposed;
-
-    public OpenRastaModule()
-    {
-    }
 
     static OpenRastaModule()
     {
-      Host = new AspNetHost();
       Log = NullLogger<AspNetLogSource>.Instance;
     }
 
@@ -54,7 +45,7 @@ namespace OpenRasta.Hosting.AspNet
       }
     }
 
-    public static AspNetHost Host { get; }
+    public static AspNetHost Host { get; set; }
 
     static ILogger<AspNetLogSource> Log { get; set; }
 
@@ -69,6 +60,8 @@ namespace OpenRasta.Hosting.AspNet
 
     public void Init(HttpApplication app)
     {
+      Host = new AspNetHost(new StartupProperties());
+
       app.PostResolveRequestCache += HandleHttpApplicationPostResolveRequestCacheEvent;
       app.EndRequest += HandleHttpApplicationEndRequestEvent;
     }

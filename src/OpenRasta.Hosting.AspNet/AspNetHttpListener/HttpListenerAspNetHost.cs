@@ -18,24 +18,14 @@ namespace OpenRasta.Hosting.AspNet.AspNetHttpListener
     string _physicalDir;
     string _virtualDir;
 
-    public void Configure(string[] prefixes, string vdir, string pdir)
+    public void Configure(string[] prefixes, string vdir, string pdir, Action configuration)
     {
       _virtualDir = vdir;
       _physicalDir = pdir;
       _listener = new System.Net.HttpListener();
       foreach (var prefix in prefixes)
         _listener.Prefixes.Add(prefix);
-    }
-
-    public void ExecuteConfig(Action t)
-    {
-      ((DelegateConfiguration) OpenRastaModule.Host.ConfigurationSource).ConfigurationLambda = () =>
-      {
-        using (OpenRastaConfiguration.Manual)
-        {
-          t();
-        }
-      };
+      AspNetHost.ConfigurationSourceLocator = () => new DelegateConfiguration(configuration);
     }
 
     public override object InitializeLifetimeService()
@@ -68,7 +58,6 @@ namespace OpenRasta.Hosting.AspNet.AspNetHttpListener
 
     public void Start()
     {
-      OpenRastaModule.Host.ConfigurationSource = new DelegateConfiguration();
       var list = BuildManager.GetReferencedAssemblies().Cast<Assembly>().ToList();
       foreach (var asm in list)
       {
@@ -92,11 +81,16 @@ namespace OpenRasta.Hosting.AspNet.AspNetHttpListener
 
     class DelegateConfiguration : IConfigurationSource
     {
-      public Action ConfigurationLambda;
+      Action _configuration;
+
+      public DelegateConfiguration(Action configuration)
+      {
+        _configuration = configuration;
+      }
 
       public void Configure()
       {
-        ConfigurationLambda();
+        _configuration();
       }
     }
   }

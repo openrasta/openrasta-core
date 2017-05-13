@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using System.Web;
 using OpenRasta.Diagnostics;
+using OpenRasta.Web;
 
 namespace OpenRasta.Hosting.AspNet
 {
@@ -12,6 +13,11 @@ namespace OpenRasta.Hosting.AspNet
     {
       _pipeline = pipeline;
       Log = NullLogger.Instance;
+    }
+
+    public OpenRastaHandlerAsync(IntegratedPipeline pipeline, string yielderName, Task runTask, ICommunicationContext env)
+    {
+
     }
 
     public ILogger Log { get; set; }

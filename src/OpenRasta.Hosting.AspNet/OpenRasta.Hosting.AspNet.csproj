@@ -33,7 +33,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="OpenRasta, Version=2.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\packages\openrasta-core.2.6.0-ci-1090\lib\net461\OpenRasta.dll</HintPath>
+      <HintPath>..\packages\openrasta-core.2.6.0-ci-1091\lib\net461\OpenRasta.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
@@ -70,7 +70,7 @@
     <Compile Include="OpenRastaModuleLoader.cs" />
     <Compile Include="PipelineStageAsync.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="YieldBeforeMiddleware.cs" />
+    <Compile Include="YieldBeforeNextMiddleware.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="OpenRasta.Hosting.AspNet.nuspec" />

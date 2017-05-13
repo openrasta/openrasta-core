@@ -11,7 +11,7 @@ namespace OpenRasta.Hosting.AspNet.Tests.Integration
 {
   public abstract class aspnet_server_context : context
   {
-    readonly HttpListenerController _http;
+    HttpListenerController _http;
     public HttpWebResponse TheResponse;
     public string TheResponseAsString;
     public int _port;
@@ -21,9 +21,6 @@ namespace OpenRasta.Hosting.AspNet.Tests.Integration
       TheResponseAsString = null;
       TheResponse = null;
       SelectPort();
-
-      _http = new HttpListenerController(new[] {"http://+:" + _port + "/"}, "/", TempFolder.FullName);
-      _http.Start();
     }
 
     void SelectPort()
@@ -96,9 +93,12 @@ namespace OpenRasta.Hosting.AspNet.Tests.Integration
       TheResponseAsString = payload != null ? encoding.GetString(data, 0, payload.Value) : null;
     }
 
-    public void ConfigureServer(Action t)
+    public void ConfigureServer(Action configuration)
     {
-      _http.Host.ExecuteConfig(t);
+      _http = new HttpListenerController
+        (new[] {"http://+:" + _port + "/"}, "/", TempFolder.FullName, configuration);
+      _http.Start();
+
     }
   }
 }
