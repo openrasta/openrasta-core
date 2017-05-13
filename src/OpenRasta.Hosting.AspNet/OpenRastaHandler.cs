@@ -26,5 +26,4 @@ namespace OpenRasta.Hosting.AspNet
             }
         }
     }
-
 }

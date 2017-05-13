@@ -1,4 +1,8 @@
-﻿install:
+﻿configuration: Release
+platform: Any CPU
+image: Visual Studio 2017
+
+install:
   - set PATH=C:\Ruby23\bin;%PATH%
   - ps: mkdir c:\ca; iwr http://curl.haxx.se/ca/cacert.pem -outfile C:\ca\cacert.pem
   - set SSL_CERT_FILE=C:\ca\cacert.pem
@@ -33,9 +37,6 @@ assembly_info:
 before_build:
   - nuget restore src
 
-configuration: Release
-
-platform: Any CPU
 
 environment:
   SSL_CERT_FILE: C:\ca\cacert.pem

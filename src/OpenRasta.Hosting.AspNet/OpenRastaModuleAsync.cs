@@ -4,6 +4,8 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
+using OpenRasta.Concordia;
+using OpenRasta.DI;
 using OpenRasta.Pipeline;
 using OpenRasta.Web;
 
@@ -28,6 +30,18 @@ namespace OpenRasta.Hosting.AspNet
     {
       Host = HostManager.RegisterHost(new AspNetHost());
 
+      var initializer = Host.Resolver.Resolve<IPipelineInitializer>();
+
+      initializer.Initialize(new StartupProperties
+      {
+        OpenRasta =
+        {
+          Pipeline = { ContributorTrailers =
+          {
+            [call=>call.Target is KnownStages.IUriMatching] = ()=> new YieldBeforeMiddleware(nameof(KnownStages.IUriMatching))
+          }}
+        }
+      });
       var factories = InjectYields(LoadNamedFactories()).Compose();
 
       var postResolve = new PipelineStageAsync(YieldingStages[0], factories);

@@ -9,9 +9,10 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>OpenRasta.Hosting.AspNet</RootNamespace>
     <AssemblyName>OpenRasta.Hosting.AspNet</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
+    <LangVersion>7</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -32,7 +33,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="OpenRasta, Version=2.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\packages\openrasta-core.2.6.0-ci-1084\lib\net45\OpenRasta.dll</HintPath>
+      <HintPath>..\packages\openrasta-core.2.6.0-ci-1090\lib\net461\OpenRasta.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
@@ -63,6 +64,7 @@
     <Compile Include="ClassicPipeline.cs" />
     <Compile Include="IntegratedPipeline.cs" />
     <Compile Include="OpenRastaHandler.cs" />
+    <Compile Include="OpenRastaHandlerAsync.cs" />
     <Compile Include="OpenRastaModule.cs" />
     <Compile Include="OpenRastaModuleAsync.cs" />
     <Compile Include="OpenRastaModuleLoader.cs" />
