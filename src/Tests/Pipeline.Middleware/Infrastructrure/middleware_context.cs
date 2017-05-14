@@ -24,23 +24,27 @@ namespace Tests.Pipeline.Middleware.Infrastructrure
       Next = new NextMiddleware(() => NextCalled = true);
     }
 
-    protected NextMiddleware Next { get; private set; }
+    protected NextMiddleware Next { get; }
 
     protected InMemoryCommunicationContext Env { get; }
 
 
-    protected Func<ICommunicationContext, Task<PipelineContinuation>> Contributor(
+    protected ContributorCall Contributor(
       Func<ICommunicationContext, Task<PipelineContinuation>> contributor)
     {
-      return env =>
-      {
-        ContributorCalled = true;
-        return contributor(env);
-      };
+      return new ContributorCall(
+        NullPipelineContributor.Instance,
+        env =>
+        {
+          ContributorCalled = true;
+          return contributor(env);
+        },
+        string.Empty);
     }
 
-    protected bool ContributorCalled { get; set; }
-    protected bool NextCalled { get; set; }
+    protected bool ContributorCalled { get; private set; }
+
+    protected bool NextCalled { get; private set; }
 
     protected class NextMiddleware : AbstractMiddleware
     {

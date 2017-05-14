@@ -5,7 +5,7 @@ namespace Tests.Pipeline.Initializer.Examples
 {
   public class AfterContributor<T> : IPipelineContributor where T : IPipelineContributor
   {
-    PipelineContinuation DoNothing(ICommunicationContext c)
+    static PipelineContinuation DoNothing(ICommunicationContext c)
     {
       return PipelineContinuation.Continue;
     }

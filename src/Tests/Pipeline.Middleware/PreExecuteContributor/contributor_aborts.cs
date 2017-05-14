@@ -18,7 +18,9 @@ namespace Tests.Pipeline.Middleware.PreExecuteContributor
       ContributorCalled.ShouldBeTrue();
       NextCalled.ShouldBeFalse();
 
+#pragma warning disable 618
       Env.PipelineData.PipelineStage.CurrentState.ShouldBe(PipelineContinuation.Abort);
+#pragma warning restore 618
     }
   }
 }

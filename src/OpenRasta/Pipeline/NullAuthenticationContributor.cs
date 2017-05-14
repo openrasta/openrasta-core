@@ -1,6 +1,6 @@
 ﻿namespace OpenRasta.Pipeline
 {
-  class NullAuthenticationContributor : NullPipelineContributor<
+  class NullAuthenticationContributor : NullOrderedPipelineContributor<
       KnownStages.IBegin,
       KnownStages.IHandlerSelection>,
     KnownStages.IAuthentication

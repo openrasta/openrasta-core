@@ -7,15 +7,16 @@ namespace OpenRasta.Pipeline
   public abstract class AbstractContributorMiddleware : IPipelineMiddlewareFactory, IPipelineMiddleware
   {
     protected IPipelineMiddleware Next { get; private set; } = Middleware.Identity;
-    protected Func<ICommunicationContext, Task<PipelineContinuation>> Contributor { get; }
+    protected Func<ICommunicationContext, Task<PipelineContinuation>> ContributorInvoke { get; }
     public abstract Task Invoke(ICommunicationContext env);
 
-    protected AbstractContributorMiddleware(Func<ICommunicationContext, Task<PipelineContinuation>> singleTapContributor)
+    protected AbstractContributorMiddleware(ContributorCall call)
     {
-      if (singleTapContributor == null)
-        throw new ArgumentNullException(nameof(singleTapContributor));
-      Contributor = singleTapContributor;
+      ContributorCall = call;
+      ContributorInvoke = call.Action ?? throw new ArgumentNullException(nameof(call.Action));
     }
+
+    public ContributorCall ContributorCall { get; }
 
     public virtual IPipelineMiddleware Compose(IPipelineMiddleware next)
     {

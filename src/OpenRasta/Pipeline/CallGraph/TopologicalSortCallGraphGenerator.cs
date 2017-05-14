@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
-using System.Threading.Tasks;
 using OpenRasta.Collections;
 using OpenRasta.Collections.Specialized;
-using OpenRasta.Web;
 
 namespace OpenRasta.Pipeline.CallGraph
 {
@@ -15,7 +12,11 @@ namespace OpenRasta.Pipeline.CallGraph
     {
       contributors = contributors.ToList();
 
-      var bootstrapper = contributors.OfType<KnownStages.IBegin>().Single();
+      var bootstrapper =
+        contributors
+          .OfType<KnownStages.IBegin>()
+          .SingleOrDefault() ?? throw new InvalidOperationException("No IBegin contributor found.");
+
       var nodes = new List<TopologicalNode<ContributorNotification>>();
 
       foreach (var contributor in contributors.Where(x => x != bootstrapper))

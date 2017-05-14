@@ -299,7 +299,10 @@
     <Compile Include="Pipeline\Contributors\CodecNotFoundException.cs" />
     <Compile Include="Pipeline\Contributors\ContextExtensions.cs" />
     <Compile Include="Pipeline\IPipelineInitializer.cs" />
+    <Compile Include="Pipeline\LoggingMiddleware.cs" />
+    <Compile Include="Pipeline\LoggingMiddlewareFactory.cs" />
     <Compile Include="Pipeline\NullAuthenticationContributor.cs" />
+    <Compile Include="Pipeline\NullOrderedPipelineContributor.cs" />
     <Compile Include="Pipeline\NullPipelineContributor.cs" />
     <Compile Include="Pipeline\PreExecuteMiddleware.cs" />
     <Compile Include="Pipeline\PipelineAsync.cs" />

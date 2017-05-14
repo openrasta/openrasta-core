@@ -6,7 +6,9 @@ namespace OpenRasta.Pipeline
 {
   public interface IPipelineAsync
   {
-    IEnumerable<IPipelineContributor> Contributors { get; }
     Task RunAsync(ICommunicationContext env);
+    IEnumerable<IPipelineContributor> Contributors { get; }
+    IEnumerable<ContributorCall> CallGraph { get; set; }
+    IEnumerable<IPipelineMiddlewareFactory> MiddlewareFactories { get; }
   }
 }

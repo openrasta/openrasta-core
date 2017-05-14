@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using OpenRasta.Web;
 
@@ -11,16 +9,17 @@ namespace OpenRasta.Pipeline
   {
     readonly IPipelineMiddleware _middleware;
     public IEnumerable<IPipelineContributor> Contributors { get; }
-    IEnumerable<ContributorCall> CallGraph { get; set; }
+    public IEnumerable<ContributorCall> CallGraph { get; set; }
+    public IEnumerable<IPipelineMiddlewareFactory> MiddlewareFactories { get; }
 
-    public PipelineAsync(
-      IEnumerable<IPipelineContributor> contributors,
-      IPipelineMiddleware middleware,
-      IEnumerable<ContributorCall> callGraph)
+    public
+      PipelineAsync(IPipelineMiddleware middleware, IEnumerable<IPipelineContributor> contributors,
+        IEnumerable<ContributorCall> callGraph, List<IPipelineMiddlewareFactory> middlewareFactories)
     {
       _middleware = middleware;
       Contributors = contributors.ToList().AsReadOnly();
       CallGraph = callGraph;
+      MiddlewareFactories = middlewareFactories;
     }
 
     public Task RunAsync(ICommunicationContext env)

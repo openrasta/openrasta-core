@@ -82,6 +82,8 @@
     <Compile Include="Pipeline.Middleware\Conversion\pre_execute.cs" />
     <Compile Include="Pipeline.Middleware\Conversion\request.cs" />
     <Compile Include="Pipeline.Middleware\Conversion\response.cs" />
+    <Compile Include="Pipeline.Middleware\Diagnostics\disabled.cs" />
+    <Compile Include="Pipeline.Middleware\Diagnostics\enabled.cs" />
     <Compile Include="Pipeline.Middleware\Examples\DoNothingContributor.cs" />
     <Compile Include="Pipeline.Middleware\Examples\OperationResultContributor.cs" />
     <Compile Include="Pipeline.Middleware\Examples\SimpleMiddleware.cs" />

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Security.Authentication.ExtendedProtection.Configuration;
 using OpenRasta.Pipeline;
+// ReSharper disable MemberCanBePrivate.Global
 
 namespace OpenRasta.Concordia
 {
@@ -50,12 +50,27 @@ namespace OpenRasta.Concordia
       {
         Pipeline = new PipelineProperties(startupProperties);
         Errors = new ErrorProperties(startupProperties);
+        Diagnostics = new DiagnosticsProperties(startupProperties);
       }
 
-      public PipelineProperties Pipeline { get; private set; }
+      public DiagnosticsProperties Diagnostics { get; }
+
+      public PipelineProperties Pipeline { get; }
       public ErrorProperties Errors { get; }
     }
 
+    public class DiagnosticsProperties : AbstractProperties
+    {
+      public DiagnosticsProperties(IDictionary<string, object> properties) : base(properties)
+      {
+      }
+
+      public bool TracePipelineExecution
+      {
+        get => Get("openrasta.diagnostics.TracePipelineExecution", true);
+        set => Set("openrasta.diagnostics.TracePipelineExecution", value);
+      }
+    }
     public class PipelineProperties : AbstractProperties
     {
       public PipelineProperties(IDictionary<string, object> startupProperties)
@@ -65,16 +80,16 @@ namespace OpenRasta.Concordia
 
       public bool Validate
       {
-        get { return Get("openrasta.pipeline.validate", true); }
-        set { Set("openrasta.pipeline.validate", value); }
+        get => Get("openrasta.pipeline.validate", true);
+        set => Set("openrasta.pipeline.validate", value);
       }
 
       public IDictionary<
         Func<ContributorCall,bool>,
         Func<IPipelineMiddlewareFactory>> ContributorTrailers
       {
-        get { return Get("openrasta.pipeline.trailers", new Dictionary<Func<ContributorCall, bool>, Func<IPipelineMiddlewareFactory>>()); }
-        set { Set("openrasta.pipeline.trailers", value); }
+        get => Get("openrasta.pipeline.trailers", new Dictionary<Func<ContributorCall, bool>, Func<IPipelineMiddlewareFactory>>());
+        set => Set("openrasta.pipeline.trailers", value);
       }
     }
 
@@ -86,8 +101,8 @@ namespace OpenRasta.Concordia
 
       public bool HandleCatastrophicExceptions
       {
-        get { return Get(Keys.HandleExceptions, true); }
-        set { Set(Keys.HandleExceptions, value); }
+        get => Get(Keys.HandleExceptions, true);
+        set => Set(Keys.HandleExceptions, value);
       }
     }
   }

@@ -18,18 +18,16 @@ namespace OpenRasta.Pipeline
       Func<ICommunicationContext, Task<PipelineContinuation>> action,
       string description)
     {
-      if (target == null) throw new ArgumentNullException(nameof(target));
-      if (action == null) throw new ArgumentNullException(nameof(action));
-      Action = action;
-      ContributorTypeName = description;
-      Target = target;
+      Action = action ?? throw new ArgumentNullException(nameof(action));
+      Target = target ?? throw new ArgumentNullException(nameof(target));
+      ContributorTypeName = description ?? string.Empty;
     }
 
     public string ContributorTypeName { get; set; }
 
     public IPipelineContributor Target
     {
-      get { return _target; }
+      get => _target;
       set
       {
         _target = value;
