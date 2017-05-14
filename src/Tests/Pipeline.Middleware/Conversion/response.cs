@@ -10,9 +10,9 @@ namespace Tests.Pipeline.Middleware.Conversion
   public class response
   {
     [Fact]
-    public void convers_to_pre_exec_contrib()
+    public void convers_to_retry_and_response()
     {
-      var calls = new ContributorCall[]
+      var calls = new[]
       {
         new ContributorCall(new DoNothingContributor(), OpenRasta.Pipeline.Middleware.IdentitySingleTap, "before"),
         new ContributorCall(new UriMatchingContributor(), OpenRasta.Pipeline.Middleware.IdentitySingleTap, "uri"),
@@ -24,8 +24,9 @@ namespace Tests.Pipeline.Middleware.Conversion
       middlewareChain[0].ShouldBeOfType<PreExecuteMiddleware>();
       middlewareChain[1].ShouldBeOfType<PreExecuteMiddleware>();
       middlewareChain[2].ShouldBeOfType<RequestMiddleware>();
-      middlewareChain[3].ShouldBeOfType<RequestMiddleware>();
+      middlewareChain[3].ShouldBeOfType<ResponseRetryMiddleware>();
       middlewareChain[4].ShouldBeOfType<ResponseMiddleware>();
+      middlewareChain[5].ShouldBeOfType<ResponseMiddleware>();
     }
   }
 }

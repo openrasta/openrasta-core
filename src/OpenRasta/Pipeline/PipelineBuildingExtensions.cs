@@ -23,8 +23,12 @@ namespace OpenRasta.Pipeline
 
       foreach (var contributorCall in callGraph)
       {
+        if (contributorCall.Target is KnownStages.IOperationResultInvocation)
+        {
+          converter = CreateResponseMiddleware;
+          yield return (new ResponseRetryMiddleware(), null);
+        }
         var middleware = converter(contributorCall);
-
         yield return (middleware, contributorCall);
         if (interceptors != null)
           foreach (var followups in interceptors
@@ -34,8 +38,6 @@ namespace OpenRasta.Pipeline
 
         if (contributorCall.Target is KnownStages.IUriMatching)
           converter = CreateRequestMiddleware;
-        if (contributorCall.Target is KnownStages.IOperationResultInvocation)
-          converter = CreateResponseMiddleware;
       }
     }
 

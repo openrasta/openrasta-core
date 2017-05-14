@@ -42,7 +42,7 @@ namespace OpenRasta.Pipeline.Contributors
                 return PipelineContinuation.Continue;
             }
 
-            string acceptHeader = context.Request.Headers[HEADER_ACCEPT];
+            var acceptHeader = context.Request.Headers[HEADER_ACCEPT];
 
 
             var responseEntityType = _typeSystem.FromInstance(context.Response.Entity.Instance);
@@ -98,7 +98,7 @@ namespace OpenRasta.Pipeline.Contributors
         void LogCodecSelected(IType responseEntityType, CodecRegistration negotiatedCodec, int codecsCount)
         {
             Log.WriteInfo(
-              $"Selected codec {(object) negotiatedCodec.CodecType.Name} out of {(object) codecsCount} codecs for entity of type {(object) responseEntityType.Name} and negotiated media type {(object) negotiatedCodec.MediaType}.");
+              $"Selected codec {negotiatedCodec.CodecType.Name} out of {codecsCount} codecs for entity of type {responseEntityType.Name} and negotiated media type {negotiatedCodec.MediaType}.");
         }
 
         void LogNoResponseEntity()

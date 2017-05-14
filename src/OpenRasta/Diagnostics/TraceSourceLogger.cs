@@ -19,6 +19,7 @@ namespace OpenRasta.Diagnostics
     static readonly TraceSource DefaultTraceSource = new TraceSource("openrasta");
     public static readonly ILogger Instance =
       DependencyManager.Current?.Resolve<ILogger>() ?? new TraceSourceLogger();
+
     public TraceSourceLogger() : this(DefaultTraceSource)
     {
     }
@@ -26,7 +27,7 @@ namespace OpenRasta.Diagnostics
     public TraceSourceLogger(TraceSource source)
     {
       _source = source;
-      var genericListeners = Trace.Listeners;
+
       if (Debugger.IsLogging() && Debug.Listeners.Count == 0)
       {
         var listener = new DebuggerLoggingTraceListener

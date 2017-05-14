@@ -25,10 +25,15 @@ namespace OpenRasta.Pipeline.Contributors
 {
   public class ResponseEntityWriterContributor : KnownStages.IResponseCoding
   {
+    readonly IDependencyResolver _resolver;
     static readonly byte[] PADDING = Enumerable.Repeat((byte) ' ', 512).ToArray();
 
     ILogger Log { get; } = NullLogger.Instance;
 
+    public ResponseEntityWriterContributor(IDependencyResolver resolver)
+    {
+      _resolver = resolver;
+    }
     public void Initialize(IPipeline pipeline)
     {
       pipeline.NotifyAsync(WriteResponseBuffered).After<KnownStages.ICodecResponseSelection>();
@@ -62,27 +67,37 @@ namespace OpenRasta.Pipeline.Contributors
 
     ICodec ResolveCodec(ICommunicationContext context)
     {
+      var codecInstance = FindResponseCodec(context);
+
+      if (context.PipelineData.ResponseCodec?.Configuration != null)
+        codecInstance.Configuration = context.PipelineData.ResponseCodec.Configuration;
+
+      return codecInstance;
+    }
+
+    ICodec FindResponseCodec(ICommunicationContext context)
+    {
       var codecInstance = context.Response.Entity.Codec;
+      Type codecType = null;
       if (codecInstance != null)
       {
         Log.WriteDebug("Codec instance with type {0} has already been defined.",
           codecInstance.GetType().Name);
       }
-      else
+      else if ((codecType = context.PipelineData.ResponseCodec?.CodecType) != null)
       {
+        if (_resolver.HasDependency(codecType) == false)
+          _resolver.AddDependency(codecType, DependencyLifetime.Transient);
+
         context.Response.Entity.Codec =
-          codecInstance =
-            DependencyManager.GetService(context.PipelineData.ResponseCodec.CodecType) as ICodec;
+          codecInstance = _resolver.Resolve(codecType) as ICodec;
       }
+
       if (codecInstance == null)
         throw new CodecNotFoundException(
-          $"Codec {context.PipelineData.ResponseCodec.CodecType} couldn't be initialized.");
+          $"Codec ({codecType?.Name ?? "null"}) couldn't be initialized.");
 
       Log.WriteDebug("Codec {0} selected.", codecInstance.GetType().Name);
-
-      if (context.PipelineData.ResponseCodec?.Configuration != null)
-        codecInstance.Configuration = context.PipelineData.ResponseCodec.Configuration;
-
       return codecInstance;
     }
 
@@ -93,7 +108,7 @@ namespace OpenRasta.Pipeline.Contributors
       return (instance, entity, parameters) =>
       {
         ((IMediaTypeWriter) codecInstance).WriteTo(instance, entity, parameters.ToArray());
-        return Task.FromResult(0);
+        return Task.CompletedTask;
       };
     }
 

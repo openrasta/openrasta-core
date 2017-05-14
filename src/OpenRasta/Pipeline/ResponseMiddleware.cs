@@ -12,6 +12,10 @@ namespace OpenRasta.Pipeline
 
     public override async Task Invoke(ICommunicationContext env)
     {
+      if (env.PipelineData.PipelineStage.CurrentState == PipelineContinuation.RenderNow)
+      {
+        env.PipelineData.PipelineStage.CurrentState = PipelineContinuation.Continue;
+      }
       var contribState = await ContributorInvoke(env);
 
 #pragma warning disable 618
@@ -21,7 +25,11 @@ namespace OpenRasta.Pipeline
         throw new PipelineAbortedException();
       }
 #pragma warning restore 618
-
+      if (contribState == PipelineContinuation.RenderNow)
+      {
+        env.PipelineData.PipelineStage.CurrentState = PipelineContinuation.RenderNow;
+        return;
+      }
       await Next.Invoke(env);
     }
   }

@@ -1,16 +1,8 @@
 ﻿using System;
 using System.Linq;
-using System.Threading.Tasks;
-using OpenRasta;
-using OpenRasta.Concordia;
-using OpenRasta.DI;
-using OpenRasta.Hosting.InMemory;
 using OpenRasta.Pipeline;
 using OpenRasta.Pipeline.CallGraph;
-using OpenRasta.Pipeline.Contributors;
-using OpenRasta.Web;
 using Shouldly;
-using Tests.Infrastructure;
 using Tests.Pipeline.Initializer.Examples;
 using Tests.Pipeline.Initializer.Infrastructure;
 using Xunit;

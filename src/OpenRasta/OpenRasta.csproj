@@ -359,6 +359,7 @@
     <Compile Include="Pipeline\PipelineRunner.cs" />
     <Compile Include="Pipeline\PipelineStage.cs" />
     <Compile Include="Pipeline\ResponseMiddleware.cs" />
+    <Compile Include="Pipeline\ResponseRetryMiddleware.cs" />
     <Compile Include="Pipeline\ThreePhasePipelineInitializer.cs" />
     <Compile Include="Pipeline\YieldingMiddleware.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
