@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using OpenRasta.Concordia;
 using OpenRasta.Diagnostics;
@@ -40,34 +41,57 @@ namespace OpenRasta.Pipeline
         {
           defaults.Add(new CatastrophicFailureMiddleware());
         }
-        var orderedCallGraph = _callGrapher
-          .GenerateCallGraph(_contributors)
-          .ToList();
-        var orderedContributor = orderedCallGraph.Select(c => c.Target).ToList();
-        var orderedContributorMiddleware = orderedCallGraph
-          .ToDetailedMiddleware(startup.OpenRasta.Pipeline.ContributorTrailers)
-          .ToList();
+        var pipeline = LogBuild(
+          _callGrapher,
+          defaults,
+          _contributors).ToList();
 
-        var orderedMiddleware = defaults
-          .Concat(orderedContributorMiddleware.Select(c=>c.Item1));
+        return new PipelineAsync(
+          pipeline.Select(c=>c.contributor?.Target).Where(c=>c!=null).ToList(),
+          pipeline.Select(c=>c.middleware).Compose(),
+          pipeline.Select(c=>c.contributor).ToList());
+      }
 
-        foreach (var defaultMiddleware in defaults)
-          LogMiddleware(defaultMiddleware);
-        foreach (var contributor in orderedContributorMiddleware)
-        {
-          LogMiddleware(contributor.Item1);
+    }
 
-          if (contributor.Item2 != null)
-            Log.WriteInfo($"Initialized contributor {contributor.Item2.Target.GetType().Name}");
-        }
-
-        return new PipelineAsync(orderedContributor, orderedMiddleware.Compose(), orderedCallGraph);
+    static IEnumerable<(IPipelineMiddlewareFactory, ContributorCall)> Build(
+      IGenerateCallGraphs callGraphGenerator,
+      IEnumerable<IPipelineMiddlewareFactory> defaults,
+      IEnumerable<IPipelineContributor> contributors)
+    {
+      foreach (var factory in defaults)
+      {
+        yield return (factory, null);
+      }
+      foreach (var contributor in
+        callGraphGenerator.GenerateCallGraph(contributors)
+          .ToDetailedMiddleware())
+      {
+        yield return contributor;
       }
     }
 
-    static void LogMiddleware(IPipelineMiddlewareFactory factory)
+    IEnumerable<(IPipelineMiddlewareFactory middleware, ContributorCall contributor)> LogBuild(
+      IGenerateCallGraphs callGraphGenerator,
+      IEnumerable<IPipelineMiddlewareFactory> defaults,
+      IEnumerable<IPipelineContributor> contributors)
     {
-      Log.WriteInfo($"Initialized middleware factory {factory.GetType().Name}");
+      using (Log.Operation(this, $"Initializing the pipeline. (using {callGraphGenerator.GetType()})"))
+      {
+        foreach (var result in Build(callGraphGenerator, defaults, contributors))
+          yield return LogBuildEntry(result);
+      }
+    }
+
+    (IPipelineMiddlewareFactory middleware, ContributorCall contributor) LogBuildEntry(
+      (IPipelineMiddlewareFactory middleware, ContributorCall call) result)
+    {
+      using (Log.Operation(this, $"Initializing middleware {result.middleware.GetType().Name}"))
+      {
+        if (result.call != null)
+          Log.WriteInfo($"Initialized contributor {result.call.ContributorTypeName}");
+        return result;
+      }
     }
   }
 }

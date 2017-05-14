@@ -1,5 +1,11 @@
 ﻿namespace OpenRasta.Pipeline
 {
+  public class NullPipelineContributor : IPipelineContributor
+  {
+    NullPipelineContributor() {}
+    public static NullPipelineContributor Instance { get; } = new NullPipelineContributor();
+    public void Initialize(IPipeline pipelineRunner) {}
+  }
   class NullPipelineContributor<TAfter, TBefore> : IPipelineContributor
     where TBefore : IPipelineContributor where TAfter : IPipelineContributor
   {

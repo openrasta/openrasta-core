@@ -13,7 +13,9 @@ namespace OpenRasta.Pipeline
       ContributorTypeName = "Unknown";
     }
 
-    public ContributorCall(IPipelineContributor target, Func<ICommunicationContext, Task<PipelineContinuation>> action,
+    public ContributorCall(
+      IPipelineContributor target,
+      Func<ICommunicationContext, Task<PipelineContinuation>> action,
       string description)
     {
       if (target == null) throw new ArgumentNullException(nameof(target));
