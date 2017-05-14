@@ -116,13 +116,6 @@ namespace OpenRasta.Pipeline.Contributors
       return Task.FromResult(0);
     }
   }
-
-  internal class CodecNotFoundException : Exception
-  {
-    public CodecNotFoundException(string message) : base(message)
-    {
-    }
-  }
 }
 
 #region Full license

@@ -5,25 +5,7 @@ using System.Text;
 
 namespace OpenRasta.Pipeline
 {
-    class NullAuthenticationContributor : NullPipelineContributor<
-            KnownStages.IBegin,
-            KnownStages.IHandlerSelection>,
-        KnownStages.IAuthentication
-    {}
-
-    class NullPipelineContributor<TAfter, TBefore> : IPipelineContributor
-        where TBefore : IPipelineContributor where TAfter : IPipelineContributor
-    {
-        public void Initialize(IPipeline pipelineRunner)
-        {
-            pipelineRunner
-                .Notify(_ => PipelineContinuation.Continue)
-                .Before<TBefore>().And
-                .After<TAfter>();
-        }
-    }
-
-    /// <summary>
+  /// <summary>
     /// Contains all the known stages 
     /// </summary>
     public static class KnownStages

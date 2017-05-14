@@ -56,18 +56,28 @@ namespace OpenRasta.Pipeline
       IDictionary<Func<ContributorCall, bool>, Func<IPipelineMiddlewareFactory>>
         interceptors = null)
     {
+      return ToDetailedMiddleware(callGraph, interceptors).Select(m => m.Item1).ToList();
+    }
+
+    public static IEnumerable<Tuple<IPipelineMiddlewareFactory, ContributorCall>> ToDetailedMiddleware(
+      this IEnumerable<ContributorCall> callGraph,
+      IDictionary<Func<ContributorCall, bool>, Func<IPipelineMiddlewareFactory>>
+        interceptors = null)
+    {
       Func<ContributorCall, IPipelineMiddlewareFactory> converter = CreatePreExecuteMiddleware;
 
       foreach (var contributorCall in callGraph)
       {
         var middleware = converter(contributorCall);
 
-        yield return middleware;
+        yield return Tuple.Create(middleware, contributorCall);
         if (interceptors != null)
           foreach (var followups in interceptors
             .Where(pair => pair.Key(contributorCall))
             .Select(pair => pair.Value))
-            yield return followups();
+            yield return Tuple.Create<IPipelineMiddlewareFactory, ContributorCall>(
+              followups(),
+              null);
 
         if (contributorCall.Target is KnownStages.IUriMatching)
           converter = CreateRequestMiddleware;

@@ -21,7 +21,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <LangVersion>6</LangVersion>
+    <LangVersion>7</LangVersion>
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -288,13 +288,18 @@
     <Compile Include="OperationModel\OperationRequestCodecExtensions.cs" />
     <Compile Include="OperationModel\OutputMember.cs" />
     <Compile Include="Pipeline\AbstractContributorMiddleware.cs" />
+    <Compile Include="Pipeline\AbstractMiddleware.cs" />
     <Compile Include="Pipeline\CallGraph\ContributorInitializer.cs" />
+    <Compile Include="Pipeline\CallGraph\DependentContributorMissingException.cs" />
     <Compile Include="Pipeline\CatastrophicFailureMiddleware.cs" />
     <Compile Include="Pipeline\CleanupMiddleware.cs" />
+    <Compile Include="Pipeline\Contributors\CodecNotFoundException.cs" />
     <Compile Include="Pipeline\Contributors\ContextExtensions.cs" />
     <Compile Include="Pipeline\IPipelineInitializer.cs" />
+    <Compile Include="Pipeline\NullAuthenticationContributor.cs" />
+    <Compile Include="Pipeline\NullPipelineContributor.cs" />
     <Compile Include="Pipeline\PreExecuteMiddleware.cs" />
-    <Compile Include="Pipeline\ThreePhasedPipelineAdaptor.cs" />
+    <Compile Include="Pipeline\PipelineAsync.cs" />
     <Compile Include="Pipeline\IPipelineBuilder.cs" />
     <Compile Include="Pipeline\IPipelineContributorAsync.cs" />
     <Compile Include="Pipeline\PipelineAbortedException.cs" />
@@ -348,6 +353,7 @@
     <Compile Include="Pipeline\PipelineRunner.cs" />
     <Compile Include="Pipeline\PipelineStage.cs" />
     <Compile Include="Pipeline\ResponseMiddleware.cs" />
+    <Compile Include="Pipeline\ThreePhasePipelineInitializer.cs" />
     <Compile Include="Pipeline\YieldingMiddleware.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RecursionException.cs" />

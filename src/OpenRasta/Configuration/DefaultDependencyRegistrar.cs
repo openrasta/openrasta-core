@@ -65,7 +65,6 @@ namespace OpenRasta.Configuration
       SetUriResolver<TemplatedUriResolver>();
       SetCodecRepository<CodecRepository>();
       SetHandlerRepository<HandlerRepository>();
-      SetPipeline<ThreePhasedPipelineAdaptor>();
       SetLogger<TraceSourceLogger>();
       SetErrorCollector<OperationContextErrorCollector>();
       SetObjectBinderLocator<DefaultObjectBinderLocator>();
@@ -225,7 +224,7 @@ namespace OpenRasta.Configuration
         typeof(IRequestEntityReader),
         typeof(RequestEntityReaderHydrator),
         DependencyLifetime.Transient);
-      resolver.AddDependency<IPipelineInitializer, ThreePhasedPipelineAdaptor>();
+      resolver.AddDependency<IPipelineInitializer, ThreePhasePipelineInitializer>();
     }
 
     protected virtual void AddCSharpCodeSnippetModifiers()
@@ -310,7 +309,6 @@ namespace OpenRasta.Configuration
       resolver.AddDependency(typeof(IUriResolver), UriResolverType, DependencyLifetime.Singleton);
       resolver.AddDependency(typeof(ICodecRepository), CodecRepositoryType, DependencyLifetime.Singleton);
       resolver.AddDependency(typeof(IHandlerRepository), HandlerRepositoryType, DependencyLifetime.Singleton);
-      resolver.AddDependency(typeof(IPipeline), PipelineType, DependencyLifetime.Singleton);
       resolver.AddDependency(typeof(IObjectBinderLocator), ParameterBinderLocatorType, DependencyLifetime.Singleton);
       resolver.AddDependency(typeof(IOperationCreator), OperationCreatorType, DependencyLifetime.Transient);
       resolver.AddDependency(typeof(IOperationExecutor), OperationExecutorType, DependencyLifetime.Transient);

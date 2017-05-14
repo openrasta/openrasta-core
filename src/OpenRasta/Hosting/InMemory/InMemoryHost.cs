@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using OpenRasta.Concordia;
 using OpenRasta.Configuration;
 using OpenRasta.DI;
 using OpenRasta.Pipeline;
@@ -7,7 +8,7 @@ using OpenRasta.Web;
 
 namespace OpenRasta.Hosting.InMemory
 {
-  public class InMemoryHost : IHost, IDependencyResolverAccessor, IDisposable
+  public class InMemoryHost : IHost, IHostStartWithStartupProperties, IDependencyResolverAccessor, IDisposable
   {
     readonly IConfigurationSource _configuration;
     bool _isDisposed;
@@ -18,23 +19,24 @@ namespace OpenRasta.Hosting.InMemory
       _configuration = configuration;
       ApplicationVirtualPath = "/";
       HostManager = HostManager.RegisterHost(this);
-      RaiseStart();
+      RaiseStart(new StartupProperties());
+
+
     }
 
     public event EventHandler<IncomingRequestProcessedEventArgs> IncomingRequestProcessed;
     public event EventHandler<IncomingRequestReceivedEventArgs> IncomingRequestReceived;
 
-    public event EventHandler Start;
     public event EventHandler Stop;
-    public string ApplicationVirtualPath { get; private set; }
-    public HostManager HostManager { get; private set; }
-    public IDependencyResolver Resolver { get; private set; }
+    public string ApplicationVirtualPath { get; }
+    public HostManager HostManager { get; }
+    public IDependencyResolver Resolver { get; }
 
     IDependencyResolverAccessor IHost.ResolverAccessor => this;
 
     public void Close()
     {
-      RaiseStop();
+      RaiseStop(new StartupProperties());
       HostManager.UnregisterHost(this);
       _isDisposed = true;
     }
@@ -104,12 +106,27 @@ namespace OpenRasta.Hosting.InMemory
       return incomingRequestReceivedEventArgs.RunTask;
     }
 
-    protected virtual void RaiseStart()
+    event EventHandler _legacyStart;
+    event EventHandler<StartupProperties> _start;
+    event EventHandler IHost.Start
     {
-      Start.Raise(this, EventArgs.Empty);
+      add => _legacyStart += value;
+      remove => _legacyStart -= value;
+    }
+    event EventHandler<StartupProperties> IHostStartWithStartupProperties.Start
+    {
+      add => _start += value;
+      remove => _start -= value;
     }
 
-    protected virtual void RaiseStop()
+    protected internal virtual void RaiseStart(StartupProperties properties)
+    {
+      _legacyStart.Raise(this);
+      var start = _start;
+      start?.Invoke(this, properties);
+    }
+
+    protected virtual void RaiseStop(StartupProperties startupProperties)
     {
       Stop.Raise(this, EventArgs.Empty);
     }

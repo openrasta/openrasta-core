@@ -32,7 +32,7 @@ namespace OpenRasta.Configuration
           "Something went horribly wrong and the Configuration is deemed finish when it didn't even start!");
 
 #pragma warning disable 618
-      DependencyManager.Pipeline.Initialize();
+      //DependencyManager.Pipeline.Initialize();
 #pragma warning restore 618
       _isBeingConfigured = false;
     }
