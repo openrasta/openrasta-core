@@ -1,4 +1,5 @@
 #region License
+
 /* Authors:
  *      Sebastien Lambla (seb@serialseb.com)
  * Copyright:
@@ -6,6 +7,7 @@
  * License:
  *      This file is distributed under the terms of the MIT License found at the end of this file.
  */
+
 #endregion
 
 using System.Diagnostics;
@@ -13,74 +15,77 @@ using System.Linq;
 
 namespace OpenRasta.Diagnostics
 {
-    public class DebuggerLoggingTraceListener : TraceListener
+  public class DebuggerLoggingTraceListener : TraceListener
+  {
+    public DebuggerLoggingTraceListener()
+      : base("DebuggerLoggingTraceListener")
     {
-        public DebuggerLoggingTraceListener()
-            : base("DebuggerLoggingTraceListener")
-        {
-        }
-
-        public override bool IsThreadSafe
-        {
-            get { return false; }
-        }
-
-        public override void TraceData(TraceEventCache eventCache, string source, TraceEventType eventType, int id, object data)
-        {
-            WriteAll(eventCache, eventType, id, data.ToString());
-        }
-
-        public override void TraceData(TraceEventCache eventCache, string source, TraceEventType eventType, int id, params object[] data)
-        {
-            string message = string.Join(", ", data.Select(obj => obj.ToString()).ToArray());
-            WriteAll(eventCache, eventType, id, message);
-        }
-
-        public override void TraceEvent(TraceEventCache eventCache, string source, TraceEventType eventType, int id, string format, params object[] args)
-        {
-            WriteAll(eventCache, eventType, id, format.With(args));
-        }
-
-        public override void TraceEvent(TraceEventCache eventCache, string source, TraceEventType eventType, int id, string message)
-        {
-            WriteAll(eventCache, eventType, id, message);
-        }
-
-        public override void Write(string message)
-        {
-            if (Debugger.IsLogging())
-            {
-                if (NeedIndent)
-                    WriteIndent();
-                Debugger.Log(0, "OpenRasta", message);
-            }
-        }
-
-        public override void WriteLine(string message)
-        {
-            if (Debugger.IsLogging())
-            {
-                if (NeedIndent)
-                    WriteIndent();
-                Debugger.Log(0, "OpenRasta", message + "\r\n");
-                NeedIndent = true;
-            }
-        }
-
-        void UpdateIndent()
-        {
-            IndentLevel = Trace.CorrelationManager.LogicalOperationStack.Count;
-        }
-
-        void WriteAll(TraceEventCache eventCache, TraceEventType eventType, int id, string message)
-        {
-            UpdateIndent();
-            WriteLine(string.Format("{4}-[{0}] {1}({2}) {3}", (object) eventCache.DateTime.ToString("u"), (object) eventType.ToString(), (object) id, (object) message, (object) eventCache.ThreadId));
-        }
     }
+
+    public override bool IsThreadSafe => false;
+
+    public override void TraceData(TraceEventCache eventCache, string source, TraceEventType eventType, int id,
+      object data)
+    {
+      WriteAll(eventCache, eventType, id, data.ToString());
+    }
+
+    public override void TraceData(TraceEventCache eventCache, string source, TraceEventType eventType, int id,
+      params object[] data)
+    {
+      var message = string.Join(", ", data.Select(obj => obj.ToString()).ToArray());
+      WriteAll(eventCache, eventType, id, message);
+    }
+
+    public override void TraceEvent(TraceEventCache eventCache, string source, TraceEventType eventType, int id,
+      string format, params object[] args)
+    {
+      WriteAll(eventCache, eventType, id, format.With(args));
+    }
+
+    public override void TraceEvent(TraceEventCache eventCache, string source, TraceEventType eventType, int id,
+      string message)
+    {
+      WriteAll(eventCache, eventType, id, message);
+    }
+
+    public override void Write(string message)
+    {
+      if (Debugger.IsLogging())
+      {
+        if (NeedIndent)
+          WriteIndent();
+        Debugger.Log(0, "OpenRasta", message);
+      }
+    }
+
+    public override void WriteLine(string message)
+    {
+      if (Debugger.IsLogging())
+      {
+        if (NeedIndent)
+          WriteIndent();
+        Debugger.Log(0, "OpenRasta", message + "\r\n");
+        NeedIndent = true;
+      }
+    }
+
+    void UpdateIndent()
+    {
+      IndentLevel = Trace.CorrelationManager.LogicalOperationStack.Count;
+    }
+
+    void WriteAll(TraceEventCache eventCache, TraceEventType eventType, int id, string message)
+    {
+      UpdateIndent();
+      WriteLine(string.Format("{4}-[{0}] {1}({2}) {3}", (object) eventCache.DateTime.ToString("u"),
+        (object) eventType.ToString(), (object) id, (object) message, (object) eventCache.ThreadId));
+    }
+  }
 }
 
 #region Full license
+
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
 // "Software"), to deal in the Software without restriction, including
@@ -97,4 +102,5 @@ namespace OpenRasta.Diagnostics
 // LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
 #endregion

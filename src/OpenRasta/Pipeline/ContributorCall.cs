@@ -20,7 +20,6 @@ namespace OpenRasta.Pipeline
     {
       Action = action ?? throw new ArgumentNullException(nameof(action));
       Target = target ?? throw new ArgumentNullException(nameof(target));
-      ContributorTypeName = description ?? string.Empty;
     }
 
     public string ContributorTypeName { get; set; }

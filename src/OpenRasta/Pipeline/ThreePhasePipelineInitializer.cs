@@ -12,7 +12,7 @@ namespace OpenRasta.Pipeline
   {
     readonly IEnumerable<IPipelineContributor> _contributors;
     readonly IGenerateCallGraphs _callGrapher;
-    static ILogger Log { get; } = new TraceSourceLogger();
+    static ILogger Log { get; } = TraceSourceLogger.Instance;
 
     public ThreePhasePipelineInitializer(IDependencyResolver resolver)
       : this(resolver.ResolveAll<IPipelineContributor>(),
@@ -106,7 +106,7 @@ namespace OpenRasta.Pipeline
 
       Log.WriteInfo(result.call != null
         ? $"Initialized contributor {result.call.ContributorTypeName} ({middleware})"
-        : $"Initialized middleware {middleware}");
+        : $"Initialized {middleware}");
 
       return result;
     }
