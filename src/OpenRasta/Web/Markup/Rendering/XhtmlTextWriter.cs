@@ -31,14 +31,14 @@ namespace OpenRasta.Web.Markup
 
         public TextWriter TextWriter { get; private set; }
 
-        public void BeginWriteStartElement(string TagName) { TextWriter.Write(TAG_START_BEGIN.With(TagName)); }
+        public void BeginWriteStartElement(string TagName) { TextWriter.Write(string.Format(TAG_START_BEGIN, TagName)); }
 
         public void EndWriteStartElement() { TextWriter.Write(TAG_START_END); }
         public void EndWriteStartElementFinal() { TextWriter.Write(TAG_START_END_FINAL); }
 
-        public void WriteEndElement(string tagName) { TextWriter.Write(TAG_END.With(tagName)); }
+        public void WriteEndElement(string tagName) { TextWriter.Write(string.Format(TAG_END, tagName)); }
 
-        public void WriteAttributeString(string key, string value) { TextWriter.Write(TAG_ATTR.With(key, HtmlEncode(value))); }
+        public void WriteAttributeString(string key, string value) { TextWriter.Write(string.Format(TAG_ATTR, key, HtmlEncode(value))); }
         public void WriteString(string content) { TextWriter.Write(HtmlEncode(content)); }
 
         public void WriteUnencodedString(string content) { TextWriter.Write(content); }

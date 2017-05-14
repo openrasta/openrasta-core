@@ -29,9 +29,8 @@ namespace OpenRasta.Hosting.HttpListener
             {
                 var request = _nativeContext.Request;
 
-                string baseUri = "{0}://{1}{2}/".With(request.Url.Scheme, 
-                                                      request.Url.Host, 
-                                                      request.Url.IsDefaultPort ? string.Empty : ":" + request.Url.Port);
+                string baseUri =
+                  $"{request.Url.Scheme}://{request.Url.Host}{(request.Url.IsDefaultPort ? string.Empty : ":" + request.Url.Port)}/";
 
                 var appBaseUri = new Uri(new Uri(baseUri, UriKind.Absolute), 
                                          new Uri(_host.ApplicationVirtualPath, UriKind.Relative));

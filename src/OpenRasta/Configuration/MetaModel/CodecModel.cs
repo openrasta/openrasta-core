@@ -16,7 +16,8 @@ namespace OpenRasta.Configuration.MetaModel
             if (codecType == null)
                 throw new ArgumentNullException("codecType");
             if (!codecType.IsAssignableTo<ICodec>())
-                throw new ArgumentOutOfRangeException("codecType", "The type {0} doesn't implement ICodec".With(codecType.FullName));
+                throw new ArgumentOutOfRangeException("codecType",
+                  $"The type {codecType.FullName} doesn't implement ICodec");
 
             CodecType = codecType;
             Configuration = configuration;

@@ -91,21 +91,14 @@ namespace OpenRasta.Pipeline.Contributors
             {
                 Title = "The response from the server could not be sent in any format understood by the UA.",
                 Description =
-                    string.Format(
-                    "Content-type negotiation failed. Resource {0} doesn't have any codec for the content-types in the accept header:\r\n{1}",
-                    responseEntityType,
-                    acceptHeader)
+                $"Content-type negotiation failed. Resource {responseEntityType} doesn't have any codec for the content-types in the accept header:\r\n{acceptHeader}"
             };
         }
 
         void LogCodecSelected(IType responseEntityType, CodecRegistration negotiatedCodec, int codecsCount)
         {
             Log.WriteInfo(
-                "Selected codec {0} out of {1} codecs for entity of type {2} and negotiated media type {3}.".
-                    With(negotiatedCodec.CodecType.Name,
-                         codecsCount,
-                         responseEntityType.Name,
-                         negotiatedCodec.MediaType));
+              $"Selected codec {(object) negotiatedCodec.CodecType.Name} out of {(object) codecsCount} codecs for entity of type {(object) responseEntityType.Name} and negotiated media type {(object) negotiatedCodec.MediaType}.");
         }
 
         void LogNoResponseEntity()

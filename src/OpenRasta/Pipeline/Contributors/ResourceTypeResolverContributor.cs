@@ -55,8 +55,7 @@ namespace OpenRasta.Pipeline.Contributors
             else
             {
                 Log.WriteInfo(
-                    "Not resolving any resource as a resource with key {0} has already been selected.".With(
-                        context.PipelineData.SelectedResource.ResourceKey));
+                  $"Not resolving any resource as a resource with key {context.PipelineData.SelectedResource.ResourceKey} has already been selected.");
             }
             return PipelineContinuation.Continue;
         }

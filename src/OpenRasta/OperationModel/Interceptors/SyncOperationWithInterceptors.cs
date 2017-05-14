@@ -49,7 +49,7 @@ namespace OpenRasta.OperationModel.Interceptors
       foreach (var precondition in _interceptors)
       {
         TryExecute(() => precondition.BeforeExecute(_inner),
-          "The interceptor {0} stopped execution.".With(precondition.GetType().Name));
+          $"The interceptor {precondition.GetType().Name} stopped execution.");
       }
     }
 

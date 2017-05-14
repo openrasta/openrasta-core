@@ -105,10 +105,7 @@ namespace OpenRasta.Web
             if (template == null)
             {
                 throw new InvalidOperationException(
-                    string.Format(
-                        "No suitable Uri could be found for resource with key {0} with values {1}.", 
-                        resourceKey, 
-                        keyValues.ToHtmlFormEncoding()));
+                  $"No suitable Uri could be found for resource with key {resourceKey} with values {keyValues.ToHtmlFormEncoding()}.");
             }
 
             return template.BindByName(baseAddress, keyValues);

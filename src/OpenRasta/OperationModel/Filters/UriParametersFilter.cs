@@ -83,9 +83,8 @@ namespace OpenRasta.OperationModel.Filters
             return new ErrorFrom<UriParametersFilter>
             {
                 Title = "No method matched the uri parameters", 
-                Message = string.Format(
-                    "None of the operations had members that could be matches against the uri parameters:\r\n{0}", 
-                    FormatUriParameterMatches(uriTemplateParameters))
+                Message =
+                $"None of the operations had members that could be matches against the uri parameters:\r\n{FormatUriParameterMatches(uriTemplateParameters)}"
             };
         }
 

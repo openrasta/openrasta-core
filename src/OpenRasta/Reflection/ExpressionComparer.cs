@@ -120,7 +120,7 @@ namespace IQ
                 case ExpressionType.ListInit:
                     return this.CompareListInit((ListInitExpression)a, (ListInitExpression)b);
                 default:
-                    throw new Exception(string.Format("Unhandled expression type: '{0}'", a.NodeType));
+                    throw new Exception($"Unhandled expression type: '{a.NodeType}'");
             }
         }
 
@@ -303,7 +303,7 @@ namespace IQ
                 case MemberBindingType.MemberBinding:
                     return this.CompareMemberMemberBinding((MemberMemberBinding)a, (MemberMemberBinding)b);
                 default:
-                    throw new Exception(string.Format("Unhandled binding type: '{0}'", a.BindingType));
+                    throw new Exception($"Unhandled binding type: '{a.BindingType}'");
             }
         }
 

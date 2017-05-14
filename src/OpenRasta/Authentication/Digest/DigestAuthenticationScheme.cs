@@ -30,7 +30,7 @@ namespace OpenRasta.Authentication.Digest
 
         public void Challenge(IResponse response)
         {
-            response.Headers["WWW-Authenticate"] = string.Format("Basic realm=\"{0}\"", _digestAuthenticator.Realm);
+            response.Headers["WWW-Authenticate"] = $"Basic realm=\"{_digestAuthenticator.Realm}\"";
         }
     }
 }

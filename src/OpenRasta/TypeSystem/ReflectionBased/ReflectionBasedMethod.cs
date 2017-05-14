@@ -33,7 +33,8 @@ namespace OpenRasta.TypeSystem.ReflectionBased
 
         public override string ToString()
         {
-            return "{0}::{1}({2})".With(Owner.TypeName, _methodInfo.Name, string.Join(", ", _methodInfo.GetParameters().Select(x => "{0} {1}".With(x.ParameterType.Name, x.Name)).ToArray()));
+            return
+              $"{Owner.TypeName}::{_methodInfo.Name}({string.Join(", ", _methodInfo.GetParameters().Select(x => $"{x.ParameterType.Name} {x.Name}").ToArray())})";
         }
 
         public T FindAttribute<T>() where T : class

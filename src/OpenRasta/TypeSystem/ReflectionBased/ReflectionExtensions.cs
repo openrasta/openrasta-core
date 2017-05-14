@@ -159,7 +159,7 @@ namespace OpenRasta.TypeSystem.ReflectionBased
             }
 
             throw new NotSupportedException(
-                string.Format("TargetType {0} couldn't be instantiated from the provided values", type.Name));
+              $"TargetType {type.Name} couldn't be instantiated from the provided values");
         }
 
         public static object CreateInstanceFrom(this Type type, string[] propertyValues)
@@ -329,9 +329,7 @@ namespace OpenRasta.TypeSystem.ReflectionBased
             {
                 if (type.IsGenericTypeDefinition && !flattenGenericTypeDefinitions)
                     throw new InvalidOperationException(
-                        string.Format(
-                            "{0} is a generic type definition and does not have a type string.\r\nTry providing a constructed generic type instead.",
-                            type.Name));
+                      $"{type.Name} is a generic type definition and does not have a type string.\r\nTry providing a constructed generic type instead.");
                 var genericType = type.GetGenericTypeDefinition();
                 var genericTypeArguments = type.GetGenericArguments();
                 builder.Append(genericType.Name.Substring(0, genericType.Name.IndexOf('`')));

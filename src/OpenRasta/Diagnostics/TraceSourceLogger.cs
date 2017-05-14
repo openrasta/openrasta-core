@@ -52,7 +52,7 @@ namespace OpenRasta.Diagnostics
 
     public IDisposable Operation(object source, string name)
     {
-      _source.TraceData(TraceEventType.Start, 1, "Entering {0}: {1}".With(source.GetType().Name, name));
+      _source.TraceData(TraceEventType.Start, 1, $"Entering {source.GetType().Name}: {name}");
       Trace.CorrelationManager.StartLogicalOperation(source.GetType().Name);
 
       return new OperationCookie {Initiator = source, Source = _source};
@@ -95,7 +95,7 @@ namespace OpenRasta.Diagnostics
       public void Dispose()
       {
         Trace.CorrelationManager.StopLogicalOperation();
-        Source.TraceData(TraceEventType.Stop, 1, "Exiting {0}".With(Initiator.GetType().Name));
+        Source.TraceData(TraceEventType.Stop, 1, $"Exiting {Initiator.GetType().Name}");
       }
     }
   }

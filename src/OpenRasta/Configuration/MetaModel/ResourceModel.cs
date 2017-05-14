@@ -23,11 +23,8 @@ namespace OpenRasta.Configuration.MetaModel
 
         public override string ToString()
         {
-            return string.Format("ResourceKey: {0}, Uris: {1}, Handlers: {2}, Codecs: {3}", 
-                                 ResourceKey, 
-                                 Uris.Aggregate(string.Empty, (str, reg) => str + reg + ";"), 
-                                 Handlers.Aggregate(string.Empty, (str, reg) => str + reg + ";"), 
-                                 Codecs.Aggregate(string.Empty, (str, reg) => str + reg + ";"));
+            return
+              $"ResourceKey: {ResourceKey}, Uris: {Uris.Aggregate(string.Empty, (str, reg) => str + reg + ";")}, Handlers: {Handlers.Aggregate(string.Empty, (str, reg) => str + reg + ";")}, Codecs: {Codecs.Aggregate(string.Empty, (str, reg) => str + reg + ";")}";
         }
     }
 }

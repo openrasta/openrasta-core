@@ -33,7 +33,7 @@ namespace OpenRasta.Security
 
         public string ServerResponseHeader
         {
-            get { return (String.Format("Basic realm=\"{0}\"", Realm)); }
+            get { return ($"Basic realm=\"{Realm}\""); }
         }
     }
 }

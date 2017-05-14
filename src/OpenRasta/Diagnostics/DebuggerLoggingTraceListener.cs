@@ -75,7 +75,7 @@ namespace OpenRasta.Diagnostics
         void WriteAll(TraceEventCache eventCache, TraceEventType eventType, int id, string message)
         {
             UpdateIndent();
-            WriteLine("{4}-[{0}] {1}({2}) {3}".With(eventCache.DateTime.ToString("u"), eventType.ToString(), id, message, eventCache.ThreadId));
+            WriteLine(string.Format("{4}-[{0}] {1}({2}) {3}", (object) eventCache.DateTime.ToString("u"), (object) eventType.ToString(), (object) id, (object) message, (object) eventCache.ThreadId));
         }
     }
 }

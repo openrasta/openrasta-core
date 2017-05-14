@@ -278,20 +278,20 @@ Content-Disposition: form-data; name=""=?ISO-8859-1?Q?T=E9l=E9phone?=""
 
 077 777 7777
 --boundary42--";
-        public static string LARGE_FIELD = @"
+        public static string LARGE_FIELD = string.Format(@"
 --boundary42
 Content-Disposition: form-data; name=""field""
 
 {0}END
---boundary42--".With(new string('-',85000));
+--boundary42--", new string('-',85000));
 
-        public static string FILE_FIELD = @"
+        public static string FILE_FIELD = string.Format(@"
 --boundary42
 Content-Disposition: form-data; name=""file"";filename=""temp.txt""
 Content-Type: application/octet-stream
 
 {0}
---boundary42--".With(new string('-', 85000));
+--boundary42--", new string('-', 85000));
         
 
     }

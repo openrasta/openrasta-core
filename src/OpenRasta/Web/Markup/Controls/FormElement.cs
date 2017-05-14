@@ -37,7 +37,8 @@ namespace OpenRasta.Web.Markup
             {
                 
                 if (!IsMethodOverrideActive && !IsMethodHtmlFriendly(value))
-                    throw new InvalidOperationException("Cannot use any other method than POST and GET unless you register the {0} uri decorator".With(typeof(HttpMethodOverrideUriDecorator).Name));
+                    throw new InvalidOperationException(
+                      $"Cannot use any other method than POST and GET unless you register the {typeof(HttpMethodOverrideUriDecorator).Name} uri decorator");
                 if (IsMethodOverrideActive && !IsMethodHtmlFriendly(value))
                 {
                     Attributes.SetAttribute("method", "POST");

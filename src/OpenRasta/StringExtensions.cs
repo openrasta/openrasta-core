@@ -61,12 +61,9 @@ namespace OpenRasta
             return new Uri(target, uriKind);
         }
 
-        public static string With(this string target, params object[] parameters)
+      public static string With(this string target, params object[] parameters)
         {
-            if (target == null) return null;
-            if (parameters == null || parameters.Length == 0)
-                return target;
-            return string.Format(target, parameters);
+            return string.Format(target,(object[])parameters);
         }
     }
 }

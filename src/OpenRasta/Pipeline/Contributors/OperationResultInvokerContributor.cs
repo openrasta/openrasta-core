@@ -20,7 +20,7 @@ namespace OpenRasta.Pipeline.Contributors
 
         public PipelineContinuation RunOperationResult(ICommunicationContext context)
         {
-            Log.WriteInfo("Executing OperationResult {0}.".With(context.OperationResult));
+            Log.WriteInfo($"Executing OperationResult {context.OperationResult}.");
             context.OperationResult.Execute(context);
 
             context.Response.Entity.Instance = context.OperationResult.ResponseResource;

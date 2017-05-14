@@ -44,7 +44,7 @@ namespace OpenRasta.Collections.Specialized
 
         public override string ToString()
         {
-            return string.Format("Item: {0}, Dependencies: {1}", Item, string.Join(", ", Dependencies.Select(d => d.Item)));
+            return $"Item: {Item}, Dependencies: {string.Join(", ", Dependencies.Select(d => d.Item))}";
         }
     }
 }

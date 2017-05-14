@@ -38,13 +38,13 @@ namespace OpenRasta.Authentication.Digest
         public string GetCalculatedResponse(string httpMethod)
         {
             // A1 = unq(username-value) ":" unq(realm-value) ":" passwd
-            string A1 = String.Format("{0}:{1}:{2}", Username, Realm, Password);
+            string A1 = $"{Username}:{Realm}:{Password}";
 
             // H(A1) = MD5(A1)
             string HA1 = GetMD5HashBinHex(A1);
 
             // A2 = Method ":" digest-uri-value
-            string A2 = String.Format("{0}:{1}", httpMethod, Uri);
+            string A2 = $"{httpMethod}:{Uri}";
 
             // H(A2)
             string HA2 = GetMD5HashBinHex(A2);
@@ -62,20 +62,11 @@ namespace OpenRasta.Authentication.Digest
             string unhashedDigest;
             if (QualityOfProtection != null)
             {
-                unhashedDigest = String.Format("{0}:{1}:{2}:{3}:{4}:{5}",
-                                               HA1,
-                                               ServerNonce,
-                                               RequestCounter,
-                                               ClientNonce,
-                                               QualityOfProtection,
-                                               HA2);
+                unhashedDigest = $"{HA1}:{ServerNonce}:{RequestCounter}:{ClientNonce}:{QualityOfProtection}:{HA2}";
             }
             else
             {
-                unhashedDigest = String.Format("{0}:{1}:{2}",
-                                               HA1,
-                                               RequestCounter,
-                                               HA2);
+                unhashedDigest = $"{HA1}:{RequestCounter}:{HA2}";
             }
 
             return GetMD5HashBinHex(unhashedDigest);

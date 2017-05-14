@@ -13,7 +13,7 @@ namespace OpenRasta.TypeSystem
                 propertyParams = "[" + string.Join(", ", property.PropertyParameters.Select(x => x.ToString()).ToArray()) + "]";
             }
 
-            return "{0} {1}.{2}".With(property.Type.Name, property.Owner.Type.Name, property.Name) + propertyParams;
+            return $"{property.Type.Name} {property.Owner.Type.Name}.{property.Name}" + propertyParams;
         }
     }
 }

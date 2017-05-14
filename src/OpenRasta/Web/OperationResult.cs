@@ -62,7 +62,7 @@ namespace OpenRasta.Web
 
         public override string ToString()
         {
-            return "OperationResult: type={0}, statusCode={1}".With(GetType().Name, StatusCode);
+            return $"OperationResult: type={GetType().Name}, statusCode={StatusCode}";
         }
 
         protected virtual void OnExecute(ICommunicationContext context)
@@ -144,13 +144,9 @@ namespace OpenRasta.Web
             public MethodNotAllowed(Uri requestUri, string methodName, object resourceKey)
                 : base(405)
             {
-                Title = string.Format("The method {0} is not available for this resource.", methodName);
+                Title = $"The method {methodName} is not available for this resource.";
                 Description =
-                    string.Format(
-                        "The requested resource at URI {0} was mapped to a resource with key {1} and no handler method was available for HTTP method {2}",
-                        requestUri,
-                        resourceKey,
-                        methodName);
+                  $"The requested resource at URI {requestUri} was mapped to a resource with key {resourceKey} and no handler method was available for HTTP method {methodName}";
             }
         }
 

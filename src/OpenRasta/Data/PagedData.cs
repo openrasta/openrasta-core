@@ -33,7 +33,7 @@ namespace OpenRasta.Data
 
             if (requestedPage != 1 && requestedPage > totalPageCount)
                 throw new ArgumentOutOfRangeException("requestedPage",
-                                                      string.Format("There is no page {0}", requestedPage));
+                  $"There is no page {requestedPage}");
 
             var currentPage = new PagedData<T> {
                                                    CurrentPage = requestedPage,

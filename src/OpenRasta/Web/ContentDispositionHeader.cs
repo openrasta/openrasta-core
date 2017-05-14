@@ -25,7 +25,7 @@ namespace OpenRasta.Web
             var fragments = SplitReg.Split(header).Where(f => !string.IsNullOrEmpty(f)).ToArray();
                 
             if (fragments.Length == 0)
-                throw new FormatException("The header value {0} is invalid for Content-Disposition.".With(header));
+                throw new FormatException($"The header value {header} is invalid for Content-Disposition.");
             Disposition = fragments[0].Trim();
 
             for (int i = 1; i < fragments.Length; i++)
