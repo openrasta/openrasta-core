@@ -7,6 +7,7 @@ using System.Web;
 using System.Web.Compilation;
 using OpenRasta.Concordia;
 using OpenRasta.Configuration;
+using OpenRasta.Configuration.MetaModel;
 using OpenRasta.DI;
 using OpenRasta.Diagnostics;
 using OpenRasta.Pipeline;
@@ -31,6 +32,13 @@ namespace OpenRasta.Hosting.AspNet
     {
       add => _start += value;
       remove => _start -= value;
+    }
+
+    protected internal virtual void RaiseStart()
+    {
+      _legacyStart.Raise(this);
+      var start = _start;
+      start?.Invoke(this, _properties);
     }
 
     public event EventHandler Stop;
@@ -145,6 +153,8 @@ namespace OpenRasta.Hosting.AspNet
     {
       if (ConfigurationSource != null)
         resolver.AddDependencyInstance<IConfigurationSource>(ConfigurationSource);
+      var uris = resolver.Resolve<IUriResolver>();
+      var config = resolver.Resolve<IMetaModelRepository>();
       return true;
     }
 
@@ -168,12 +178,6 @@ namespace OpenRasta.Hosting.AspNet
       return incomingRequestReceivedEventArgs.RunTask;
     }
 
-    protected internal virtual void RaiseStart()
-    {
-      _legacyStart.Raise(this);
-      var start = _start;
-      start?.Invoke(this, _properties);
-    }
 
     protected internal virtual void RaiseStop()
     {

@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Configuration;
 using System.Web.Hosting;
+using OpenRasta.DI;
 using OpenRasta.Web;
 
 namespace OpenRasta.Hosting.AspNet
@@ -24,23 +25,27 @@ namespace OpenRasta.Hosting.AspNet
 
     async Task Invoke(object sender, EventArgs e)
     {
-      if (ShouldIgnoreRequestEarly())
-      {
-        return;
-      }
+      if (ShouldIgnoreRequestEarly()) return;
+
       var env = AspNetCommunicationContext.Current;
       var yielder = env.Yielder(_yielderName);
-      var runTask = _host.RaiseIncomingRequestReceived(env);
-      var yielded = await Yielding.DidItYield(runTask, yielder.Task);
+      try
+      {
+        var runTask = _host.RaiseIncomingRequestReceived(env);
+        var yielded = await Yielding.DidItYield(runTask, yielder.Task);
 
-      if (!yielded)
-        return;
-
-      var notFound = env.OperationResult as OperationResult.NotFound;
-      if (notFound?.Reason != NotFoundReason.NotMapped)
-        OpenRastaModuleAsync.Pipeline.HandoverToPipeline(_yielderName, runTask, env);
-      else
-        env.Resumer(_yielderName).SetResult(false);
+        if (!yielded)
+          return;
+        var notFound = env.OperationResult as OperationResult.NotFound;
+        if (notFound?.Reason != NotFoundReason.NotMapped)
+          OpenRastaModuleAsync.Pipeline.HandoverToPipeline(_yielderName, runTask, env);
+        else
+          env.Resumer(_yielderName).SetResult(false);
+      }
+      catch (Exception ex)
+      {
+        throw ex;
+      }
     }
 
     public BeginEventHandler Begin => _eventHandler.BeginEventHandler;

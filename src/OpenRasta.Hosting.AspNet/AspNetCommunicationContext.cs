@@ -19,10 +19,15 @@ namespace OpenRasta.Hosting.AspNet
         var context = HttpContext.Current;
         if (context.Items.Contains(COMM_CONTEXT_KEY))
           return (AspNetCommunicationContext) context.Items[COMM_CONTEXT_KEY];
-        var orContext = new AspNetCommunicationContext(Log,
+        var orContext = new AspNetCommunicationContext(
+          TraceSourceLogger.Instance,
           context,
           new AspNetRequest(context),
-          new AspNetResponse(context) {Log = Log});
+          new AspNetResponse(context)
+          {
+            Log = TraceSourceLogger.Instance
+
+          });
         context.Items[COMM_CONTEXT_KEY] = orContext;
 
         return orContext;
@@ -32,7 +37,6 @@ namespace OpenRasta.Hosting.AspNet
     public AspNetCommunicationContext(ILogger logger, HttpContext context, AspNetRequest request,
       AspNetResponse response)
     {
-      Log = logger;
       NativeContext = context;
       ServerErrors = new ServerErrorList {Log = logger};
       PipelineData = new PipelineData();
@@ -55,7 +59,6 @@ namespace OpenRasta.Hosting.AspNet
       }
     }
 
-    public static ILogger Log { get; set; }
 
 
     public OperationResult OperationResult { get; set; }

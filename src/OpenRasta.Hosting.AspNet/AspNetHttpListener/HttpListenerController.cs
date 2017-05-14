@@ -8,27 +8,25 @@ namespace OpenRasta.Hosting.AspNet.AspNetHttpListener
   public class HttpListenerController
   {
     readonly string _physicalDir;
-    readonly Action _configuration;
     readonly string[] _prefixes;
     readonly string _virtualDir;
 
-    public HttpListenerController(string[] prefixes, string vdir, string pdir, Action configuration)
+    public HttpListenerController(string[] prefixes, string vdir, string pdir)
     {
       _prefixes = prefixes;
       _virtualDir = vdir;
       _physicalDir = pdir;
-      _configuration = configuration;
     }
 
     public HttpListenerAspNetHost Host { get; private set; }
 
 
-    public void Start()
+    public void Start(Action configuration)
     {
       Host = (HttpListenerAspNetHost)ApplicationHost.CreateApplicationHost(
                                           typeof(HttpListenerAspNetHost), _virtualDir, _physicalDir);
 
-      Host.Configure(_prefixes, _virtualDir, _physicalDir, _configuration);
+      Host.Configure(_prefixes, _virtualDir, _physicalDir, configuration);
       Host.Start();
     }
 

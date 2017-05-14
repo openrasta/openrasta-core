@@ -79,7 +79,7 @@ namespace OpenRasta.Hosting.AspNet.AspNetHttpListener
       ThreadPool.QueueUserWorkItem(s => ProcessRequest());
     }
 
-    class DelegateConfiguration : IConfigurationSource
+    public class DelegateConfiguration : IConfigurationSource
     {
       Action _configuration;
 
@@ -90,7 +90,10 @@ namespace OpenRasta.Hosting.AspNet.AspNetHttpListener
 
       public void Configure()
       {
-        _configuration();
+        using (OpenRastaConfiguration.Manual)
+        {
+          _configuration();
+        }
       }
     }
   }
