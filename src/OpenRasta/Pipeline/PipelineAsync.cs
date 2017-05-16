@@ -25,7 +25,7 @@ namespace OpenRasta.Pipeline
     public Task RunAsync(ICommunicationContext env)
     {
       if (env.PipelineData.PipelineStage == null)
-        env.PipelineData.PipelineStage = new PipelineStage(CallGraph);
+        env.PipelineData.PipelineStage = new PipelineStage();
       return _middleware.Invoke(env);
     }
   }

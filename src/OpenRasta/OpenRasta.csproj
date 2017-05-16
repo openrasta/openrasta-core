@@ -298,6 +298,7 @@
     <Compile Include="Pipeline\CleanupMiddleware.cs" />
     <Compile Include="Pipeline\Contributors\CodecNotFoundException.cs" />
     <Compile Include="Pipeline\Contributors\ContextExtensions.cs" />
+    <Compile Include="Pipeline\DelegateMiddleware.cs" />
     <Compile Include="Pipeline\IPipelineInitializer.cs" />
     <Compile Include="Pipeline\LoggingMiddleware.cs" />
     <Compile Include="Pipeline\LoggingMiddlewareFactory.cs" />

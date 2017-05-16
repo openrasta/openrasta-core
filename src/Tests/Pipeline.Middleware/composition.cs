@@ -17,19 +17,19 @@ namespace Tests.Pipeline.Middleware
       var ordered = new List<string>();
       var contribs = new[]
       {
-        new DelegateMiddleware(() => ordered.Add("first")),
-        new DelegateMiddleware(() => ordered.Add("second")),
+        new DelegateBeforeNextMiddleware(() => ordered.Add("first")),
+        new DelegateBeforeNextMiddleware(() => ordered.Add("second")),
       };
       contribs.Compose().Invoke(new InMemoryCommunicationContext());
       ordered.ShouldBe(new[]{"first", "second"});
     }
   }
 
-  public class DelegateMiddleware : IPipelineMiddleware, IPipelineMiddlewareFactory
+  public class DelegateBeforeNextMiddleware : IPipelineMiddleware, IPipelineMiddlewareFactory
   {
     readonly Action _beforeNext;
 
-    public DelegateMiddleware(Action beforeNext)
+    public DelegateBeforeNextMiddleware(Action beforeNext)
     {
       _beforeNext = beforeNext;
     }

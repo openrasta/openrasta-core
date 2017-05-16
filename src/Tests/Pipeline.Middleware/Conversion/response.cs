@@ -2,7 +2,6 @@
 using OpenRasta.Pipeline;
 using Shouldly;
 using Tests.Pipeline.Middleware.Examples;
-using Tests.Pipeline.Middleware.Infrastructrure;
 using Xunit;
 
 namespace Tests.Pipeline.Middleware.Conversion
@@ -24,7 +23,7 @@ namespace Tests.Pipeline.Middleware.Conversion
       middlewareChain[0].ShouldBeOfType<PreExecuteMiddleware>();
       middlewareChain[1].ShouldBeOfType<PreExecuteMiddleware>();
       middlewareChain[2].ShouldBeOfType<RequestMiddleware>();
-      middlewareChain[3].ShouldBeOfType<ResponseRetryMiddleware>();
+      middlewareChain[3].ShouldBeOfType<OpenRasta.Pipeline.ResponseRetryMiddleware>();
       middlewareChain[4].ShouldBeOfType<ResponseMiddleware>();
       middlewareChain[5].ShouldBeOfType<ResponseMiddleware>();
     }

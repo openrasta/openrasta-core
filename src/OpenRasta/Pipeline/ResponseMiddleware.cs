@@ -22,6 +22,7 @@ namespace OpenRasta.Pipeline
       if (contribState == PipelineContinuation.Abort)
       {
         env.PipelineData.PipelineStage.CurrentState = PipelineContinuation.Abort;
+
         throw new PipelineAbortedException();
       }
 #pragma warning restore 618

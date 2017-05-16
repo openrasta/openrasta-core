@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Threading.Tasks;
 using OpenRasta.Hosting.InMemory;
 using OpenRasta.Pipeline;
@@ -15,7 +14,7 @@ namespace Tests.Pipeline.Middleware.Infrastructrure
       {
         PipelineData =
         {
-          PipelineStage = new PipelineStage(Enumerable.Empty<ContributorCall>())
+          PipelineStage = new PipelineStage()
           {
             CurrentState = PipelineContinuation.Continue
           }

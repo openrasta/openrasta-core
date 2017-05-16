@@ -34,6 +34,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="nunit.framework, Version=3.4.1.0, Culture=neutral, PublicKeyToken=2638cd05610744eb">
+      <HintPath>..\..\packages\NUnit.3.4.1\lib\net45\nunit.framework.dll</HintPath>
+    </Reference>
     <Reference Include="Shouldly, Version=2.8.2.0, Culture=neutral, PublicKeyToken=6042cbcb05cbc941">
       <HintPath>..\..\packages\Shouldly.2.8.2\lib\net40\Shouldly.dll</HintPath>
     </Reference>
@@ -90,6 +93,17 @@
     <Compile Include="Pipeline.Middleware\Examples\TrailerMiddleware.cs" />
     <Compile Include="Pipeline.Middleware\Examples\UriMatchingContributor.cs" />
     <Compile Include="Pipeline.Middleware\Infrastructrure\middleware_context.cs" />
+    <Compile Include="Pipeline.Middleware\ResponseContributor\pipeline_in_continue_contrib_RenderNow.cs" />
+    <Compile Include="Pipeline.Middleware\ResponseRetryMiddleware\response_retry.cs" />
+    <Compile Include="Pipeline.Middleware\ResponseRetryMiddleware\pipeline_Continue.cs" />
+    <Compile Include="Pipeline.Middleware\ResponseRetryMiddleware\pipeline_in_Abort.cs" />
+    <Compile Include="Pipeline.Middleware\ResponseRetryMiddleware\pipeline_RenderNow_once.cs" />
+    <Compile Include="Pipeline.Middleware\ResponseRetryMiddleware\pipeline_RenderNow_then_throws.cs" />
+    <Compile Include="Pipeline.Middleware\ResponseRetryMiddleware\pipeline_RenderNow_twice.cs" />
+    <Compile Include="Pipeline.Middleware\ResponseRetryMiddleware\pipeline_throws_once.cs" />
+    <Compile Include="Pipeline.Middleware\ResponseRetryMiddleware\pipeline_throws_then_RenderNow_then_Continue.cs" />
+    <Compile Include="Pipeline.Middleware\ResponseRetryMiddleware\pipeline_throws_then_RenderNow_twice.cs" />
+    <Compile Include="Pipeline.Middleware\ResponseRetryMiddleware\pipeline_throws_twice.cs" />
     <Compile Include="Pipeline.Middleware\Trailers\trailered_middleware.cs" />
     <Compile Include="Pipeline.Middleware\PreExecuteContributor\contributor_aborts.cs" />
     <Compile Include="Pipeline.Middleware\PreExecuteContributor\contributor_continues.cs" />

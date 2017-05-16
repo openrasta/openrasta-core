@@ -40,6 +40,10 @@ namespace OpenRasta.Pipeline
     const string SUSPEND = "openrasta.pipeline.stages.suspend";
     const string RESUME = "openrasta.pipeline.stages.resume";
 
+    public PipelineData()
+    {
+      PipelineStage = new PipelineStage();
+    }
     /// <summary>
     /// Gets the type of the handler selected when matching a request against the registerd resource.
     /// </summary>
