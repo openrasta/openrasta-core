@@ -18,7 +18,7 @@ namespace OpenRasta.Tests.Unit.OperationModel.MethodBased
             var filteredMethods = new TypeExclusionMethodFilter<when_filtering_methods_by_type>()
                 .Filter(TypeSystem.FromClr<when_filtering_methods_by_type>().GetMethods());
             filteredMethods.SingleOrDefault(x => x.Name == "the_methods_from_the_type_are_excluded")
-                .ShouldBeNull();
+                .LegacyShouldBeNull();
         }
     }
 }

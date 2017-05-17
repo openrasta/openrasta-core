@@ -15,7 +15,7 @@ namespace OpenRasta.Testing.Contexts
       Handler = TypeSystem.FromClr<THandler>();
     }
 
-    IType Handler { get; }
+    protected IType Handler { get; }
     protected IOperationAsync Operation { get; set; }
 
     protected void given_operation(string name, params Type[] parameters)

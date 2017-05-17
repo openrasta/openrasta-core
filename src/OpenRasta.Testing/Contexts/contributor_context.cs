@@ -12,7 +12,7 @@ namespace OpenRasta.Testing.Contexts
 
         protected void then_contributor_returns(PipelineContinuation continuation)
         {
-            Result.ShouldBe(continuation);
+            Result.LegacyShouldBe(continuation);
         }
     }
 }

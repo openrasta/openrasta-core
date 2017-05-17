@@ -11,8 +11,8 @@ namespace OpenRasta.Tests.Unit.OperationModel.MethodBased.Operation
     public void operation_is_invoked()
     {
       given_operation("GetText");
-      Operation.InvokeAsync().Result.ShouldHaveCountOf(1)
-        .First().Value.ShouldBe("Hello, is it me you're looking for?");
+      Operation.InvokeAsync().Result.LegacyShouldHaveCountOf(1)
+        .First().Value.LegacyShouldBe("Hello, is it me you're looking for?");
     }
   }
 

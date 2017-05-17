@@ -27,7 +27,7 @@ namespace FormElement_Specification
             Executing(() =>
                       WhenCreatingElement(
                           () => new FormElement(false).Method("PUT").Action("http://localhost/test"))
-                ).ShouldThrow<InvalidOperationException>();
+                ).LegacyShouldThrow<InvalidOperationException>();
         }
 
         [Test]
@@ -37,8 +37,8 @@ namespace FormElement_Specification
 
             WhenCreatingElement(() =>new FormElement(true).Action("http://localhost/test").Method("PUT"));
 
-            ThenTheElementAsString.ShouldContain("method=\"POST\"");
-            ThenTheElementAsString.ShouldContain("action=\"http://localhost/test!PUT");
+            ThenTheElementAsString.LegacyShouldContain("method=\"POST\"");
+            ThenTheElementAsString.LegacyShouldContain("action=\"http://localhost/test!PUT");
         }
 
         [Test]
@@ -47,14 +47,14 @@ namespace FormElement_Specification
             WhenCreatingElement(() => new FormElement(false).Action("htp://localhost/"));
 
             ThenTheElement.Method
-                .ShouldBe("GET");
+                .LegacyShouldBe("GET");
         }
         [Test]
         public void multiple_media_types_in_accept_results_in_a_comma_separated_list()
         {
             WhenCreatingElement(() => new FormElement(false).Accept("text/html").Accept("application/xhtml+xml"));
 
-            ThenTheElementAsString.ShouldContain("accept=\"text/html,application/xhtml+xml\"");
+            ThenTheElementAsString.LegacyShouldContain("accept=\"text/html,application/xhtml+xml\"");
         }
     }
 }

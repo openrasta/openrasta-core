@@ -23,12 +23,12 @@ namespace OpenRasta.Tests.Unit.Web.UriDecorators
             given_context_applicationBase("http://localhost/vdir");
 
             when_parsing();
-            ParsingResult.ShouldBeTrue();
-            ProcessedUri.ShouldBe("http://localhost/vdir/customer/1");
+            ParsingResult.LegacyShouldBeTrue();
+            ProcessedUri.LegacyShouldBe("http://localhost/vdir/customer/1");
 
             when_applying();
-            Context.PipelineData.ResponseCodec.CodecType.ShouldBe<XmlCodec>();
-            Context.Response.Entity.ContentType.ShouldBe(MediaType.Xml);
+            Context.PipelineData.ResponseCodec.CodecType.LegacyShouldBe<XmlCodec>();
+            Context.Response.Entity.ContentType.LegacyShouldBe(MediaType.Xml);
 
         }
 

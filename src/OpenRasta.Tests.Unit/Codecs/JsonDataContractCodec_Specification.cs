@@ -29,7 +29,7 @@ namespace JsonDataContractCodec_Specification
             codec.WriteTo(new Customer { Name = "hello" }, stub.Entity, null);
 
             stub.Entity.Stream.Position
-                .ShouldNotBe(0);
+                .LegacyShouldNotBe(0);
         }
         public class Customer { public string Name { get; set; } }
     }

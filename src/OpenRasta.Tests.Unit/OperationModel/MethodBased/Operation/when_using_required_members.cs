@@ -12,14 +12,14 @@ namespace OpenRasta.Tests.Unit.OperationModel.MethodBased.Operation
     {
       given_operation("Post", typeof(int), typeof(string));
 
-      Operation.Inputs.AllReady().ShouldBeFalse();
+      Operation.Inputs.AllReady().LegacyShouldBeFalse();
     }
     [Test]
     public void no_parameter_is_satisfied()
     {
       given_operation("Post", typeof(int), typeof(string));
 
-      Operation.Inputs.CountReady().ShouldBe(0);
+      Operation.Inputs.CountReady().LegacyShouldBe(0);
     }
   }
 }

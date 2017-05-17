@@ -62,7 +62,7 @@ namespace MultipartWriter_Specification
 
             WhenWritingTheMultipartMessage();
 
-            ThenTheResult.ShouldBe(
+            ThenTheResult.LegacyShouldBe(
                 @"
 --boundary
 Content-Disposition: form-data; name=""user""

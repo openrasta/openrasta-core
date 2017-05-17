@@ -15,7 +15,7 @@ namespace OpenRasta.Tests.Unit.Collections
             var iterator = CreateIterator();
             when_enumerating_values(iterator);
 
-            _resulting.ShouldHaveSameElementsAs(_original);
+            _resulting.LegacyShouldHaveSameElementsAs(_original);
         }
 
         [Test]
@@ -24,7 +24,7 @@ namespace OpenRasta.Tests.Unit.Collections
             var iter = CreateIterator();
             iter.SuspendAfter(2);
             when_enumerating_values(iter);
-            _resulting.ShouldHaveSameElementsAs(new[] { 1, 2 });
+            _resulting.LegacyShouldHaveSameElementsAs(new[] { 1, 2 });
         }
         [Test]
         public void resuming_after_suspension_should_enumerate_further_items()
@@ -32,26 +32,26 @@ namespace OpenRasta.Tests.Unit.Collections
             var iter = CreateIterator();
             iter.SuspendAfter(2);
             when_enumerating_values(iter);
-            _resulting.ShouldHaveSameElementsAs(new[] { 1, 2 });
+            _resulting.LegacyShouldHaveSameElementsAs(new[] { 1, 2 });
             when_enumerating_values(iter);
-            _resulting.ShouldHaveSameElementsAs(new[] { 3, 4, 5 });
+            _resulting.LegacyShouldHaveSameElementsAs(new[] { 3, 4, 5 });
         }
 
         [Test]
         public void enumerating_values_from_a_starting_point_is_successfull()
         {
             var iterator = CreateIterator();
-            iterator.ResumeFrom(2).ShouldBeTrue();
+            iterator.ResumeFrom(2).LegacyShouldBeTrue();
             when_enumerating_values(iterator);
-            _resulting.ShouldHaveSameElementsAs(new[] { 2, 3, 4, 5 });
+            _resulting.LegacyShouldHaveSameElementsAs(new[] { 2, 3, 4, 5 });
         }
 
         [Test]
         public void enumerating_values_from_unknown_starting_point_fails()
         {
             var iterator = CreateIterator();
-            iterator.ResumeFrom(10).ShouldBeFalse();
-            iterator.GetEnumerator().MoveNext().ShouldBeFalse();
+            iterator.ResumeFrom(10).LegacyShouldBeFalse();
+            iterator.GetEnumerator().MoveNext().LegacyShouldBeFalse();
         }
 
         ResumableIterator<int, int> CreateIterator()

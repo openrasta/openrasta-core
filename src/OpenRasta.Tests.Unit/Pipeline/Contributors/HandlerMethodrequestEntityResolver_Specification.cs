@@ -27,16 +27,16 @@ namespace HandlerMethodRequestEntityResolver_Specification
     //        GivenTheRequestCodec<CustomerCodec,Strictly<Customer>>("application/vnd.rasta");
     //        GivenARequestContentTypeOf("application/vnd.rasta");
 
-    //        Context.PipelineData.SelectedMethod.IsReadyForInvocation.ShouldBeFalse();
+    //        Context.PipelineData.SelectedMethod.IsReadyForInvocation.LegacyShouldBeFalse();
 
     //        WhenSendingNotificationFor<RequestEntityCodecResolver>()
-    //            .ShouldBe(PipelineContinuation.Continue);
+    //            .LegacyShouldBe(PipelineContinuation.Continue);
 
-    //        Context.PipelineData.SelectedMethod.IsReadyForInvocation.ShouldBeTrue();
+    //        Context.PipelineData.SelectedMethod.IsReadyForInvocation.LegacyShouldBeTrue();
     //        Context.PipelineData.SelectedMethod.GetParameterByName("c")
     //            .ShouldNotBeNull()
     //            .Value
-    //                .ShouldBeOfType<Customer>();
+    //                .LegacyShouldBeOfType<Customer>();
     //    }
     //}
     //public class when_the_codec_fails_to_read_a_parameter_successfully : openrasta_context
@@ -57,7 +57,7 @@ namespace HandlerMethodRequestEntityResolver_Specification
     //        GivenARequestContentTypeOf("application/vnd.rasta");
 
     //        WhenSendingNotificationFor<RequestEntityCodecResolver>()
-    //            .ShouldBe(PipelineContinuation.Continue);
+    //            .LegacyShouldBe(PipelineContinuation.Continue);
     //    }
     }
 }

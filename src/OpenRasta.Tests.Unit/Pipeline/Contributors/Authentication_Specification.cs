@@ -29,7 +29,7 @@ namespace Authentication_Specification
             when_sending_notification<KnownStages.IBegin>();
 
             // then
-            IsContributorExecuted.ShouldBeTrue();
+            IsContributorExecuted.LegacyShouldBeTrue();
         }
 
         [Test]
@@ -42,7 +42,7 @@ namespace Authentication_Specification
             when_sending_notification<KnownStages.IHandlerSelection>();
 
             // then
-            IsContributorExecuted.ShouldBeTrue();
+            IsContributorExecuted.LegacyShouldBeTrue();
         }
 
         [Test]
@@ -55,7 +55,7 @@ namespace Authentication_Specification
             var result = when_sending_notification<KnownStages.IHandlerSelection>();
 
             // then
-            result.ShouldBe(PipelineContinuation.Continue);
+            result.LegacyShouldBe(PipelineContinuation.Continue);
         }
 
         [Test]
@@ -70,8 +70,8 @@ namespace Authentication_Specification
             var result = when_sending_notification<KnownStages.IHandlerSelection>();
 
             // then
-            Context.Response.Headers["Warning"].ShouldBe("199 Unsupported Authentication Scheme");
-            result.ShouldBe(PipelineContinuation.Continue);
+            Context.Response.Headers["Warning"].LegacyShouldBe("199 Unsupported Authentication Scheme");
+            result.LegacyShouldBe(PipelineContinuation.Continue);
         }
 
         [Test]
@@ -96,9 +96,9 @@ namespace Authentication_Specification
             var result = when_sending_notification<KnownStages.IHandlerSelection>();
 
             // then
-            Context.Response.Headers["Warning"].ShouldBe("199 Malformed credentials");
-            Context.OperationResult.ShouldBeOfType<OperationResult.BadRequest>();
-            result.ShouldBe(PipelineContinuation.RenderNow);
+            Context.Response.Headers["Warning"].LegacyShouldBe("199 Malformed credentials");
+            Context.OperationResult.LegacyShouldBeOfType<OperationResult.BadRequest>();
+            result.LegacyShouldBe(PipelineContinuation.RenderNow);
         }
 
         [Test]
@@ -123,8 +123,8 @@ namespace Authentication_Specification
             var result = when_sending_notification<KnownStages.IHandlerSelection>();
 
             // then
-            Context.OperationResult.ShouldBeOfType<OperationResult.Unauthorized>();
-            result.ShouldBe(PipelineContinuation.Continue);
+            Context.OperationResult.LegacyShouldBeOfType<OperationResult.Unauthorized>();
+            result.LegacyShouldBe(PipelineContinuation.Continue);
         }
 
         [Test]
@@ -152,9 +152,9 @@ namespace Authentication_Specification
             var result = when_sending_notification<KnownStages.IHandlerSelection>();
 
             // then
-            result.ShouldBe(PipelineContinuation.Continue);
+            result.LegacyShouldBe(PipelineContinuation.Continue);
 
-            Context.User.Identity.Name.ShouldBe(username);
+            Context.User.Identity.Name.LegacyShouldBe(username);
             Context.User.IsInRole(roles[0]);
             Context.User.IsInRole(roles[1]);
         }

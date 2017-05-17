@@ -12,20 +12,20 @@ namespace OpenRasta.Tests.Unit.OperationModel.MethodBased.Operation
     {
       given_operation("Get", typeof(int));
 
-      Operation.Name.ShouldBe("Get");
+      Operation.Name.LegacyShouldBe("Get");
     }
     [Test]
     public void the_operation_string_representation_is_the_method_signature()
     {
       given_operation("Get", typeof(int));
 
-      Operation.ToString().ShouldBe("MockOperationHandler::Get(Int32 index)");
+      Operation.ToString().LegacyShouldBe("MockOperationHandler::Get(Int32 index)");
     }
     [Test]
     public void property_getters_are_not_selected()
     {
       Executing(()=>given_operation("get_Dependency"))
-        .ShouldThrow<InvalidOperationException>();
+        .LegacyShouldThrow<InvalidOperationException>();
 
 
     }

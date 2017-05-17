@@ -19,6 +19,7 @@ using OpenRasta.Testing;
 using OpenRasta.Tests.Unit.Fakes;
 using OpenRasta.TypeSystem;
 using OpenRasta.Web;
+using Shouldly;
 
 namespace TemplatedUriResolver_Specification
 {
@@ -32,11 +33,10 @@ namespace TemplatedUriResolver_Specification
             given_uri_mapping("/Valinor/Olorin", typeof(Gandalf), CultureInfo.CurrentCulture, null);
             when_matching_uri("https://localhost/Valinor/Olorin");
 
-            var resourceKey = matching_result
-                .ShouldNotBeNull()
-                .ResourceKey;
-            resourceKey.ShouldBeOfType<IType>()
-                .Equals<Gandalf>().ShouldBeTrue();
+            matching_result
+                .ShouldNotBeNull();
+          matching_result.ResourceKey.LegacyShouldBeOfType<IType>()
+                .Equals<Gandalf>().LegacyShouldBeTrue();
         }
 
         void when_matching_uri(string uri)
@@ -55,7 +55,7 @@ namespace TemplatedUriResolver_Specification
 
             when_creating_uri<IConvertible>("location2", null);
 
-            Result.ShouldBe("http://localhost/location2");
+            Result.LegacyShouldBe("http://localhost/location2");
         }
 
 
@@ -67,7 +67,7 @@ namespace TemplatedUriResolver_Specification
 
             when_creating_uri<object>(new NameValueCollection { { "variable1", "injected1" } });
 
-            Result.ToString().ShouldBe("http://localhost/test/injected1");
+            Result.ToString().LegacyShouldBe("http://localhost/test/injected1");
         }
 
         [Test]
@@ -77,7 +77,7 @@ namespace TemplatedUriResolver_Specification
 
             when_creating_uri<IList<object>>(new NameValueCollection { { "variable1", "injected1" } });
 
-            Result.ToString().ShouldBe("http://localhost/test/injected1");
+            Result.ToString().LegacyShouldBe("http://localhost/test/injected1");
         }
 
         [Test]
@@ -90,7 +90,7 @@ namespace TemplatedUriResolver_Specification
 
             when_creating_uri<IList<object>>(new NameValueCollection { { "variable1", "injected1" } });
 
-            Result.ToString().ShouldBe("http://localhost/test?query=injected1");
+            Result.ToString().LegacyShouldBe("http://localhost/test?query=injected1");
         }
 
         [Test]
@@ -101,7 +101,7 @@ namespace TemplatedUriResolver_Specification
 
             when_creating_uri<IConvertible>(null);
 
-            Result.ShouldBe("http://localhost/location1");
+            Result.LegacyShouldBe("http://localhost/location1");
         }
 
         [Test]
@@ -112,7 +112,7 @@ namespace TemplatedUriResolver_Specification
 
             when_creating_uri<Frodo>(null);
 
-            Result.ShouldBe("http://localhost/theshire");
+            Result.LegacyShouldBe("http://localhost/theshire");
         }
 
         [Test]
@@ -122,7 +122,7 @@ namespace TemplatedUriResolver_Specification
 
             when_creating_uri<Frodo>("http://localhost/lotr/".ToUri(), null);
 
-            Result.ShouldBe("http://localhost/lotr/theshire");
+            Result.LegacyShouldBe("http://localhost/lotr/theshire");
         }
 
         [Test]
@@ -132,7 +132,7 @@ namespace TemplatedUriResolver_Specification
 
             when_creating_uri<Frodo>("http://localhost/lotr".ToUri(), null);
 
-            Result.ShouldBe("http://localhost/lotr/theshire");
+            Result.LegacyShouldBe("http://localhost/lotr/theshire");
         }
 
         [Test]
@@ -143,7 +143,7 @@ namespace TemplatedUriResolver_Specification
 
             when_creating_uri<Frodo>(new NameValueCollection{{"character", "frodo"}});
 
-            Result.ShouldBe("http://localhost/theshire/frodo");
+            Result.LegacyShouldBe("http://localhost/theshire/frodo");
         }
     }
     namespace context

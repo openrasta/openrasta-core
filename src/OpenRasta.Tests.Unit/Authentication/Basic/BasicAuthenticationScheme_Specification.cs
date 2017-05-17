@@ -53,11 +53,11 @@ namespace BasicAuthenticationScheme_Specification
             var result = _basicScheme.Authenticate(_request);
 
             // then
-            result.ShouldBeOfType<AuthenticationResult.Success>();
+            result.LegacyShouldBeOfType<AuthenticationResult.Success>();
             var success = result as AuthenticationResult.Success;
 
-            success.Username.ShouldBe(username);
-            success.Roles.ShouldHaveSameElementsAs(userRoles);
+            success.Username.LegacyShouldBe(username);
+            success.Roles.LegacyShouldHaveSameElementsAs(userRoles);
         }
 
         [Test]
@@ -71,7 +71,7 @@ namespace BasicAuthenticationScheme_Specification
             var result = _basicScheme.Authenticate(_request);
 
             // then
-            result.ShouldBeOfType<AuthenticationResult.MalformedCredentials>();
+            result.LegacyShouldBeOfType<AuthenticationResult.MalformedCredentials>();
         }
 
         [Test]
@@ -91,7 +91,7 @@ namespace BasicAuthenticationScheme_Specification
             var result = _basicScheme.Authenticate(_request);
 
             // then
-            result.ShouldBeOfType<AuthenticationResult.Failed>();
+            result.LegacyShouldBeOfType<AuthenticationResult.Failed>();
         }
 
         [Test]
@@ -110,7 +110,7 @@ namespace BasicAuthenticationScheme_Specification
             var result = _basicScheme.Authenticate(_request);
 
             // then
-            result.ShouldBeOfType<AuthenticationResult.Success>();
+            result.LegacyShouldBeOfType<AuthenticationResult.Success>();
         }
 
         [Test]
@@ -129,7 +129,7 @@ namespace BasicAuthenticationScheme_Specification
 
             // then
             var expectedChallengeHeader = string.Format("Basic realm=\"{0}\"", realm);
-            response.Headers.ShouldContain("WWW-Authenticate", expectedChallengeHeader);
+            response.Headers.LegacyShouldContain("WWW-Authenticate", expectedChallengeHeader);
         }
     }
 }

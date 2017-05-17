@@ -30,8 +30,8 @@ namespace SelectElement_Specification
         {
             WhenCreatingElement(()=>((IXhtmlAnchor) null).Select(() => this.PropertyReturningFalse));
 
-            ThenTheElement.ChildElements.OfType<IOptionElement>().Where(x => x.InnerText == "Interface").Single().Selected.ShouldBeTrue();
-            ThenTheElement.ChildElements.OfType<IOptionElement>().Where(x => x.InnerText != "Interface").All(x => x.Selected.ShouldBeFalse());
+            ThenTheElement.ChildElements.OfType<IOptionElement>().Where(x => x.InnerText == "Interface").Single().Selected.LegacyShouldBeTrue();
+            ThenTheElement.ChildElements.OfType<IOptionElement>().Where(x => x.InnerText != "Interface").All(x => x.Selected.LegacyShouldBeFalse());
             ThenTheElementAsString.Contains("<option value=\"Interface\" selected=\"selected\" />");
             ThenTheElementAsString.Contains("<option value=\"Method\" />");
         }
@@ -43,7 +43,7 @@ namespace SelectElement_Specification
         {
             var element = Document.CreateElement<IOptionElement>().Value("value")["content"];
             element.Selected = true;
-            element.ToString().ShouldBe("<option value=\"value\" selected=\"selected\">content</option>");
+            element.ToString().LegacyShouldBe("<option value=\"value\" selected=\"selected\">content</option>");
         }
         [Test]
         public void the_markup_for_not_selected_options_is_correct()
@@ -51,7 +51,7 @@ namespace SelectElement_Specification
 
             var element = Document.CreateElement<IOptionElement>().Value("value")["content"];
             element.Selected = false;
-            element.ToString().ShouldBe("<option value=\"value\">content</option>");
+            element.ToString().LegacyShouldBe("<option value=\"value\">content</option>");
         }
     }
 }

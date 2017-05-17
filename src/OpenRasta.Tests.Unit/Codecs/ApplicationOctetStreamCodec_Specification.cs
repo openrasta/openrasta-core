@@ -19,6 +19,7 @@ using OpenRasta.Web;
 using NUnit.Framework;
 using OpenRasta.IO;
 using System.IO;
+using Shouldly;
 
 namespace ApplicationOctetStreamCodec_Specification
 {
@@ -43,7 +44,7 @@ namespace ApplicationOctetStreamCodec_Specification
 
             when_decoding();
 
-            ThenTheResult.Length.ShouldBe(1000);
+            ThenTheResult.Length.LegacyShouldBe(1000);
         }
 
         [Test]
@@ -67,7 +68,7 @@ namespace ApplicationOctetStreamCodec_Specification
             when_decoding();
 
             ThenTheResult.FileName.
-                ShouldBeNull();
+                LegacyShouldBeNull();
         }
 
         [Test]
@@ -80,7 +81,7 @@ namespace ApplicationOctetStreamCodec_Specification
             when_decoding();
 
             ThenTheResult.FileName.
-                ShouldBe("test.txt");
+                LegacyShouldBe("test.txt");
         }
 
         public void when_decoding()
@@ -102,7 +103,7 @@ namespace ApplicationOctetStreamCodec_Specification
 
             when_coding();
 
-            Response.Headers.ContentDisposition.ShouldBeNull();
+            Response.Headers.ContentDisposition.LegacyShouldBeNull();
         }
         [Test]
         public void a_file_with_a_name_generates_an_inline_content_disposition()
@@ -113,8 +114,8 @@ namespace ApplicationOctetStreamCodec_Specification
             when_coding();
             Response.Headers.ContentDisposition.ShouldNotBeNull();
 
-            Response.Headers.ContentDisposition.Disposition.ShouldBe("inline");
-            Response.Headers.ContentDisposition.FileName.ShouldBe("test.txt");
+            Response.Headers.ContentDisposition.Disposition.LegacyShouldBe("inline");
+            Response.Headers.ContentDisposition.FileName.LegacyShouldBe("test.txt");
         }
         [Test]
         public void a_file_without_a_content_type_generates_an_app_octet_stream_content_type()
@@ -123,7 +124,7 @@ namespace ApplicationOctetStreamCodec_Specification
             given_entity(new InMemoryFile());
 
             when_coding();
-            Response.Headers.ContentType.ShouldBe(MediaType.ApplicationOctetStream);
+            Response.Headers.ContentType.LegacyShouldBe(MediaType.ApplicationOctetStream);
         }
         [Test]
         public void a_file_with_a_content_type_generates_the_correct_content_type_header()
@@ -132,7 +133,7 @@ namespace ApplicationOctetStreamCodec_Specification
             given_entity(new InMemoryFile{ContentType = MediaType.TextPlain});
 
             when_coding();
-            Response.Headers.ContentType.ShouldBe(MediaType.TextPlain);
+            Response.Headers.ContentType.LegacyShouldBe(MediaType.TextPlain);
         }
         [Test]
         public void a_file_with_a_content_type_of_app_octet_stream_doesnt_override_response_content_type()
@@ -142,7 +143,7 @@ namespace ApplicationOctetStreamCodec_Specification
             Response.Headers.ContentType = MediaType.Xml;
 
             when_coding();
-            Response.Headers.ContentType.ShouldBe(MediaType.Xml);
+            Response.Headers.ContentType.LegacyShouldBe(MediaType.Xml);
         }
         [Test]
         public void a_file_with_a_more_specific_content_type_overrides_the_response_content_type()
@@ -152,7 +153,7 @@ namespace ApplicationOctetStreamCodec_Specification
             Response.Headers.ContentType = MediaType.ApplicationOctetStream;
 
             when_coding();
-            Response.Headers.ContentType.ShouldBe(MediaType.Xml);
+            Response.Headers.ContentType.LegacyShouldBe(MediaType.Xml);
         }
         [Test]
         public void a_downloadable_file_with_name_generates_a_content_disposition()
@@ -163,8 +164,8 @@ namespace ApplicationOctetStreamCodec_Specification
             when_coding();
             Response.Headers.ContentDisposition.ShouldNotBeNull();
 
-            Response.Headers.ContentDisposition.Disposition.ShouldBe("attachment");
-            Response.Headers.ContentDisposition.FileName.ShouldBe("test.txt");
+            Response.Headers.ContentDisposition.Disposition.LegacyShouldBe("attachment");
+            Response.Headers.ContentDisposition.FileName.LegacyShouldBe("test.txt");
             
         }
         [Test]
@@ -176,8 +177,8 @@ namespace ApplicationOctetStreamCodec_Specification
             when_coding();
             Response.Headers.ContentDisposition.ShouldNotBeNull();
 
-            Response.Headers.ContentDisposition.Disposition.ShouldBe("attachment");
-            Response.Headers.ContentDisposition.FileName.ShouldBeNull();
+            Response.Headers.ContentDisposition.Disposition.LegacyShouldBe("attachment");
+            Response.Headers.ContentDisposition.FileName.LegacyShouldBeNull();
 
         }
         void when_coding()
@@ -209,7 +210,7 @@ namespace ApplicationOctetStreamCodec_Specification
 
             WhenParsing();
 
-            ThenTheResult.Length.ShouldBe(1024);
+            ThenTheResult.Length.LegacyShouldBe(1024);
             
         }
         public void WhenParsing() { when_decoding<Stream>(); }

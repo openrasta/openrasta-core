@@ -12,14 +12,14 @@ namespace OpenRasta.Tests.Unit.OperationModel.MethodBased.Operation
     {
       given_operation("GetHasOneAttribute", typeof(int));
 
-      Operation.FindAttribute<AttributeUsageAttribute>().ShouldBeNull();
+      Operation.FindAttribute<AttributeUsageAttribute>().LegacyShouldBeNull();
     }
     [Test]
     public void an_attribute_not_defined_returns_an_empty_collection()
     {
       given_operation("GetHasOneAttribute", typeof(int));
 
-      Operation.FindAttributes<AttributeUsageAttribute>().ShouldNotBeNull().ShouldBeEmpty();
+      Operation.FindAttributes<AttributeUsageAttribute>().legacyShouldNotBeNull().ShouldBeEmpty();
     }
   }
 }

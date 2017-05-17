@@ -23,7 +23,7 @@ namespace OpenRasta.Tests.Unit.Codecs
     //        var typeName = "OpenRasta.Codecs.WebForms.ResourceView<System.String>";
 
     //        OpenRastaPageParserFilter.GetTypeFromCSharpType(typeName,null)
-    //            .ShouldBe<ResourceView<string>>();
+    //            .LegacyShouldBe<ResourceView<string>>();
 
     //    }
     //    [Test]
@@ -32,14 +32,14 @@ namespace OpenRasta.Tests.Unit.Codecs
     //        var typeName = "OpenRasta.Codecs.WebForms.ResourceView<System.Collections.Generic.KeyValuePair<System.String,System.String>>";
 
     //        OpenRastaPageParserFilter.GetTypeFromCSharpType(typeName,null)
-    //            .ShouldBe<ResourceView<KeyValuePair<string,string>>>();
+    //            .LegacyShouldBe<ResourceView<KeyValuePair<string,string>>>();
 
     //    }
     //    public void types_are_resolved_against_imported_namespaces()
     //    {
     //        var typename = "String";
     //        OpenRastaPageParserFilter.GetTypeFromCSharpType(typename, new[] {"System"})
-    //            .ShouldBe<string>();
+    //            .LegacyShouldBe<string>();
     //    }
     }
 }

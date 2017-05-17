@@ -32,9 +32,9 @@ namespace ResponseEntityCodecResolver_Specification
             given_request_header_accept("text/plain");
 
             when_sending_notification<KnownStages.IOperationResultInvocation>()
-                .ShouldBe(PipelineContinuation.Continue);
+                .LegacyShouldBe(PipelineContinuation.Continue);
 
-            Context.PipelineData.ResponseCodec.CodecType.ShouldBe<Codec>();
+            Context.PipelineData.ResponseCodec.CodecType.LegacyShouldBe<Codec>();
         }
         [Test]
         public void there_is_no_vary_header()
@@ -45,9 +45,9 @@ namespace ResponseEntityCodecResolver_Specification
             given_request_header_accept("text/plain");
 
             when_sending_notification<KnownStages.IOperationResultInvocation>()
-                .ShouldBe(PipelineContinuation.Continue);
+                .LegacyShouldBe(PipelineContinuation.Continue);
 
-            Context.Response.Entity.Headers["Vary"].ShouldBeNull();
+            Context.Response.Entity.Headers["Vary"].LegacyShouldBeNull();
             
         }
     }
@@ -66,9 +66,9 @@ namespace ResponseEntityCodecResolver_Specification
             when_running_pipeline();
             
             Context.PipelineData.ResponseCodec.CodecType
-                .ShouldBe<CustomerCodec>();
+                .LegacyShouldBe<CustomerCodec>();
             Context.Response.Entity.ContentType.MediaType
-                .ShouldBe("text/plain");
+                .LegacyShouldBe("text/plain");
         }
 
         [Test]
@@ -79,10 +79,10 @@ namespace ResponseEntityCodecResolver_Specification
             given_registration_codec<CustomerCodec, Customer>("text/plain");
             given_request_header_accept("q=");
 
-            when_sending_notification<KnownStages.IOperationResultInvocation>().ShouldBe(PipelineContinuation.RenderNow);
+            when_sending_notification<KnownStages.IOperationResultInvocation>().LegacyShouldBe(PipelineContinuation.RenderNow);
             
-            Context.OperationResult.ShouldBeOfType<OperationResult.BadRequest>();
-            Context.Response.Headers["Warning"].ShouldBe("199 Malformed accept header");
+            Context.OperationResult.LegacyShouldBeOfType<OperationResult.BadRequest>();
+            Context.Response.Headers["Warning"].LegacyShouldBe("199 Malformed accept header");
         }
 
         [Test]
@@ -95,8 +95,8 @@ namespace ResponseEntityCodecResolver_Specification
 
             when_running_pipeline();
 
-            Context.PipelineData.ResponseCodec.CodecType.ShouldBe<CustomerCodec>();
-            Context.Response.Entity.ContentType.MediaType.ShouldBe("text/plain");
+            Context.PipelineData.ResponseCodec.CodecType.LegacyShouldBe<CustomerCodec>();
+            Context.Response.Entity.ContentType.MediaType.LegacyShouldBe("text/plain");
         }
 
         [Test]
@@ -108,11 +108,11 @@ namespace ResponseEntityCodecResolver_Specification
             given_request_header_accept("application/xml");
 
             when_sending_notification<KnownStages.IOperationResultInvocation>()
-                            .ShouldBe(PipelineContinuation.RenderNow);
+                            .LegacyShouldBe(PipelineContinuation.RenderNow);
             
 
             Context.OperationResult
-                .ShouldBeOfType<OperationResult.ResponseMediaTypeUnsupported>();
+                .LegacyShouldBeOfType<OperationResult.ResponseMediaTypeUnsupported>();
         }
 
         [Test]
@@ -125,8 +125,8 @@ namespace ResponseEntityCodecResolver_Specification
 
             when_running_pipeline();
             
-            Context.PipelineData.ResponseCodec.ShouldBeNull();
-            Context.Response.Entity.ContentType.ShouldBeNull();
+            Context.PipelineData.ResponseCodec.LegacyShouldBeNull();
+            Context.Response.Entity.ContentType.LegacyShouldBeNull();
         }
 
         [Test]
@@ -140,8 +140,8 @@ namespace ResponseEntityCodecResolver_Specification
 
             when_running_pipeline();
             
-            Context.PipelineData.ResponseCodec.CodecType.ShouldBe<CustomerCodec>();
-            Context.Response.Entity.ContentType.MediaType.ShouldBe("text/plain");
+            Context.PipelineData.ResponseCodec.CodecType.LegacyShouldBe<CustomerCodec>();
+            Context.Response.Entity.ContentType.MediaType.LegacyShouldBe("text/plain");
         }
 
         [Test]
@@ -156,9 +156,9 @@ namespace ResponseEntityCodecResolver_Specification
 
 
             Context.PipelineData.ResponseCodec.CodecType
-                .ShouldBe<AnotherCustomerCodec>();
+                .LegacyShouldBe<AnotherCustomerCodec>();
             Context.Response.Entity.ContentType.MediaType
-                .ShouldBe("application/xml");
+                .LegacyShouldBe("application/xml");
         }
         [Test]
         public void the_client_quality_parameter_is_respected()
@@ -172,16 +172,16 @@ namespace ResponseEntityCodecResolver_Specification
             when_running_pipeline();
 
             Context.PipelineData.ResponseCodec.CodecType
-                .ShouldBe<CustomerCodec>();
+                .LegacyShouldBe<CustomerCodec>();
             Context.Response.Entity.ContentType.MediaType
-                .ShouldBe("text/plain");
+                .LegacyShouldBe("text/plain");
             
         }
 
         void when_running_pipeline()
         {
             when_sending_notification<KnownStages.IOperationResultInvocation>()
-                .ShouldBe(PipelineContinuation.Continue);
+                .LegacyShouldBe(PipelineContinuation.Continue);
         }
 
         [Test,Category("Regression")]
@@ -194,12 +194,12 @@ namespace ResponseEntityCodecResolver_Specification
             given_request_header_accept("text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
 
             when_sending_notification<KnownStages.IOperationResultInvocation>()
-                .ShouldBe(PipelineContinuation.Continue);
+                .LegacyShouldBe(PipelineContinuation.Continue);
 
             Context.PipelineData.ResponseCodec.CodecType
-                .ShouldBe<CustomerCodec>();
+                .LegacyShouldBe<CustomerCodec>();
             Context.Response.Entity.ContentType.MediaType
-                .ShouldBe("text/html");
+                .LegacyShouldBe("text/html");
         }
     }
 }

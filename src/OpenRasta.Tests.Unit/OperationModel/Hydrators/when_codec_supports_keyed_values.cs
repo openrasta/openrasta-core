@@ -21,8 +21,8 @@ namespace OpenRasta.Tests.Unit.OperationModel.Hydrators
       when_entity_is_read();
 
       ResultOperation.Inputs.Required().First().Binder.BuildObject()
-        .Instance.ShouldBeOfType<Frodo>()
-        .LastName.ShouldBe("Baggins");
+        .Instance.LegacyShouldBeOfType<Frodo>()
+        .LastName.LegacyShouldBe("Baggins");
     }
   }
 }

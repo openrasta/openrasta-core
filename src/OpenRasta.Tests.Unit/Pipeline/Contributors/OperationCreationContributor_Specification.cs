@@ -53,7 +53,7 @@ namespace OperationCreationContributor_Specification
             when_sending_notification();
 
             then_contributor_returns(PipelineContinuation.RenderNow);
-            Context.OperationResult.ShouldBeOfType<OperationResult.MethodNotAllowed>();
+            Context.OperationResult.LegacyShouldBeOfType<OperationResult.MethodNotAllowed>();
         }
     }
 
@@ -69,8 +69,8 @@ namespace OperationCreationContributor_Specification
             when_sending_notification();
 
             then_contributor_returns(PipelineContinuation.Continue);
-            Context.PipelineData.OperationsAsync.ShouldHaveCountOf(1)
-                .ShouldHaveSameElementsAs(Operations);
+            Context.PipelineData.OperationsAsync.LegacyShouldHaveCountOf(1)
+                .LegacyShouldHaveSameElementsAs(Operations);
         }
     }
 

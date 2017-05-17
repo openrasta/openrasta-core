@@ -14,23 +14,23 @@ namespace OpenRasta.Tests.Unit.OperationModel.MethodBased
         {
             given_operation("Get", typeof(int));
 
-            Operation.Inputs.AllReady().ShouldBeTrue();
+            Operation.Inputs.AllReady().LegacyShouldBeTrue();
         }
         [Test]
         public void all_parameters_are_satisfied()
         {
             given_operation("Get", typeof(int));
 
-            Operation.Inputs.CountReady().ShouldBe(1);
+            Operation.Inputs.CountReady().LegacyShouldBe(1);
         }
         [Test]
         public void a_default_parameter_value_is_supported()
         {
             given_operation("Search",typeof(string));
 
-            Operation.Inputs.Optional().First().IsOptional.ShouldBeTrue();
-            Operation.Inputs.Optional().First().Member.ShouldBeOfType<IParameter>().DefaultValue
-                .ShouldBe("*");
+            Operation.Inputs.Optional().First().IsOptional.LegacyShouldBeTrue();
+            Operation.Inputs.Optional().First().Member.LegacyShouldBeOfType<IParameter>().DefaultValue
+                .LegacyShouldBe("*");
         }
     }
 
@@ -42,7 +42,7 @@ namespace OpenRasta.Tests.Unit.OperationModel.MethodBased
     {
       given_operation("SearchNative", typeof(string));
 
-      Operation.Inputs.AllReady().ShouldBeTrue();
+      Operation.Inputs.AllReady().LegacyShouldBeTrue();
     }
 
     [Test]
@@ -50,7 +50,7 @@ namespace OpenRasta.Tests.Unit.OperationModel.MethodBased
     {
       given_operation("SearchNative", typeof(string));
 
-      Operation.Inputs.CountReady().ShouldBe(1);
+      Operation.Inputs.CountReady().LegacyShouldBe(1);
     }
 
     [Test]
@@ -58,9 +58,9 @@ namespace OpenRasta.Tests.Unit.OperationModel.MethodBased
     {
       given_operation("SearchNative", typeof(string));
 
-      Operation.Inputs.Optional().First().IsOptional.ShouldBeTrue();
-      Operation.Inputs.Optional().First().Member.ShouldBeOfType<IParameter>().DefaultValue
-        .ShouldBe("*");
+      Operation.Inputs.Optional().First().IsOptional.LegacyShouldBeTrue();
+      Operation.Inputs.Optional().First().Member.LegacyShouldBeOfType<IParameter>().DefaultValue
+        .LegacyShouldBe("*");
     }
   }
 }

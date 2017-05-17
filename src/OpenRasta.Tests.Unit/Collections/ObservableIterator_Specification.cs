@@ -18,12 +18,12 @@ namespace OpenRasta.Tests.Unit.Collections
             var source = new[] { 1, 2, 3 };
             var result = source.AsObservable(x => x.Where(i=>i != 2), selected.Add, discarded.Add).ToList();
 
-            selected.ShouldHaveCountOf(2)
-                .ShouldContain(1)
-                .ShouldContain(3);
+            selected.LegacyShouldHaveCountOf(2)
+                .LegacyShouldContain(1)
+                .LegacyShouldContain(3);
 
-            discarded.ShouldHaveCountOf(1)
-                .ShouldContain(2);
+            discarded.LegacyShouldHaveCountOf(1)
+                .LegacyShouldContain(2);
         }
         [Test]
         public void all_discarded_items_are_notified()
@@ -33,12 +33,12 @@ namespace OpenRasta.Tests.Unit.Collections
             var source = new[] { 1, 2, 3 };
             var result = source.AsObservable(x => x.Where(i => false), selected.Add, discarded.Add).ToList();
 
-            selected.ShouldHaveCountOf(0);
+            selected.LegacyShouldHaveCountOf(0);
 
-            discarded.ShouldHaveCountOf(3)
-                .ShouldContain(1)
-                .ShouldContain(2)
-                .ShouldContain(3);
+            discarded.LegacyShouldHaveCountOf(3)
+                .LegacyShouldContain(1)
+                .LegacyShouldContain(2)
+                .LegacyShouldContain(3);
             
         }
     }

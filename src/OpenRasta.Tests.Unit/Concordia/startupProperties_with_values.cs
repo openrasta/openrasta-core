@@ -10,7 +10,7 @@ namespace OpenRasta.Tests.Unit.Concordia
         public void keys_are_correct()
         {
             var props = new StartupProperties {OpenRasta = {Pipeline = {Validate = false}}};
-            var shouldBe = props.Properties["openrasta.pipeline.validate"].ShouldBe(false);
+            var shouldBe = props.Properties["openrasta.pipeline.validate"].LegacyShouldBe(false);
         }
     }
 }

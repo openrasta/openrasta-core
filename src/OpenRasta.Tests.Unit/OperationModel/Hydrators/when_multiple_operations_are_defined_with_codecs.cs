@@ -19,7 +19,7 @@ namespace OpenRasta.Tests.Unit.OperationModel.Hydrators
 
       when_filtering_operations();
 
-      Error.ShouldBeOfType<AmbiguousRequestException>();
+      Error.LegacyShouldBeOfType<AmbiguousRequestException>();
     }
 
     [Test]
@@ -33,7 +33,7 @@ namespace OpenRasta.Tests.Unit.OperationModel.Hydrators
       when_filtering_operations();
 
       ResultOperation.GetRequestCodec().CodecRegistration.CodecType
-        .ShouldBe<ApplicationXWwwFormUrlencodedKeyedValuesCodec>();
+        .LegacyShouldBe<ApplicationXWwwFormUrlencodedKeyedValuesCodec>();
     }
     [Test]
     public void the_one_without_a_codec_is_not_selected()
@@ -46,7 +46,7 @@ namespace OpenRasta.Tests.Unit.OperationModel.Hydrators
       when_filtering_operations();
 
       ResultOperation.GetRequestCodec().CodecRegistration.CodecType
-        .ShouldBe<ApplicationOctetStreamCodec>();
+        .LegacyShouldBe<ApplicationOctetStreamCodec>();
     }
   }
 }

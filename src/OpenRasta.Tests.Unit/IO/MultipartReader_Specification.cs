@@ -23,9 +23,9 @@ namespace MultipartReader_Specification
         {
             entity.ContentType
                 .Matches(httpContentType)
-                .ShouldBeTrue();
+                .LegacyShouldBeTrue();
             string actualContent = new StreamReader(entity.Stream).ReadToEnd();
-            actualContent.ShouldBe(expectedContent);
+            actualContent.LegacyShouldBe(expectedContent);
         }
 
         string TheTextIn(Stream stream) { return new StreamReader(stream).ReadToEnd(); }
@@ -68,10 +68,10 @@ text
 
             var enumerator = reader.GetParts().GetEnumerator();
             enumerator.MoveNext()
-                .ShouldBeTrue();
+                .LegacyShouldBeTrue();
 
-            enumerator.Current.Headers.Count.ShouldBe(0);
-            TheTextIn(enumerator.Current.Stream).ShouldBe("text");
+            enumerator.Current.Headers.Count.LegacyShouldBe(0);
+            TheTextIn(enumerator.Current.Stream).LegacyShouldBe("text");
         }
 
         [Test]
@@ -107,7 +107,7 @@ text
             enumerator.MoveNext();
             CheckEntity(enumerator.Current, new MediaType("text/x-whatever"), "text\r\n...");
 
-            enumerator.MoveNext().ShouldBeFalse();
+            enumerator.MoveNext().LegacyShouldBeFalse();
             enumerator.Dispose();
         }
     }

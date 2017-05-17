@@ -25,8 +25,8 @@ namespace HandlerRepository_Specification
       repo.AddResourceHandler("ring of power", handler2);
 
       repo.GetHandlerTypesFor("ring of power")
-        .ShouldContain(handler1)
-        .ShouldContain(handler2);
+        .LegacyShouldContain(handler1)
+        .LegacyShouldContain(handler2);
     }
 
     [Test]
@@ -41,7 +41,7 @@ namespace HandlerRepository_Specification
       repo.AddResourceHandler("ring of power", handler2);
 
       repo.GetHandlerTypesFor("ring of power").FirstOrDefault()
-        .ShouldBe(handler1);
+        .LegacyShouldBe(handler1);
     }
 
     [Test]
@@ -50,7 +50,7 @@ namespace HandlerRepository_Specification
       var repo = new HandlerRepository();
 
       Executing(() => repo.AddResourceHandler(null, TypeSystems.Default.FromClr(typeof(Frodo))))
-        .ShouldThrow<ArgumentNullException>();
+        .LegacyShouldThrow<ArgumentNullException>();
     }
 
     [Test]
@@ -59,7 +59,7 @@ namespace HandlerRepository_Specification
       var repo = new HandlerRepository();
 
       Executing(() => repo.AddResourceHandler(null, TypeSystems.Default.FromClr(typeof(Frodo))))
-        .ShouldThrow<ArgumentNullException>();
+        .LegacyShouldThrow<ArgumentNullException>();
     }
 
     [Test]
@@ -72,8 +72,8 @@ namespace HandlerRepository_Specification
       repo.AddResourceHandler("Narya", gilGalad);
       repo.AddResourceHandler("Vilya", gilGalad);
 
-      repo.GetHandlerTypesFor("Narya").FirstOrDefault().ShouldBe(gilGalad);
-      repo.GetHandlerTypesFor("Vilya").FirstOrDefault().ShouldBe(gilGalad);
+      repo.GetHandlerTypesFor("Narya").FirstOrDefault().LegacyShouldBe(gilGalad);
+      repo.GetHandlerTypesFor("Vilya").FirstOrDefault().LegacyShouldBe(gilGalad);
     }
 
     [Test]
@@ -86,7 +86,7 @@ namespace HandlerRepository_Specification
       repo.AddResourceHandler("Narya", gilGalad);
       repo.AddResourceHandler("Vilya", gilGalad);
 
-      repo.GetHandlerTypes().ShouldContain(gilGalad).Count().ShouldBe(1);
+      repo.GetHandlerTypes().LegacyShouldContain(gilGalad).Count().LegacyShouldBe(1);
     }
   }
 }

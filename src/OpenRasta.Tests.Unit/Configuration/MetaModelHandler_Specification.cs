@@ -58,15 +58,15 @@ namespace MetaModelHandler_Specification
             when_executing_the_handler();
 
             Resolver.HasDependencyImplementation(typeof(IMetaModelHandler), typeof(DependencyRegistrationMetaModelHandler))
-                .ShouldBeTrue();
+                .LegacyShouldBeTrue();
         }
         [Test]
         public void cannot_add_registrations_for_null_types()
         {
             Executing(() => new DependencyRegistrationModel(null, typeof(IMetaModelHandler), DependencyLifetime.Transient))
-                .ShouldThrow<ArgumentNullException>();
+                .LegacyShouldThrow<ArgumentNullException>();
             Executing(() => new DependencyRegistrationModel(typeof(IMetaModelHandler), null, DependencyLifetime.Transient))
-                .ShouldThrow<ArgumentNullException>();
+                .LegacyShouldThrow<ArgumentNullException>();
         }
     }
     public class when_registering_uris : metamodelhandler_context<UriRegistrationMetaModelHandler>
@@ -86,12 +86,12 @@ namespace MetaModelHandler_Specification
             Handler.Process(MetaModel);
 
             var uri1 = UriResolver.Match("http://localhost/customer".ToUri());
-            uri1.ResourceKey.ShouldBeOfType<IType>().Name.ShouldBe("Customer");
-            uri1.UriName.ShouldBe("model");
+            uri1.ResourceKey.LegacyShouldBeOfType<IType>().Name.LegacyShouldBe("Customer");
+            uri1.UriName.LegacyShouldBe("model");
 
             var uri2 = UriResolver.Match("http://localhost/preferedCustomer".ToUri());
-            uri2.ResourceKey.ShouldBeOfType<IType>().Name.ShouldBe("Customer");
-            uri2.UriCulture.ShouldBe(CultureInfo.GetCultureInfo("fr-FR"));
+            uri2.ResourceKey.LegacyShouldBeOfType<IType>().Name.LegacyShouldBe("Customer");
+            uri2.UriCulture.LegacyShouldBe(CultureInfo.GetCultureInfo("fr-FR"));
 
         }
 
@@ -135,8 +135,8 @@ namespace MetaModelHandler_Specification
             var typeSystem = TypeSystems.Default.FromClr(typeof(Customer));
             var registeredHandlers = HandlerRepository.GetHandlerTypesFor(typeSystem);
 
-            registeredHandlers.Any(x => x.Name == "CustomerHandler").ShouldBeTrue();
-            registeredHandlers.Any(x => x.Name == "Object").ShouldBeTrue();
+            registeredHandlers.Any(x => x.Name == "CustomerHandler").LegacyShouldBeTrue();
+            registeredHandlers.Any(x => x.Name == "Object").LegacyShouldBeTrue();
                 
         }
 
@@ -172,9 +172,9 @@ namespace MetaModelHandler_Specification
             when_executing_the_handler();
 
             MetaModel.ResourceRegistrations[0].ResourceKey
-                .ShouldBeOfType<IType>()
+                .LegacyShouldBeOfType<IType>()
                 .CompareTo(TypeSystem.FromClr(typeof(Customer)))
-                    .ShouldBe(0);
+                    .LegacyShouldBe(0);
         }
         void given_resource_registration()
         {
@@ -199,9 +199,9 @@ namespace MetaModelHandler_Specification
 
             var htmlCodec = CodecRepository.Where(x => x.CodecType == typeof(HtmlErrorCodec));
 
-            htmlCodec.Count().ShouldBe(2);
-            htmlCodec.First().MediaType.Matches(MediaType.Xhtml).ShouldBeTrue();
-            htmlCodec.Skip(1).First().MediaType.Matches(MediaType.Html).ShouldBeTrue();
+            htmlCodec.Count().LegacyShouldBe(2);
+            htmlCodec.First().MediaType.Matches(MediaType.Xhtml).LegacyShouldBeTrue();
+            htmlCodec.Skip(1).First().MediaType.Matches(MediaType.Html).LegacyShouldBeTrue();
         }
         [Test]
         public void all_registered_codecs_for_a_resource_key_are_registered()
@@ -210,18 +210,18 @@ namespace MetaModelHandler_Specification
 
             when_executing_the_handler();
 
-            CodecRepository.Count().ShouldBe(4);
+            CodecRepository.Count().LegacyShouldBe(4);
             var first = CodecRepository.First();
-            first.CodecType.ShouldBe<CustomerCodec>();
-            first.MediaType.ShouldBe(MediaType.Json);
-            first.Extensions.ShouldContain("json");
-            first.Extensions.Count.ShouldBe(1);
+            first.CodecType.LegacyShouldBe<CustomerCodec>();
+            first.MediaType.LegacyShouldBe(MediaType.Json);
+            first.Extensions.LegacyShouldContain("json");
+            first.Extensions.Count.LegacyShouldBe(1);
 
             var second = CodecRepository.Skip(1).First();
-            second.CodecType.ShouldBe<CustomerCodec>();
-            second.MediaType.ShouldBe(MediaType.Xml);
-            second.Extensions.ShouldContain("xml");
-            second.Extensions.Count.ShouldBe(1);
+            second.CodecType.LegacyShouldBe<CustomerCodec>();
+            second.MediaType.LegacyShouldBe(MediaType.Xml);
+            second.Extensions.LegacyShouldContain("xml");
+            second.Extensions.Count.LegacyShouldBe(1);
 
 
         }
@@ -229,7 +229,7 @@ namespace MetaModelHandler_Specification
         public void cannot_add_a_codec_not_implementing_the_correct_interfaces()
         {
             Executing(() => given_unknown_type_registered_as_codec())
-                .ShouldThrow<ArgumentOutOfRangeException>();
+                .LegacyShouldThrow<ArgumentOutOfRangeException>();
         }
 
         void given_unknown_type_registered_as_codec()

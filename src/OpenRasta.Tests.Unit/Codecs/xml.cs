@@ -39,7 +39,7 @@ namespace OpenRasta.Tests.Unit.Codecs
             {
                 when_I_write(new Customer { FirstName = "good text" });
                 response.Entity.Stream.Position = 0;
-                response.Entity.Stream.ReadByte().ShouldBe('<');
+                response.Entity.Stream.ReadByte().LegacyShouldBe('<');
             }
             [Test]
             public void should_write_xml()

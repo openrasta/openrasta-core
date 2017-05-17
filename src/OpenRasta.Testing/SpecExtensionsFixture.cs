@@ -17,7 +17,7 @@ namespace OpenRasta.Testing
     public class AssertExtensionsFixture
     {
         [Test]
-        public void AssertExFailsWhenCodeThrowsAnException() { SpecExtensions.ShouldThrow<InvalidOperationException>(() => { throw new InvalidOperationException(); }); }
+        public void AssertExFailsWhenCodeThrowsAnException() { SpecExtensions.LegacyShouldThrow<InvalidOperationException>(() => { throw new InvalidOperationException(); }); }
     }
 
     public class when_matching_elements_in_enumerables : context
@@ -26,15 +26,15 @@ namespace OpenRasta.Testing
         public void contains_doesnt_fail_when_element_is_found()
         {
             var items = new[] {"one", "two"};
-            items.ShouldContain("one");
+            items.LegacyShouldContain("one");
         }
 
         [Test]
         public void contains_fails_when_element_is_not_found()
         {
             var items = new[] {"one", "two"};
-            Executing(() => items.ShouldContain("three"))
-                .ShouldThrow<AssertionException>();
+            Executing(() => items.LegacyShouldContain("three"))
+                .LegacyShouldThrow<AssertionException>();
         }
     }
 }

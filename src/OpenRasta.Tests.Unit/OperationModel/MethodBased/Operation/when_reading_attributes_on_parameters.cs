@@ -12,7 +12,7 @@ namespace OpenRasta.Tests.Unit.OperationModel.MethodBased.Operation
     {
       given_operation("GetHasParameterAttribute", typeof(int));
 
-      Operation.Inputs.First().Binder.ShouldBeAssignableTo<ParameterBinder>();
+      Operation.Inputs.First().Binder.LegacyShouldBeAssignableTo<ParameterBinder>();
     }
   }
 }

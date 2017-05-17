@@ -24,49 +24,49 @@ namespace Extensions_Specification
         public void array_types_are_parsed()
         {
             typeof (int[]).CreateInstanceFrom(new[] {"1"})
-                .ShouldBeOfType<int[]>()
-                .ShouldContain(1);
+                .LegacyShouldBeOfType<int[]>()
+                .LegacyShouldContain(1);
         }
 
         [Test]
         public void arrays_of_strings_return_the_provided_values()
         {
             typeof (string[]).CreateInstanceFrom(new[] {"one", "two", "three"})
-                .ShouldBeOfType<string[]>()
-                .ShouldHaveSameElementsAs(new[] {"one", "two", "three"});
+                .LegacyShouldBeOfType<string[]>()
+                .LegacyShouldHaveSameElementsAs(new[] {"one", "two", "three"});
         }
 
         [Test]
         public void lists_are_parsed()
         {
             typeof (List<string>).CreateInstanceFrom(new[] {"one", "two"})
-                .ShouldBeOfType<List<string>>()
-                .ShouldContain("one")
-                .ShouldContain("two");
+                .LegacyShouldBeOfType<List<string>>()
+                .LegacyShouldContain("one")
+                .LegacyShouldContain("two");
         }
 
         [Test]
         public void non_array_types_are_not_parsed_if_there_are_multiple_values()
         {
             Executing(() => typeof (int).CreateInstanceFrom(new[] {"1", "2"}))
-                .ShouldThrow<NotSupportedException>();
+                .LegacyShouldThrow<NotSupportedException>();
         }
 
         [Test]
         public void non_array_types_are_parsed_if_theres_one_value()
         {
             typeof (int).CreateInstanceFrom(new[] {"1"})
-                .ShouldBeOfType<int>()
-                .ShouldBe(1);
+                .LegacyShouldBeOfType<int>()
+                .LegacyShouldBe(1);
         }
 
         [Test]
         public void types_implementing_ICollection_of_T_are_parsed()
         {
             typeof (LinkedList<string>).CreateInstanceFrom(new[] {"one", "two"})
-                .ShouldBeOfType<LinkedList<string>>()
-                .ShouldContain("one")
-                .ShouldContain("two");
+                .LegacyShouldBeOfType<LinkedList<string>>()
+                .LegacyShouldContain("one")
+                .LegacyShouldContain("two");
         }
     }
 
@@ -76,28 +76,28 @@ namespace Extensions_Specification
         public void instance_results_in_typestring_for_the_instance_type()
         {
             new SimpleType().GetTypeString()
-                .ShouldBe("SimpleType");
+                .LegacyShouldBe("SimpleType");
         }
 
         [Test]
         public void nested_types_use_the_dot_syntax()
         {
             typeof (SimpleType.NestedType).GetTypeString()
-                .ShouldBe("SimpleType.NestedType");
+                .LegacyShouldBe("SimpleType.NestedType");
         }
 
         [Test]
         public void null_types_result_in_an_error()
         {
             Executing(() => ((Type) null).GetTypeString())
-                .ShouldThrow<ArgumentNullException>();
+                .LegacyShouldThrow<ArgumentNullException>();
         }
 
         [Test]
         public void the_name_without_the_namespace_is_returned()
         {
             typeof (SimpleType).GetTypeString()
-                .ShouldBe("SimpleType");
+                .LegacyShouldBe("SimpleType");
         }
     }
 
@@ -107,28 +107,28 @@ namespace Extensions_Specification
         public void generic_type_strings_are_defined_with_parenthesis()
         {
             typeof (GenericType<string>).GetTypeString()
-                .ShouldBe("GenericType(String)");
+                .LegacyShouldBe("GenericType(String)");
         }
 
         [Test]
         public void generic_types_that_are_not_constructed_do_not_have_a_typestring()
         {
             Executing(() => typeof (GenericType<>).GetTypeString())
-                .ShouldThrow<InvalidOperationException>();
+                .LegacyShouldThrow<InvalidOperationException>();
         }
 
         [Test]
         public void nested_generic_type_uses_the_generics_syntax()
         {
             typeof (SimpleType.NestedGenericType<string>).GetTypeString()
-                .ShouldBe("SimpleType.NestedGenericType(String)");
+                .LegacyShouldBe("SimpleType.NestedGenericType(String)");
         }
 
         [Test, Ignore("Need to understand how the generics reflection api works first.")]
         public void recursive_generic_types_use_the_generic_syntax()
         {
             typeof (GenericType<GenericType<string>>.NestedGenericType<string>).GetTypeString()
-                .ShouldBe("GenericType(GenericType(string)).NestedGenericType(String)");
+                .LegacyShouldBe("GenericType(GenericType(string)).NestedGenericType(String)");
         }
     }
 
@@ -138,54 +138,54 @@ namespace Extensions_Specification
         public void a_type_implementing_an_interface_has_a_distance_of_0_to_that_interface()
         {
             typeof (IList<string>).GetInheritanceDistance(typeof (IEnumerable))
-                .ShouldBe(0);
+                .LegacyShouldBe(0);
         }
 
         [Test]
         public void an_interface_has_a_distance_of_minus_one_to_a_concrete_type()
         {
             typeof (IList).GetInheritanceDistance(typeof (string))
-                .ShouldBe(-1);
+                .LegacyShouldBe(-1);
         }
 
         [Test]
         public void an_interface_has_a_distance_of_minus_one_to_an_interface_it_doesnt_implement()
         {
             typeof (IList<string>).GetInheritanceDistance(typeof (IList))
-                .ShouldBe(-1);
+                .LegacyShouldBe(-1);
         }
 
         [Test]
         public void an_interface_has_a_distance_of_one_to_object()
         {
             typeof (IList).GetInheritanceDistance(typeof (object))
-                .ShouldBe(1);
+                .LegacyShouldBe(1);
         }
 
         [Test]
         public void any_type_has_a_distance_of_zero_to_itself()
         {
             typeof (int).GetInheritanceDistance(typeof (int))
-                .ShouldBe(0);
+                .LegacyShouldBe(0);
         }
 
         [Test]
         public void comparing_to_a_type_not_in_the_inheritance_tree_returns_minus_one()
         {
             typeof (int).GetInheritanceDistance(typeof (string))
-                .ShouldBe(-1);
+                .LegacyShouldBe(-1);
         }
 
         [Test]
         public void primitive_types_return_one()
         {
             typeof (int).GetInheritanceDistance(typeof (ValueType))
-                .ShouldBe(1);
+                .LegacyShouldBe(1);
         }
         [Test]
         public void a_parent_type_has_an_inheritance_distance_of_minus_one_to_a_child_type()
         {
-            typeof(ValueType).GetInheritanceDistance(typeof(int)).ShouldBe(-1);
+            typeof(ValueType).GetInheritanceDistance(typeof(int)).LegacyShouldBe(-1);
         }
     }
 
@@ -195,14 +195,14 @@ namespace Extensions_Specification
         public void reference_types_return_null()
         {
             typeof (SimpleType).GetDefaultValue()
-                .ShouldBeNull();
+                .LegacyShouldBeNull();
         }
 
         [Test]
         public void value_types_return_a_default_instance()
         {
             typeof (int).GetDefaultValue()
-                .ShouldBe(0);
+                .LegacyShouldBe(0);
         }
     }
 
@@ -229,21 +229,21 @@ namespace Extensions_Specification
         {
             var simpleType = new SimpleType();
             simpleType.ConvertToString()
-                .ShouldBe(simpleType.ToString());
+                .LegacyShouldBe(simpleType.ToString());
         }
 
         [Test]
         public void primitive_types_return_the_converted_value()
         {
             3.ConvertToString()
-                .ShouldBe("3");
+                .LegacyShouldBe("3");
         }
 
         [Test]
         public void types_with_converters_return_the_coverter_value()
         {
             new TypeWithConverter().ConvertToString()
-                .ShouldBe("ValueFromConverter");
+                .LegacyShouldBe("ValueFromConverter");
         }
     }
 

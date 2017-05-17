@@ -23,24 +23,24 @@ namespace ByteArrayExtension_Specification
         public void a_full_match_returns_the_correct_index()
         {
             var match = Base10.Match(new byte[] {3, 4});
-            match.State.ShouldBe(MatchState.Found);
-            match.Index.ShouldBe(3);
+            match.State.LegacyShouldBe(MatchState.Found);
+            match.Index.LegacyShouldBe(3);
         }
 
         [Test]
         public void a_match_at_the_beginning_returns_the_correct_index()
         {
             var match = Base10.Match(new byte[] {0, 1, 2, 3, 4});
-            match.State.ShouldBe(MatchState.Found);
-            match.Index.ShouldBe(0);
+            match.State.LegacyShouldBe(MatchState.Found);
+            match.Index.LegacyShouldBe(0);
         }
 
         [Test]
         public void a_partial_match_returns_the_beginning_of_the_match()
         {
             var match = Base10.Match(new byte[] {8, 9, 10});
-            match.Index.ShouldBe(8);
-            match.State.ShouldBe(MatchState.Truncated);
+            match.Index.LegacyShouldBe(8);
+            match.State.LegacyShouldBe(MatchState.Truncated);
         }
     }
 }

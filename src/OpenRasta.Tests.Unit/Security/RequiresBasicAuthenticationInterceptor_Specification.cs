@@ -19,10 +19,10 @@ namespace RequiresBasicAuthenticationInterceptor_Specification
             var context = new InMemoryCommunicationContext();
             const string REALM = "Test Realm";
             var authenticationInterceptor = new RequiresBasicAuthenticationInterceptor(context, REALM);
-            authenticationInterceptor.BeforeExecute(new Mock<IOperation>().Object).ShouldBeFalse();
-            context.OperationResult.ShouldBeOfType<OperationResult.Unauthorized>();
+            authenticationInterceptor.BeforeExecute(new Mock<IOperation>().Object).LegacyShouldBeFalse();
+            context.OperationResult.LegacyShouldBeOfType<OperationResult.Unauthorized>();
             var expectedHeader = String.Format("Basic realm=\"{0}\"", REALM);
-            context.Response.Headers["WWW-Authenticate"].ShouldBe(expectedHeader);
+            context.Response.Headers["WWW-Authenticate"].LegacyShouldBe(expectedHeader);
         }
     }
 }

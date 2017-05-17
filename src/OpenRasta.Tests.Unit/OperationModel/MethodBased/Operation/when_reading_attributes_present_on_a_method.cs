@@ -2,6 +2,7 @@
 using NUnit.Framework;
 using OpenRasta.Testing;
 using OpenRasta.Testing.Contexts;
+using Shouldly;
 using DescriptionAttribute = System.ComponentModel.DescriptionAttribute;
 
 namespace OpenRasta.Tests.Unit.OperationModel.MethodBased.Operation
@@ -13,9 +14,9 @@ namespace OpenRasta.Tests.Unit.OperationModel.MethodBased.Operation
     {
       given_operation("GetHasOneAttribute", typeof(int));
 
-      Operation.FindAttribute<DescriptionAttribute>()
-        .ShouldNotBeNull()
-        .Description.ShouldBe("Description");
+      var attrib = Operation.FindAttribute<DescriptionAttribute>();
+      attrib.ShouldNotBeNull();
+      attrib.Description.LegacyShouldBe("Description");
     }
     [Test]
     public void multile_attributes_are_found()
@@ -42,7 +43,7 @@ namespace OpenRasta.Tests.Unit.OperationModel.MethodBased.Operation
     {
       given_operation("GetHasTwoAttributes", typeof(int));
       Operation.FindAttributes<IUseless>()
-        .Count().ShouldBe(3);
+        .Count().LegacyShouldBe(3);
 
     }
   }

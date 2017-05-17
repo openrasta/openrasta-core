@@ -19,7 +19,7 @@ namespace DefaultBinderLocator_Specification
             var type = TypeSystems.Default.FromClr(typeof(ClassWithStaticBinder));
             var binderLocator = new DefaultObjectBinderLocator();
 
-            binderLocator.GetBinder(type).ShouldBe(ClassWithStaticBinder.StaticBinder);
+            binderLocator.GetBinder(type).LegacyShouldBe(ClassWithStaticBinder.StaticBinder);
         }
         private class ClassWithStaticBinder
         {

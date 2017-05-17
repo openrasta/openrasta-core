@@ -25,7 +25,7 @@ namespace TextArea_Specification
         public void the_content_is_written()
         {
             WhenCreatingElement(() => Document.CreateElement<ITextAreaElement>()["hello"]);
-            ThenTheElementAsString.ShouldBe("<textarea>hello</textarea>");
+            ThenTheElementAsString.LegacyShouldBe("<textarea>hello</textarea>");
         }
     }
 }

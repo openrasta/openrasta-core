@@ -14,19 +14,19 @@ namespace ReflectionExtensions_Specification
         public void an_interface_on_a_type_is_discovered()
         {
             typeof(List<string>).FindInterface(typeof(IList<>))
-                .ShouldBe<IList<string>>();
+                .LegacyShouldBe<IList<string>>();
         }
         [Test]
         public void an_interface_on_an_interface_is_discovered()
         {
             typeof(IList<string>).FindInterface(typeof(IEnumerable<>))
-                .ShouldBe<IEnumerable<string>>();
+                .LegacyShouldBe<IEnumerable<string>>();
         }
         [Test]
         public void an_interface_that_is_the_provided_interface_is_discovered()
         {
             typeof(IList<string>).FindInterface(typeof(IList<>))
-                .ShouldBe <IList<string>>();
+                .LegacyShouldBe <IList<string>>();
         }
     }
 }

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using OpenRasta.Web;
@@ -46,7 +45,9 @@ namespace OpenRasta.Pipeline
         catch (Exception e)
         {
           env.ServerErrors.Add(new Error { Exception =  e});
+#pragma warning disable 618 - Compatibility
           env.PipelineData.PipelineStage.CurrentState = PipelineContinuation.Abort;
+#pragma warning restore 618
 
           throw new PipelineAbortedException(env.ServerErrors);
         }

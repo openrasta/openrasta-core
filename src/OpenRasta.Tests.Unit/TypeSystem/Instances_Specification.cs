@@ -7,6 +7,7 @@
  * License:
  *      This file is distributed under the terms of the MIT License found at the end of this file.
  */
+
 #endregion
 
 using System;
@@ -17,315 +18,329 @@ using OpenRasta.Testing;
 using OpenRasta.Tests.Unit.Fakes;
 using OpenRasta.Tests.Unit.TypeSystem;
 using OpenRasta.TypeSystem;
-using Frodo=OpenRasta.Tests.Unit.Fakes.Frodo;
+using Shouldly;
+using Frodo = OpenRasta.Tests.Unit.Fakes.Frodo;
 
 namespace Instances_Specification
 {
-    public class when_assigning_properties_to_an_existing_object : instance_context
+  public class when_assigning_properties_to_an_existing_object : instance_context
+  {
+    [Test]
+    public void cannot_assign_properties_to_a_null_object()
     {
-        [Test]
-        public void cannot_assign_properties_to_a_null_object()
-        {
-            given_builder_for<Customer>();
+      given_builder_for<Customer>();
 
-            Executing(() => TypeBuilder.Update(null)).ShouldThrow<ArgumentNullException>();
-        }
-
-        [Test]
-        public void the_properties_are_assigned()
-        {
-            given_builder_for<Customer>();
-            given_property("username", "johndoe");
-
-            var newCustomer = new Customer {FirstName = "John"};
-
-            TypeBuilder.Update(newCustomer);
-
-            newCustomer.Username.ShouldBe("johndoe");
-            newCustomer.FirstName.ShouldBe("John");
-
-            given_property("lastname", "doe");
-            newCustomer = new Customer {FirstName = "John"};
-            TypeBuilder.Update(newCustomer);
-
-            newCustomer.Username.ShouldBe("johndoe");
-            newCustomer.FirstName.ShouldBe("John");
-            newCustomer.LastName.ShouldBe("doe");
-        }
+      Executing(() => TypeBuilder.Update(null)).ShouldThrow<ArgumentNullException>();
     }
 
-    public class when_getting_properties_by_name : instance_context
+    [Test]
+    public void the_properties_are_assigned()
     {
-        [Test]
-        public void a_property_retrieved_twice_retrieves_the_same_object()
-        {
-            given_builder_for<string>();
+      given_builder_for<Customer>();
+      given_property("username", "johndoe");
 
-            TypeBuilder.GetProperty("Length").ShouldBeTheSameInstanceAs(TypeBuilder.GetProperty("Length"));
-        }
+      var newCustomer = new Customer {FirstName = "John"};
 
-        [Test]
-        public void a_readonly_property_is_returned_as_non_writable()
-        {
-            given_builder_for<string>();
+      TypeBuilder.Update(newCustomer);
 
-            TypeBuilder.GetProperty("Length").CanWrite.ShouldBeFalse();
-        }
+      newCustomer.Username.LegacyShouldBe("johndoe");
+      newCustomer.FirstName.LegacyShouldBe("John");
 
-        [Test]
-        public void an_unknown_property_returns_null()
-        {
-            given_builder_for<string>();
+      given_property("lastname", "doe");
+      newCustomer = new Customer {FirstName = "John"};
+      TypeBuilder.Update(newCustomer);
 
-            TypeBuilder.GetProperty("unknown").ShouldBeNull();
-        }
+      newCustomer.Username.LegacyShouldBe("johndoe");
+      newCustomer.FirstName.LegacyShouldBe("John");
+      newCustomer.LastName.LegacyShouldBe("doe");
+    }
+  }
+
+  public class when_getting_properties_by_name : instance_context
+  {
+    [Test]
+    public void a_property_retrieved_twice_retrieves_the_same_object()
+    {
+      given_builder_for<string>();
+
+      TypeBuilder.GetProperty("Length").LegacyShouldBeTheSameInstanceAs(TypeBuilder.GetProperty("Length"));
     }
 
-    public class when_getting_list_of_changes : instance_context
+    [Test]
+    public void a_readonly_property_is_returned_as_non_writable()
     {
-        [Test]
-        public void a_property_retrieved_but_wihtout_a_value_is_not_present_in_the_changes()
-        {
-            given_builder_for<Customer>();
+      given_builder_for<string>();
 
-            TypeBuilder.GetProperty("FirstName")
-                .TrySetValue(2).ShouldBeFalse();
-
-            TypeBuilder.Changes.Count.ShouldBe(0);
-        }
-
-        [Test]
-        public void a_successfully_assigned_property_is_present_in_the_list_of_changes()
-        {
-            given_builder_for<Customer>();
-
-            TypeBuilder.GetProperty("FirstName").TrySetValue("Frodo");
-
-            TypeBuilder.Changes.Count.ShouldBe(1);
-            TypeBuilder.Changes.ContainsKey("FirstName").ShouldBeTrue();
-        }
-
-        [Test]
-        public void accessing_the_indexer_with_an_unknown_key_throws()
-        {
-            given_builder_for<Customer>();
-            Executing(() => { IPropertyBuilder value = TypeBuilder.Changes["firstname"]; })
-                .ShouldThrow<ArgumentOutOfRangeException>();
-        }
-
-        [Test]
-        public void the_change_list_is_readonly()
-        {
-            given_builder_for<Customer>();
-
-            TypeBuilder.Changes.IsReadOnly.ShouldBeTrue();
-            Executing(() => TypeBuilder.Changes.Add(null, null))
-                .ShouldThrow<NotSupportedException>();
-
-            Executing(() => TypeBuilder.Changes.Remove(null))
-                .ShouldThrow<NotSupportedException>();
-
-            Executing(() => TypeBuilder.Changes["bla"] = null)
-                .ShouldThrow<NotSupportedException>();
-        }
-
-        [Test]
-        public void the_keys_are_case_insensitive()
-        {
-            given_builder_for<Customer>();
-            TypeBuilder.GetProperty("FirstName")
-                .TrySetValue("Frodo");
-            TypeBuilder.Changes["firstname"].Value.ShouldBe("Frodo");
-        }
+      TypeBuilder.GetProperty("Length").CanWrite.LegacyShouldBeFalse();
     }
 
-    public class when_writing_propertie_values : instance_context
+    [Test]
+    public void an_unknown_property_returns_null()
     {
-        [Test]
-        public void a_property_is_not_set_when_the_type_is_incompatible()
-        {
-            given_builder_for<Customer>();
+      given_builder_for<string>();
 
-            TypeBuilder.GetProperty("Username").TrySetValue(3).ShouldBeFalse();
-        }
+      TypeBuilder.GetProperty("unknown").LegacyShouldBeNull();
+    }
+  }
 
-        [Test]
-        public void a_writable_property_is_set_and_its_value_can_be_retrieved()
-        {
-            given_builder_for<Customer>();
+  public class when_getting_list_of_changes : instance_context
+  {
+    [Test]
+    public void a_property_retrieved_but_wihtout_a_value_is_not_present_in_the_changes()
+    {
+      given_builder_for<Customer>();
 
-            TypeBuilder.GetProperty("Username").TrySetValue("hello")
-                .ShouldBeTrue();
+      TypeBuilder.GetProperty("FirstName")
+        .TrySetValue(2)
+        .LegacyShouldBeFalse();
 
-            TypeBuilder.GetProperty("Username")
-                .Value.ShouldBe("hello");
-        }
+      TypeBuilder.Changes.Count.LegacyShouldBe(0);
     }
 
-    public class when_writing_property_values_on_live_object : instance_context
+    [Test]
+    public void a_successfully_assigned_property_is_present_in_the_list_of_changes()
     {
-        BindingResult IdentityConverter(string str, Type destinationType)
-        {
-            return BindingResult.Success(str);
-        }
+      given_builder_for<Customer>();
 
-        [Test]
-        public void a_new_instance_is_created_when_using_create()
-        {
-            given_builder_for<Customer>();
-            Customer customer = TypeBuilder.Create().ShouldBeOfType<Customer>().ShouldNotBeNull();
+      TypeBuilder.GetProperty("FirstName").TrySetValue("Frodo");
 
-            TypeBuilder.GetProperty("FirstName").TrySetValue("Frodo")
-                .ShouldBeTrue();
-
-            customer.LastName = "Baggins";
-            customer = TypeBuilder.Create() as Customer;
-
-            customer.FirstName.ShouldBe("Frodo");
-            customer.LastName.ShouldBeNull();
-        }
-
-        [Test]
-        public void assigning_properties_after_the_property_got_assigned_a_parent_updates_the_parent()
-        {
-            given_builder_for<Customer>();
-
-            var customerInstance = new Customer();
-            TypeBuilder.TrySetValue(customerInstance);
-
-            IPropertyBuilder firstName = TypeBuilder.GetProperty("FirstName");
-            //firstName.SetOwner(TypeBuilder);
-
-            firstName.TrySetValue(new[] {"Smeagol"}, IdentityConverter);
-
-            TypeBuilder.Update(customerInstance);
-            customerInstance.FirstName.ShouldBe("Smeagol");
-        }
-
-        [Test]
-        public void no_reference_is_kept_after_a_call_to_apply()
-        {
-            given_builder_for<Customer>();
-            var customer = new Customer();
-            TypeBuilder.Update(customer);
-
-            TypeBuilder.GetProperty("FirstName").TrySetValue("Frodo")
-                .ShouldBeTrue();
-
-            object newCustomer = TypeBuilder.Create();
-            newCustomer.ShouldNotBeTheSameInstanceAs(customer);
-            customer.FirstName.ShouldBe(null);
-        }
+      TypeBuilder.Changes.Count.LegacyShouldBe(1);
+      TypeBuilder.Changes.ContainsKey("FirstName").LegacyShouldBeTrue();
     }
 
-    public class when_creating_an_object : instance_context
+    [Test]
+    public void accessing_the_indexer_with_an_unknown_key_throws()
     {
-        object _result;
-
-        T ThenTheObject<T>()
+      given_builder_for<Customer>();
+      Executing(() =>
         {
-            return (T) _result;
-        }
-
-        void WhenCreatingTheObject()
-        {
-            _result = TypeBuilder.Create();
-        }
-
-        [Test]
-        public void a_type_instance_can_be_applied_twice()
-        {
-            given_builder_for<Customer>();
-            given_property("Username", "johndoe");
-
-            WhenCreatingTheObject();
-
-            given_property("FirstName", "John");
-            WhenCreatingTheObject();
-
-            ThenTheObject<Customer>().FirstName.ShouldBe("John");
-            ThenTheObject<Customer>().Username.ShouldBe("johndoe");
-        }
-
-        [Test]
-        public void a_value_can_be_assigned_to_the_type_instance()
-        {
-            given_builder_for<int>();
-
-            TypeBuilder.TrySetValue(3)
-                .ShouldBeTrue();
-            TypeBuilder.HasValue.ShouldBeTrue();
-            TypeBuilder.Value.ShouldBe(3);
-        }
-
-        [Test]
-        public void a_value_of_the_incorrect_type_cannot_be_assinged()
-        {
-            given_builder_for<int>();
-
-            TypeBuilder.TrySetValue("hello")
-                .ShouldBeFalse();
-
-            TypeBuilder.HasValue.ShouldBeFalse();
-        }
-        [Test]
-        public void nested_properties_are_assigned()
-        {
-            given_builder_for<Customer>();
-            given_property("Address.Line1", "Cadbury Street");
-            given_property("Address.City", "London");
-
-            WhenCreatingTheObject();
-
-            ThenTheObject<Customer>().Address.Line1.ShouldBe("Cadbury Street");
-            ThenTheObject<Customer>().Address.City.ShouldBe("London");
-        }
-
-        [Test]
-        public void setting_properties_on_children_of_indexers_works_as_expected()
-        {
-            given_builder_for<House>();
-
-            given_property("CustomersByName:john.FirstName", "John");
-            given_property("CustomersByName:john.LastName", "Doe");
-            WhenCreatingTheObject();
-            ThenTheObject<House>().CustomersByName["john"].FirstName.ShouldBe("John");
-            ThenTheObject<House>().CustomersByName["john"].LastName.ShouldBe("Doe");
-        }
-
-        [Test]
-        public void the_properties_are_assigned()
-        {
-            given_builder_for<Customer>();
-            given_property("Username", "johndoe");
-            given_property("FirstName", "john");
-
-            WhenCreatingTheObject();
-            ThenTheObject<Customer>().Username.ShouldBe("johndoe");
-            ThenTheObject<Customer>().FirstName.ShouldBe("john");
-        }
+          IPropertyBuilder value = TypeBuilder.Changes["firstname"];
+        })
+        .ShouldThrow<ArgumentOutOfRangeException>();
     }
 
-
-    public abstract class instance_context : context
+    [Test]
+    public void the_change_list_is_readonly()
     {
-        protected static ITypeSystem _ts = TypeSystems.Default;
-        public instance_context()
-        {
-        }
-        // ITypeSystem _typeSystem = new 
-        public void given_builder_for<T1>()
-        {
-            TypeBuilder = _ts.FromClr(typeof(T1)).CreateBuilder();
-        }
+      given_builder_for<Customer>();
 
-        protected ITypeBuilder TypeBuilder;
+      TypeBuilder.Changes.IsReadOnly.LegacyShouldBeTrue();
+      Executing(() => TypeBuilder.Changes.Add(null, null))
+        .ShouldThrow<NotSupportedException>();
 
-        protected void given_property(string prop, object value)
-        {
-            TypeBuilder.GetProperty(prop).TrySetValue(value).ShouldBeTrue();
-        }
+      Executing(() => TypeBuilder.Changes.Remove(null))
+        .ShouldThrow<NotSupportedException>();
+
+      Executing(() => TypeBuilder.Changes["bla"] = null)
+        .ShouldThrow<NotSupportedException>();
     }
+
+    [Test]
+    public void the_keys_are_case_insensitive()
+    {
+      given_builder_for<Customer>();
+      TypeBuilder.GetProperty("FirstName")
+        .TrySetValue("Frodo");
+      TypeBuilder.Changes["firstname"].Value.LegacyShouldBe("Frodo");
+    }
+  }
+
+  public class when_writing_propertie_values : instance_context
+  {
+    [Test]
+    public void a_property_is_not_set_when_the_type_is_incompatible()
+    {
+      given_builder_for<Customer>();
+
+      TypeBuilder.GetProperty("Username").TrySetValue(3).LegacyShouldBeFalse();
+    }
+
+    [Test]
+    public void a_writable_property_is_set_and_its_value_can_be_retrieved()
+    {
+      given_builder_for<Customer>();
+
+      TypeBuilder.GetProperty("Username")
+        .TrySetValue("hello")
+        .LegacyShouldBeTrue();
+
+      TypeBuilder.GetProperty("Username")
+        .Value.LegacyShouldBe("hello");
+    }
+  }
+
+  public class when_writing_property_values_on_live_object : instance_context
+  {
+    BindingResult IdentityConverter(string str, Type destinationType)
+    {
+      return BindingResult.Success(str);
+    }
+
+    [Test]
+    public void a_new_instance_is_created_when_using_create()
+    {
+      given_builder_for<Customer>();
+      var result = TypeBuilder.Create();
+      result.LegacyShouldBeOfType<Customer>();
+      result.ShouldNotBeNull();
+
+      TypeBuilder.GetProperty("FirstName")
+        .TrySetValue("Frodo")
+        .LegacyShouldBeTrue();
+
+      var customer = (Customer) result;
+      customer.LastName = "Baggins";
+      customer = TypeBuilder.Create() as Customer;
+
+      customer.FirstName.LegacyShouldBe("Frodo");
+      customer.LastName.LegacyShouldBeNull();
+    }
+
+    [Test]
+    public void assigning_properties_after_the_property_got_assigned_a_parent_updates_the_parent()
+    {
+      given_builder_for<Customer>();
+
+      var customerInstance = new Customer();
+      TypeBuilder.TrySetValue(customerInstance);
+
+      IPropertyBuilder firstName = TypeBuilder.GetProperty("FirstName");
+      //firstName.SetOwner(TypeBuilder);
+
+      firstName.TrySetValue(new[] {"Smeagol"}, IdentityConverter);
+
+      TypeBuilder.Update(customerInstance);
+      customerInstance.FirstName.LegacyShouldBe("Smeagol");
+    }
+
+    [Test]
+    public void no_reference_is_kept_after_a_call_to_apply()
+    {
+      given_builder_for<Customer>();
+      var customer = new Customer();
+      TypeBuilder.Update(customer);
+
+      TypeBuilder.GetProperty("FirstName")
+        .TrySetValue("Frodo")
+        .LegacyShouldBeTrue();
+
+      object newCustomer = TypeBuilder.Create();
+      newCustomer.LegacyShouldNotBeTheSameInstanceAs(customer);
+      customer.FirstName.LegacyShouldBe(null);
+    }
+  }
+
+  public class when_creating_an_object : instance_context
+  {
+    object _result;
+
+    T ThenTheObject<T>()
+    {
+      return (T) _result;
+    }
+
+    void WhenCreatingTheObject()
+    {
+      _result = TypeBuilder.Create();
+    }
+
+    [Test]
+    public void a_type_instance_can_be_applied_twice()
+    {
+      given_builder_for<Customer>();
+      given_property("Username", "johndoe");
+
+      WhenCreatingTheObject();
+
+      given_property("FirstName", "John");
+      WhenCreatingTheObject();
+
+      ThenTheObject<Customer>().FirstName.LegacyShouldBe("John");
+      ThenTheObject<Customer>().Username.LegacyShouldBe("johndoe");
+    }
+
+    [Test]
+    public void a_value_can_be_assigned_to_the_type_instance()
+    {
+      given_builder_for<int>();
+
+      TypeBuilder.TrySetValue(3)
+        .LegacyShouldBeTrue();
+      TypeBuilder.HasValue.LegacyShouldBeTrue();
+      TypeBuilder.Value.LegacyShouldBe(3);
+    }
+
+    [Test]
+    public void a_value_of_the_incorrect_type_cannot_be_assinged()
+    {
+      given_builder_for<int>();
+
+      TypeBuilder.TrySetValue("hello")
+        .LegacyShouldBeFalse();
+
+      TypeBuilder.HasValue.LegacyShouldBeFalse();
+    }
+
+    [Test]
+    public void nested_properties_are_assigned()
+    {
+      given_builder_for<Customer>();
+      given_property("Address.Line1", "Cadbury Street");
+      given_property("Address.City", "London");
+
+      WhenCreatingTheObject();
+
+      ThenTheObject<Customer>().Address.Line1.LegacyShouldBe("Cadbury Street");
+      ThenTheObject<Customer>().Address.City.LegacyShouldBe("London");
+    }
+
+    [Test]
+    public void setting_properties_on_children_of_indexers_works_as_expected()
+    {
+      given_builder_for<House>();
+
+      given_property("CustomersByName:john.FirstName", "John");
+      given_property("CustomersByName:john.LastName", "Doe");
+      WhenCreatingTheObject();
+      ThenTheObject<House>().CustomersByName["john"].FirstName.LegacyShouldBe("John");
+      ThenTheObject<House>().CustomersByName["john"].LastName.LegacyShouldBe("Doe");
+    }
+
+    [Test]
+    public void the_properties_are_assigned()
+    {
+      given_builder_for<Customer>();
+      given_property("Username", "johndoe");
+      given_property("FirstName", "john");
+
+      WhenCreatingTheObject();
+      ThenTheObject<Customer>().Username.LegacyShouldBe("johndoe");
+      ThenTheObject<Customer>().FirstName.LegacyShouldBe("john");
+    }
+  }
+
+
+  public abstract class instance_context : context
+  {
+    protected static ITypeSystem _ts = TypeSystems.Default;
+
+    public instance_context()
+    {
+    }
+
+    // ITypeSystem _typeSystem = new
+    public void given_builder_for<T1>()
+    {
+      TypeBuilder = _ts.FromClr(typeof(T1)).CreateBuilder();
+    }
+
+    protected ITypeBuilder TypeBuilder;
+
+    protected void given_property(string prop, object value)
+    {
+      TypeBuilder.GetProperty(prop).TrySetValue(value).LegacyShouldBeTrue();
+    }
+  }
 }
 
 #region Full license

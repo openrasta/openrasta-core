@@ -37,8 +37,8 @@ namespace Reflection_Specification
     //        var result = ReflectionHelper.FindMethod(
     //            GetMethods("testmethod", "testmethod2")
     //            , new List<NameValueCollection>(), null, nv);
-    //        result.GetParameterByName("testvalue").Value.ShouldBe("testvaluevalue");
-    //        result.GetParameterByName("key").Value.ShouldBe("keyvalue");
+    //        result.GetParameterByName("testvalue").Value.LegacyShouldBe("testvaluevalue");
+    //        result.GetParameterByName("key").Value.LegacyShouldBe("keyvalue");
     //    }
     //    [Test]
     //    public void selecting_a_method_matches_name_value_before_simple_properties()
@@ -65,7 +65,7 @@ namespace Reflection_Specification
     //            entityBody);
     //        result.ShouldNotBeNull();
     //        result.Method.ShouldNotBeNull();
-    //        result.Method.Name.ShouldBe("testmethodoptional");
+    //        result.Method.Name.LegacyShouldBe("testmethodoptional");
     //    }
     //    [Test]
     //    public void an_entity_body_of_type_NameValueCollection_is_turned_into_a_changeset_for_the_type()
@@ -77,17 +77,17 @@ namespace Reflection_Specification
     //        theSelectedMethod.ShouldNotBeNull();
 
     //        theSelectedMethod.Method.ShouldNotBeNull();
-    //        theSelectedMethod.Method.Name.ShouldBe("TestMethodWithChangeSet");
+    //        theSelectedMethod.Method.Name.LegacyShouldBe("TestMethodWithChangeSet");
 
     //        var theParameter = theSelectedMethod.GetParameterByName("changeset");
 
     //        theParameter.ShouldNotBeNull();
-    //        theParameter.Value.ShouldBeOfType<ChangeSet<TestType1>>();
+    //        theParameter.Value.LegacyShouldBeOfType<ChangeSet<TestType1>>();
 
     //        var theValue = theParameter.Value as ChangeSet<TestType1>;
-    //        theValue.Changes.Count.ShouldBe(2);
-    //        theValue.Changes["Property1"].ShouldBe(3);
-    //        theValue.Changes["Property2"].ShouldBe(true);
+    //        theValue.Changes.Count.LegacyShouldBe(2);
+    //        theValue.Changes["Property1"].LegacyShouldBe(3);
+    //        theValue.Changes["Property2"].LegacyShouldBe(true);
     //    }
     //    [Test]
     //    public void an_entity_body_of_type_NameValueCollection_is_turned_into_the_complex_types_required_by_the_method()
@@ -96,34 +96,34 @@ namespace Reflection_Specification
     //        var theSelectedMethod = ReflectionHelper.FindMethod(GetMethods("TestMethodWithType", "testmethod"), new List<NameValueCollection>(), null, entityBody);
 
     //        theSelectedMethod.ShouldNotBeNull();
-    //        theSelectedMethod.Method.Name.ShouldBe("TestMethodWithType");
+    //        theSelectedMethod.Method.Name.LegacyShouldBe("TestMethodWithType");
 
     //        var theParameter = theSelectedMethod.GetParameterByName("type");
 
     //        theParameter.ShouldNotBeNull();
-    //        theParameter.HasBeenSet.ShouldBeTrue();
+    //        theParameter.HasBeenSet.LegacyShouldBeTrue();
 
     //        var theParameterValue = theParameter.Value as TestType1;
     //        theParameterValue.ShouldNotBeNull();
-    //        theParameterValue.Property1.ShouldBe(3);
-    //        theParameterValue.Property2.ShouldBeFalse();
+    //        theParameterValue.Property1.LegacyShouldBe(3);
+    //        theParameterValue.Property2.LegacyShouldBeFalse();
     //    }
     //    [Test]
     //    public void constructing_an_object_from_a_NameValueCollection_returns_the_correct_properties_set()
     //    {
     //        var testObject = ReflectionHelper.ConstructComposedType(typeof(TestType1), new NameValueCollection { { "TestType1.Property1", "3" }, { "TestType1.Property2", "true" } }) as TestType1;
     //        testObject.ShouldNotBeNull();
-    //        testObject.Property1.ShouldBe(3);
-    //        testObject.Property2.ShouldBe(true);
+    //        testObject.Property1.LegacyShouldBe(3);
+    //        testObject.Property2.LegacyShouldBe(true);
 
     //    }
     //    [Test]
     //    public void parsing_complex_type_names_returns_no_duplicates()
     //    {
     //        var list = ReflectionHelper.ParseNameValueCollectionForComposedTypeNames(new NameValueCollection { { "Test.Test", "bla" }, { "Test.Test2", "bla" }, { "TestSecond.Test3", "bla" } });
-    //        list.Count.ShouldBe(2);
-    //        list[0].ShouldBe("Test");
-    //        list[1].ShouldBe("TestSecond");
+    //        list.Count.LegacyShouldBe(2);
+    //        list[0].LegacyShouldBe("Test");
+    //        list[1].LegacyShouldBe("TestSecond");
     //    }
     //    private static MemberInfo[] GetMethods(params string[] names)
     //    {

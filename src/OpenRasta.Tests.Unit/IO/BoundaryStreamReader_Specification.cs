@@ -23,9 +23,9 @@ namespace BoundaryStreamReader_Specification
         public void GivenABoundaryStreamReader(string boundary) { Reader = new BoundaryStreamReader(boundary, Stream); }
         public void GivenABoundaryStreamReader(string boundary, int bufferLength) { Reader = new BoundaryStreamReader(boundary, Stream, Encoding.ASCII, bufferLength); }
 
-        void ThenTheNextPartShouldBeEmpty() { Reader.ReadNextPart().ShouldBe(new byte[0]); }
+        void ThenTheNextPartShouldBeEmpty() { Reader.ReadNextPart().LegacyShouldBe(new byte[0]); }
 
-        void ThenTheNextPartShouldBe(byte[] p) { Reader.ReadNextPart().ShouldBe(p); }
+        void ThenTheNextPartShouldBe(byte[] p) { Reader.ReadNextPart().LegacyShouldBe(p); }
 
         [Test]
         public void a_boundary_starting_at_the_beginning_of_the_stream_with_a_crlf_is_processed_correctly()
@@ -35,7 +35,7 @@ namespace BoundaryStreamReader_Specification
 
             ThenTheNextPartShouldBeEmpty();
 
-            Encoding.ASCII.GetString(Reader.ReadNextPart()).ShouldBe("text");
+            Encoding.ASCII.GetString(Reader.ReadNextPart()).LegacyShouldBe("text");
         }
 
         [Test]
@@ -46,7 +46,7 @@ namespace BoundaryStreamReader_Specification
 
             ThenTheNextPartShouldBeEmpty();
 
-            Encoding.ASCII.GetString(Reader.ReadNextPart()).ShouldBe("text");
+            Encoding.ASCII.GetString(Reader.ReadNextPart()).LegacyShouldBe("text");
         }
 
         [Test]
@@ -55,7 +55,7 @@ namespace BoundaryStreamReader_Specification
             GivenAMemoryStreamContaining(TextInASCII(""));
             GivenABoundaryStreamReader("bla");
 
-            Reader.Encoding.ShouldBe(Encoding.ASCII);
+            Reader.Encoding.LegacyShouldBe(Encoding.ASCII);
         }
 
         [Test]
@@ -65,7 +65,7 @@ namespace BoundaryStreamReader_Specification
             GivenABoundaryStreamReader("boundary");
 
             ThenTheNextPartShouldBe(TextInASCII("a"));
-            Reader.ReadLine().ShouldBe("text");
+            Reader.ReadLine().LegacyShouldBe("text");
         }
 
         [Test]
@@ -75,8 +75,8 @@ namespace BoundaryStreamReader_Specification
 
             GivenABoundaryStreamReader("b");
 
-            Reader.ReadLine().ShouldBe("sentence");
-            Stream.Position.ShouldBe(10);
+            Reader.ReadLine().LegacyShouldBe("sentence");
+            Stream.Position.LegacyShouldBe(10);
         }
 
         [Test]
@@ -85,7 +85,7 @@ namespace BoundaryStreamReader_Specification
             GivenAMemoryStreamContaining(TextInASCII("once upon a time,\r\na BoundaryStreamReader...\r\n"));
             GivenABoundaryStreamReader("boundary");
 
-            Reader.ReadNextPart().ShouldBe(TextInASCII("once upon a time,\r\na BoundaryStreamReader...\r\n"));
+            Reader.ReadNextPart().LegacyShouldBe(TextInASCII("once upon a time,\r\na BoundaryStreamReader...\r\n"));
         }
 
         [Test]
@@ -94,7 +94,7 @@ namespace BoundaryStreamReader_Specification
             GivenAMemoryStreamContaining(TextInASCII("once upon a time, a BoundaryStreamReader..."));
             GivenABoundaryStreamReader("boundary");
 
-            Reader.ReadNextPart().ShouldBe(TextInASCII("once upon a time, a BoundaryStreamReader..."));
+            Reader.ReadNextPart().LegacyShouldBe(TextInASCII("once upon a time, a BoundaryStreamReader..."));
         }
 
         [Test]
@@ -105,7 +105,7 @@ namespace BoundaryStreamReader_Specification
 
             ThenTheNextPartShouldBe(TextInASCII("abc"));
 
-            Reader.ReadLine().ShouldBeNull();
+            Reader.ReadLine().LegacyShouldBeNull();
         }
 
         [Test]
@@ -122,7 +122,7 @@ namespace BoundaryStreamReader_Specification
         {
             GivenANullStream();
             Executing(() => GivenABoundaryStreamReader("b"))
-                .ShouldThrow<ArgumentNullException>();
+                .LegacyShouldThrow<ArgumentNullException>();
         }
 
         [Test]
@@ -131,7 +131,7 @@ namespace BoundaryStreamReader_Specification
             GivenANonSeekableStream();
 
             Executing(() => GivenABoundaryStreamReader("b"))
-                .ShouldThrow<ArgumentException>();
+                .LegacyShouldThrow<ArgumentException>();
         }
 
         [Test]
@@ -145,13 +145,13 @@ namespace BoundaryStreamReader_Specification
 
             Reader.SeekToNextPart(); //ensures we get to our first part
 
-            Reader.ReadLine().ShouldBe("line1");
+            Reader.ReadLine().LegacyShouldBe("line1");
 
-            Reader.GetNextPart().ReadToEnd().ShouldBe(TextInASCII("line2"));
+            Reader.GetNextPart().ReadToEnd().LegacyShouldBe(TextInASCII("line2"));
 
-            Reader.ReadLine().ShouldBe("line3");
+            Reader.ReadLine().LegacyShouldBe("line3");
 
-            Reader.GetNextPart().ReadToEnd().ShouldBe(TextInASCII("line4"));
+            Reader.GetNextPart().ReadToEnd().LegacyShouldBe(TextInASCII("line4"));
         }
 
         [Test]
@@ -160,9 +160,9 @@ namespace BoundaryStreamReader_Specification
             GivenAMemoryStreamContaining(TextInASCII("--boundary\r\ncontent\r\n--boundary\r\ncontent2\r\n--boundary--"));
             GivenABoundaryStreamReader("boundary");
 
-            Reader.GetNextPart().ReadToEnd().ShouldBe(TextInASCII("content"));
+            Reader.GetNextPart().ReadToEnd().LegacyShouldBe(TextInASCII("content"));
             Reader.SeekToNextPart();
-            Reader.GetNextPart().ShouldBeNull();
+            Reader.GetNextPart().LegacyShouldBeNull();
         }
 
         [Test]
@@ -171,8 +171,8 @@ namespace BoundaryStreamReader_Specification
             GivenAMemoryStreamContaining(TextInASCII("--boundary\r\ncontent\r\n--boundary\r\ncontent2\r\n--boundary--"));
             GivenABoundaryStreamReader("boundary");
 
-            Reader.GetNextPart().ReadByte().ShouldBe('c');
-            Reader.ReadNextPart().ShouldBe(TextInASCII("content2"));
+            Reader.GetNextPart().ReadByte().LegacyShouldBe('c');
+            Reader.ReadNextPart().LegacyShouldBe(TextInASCII("content2"));
         }
 
         [Test]
@@ -182,7 +182,7 @@ namespace BoundaryStreamReader_Specification
             GivenABoundaryStreamReader("boundary");
 
             Reader.SeekToNextPart();
-            Reader.GetNextPart().ReadToEnd().ShouldBe(TextInASCII("content"));
+            Reader.GetNextPart().ReadToEnd().LegacyShouldBe(TextInASCII("content"));
         }
 
         [Test]
@@ -196,7 +196,7 @@ namespace BoundaryStreamReader_Specification
             Reader.SeekToNextPart();
 
             Reader.SeekToNextPart();
-            Reader.GetNextPart().ReadToEnd().ShouldBe(TextInASCII("content3"));
+            Reader.GetNextPart().ReadToEnd().LegacyShouldBe(TextInASCII("content3"));
         }
         [Test]
         public void reading_over_truncated_values_doesnt_corrupt_the_stream()
@@ -213,14 +213,14 @@ namespace BoundaryStreamReader_Specification
 
             Reader.SeekToNextPart();
 
-            Reader.GetNextPart().ReadToEnd().ShouldBe(content);
+            Reader.GetNextPart().ReadToEnd().LegacyShouldBe(content);
         }
         [Test]
         public void the_buffer_of_the_reader_must_be_big_enough_to_seek_for_a_boundary()
         {
             GivenAMemoryStreamContaining(new byte[0]);
             Executing(() => GivenABoundaryStreamReader("four", 9))
-                .ShouldThrow<ArgumentOutOfRangeException>();
+                .LegacyShouldThrow<ArgumentOutOfRangeException>();
         }
 
         [Test]
@@ -236,10 +236,10 @@ namespace BoundaryStreamReader_Specification
 
             GivenABoundaryStreamReader("boundary");
 
-            Reader.ReadLine().ShouldBe("Header: value");
-            Reader.ReadLine().ShouldBe("");
-            Reader.ReadNextPart().ShouldHaveSameElementsAs(unicodeText);
-            Reader.ReadLine().ShouldBeNull();
+            Reader.ReadLine().LegacyShouldBe("Header: value");
+            Reader.ReadLine().LegacyShouldBe("");
+            Reader.ReadNextPart().LegacyShouldHaveSameElementsAs(unicodeText);
+            Reader.ReadLine().LegacyShouldBeNull();
         }
 
         [Test]
@@ -251,13 +251,13 @@ namespace BoundaryStreamReader_Specification
 
             Reader.SeekToNextPart(); //ensures we get to our first part
 
-            Reader.ReadLine().ShouldBe("line1");
+            Reader.ReadLine().LegacyShouldBe("line1");
 
-            Reader.GetNextPart().ReadByte().ShouldBe('l');
+            Reader.GetNextPart().ReadByte().LegacyShouldBe('l');
 
-            Reader.ReadLine().ShouldBe("line3");
+            Reader.ReadLine().LegacyShouldBe("line3");
 
-            Reader.GetNextPart().ReadToEnd().ShouldBe(TextInASCII("line4"));
+            Reader.GetNextPart().ReadToEnd().LegacyShouldBe(TextInASCII("line4"));
         }
     }
 }

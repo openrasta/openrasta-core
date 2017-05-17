@@ -20,7 +20,7 @@ namespace CodecMatch_Specification
 
             List<CodecMatch> list = GetSoretedList(codec1, codec2);
 
-            list[0].ShouldBe(codec2);
+            list[0].LegacyShouldBe(codec2);
         }
         [Test]
         public void when_score_is_the_same_the_highest_matching_parameters_is_selected()
@@ -30,7 +30,7 @@ namespace CodecMatch_Specification
 
             List<CodecMatch> list = GetSoretedList(codec1, codec2);
 
-            list[0].ShouldBe(codec2);
+            list[0].LegacyShouldBe(codec2);
         }
         [Test]
         public void when_score_and_param_matching_are_the_same_the_highest_quality_is_selected()
@@ -40,7 +40,7 @@ namespace CodecMatch_Specification
 
             List<CodecMatch> list = GetSoretedList(codec1, codec2);
 
-            list[0].ShouldBe(codec2);
+            list[0].LegacyShouldBe(codec2);
             
         }
         [Test]
@@ -50,7 +50,7 @@ namespace CodecMatch_Specification
 
             var list = GetSoretedList(codec, null);
 
-            list[0].ShouldBe(codec);
+            list[0].LegacyShouldBe(codec);
 
         }
         private List<CodecMatch> GetSoretedList(params CodecMatch[] codecs)

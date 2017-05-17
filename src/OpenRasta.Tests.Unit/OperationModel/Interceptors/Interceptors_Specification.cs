@@ -26,7 +26,7 @@ namespace OpenRasta.Tests.Unit.OperationModel.Interceptors
 
       when_creating_interceptors();
 
-      Interceptors.OfType<SystemInterceptor>().Count().ShouldBe(1);
+      Interceptors.OfType<SystemInterceptor>().Count().LegacyShouldBe(1);
     }
 
     [Test]
@@ -37,7 +37,7 @@ namespace OpenRasta.Tests.Unit.OperationModel.Interceptors
 
       when_creating_interceptors();
 
-      Interceptors.OfType<SomeKindOfInterceptorAttribute.InlineInterceptor>().Count().ShouldBe(1);
+      Interceptors.OfType<SomeKindOfInterceptorAttribute.InlineInterceptor>().Count().LegacyShouldBe(1);
     }
 
     [Test]
@@ -48,7 +48,7 @@ namespace OpenRasta.Tests.Unit.OperationModel.Interceptors
 
       when_creating_interceptors();
 
-      Interceptors.OfType<AttributePosingAsAnInterceptor>().Count().ShouldBe(1);
+      Interceptors.OfType<AttributePosingAsAnInterceptor>().Count().LegacyShouldBe(1);
     }
   }
 
@@ -61,9 +61,9 @@ namespace OpenRasta.Tests.Unit.OperationModel.Interceptors
 
       when_creating_wrapper();
 
-      WrappedOperation.ExtendedProperties.ShouldBeTheSameInstanceAs(Operation.ExtendedProperties);
-      WrappedOperation.Inputs.ShouldBeTheSameInstanceAs(Operation.Inputs);
-      WrappedOperation.Name.ShouldBeTheSameInstanceAs(Operation.Name);
+      WrappedOperation.ExtendedProperties.LegacyShouldBeTheSameInstanceAs(Operation.ExtendedProperties);
+      WrappedOperation.Inputs.LegacyShouldBeTheSameInstanceAs(Operation.Inputs);
+      WrappedOperation.Name.LegacyShouldBeTheSameInstanceAs(Operation.Name);
     }
 
     [Test]
@@ -74,8 +74,8 @@ namespace OpenRasta.Tests.Unit.OperationModel.Interceptors
       given_wrapper();
 
       Executing(()=>invoking_wrapped_operation())
-        .ShouldThrow<InterceptorException>()
-        .InnerException.ShouldBeOfType<ArgumentException>();
+        .LegacyShouldThrow<InterceptorException>()
+        .InnerException.LegacyShouldBeOfType<ArgumentException>();
     }
 
     [Test]
@@ -86,8 +86,8 @@ namespace OpenRasta.Tests.Unit.OperationModel.Interceptors
       given_wrapper();
 
       Executing(()=>invoking_wrapped_operation())
-        .ShouldThrow<InterceptorException>()
-        .InnerException.ShouldBeNull();
+        .LegacyShouldThrow<InterceptorException>()
+        .InnerException.LegacyShouldBeNull();
     }
 
     [Test]
@@ -101,8 +101,8 @@ namespace OpenRasta.Tests.Unit.OperationModel.Interceptors
       given_wrapper();
 
       Executing(()=>invoking_wrapped_operation())
-        .ShouldThrow<InterceptorException>()
-        .InnerException.ShouldBeOfType<ArgumentException>();
+        .LegacyShouldThrow<InterceptorException>()
+        .InnerException.LegacyShouldBeOfType<ArgumentException>();
       MockOperation.Verify(x => x.Invoke());
     }
 
@@ -119,8 +119,8 @@ namespace OpenRasta.Tests.Unit.OperationModel.Interceptors
       given_wrapper();
 
       Executing(()=>invoking_wrapped_operation())
-        .ShouldThrow<InterceptorException>()
-        .InnerException.ShouldBeNull();
+        .LegacyShouldThrow<InterceptorException>()
+        .InnerException.LegacyShouldBeNull();
       MockOperation.Verify(x => x.Invoke());
     }
 
@@ -135,7 +135,7 @@ namespace OpenRasta.Tests.Unit.OperationModel.Interceptors
       when_creating_wrapper();
       invoking_wrapped_operation();
 
-      InvokeResult.Single().Value.ShouldBe("Calm down dear!");
+      InvokeResult.Single().Value.LegacyShouldBe("Calm down dear!");
     }
   }
 

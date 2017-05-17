@@ -26,10 +26,10 @@ namespace PropertyPathExpressionTree_Specification
             var customer = new Customer { DateOfBirth = DateTime.Parse("14 Nov 2000") };
             var pp = new PropertyPathForInstance<int>(() => customer.DateOfBirth.Day);
 
-            pp.Path.TypePrefix.ShouldBe("Customer");
-            pp.Path.TypeSuffix.ShouldBe("DateOfBirth.Day");
-            pp.PropertyType.ShouldBe<int>();
-            pp.Value.ShouldBe(14);
+            pp.Path.TypePrefix.LegacyShouldBe("Customer");
+            pp.Path.TypeSuffix.LegacyShouldBe("DateOfBirth.Day");
+            pp.PropertyType.LegacyShouldBe<int>();
+            pp.Value.LegacyShouldBe(14);
         }
 
         [Test]
@@ -39,10 +39,10 @@ namespace PropertyPathExpressionTree_Specification
             var pp = new PropertyPathForInstance<object>(
                 () => customer.Username);
 
-            pp.Path.TypePrefix.ShouldBe("Customer");
-            pp.Path.TypeSuffix.ShouldBe("Username");
-            pp.PropertyType.ShouldBe<string>();
-            pp.Value.ShouldBe("johndoe");
+            pp.Path.TypePrefix.LegacyShouldBe("Customer");
+            pp.Path.TypeSuffix.LegacyShouldBe("Username");
+            pp.PropertyType.LegacyShouldBe<string>();
+            pp.Value.LegacyShouldBe("johndoe");
         }
 
         [Test]
@@ -68,8 +68,8 @@ namespace PropertyPathExpressionTree_Specification
                 ObjectPaths.Add(Customer, new PropertyPath { TypePrefix = "Customer", TypeSuffix = "TheFirst" });
 
                 var pp = new PropertyPathForInstance<object>(() => Customer.FirstName);
-                pp.Path.TypePrefix.ShouldBe("Customer");
-                pp.Path.TypeSuffix.ShouldBe("TheFirst.FirstName");
+                pp.Path.TypePrefix.LegacyShouldBe("Customer");
+                pp.Path.TypeSuffix.LegacyShouldBe("TheFirst.FirstName");
             }
             finally
             {
@@ -83,9 +83,9 @@ namespace PropertyPathExpressionTree_Specification
             var pp = new PropertyPathForInstance<object>(
                 () => Customer.FirstName);
 
-            pp.Path.TypePrefix.ShouldBe("Customer");
-            pp.Path.TypeSuffix.ShouldBe("FirstName");
-            pp.Value.ShouldBe("John");
+            pp.Path.TypePrefix.LegacyShouldBe("Customer");
+            pp.Path.TypeSuffix.LegacyShouldBe("FirstName");
+            pp.Value.LegacyShouldBe("John");
         }
     }
 }

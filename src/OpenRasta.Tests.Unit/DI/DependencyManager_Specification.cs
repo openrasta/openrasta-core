@@ -22,14 +22,14 @@ namespace DependencyManager_Specification
         {
             DependencyManager.SetResolver(null);
             Executing(() => DependencyManager.GetService(typeof (IConvertible)))
-                .ShouldThrow<DependencyResolutionException>();
+                .LegacyShouldThrow<DependencyResolutionException>();
         }
 
         [Test]
         public void resolving_a_null_dependency_returns_null()
         {
             DependencyManager.GetService(null).
-                ShouldBeNull();
+                LegacyShouldBeNull();
         }
     }
 }

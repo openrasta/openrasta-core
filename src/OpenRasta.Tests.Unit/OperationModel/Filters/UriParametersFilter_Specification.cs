@@ -22,8 +22,8 @@ namespace OpenRasta.Tests.Unit.OperationModel.Filters
 
                 when_filtering_operations();
 
-                FilteredOperations.ShouldHaveSameElementsAs(Operations);
-                Errors.Errors.Count.ShouldBe(0);
+                FilteredOperations.LegacyShouldHaveSameElementsAs(Operations);
+                Errors.Errors.Count.LegacyShouldBe(0);
 
             }
         }
@@ -39,8 +39,8 @@ namespace OpenRasta.Tests.Unit.OperationModel.Filters
 
                 when_filtering_operations();
 
-                FilteredOperations.ShouldHaveCountOf(1).First().Name.ShouldBe("Post");
-                Errors.Errors.Count.ShouldBe(0);
+                FilteredOperations.LegacyShouldHaveCountOf(1).First().Name.LegacyShouldBe("Post");
+                Errors.Errors.Count.LegacyShouldBe(0);
                 
             }
 
@@ -53,7 +53,7 @@ namespace OpenRasta.Tests.Unit.OperationModel.Filters
 
                 when_filtering_operations();
 
-                FilteredOperations.ShouldHaveCountOf(0);
+                FilteredOperations.LegacyShouldHaveCountOf(0);
             }
             [Test]
             public void operations_with_the_wrong_parameter_type_are_not_selected()
@@ -64,8 +64,8 @@ namespace OpenRasta.Tests.Unit.OperationModel.Filters
 
                 when_filtering_operations();
 
-                FilteredOperations.ShouldHaveCountOf(0);
-                Errors.Errors.Count.ShouldNotBe(0);
+                FilteredOperations.LegacyShouldHaveCountOf(0);
+                Errors.Errors.Count.LegacyShouldNotBe(0);
 
             }
         }

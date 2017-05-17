@@ -28,16 +28,16 @@ namespace RequestEntityReader_Specification
     //        GivenTheRequestCodec<CustomerCodec, Strictly<Customer>>("application/vnd.rasta");
     //        given_request_header_content_type("application/vnd.rasta");
 
-    //        Context.PipelineData.SelectedMethod.IsReadyForInvocation.ShouldBeFalse();
+    //        Context.PipelineData.SelectedMethod.IsReadyForInvocation.LegacyShouldBeFalse();
 
     //        when_sending_notification<RequestEntityCodecResolver>()
-    //            .ShouldBe(PipelineContinuation.Continue);
+    //            .LegacyShouldBe(PipelineContinuation.Continue);
 
-    //        Context.PipelineData.SelectedMethod.IsReadyForInvocation.ShouldBeTrue();
+    //        Context.PipelineData.SelectedMethod.IsReadyForInvocation.LegacyShouldBeTrue();
     //        Context.PipelineData.SelectedMethod.GetParameterByName("c")
     //            .ShouldNotBeNull()
     //            .Value
-    //            .ShouldBeOfType<Customer>();
+    //            .LegacyShouldBeOfType<Customer>();
     //    }
     //}
     //public class when_the_codec_supports_keyed_values : openrasta_context
@@ -50,17 +50,17 @@ namespace RequestEntityReader_Specification
     //        GivenTheRequestCodec<KeyValuesCustomerCodec, Strictly<Customer>>("application/vnd.rasta");
     //        given_request_header_content_type("application/vnd.rasta");
 
-    //        Context.PipelineData.SelectedMethod.IsReadyForInvocation.ShouldBeFalse();
+    //        Context.PipelineData.SelectedMethod.IsReadyForInvocation.LegacyShouldBeFalse();
 
     //        when_sending_notification<RequestEntityCodecResolver>()
-    //            .ShouldBe(PipelineContinuation.Continue);
+    //            .LegacyShouldBe(PipelineContinuation.Continue);
 
-    //        Context.PipelineData.SelectedMethod.IsReadyForInvocation.ShouldBeTrue();
+    //        Context.PipelineData.SelectedMethod.IsReadyForInvocation.LegacyShouldBeTrue();
     //        Context.PipelineData.SelectedMethod.GetParameterByName("c")
     //            .ShouldNotBeNull()
     //            .Value
-    //            .ShouldBeOfType<Customer>()
-    //            .Username.ShouldBe("johndoe");
+    //            .LegacyShouldBeOfType<Customer>()
+    //            .Username.LegacyShouldBe("johndoe");
     //    }
     //    [Test]
     //    public void the_key_values_are_used_to_build_multiple_parameters()
@@ -70,22 +70,22 @@ namespace RequestEntityReader_Specification
     //        GivenTheRequestCodec<KeyValuesCustomerAndAddressCodec, object>("application/vnd.rasta");
     //        given_request_header_content_type("application/vnd.rasta");
 
-    //        Context.PipelineData.SelectedMethod.IsReadyForInvocation.ShouldBeFalse();
+    //        Context.PipelineData.SelectedMethod.IsReadyForInvocation.LegacyShouldBeFalse();
 
     //        when_sending_notification<RequestEntityCodecResolver>()
-    //            .ShouldBe(PipelineContinuation.Continue);
+    //            .LegacyShouldBe(PipelineContinuation.Continue);
 
-    //        Context.PipelineData.SelectedMethod.IsReadyForInvocation.ShouldBeTrue();
+    //        Context.PipelineData.SelectedMethod.IsReadyForInvocation.LegacyShouldBeTrue();
     //        Context.PipelineData.SelectedMethod.GetParameterByName("c")
     //            .ShouldNotBeNull()
     //            .Value
-    //            .ShouldBeOfType<Customer>()
-    //            .Username.ShouldBe("johndoe"); 
+    //            .LegacyShouldBeOfType<Customer>()
+    //            .Username.LegacyShouldBe("johndoe"); 
     //        Context.PipelineData.SelectedMethod.GetParameterByName("a")
     //             .ShouldNotBeNull()
     //                 .Value
-    //                     .ShouldBeOfType<Address>()
-    //                        .City.ShouldBe("London");
+    //                     .LegacyShouldBeOfType<Address>()
+    //                        .City.LegacyShouldBe("London");
     //    }
     //}
     //public class when_the_codec_fails_to_read_a_parameter_successfully : openrasta_context
@@ -104,7 +104,7 @@ namespace RequestEntityReader_Specification
     //        given_request_header_content_type("application/vnd.rasta");
 
     //        when_sending_notification<RequestEntityCodecResolver>()
-    //            .ShouldBe(PipelineContinuation.Continue);
+    //            .LegacyShouldBe(PipelineContinuation.Continue);
     //    }
     //}
 }

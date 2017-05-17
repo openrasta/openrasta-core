@@ -36,8 +36,8 @@ namespace ApplicationXWwwUrlformEncodedCodec_Specification
             when_decoding<Dictionary<string, string[]>>();
 
             ThenTheResult
-                .ShouldContain("Customer.Something", new[] { "John" })
-                .ShouldContain("Customer.SomethingElse", new[] { "Doe" });
+                .LegacyShouldContain("Customer.Something", new[] { "John" })
+                .LegacyShouldContain("Customer.SomethingElse", new[] { "Doe" });
 
         }
         private Dictionary<string, string[]> ThenTheResult { get { return base.then_decoding_result<Dictionary<string, string[]>>(); } }
@@ -53,7 +53,7 @@ namespace ApplicationXWwwUrlformEncodedCodec_Specification
             when_decoding<string>("thecustomer");
 
             then_decoding_result<string>()
-                .ShouldBe("John Doe");
+                .LegacyShouldBe("John Doe");
         }
         [Test]
         public void strings_are_assigned()
@@ -65,7 +65,7 @@ namespace ApplicationXWwwUrlformEncodedCodec_Specification
             when_decoding<string[]>("thecustomer");
 
             then_decoding_result<string[]>()
-                .ShouldHaveSameElementsAs(new[] { "John", "Jack" });
+                .LegacyShouldHaveSameElementsAs(new[] { "John", "Jack" });
         }
         [Test]
         public void string_arrays_are_assigned()
@@ -76,7 +76,7 @@ namespace ApplicationXWwwUrlformEncodedCodec_Specification
             when_decoding<string>("thecustomer");
 
             then_decoding_result<string>()
-                .ShouldBe("John");
+                .LegacyShouldBe("John");
         }
 
         [Test]
@@ -88,7 +88,7 @@ namespace ApplicationXWwwUrlformEncodedCodec_Specification
             when_decoding<Guid>("myguid");
 
             then_decoding_result<Guid>()
-                .ShouldBe(new Guid("044A624B-466A-4383-89FA-A02B629C78B9"));
+                .LegacyShouldBe(new Guid("044A624B-466A-4383-89FA-A02B629C78B9"));
         }
 
         [Test]
@@ -123,7 +123,7 @@ namespace ApplicationXWwwUrlformEncodedCodec_Specification
             when_decoding<int>("thecustomerid");
 
             then_decoding_result<int>()
-                .ShouldBe(3);
+                .LegacyShouldBe(3);
         }
     }
     public class when_parsing_for_complex_types : app_www_context
@@ -137,7 +137,7 @@ namespace ApplicationXWwwUrlformEncodedCodec_Specification
             when_decoding<Customer>("thecustomer");
 
             then_decoding_result<Customer>().FirstName
-                .ShouldBe("John");
+                .LegacyShouldBe("John");
 
         }
         [Test]
@@ -149,7 +149,7 @@ namespace ApplicationXWwwUrlformEncodedCodec_Specification
             when_decoding<Customer>();
 
             then_decoding_result<Customer>().FirstName
-                .ShouldBe("John");
+                .LegacyShouldBe("John");
         }
         [Test]
         public void multiple_values_for_a_non_array_type_are_ignored()
@@ -158,8 +158,8 @@ namespace ApplicationXWwwUrlformEncodedCodec_Specification
             given_request_stream("Customer.FirstName=John&Customer.FirstName=Jack&Customer.LastName=Doe");
 
             when_decoding<Customer>();
-            then_decoding_result<Customer>().FirstName.ShouldBe(null);
-            then_decoding_result<Customer>().LastName.ShouldBe("Doe");
+            then_decoding_result<Customer>().FirstName.LegacyShouldBe(null);
+            then_decoding_result<Customer>().LastName.LegacyShouldBe("Doe");
 
         }
         [Test]
@@ -171,15 +171,15 @@ namespace ApplicationXWwwUrlformEncodedCodec_Specification
             when_decoding<Customer>();
 
             then_decoding_result<Customer>()
-                .ShouldBeOfType<Customer>();
+                .LegacyShouldBeOfType<Customer>();
 
             then_decoding_result<Customer>().FirstName
-                    .ShouldBe("John");
+                    .LegacyShouldBe("John");
             then_decoding_result<Customer>().LastName
-                    .ShouldBe("Doe");
+                    .LegacyShouldBe("Doe");
 
             then_decoding_result<Customer>().DateOfBirth.Day
-                    .ShouldBe(10);
+                    .LegacyShouldBe(10);
         }
         [Test]
         public void the_changeset_type_is_built_from_key_value_pairs()
@@ -194,12 +194,12 @@ namespace ApplicationXWwwUrlformEncodedCodec_Specification
                 .Apply(customer);
 
             customer.FirstName
-                    .ShouldBe("John");
+                    .LegacyShouldBe("John");
             customer.LastName
-                      .ShouldBe("Doe");
+                      .LegacyShouldBe("Doe");
 
             customer.DateOfBirth.Day
-                    .ShouldBe(10);
+                    .LegacyShouldBe(10);
         }
         [Test]
         public void indexers_are_supported_when_encoded()
@@ -210,7 +210,7 @@ namespace ApplicationXWwwUrlformEncodedCodec_Specification
             when_decoding<Customer>();
 
             then_decoding_result<Customer>()
-                .Attributes.Count().ShouldBe(2);
+                .Attributes.Count().LegacyShouldBe(2);
         }
 
 

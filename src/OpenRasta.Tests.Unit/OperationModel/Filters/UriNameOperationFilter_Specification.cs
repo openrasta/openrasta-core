@@ -6,6 +6,7 @@ using NUnit.Framework;
 using OpenRasta.OperationModel.Filters;
 using OpenRasta.Testing;
 using OpenRasta.Testing.Contexts;
+using Shouldly;
 
 namespace OpenRasta.Tests.Unit.OperationModel.Filters
 {
@@ -30,7 +31,7 @@ namespace OpenRasta.Tests.Unit.OperationModel.Filters
 
             when_filtering_operations();
 
-            FilteredOperations.ShouldHaveCountOf(2);
+            FilteredOperations.LegacyShouldHaveCountOf(2);
 
             FilteredOperations.SingleOrDefault(x => x.Name == "GetForRouteName")
                 .ShouldNotBeNull();
@@ -50,7 +51,7 @@ namespace OpenRasta.Tests.Unit.OperationModel.Filters
 
             when_filtering_operations();
 
-            FilteredOperations.ShouldHaveSameElementsAs(Operations);
+            FilteredOperations.LegacyShouldHaveSameElementsAs(Operations);
         }
     }
 }

@@ -13,6 +13,7 @@ using OpenRasta.Testing.Contexts;
 using OpenRasta.Tests.Unit.Fakes;
 using OpenRasta.Tests.Unit.OperationModel.Filters;
 using OpenRasta.Web;
+using Shouldly;
 
 namespace OpenRasta.Tests.Unit.OperationModel.CodecSelectors
 {
@@ -27,16 +28,17 @@ namespace OpenRasta.Tests.Unit.OperationModel.CodecSelectors
 
             when_filtering_operations();
 
-            FilteredOperations.ShouldHaveCountOf(2);
+            FilteredOperations.LegacyShouldHaveCountOf(2);
             
             then_operation_should_be_selected("Get");
             then_operation_should_be_selected("GetWithOptionalValue");
 
         }
 
-        IOperationAsync then_operation_should_be_selected(string methodName)
+        void then_operation_should_be_selected(string methodName)
         {
-            return FilteredOperations.FirstOrDefault(x => x.Name == methodName).ShouldNotBeNull();
+          FilteredOperations.FirstOrDefault(x => x.Name == methodName).ShouldNotBeNull();
+          return;
         }
 
         void given_request_entity_is_zero()
@@ -60,7 +62,7 @@ namespace OpenRasta.Tests.Unit.OperationModel.CodecSelectors
 
             var selectedCodec = FilteredOperations.First(x=>x.Name == "PostForStream");
             selectedCodec.GetRequestCodec().CodecRegistration.MediaType.Matches(MediaType.ApplicationOctetStream)
-                .ShouldBeTrue();
+                .LegacyShouldBeTrue();
         }
     }
     public class when_there_is_a_request_entity : requestcodecselector_context
@@ -76,7 +78,7 @@ namespace OpenRasta.Tests.Unit.OperationModel.CodecSelectors
 
             when_filtering_operations();
 
-            FilteredOperations.First(x => x.Name == "Get").GetRequestCodec().ShouldBeNull();   
+            FilteredOperations.First(x => x.Name == "Get").GetRequestCodec().LegacyShouldBeNull();   
         }
         [Test]
         public void operations_with_partially_filled_members_still_get_codec_assigned()
@@ -92,10 +94,10 @@ namespace OpenRasta.Tests.Unit.OperationModel.CodecSelectors
 
             when_filtering_operations();
 
-            FilteredOperations.First(x => x.Name == "GetFrodo").GetRequestCodec()
-                .ShouldNotBeNull()
-                .CodecRegistration.CodecType
-                    .ShouldBe<ApplicationXWwwFormUrlencodedKeyedValuesCodec>();
+          var requestCodec = FilteredOperations.First(x => x.Name == "GetFrodo").GetRequestCodec();
+          requestCodec.ShouldNotBeNull();
+          requestCodec.CodecRegistration.CodecType
+                    .LegacyShouldBe<ApplicationXWwwFormUrlencodedKeyedValuesCodec>();
         }
 
         void given_operation_property(Func<IOperationAsync, bool> predicate, string propertyName, string propertyValue)
@@ -119,7 +121,7 @@ namespace OpenRasta.Tests.Unit.OperationModel.CodecSelectors
 
             when_filtering_operations();
 
-            FilteredOperations.FirstOrDefault(x => x.Name == "Post").ShouldBeNull();
+            FilteredOperations.FirstOrDefault(x => x.Name == "Post").LegacyShouldBeNull();
         }
     }
 
@@ -127,7 +129,7 @@ namespace OpenRasta.Tests.Unit.OperationModel.CodecSelectors
     {
         protected override RequestCodecSelector create_filter()
         {
-            return new RequestCodecSelector(Codecs, Context.Request);
+            return new RequestCodecSelector(Codecs,Context.Request);
         }
     }
 

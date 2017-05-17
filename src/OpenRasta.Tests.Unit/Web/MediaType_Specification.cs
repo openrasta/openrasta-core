@@ -24,15 +24,15 @@ namespace MediaType_Specification
         public void TheBaseTypeIsProcessedCorrectly()
         {
             MediaType content = new MediaType("application/xml");
-            content.TopLevelMediaType.ShouldBe("application");
-            content.Subtype.ShouldBe("xml");
-            content.Quality.ShouldBe(1.0f);
+            content.TopLevelMediaType.LegacyShouldBe("application");
+            content.Subtype.LegacyShouldBe("xml");
+            content.Quality.LegacyShouldBe(1.0f);
         }
         [Test,SetCulture("fr-FR")]
         public void parsing_a_quality_value_when_using_another_culture_still_parse_the_dot_value()
         {
             var mediaType = new MediaType("application/xml;q=0.3");
-            mediaType.Quality.ShouldBe(0.3f);
+            mediaType.Quality.LegacyShouldBe(0.3f);
         }
     }
 
@@ -43,48 +43,48 @@ namespace MediaType_Specification
         public void AWildcardForBaseTypeIsLessSpecificThanANonWildcard()
         {
             var ct = MediaType.Parse("*/xml,text/xml").ToList();
-            ct[0].MediaType.ShouldBe("text/xml");
-            ct[1].MediaType.ShouldBe("*/xml");
+            ct[0].MediaType.LegacyShouldBe("text/xml");
+            ct[1].MediaType.LegacyShouldBe("*/xml");
         }
 
         [Test]
         public void AWildcardHasLowerPriorityThanAny()
         {
             var ct = MediaType.Parse("application/*, */*, application/xhtml+xml").ToList();
-            ct[0].MediaType.ShouldBe("application/xhtml+xml");
-            ct[1].MediaType.ShouldBe("application/*");
-            ct[2].MediaType.ShouldBe("*/*");
+            ct[0].MediaType.LegacyShouldBe("application/xhtml+xml");
+            ct[1].MediaType.LegacyShouldBe("application/*");
+            ct[2].MediaType.LegacyShouldBe("*/*");
         }
 
         [Test]
         public void AWildcardIsConsideredAsHavingTheLowestPriority()
         {
             var ct = MediaType.Parse("*/*,text/plain;q=0.1").ToList();
-            ct[0].MediaType.ShouldBe("text/plain");
-            ct[1].MediaType.ShouldBe("*/*");
+            ct[0].MediaType.LegacyShouldBe("text/plain");
+            ct[1].MediaType.LegacyShouldBe("*/*");
         }
 
         [Test]
         public void AWildcardSubTypeHasLowerPriorityThanASpecificSubType()
         {
             var ct = MediaType.Parse("application/*, application/xhtml+xml").ToList();
-            ct[0].MediaType.ShouldBe("application/xhtml+xml");
+            ct[0].MediaType.LegacyShouldBe("application/xhtml+xml");
         }
 
         [Test]
         public void TheApplicationXmlContentTypeIsOrderedAfterAnyOtherContentTypeOfSamePriority()
         {
             var ct = MediaType.Parse("application/xml,text/plain,image/jpeg;q=0.7").ToList();
-            ct[0].MediaType.ShouldBe("text/plain");
-            ct[1].MediaType.ShouldBe("application/xml");
-            ct[2].MediaType.ShouldBe("image/jpeg");
+            ct[0].MediaType.LegacyShouldBe("text/plain");
+            ct[1].MediaType.LegacyShouldBe("application/xml");
+            ct[2].MediaType.LegacyShouldBe("image/jpeg");
         }
 
         [Test]
         public void TheApplicationXmlContentTypeIsOrderedAfterMoreSpecificTypes()
         {
             var ct = MediaType.Parse("application/xml, application/xhtml+xml").ToList();
-            ct[0].MediaType.ShouldBe("application/xhtml+xml");
+            ct[0].MediaType.LegacyShouldBe("application/xhtml+xml");
         }
 
         [Test]
@@ -92,10 +92,10 @@ namespace MediaType_Specification
         {
             var contentTypes = MediaType.Parse("text/plain; q=0.5, text/html, text/x-dvi; q=0.8, text/x-c").ToList();
 
-            contentTypes[0].MediaType.ShouldBe("text/x-c");
-            contentTypes[1].MediaType.ShouldBe("text/html");
-            contentTypes[2].MediaType.ShouldBe("text/x-dvi");
-            contentTypes[3].MediaType.ShouldBe("text/plain");
+            contentTypes[0].MediaType.LegacyShouldBe("text/x-c");
+            contentTypes[1].MediaType.LegacyShouldBe("text/html");
+            contentTypes[2].MediaType.LegacyShouldBe("text/x-dvi");
+            contentTypes[3].MediaType.LegacyShouldBe("text/plain");
         }
     }
 }

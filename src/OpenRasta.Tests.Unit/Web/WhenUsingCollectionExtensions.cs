@@ -22,9 +22,9 @@ namespace OpenRasta.Collections.Specialized
             var testObject = new {Key1 = "value1", Key2 = "value2"};
 
             var testResult = testObject.ToCaseInvariantDictionary();
-            testResult["Key1"].ShouldBe("value1");
-            testResult["Key2"].ShouldBe("value2");
-            testResult.Count.ShouldBe(2);
+            testResult["Key1"].LegacyShouldBe("value1");
+            testResult["Key2"].LegacyShouldBe("value2");
+            testResult.Count.LegacyShouldBe(2);
         }
 
         [Test]
@@ -32,8 +32,8 @@ namespace OpenRasta.Collections.Specialized
         {
             var testObject = new {Key1 = "value1", Key2 = "value2"}.ToCaseInvariantDictionary();
 
-            testObject["key1"].ShouldBe("value1");
-            testObject["Key1"].ShouldBe("value1");
+            testObject["key1"].LegacyShouldBe("value1");
+            testObject["Key1"].LegacyShouldBe("value1");
         }
     }
 }

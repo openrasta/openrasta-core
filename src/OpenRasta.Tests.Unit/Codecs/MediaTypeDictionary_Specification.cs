@@ -24,7 +24,7 @@ namespace MediaTypeDictionary_Specification
         public void adding_a_null_media_type_raises_an_error()
         {
             Executing(() => GivenMediaType(null, null))
-                .ShouldThrow<ArgumentNullException>();
+                .LegacyShouldThrow<ArgumentNullException>();
         }
     }
     public class when_matching_media_types : media_type_context
@@ -38,9 +38,9 @@ namespace MediaTypeDictionary_Specification
             WhenMatching("application/xml");
 
             ThenTheResult
-                .ShouldContain("xml");
+                .LegacyShouldContain("xml");
             ThenTheResult
-                .Count.ShouldBe(1);
+                .Count.LegacyShouldBe(1);
         }
         [Test]
         public void registering_a_specific_media_type_and_matching_on_sub_type_wildcard_returns_two_results()
@@ -51,9 +51,9 @@ namespace MediaTypeDictionary_Specification
 
             WhenMatching("application/*");
 
-            ThenTheResult.Count.ShouldBe(2);
-            ThenTheResult.ShouldContain("xhtml");
-            ThenTheResult.ShouldContain("xml");
+            ThenTheResult.Count.LegacyShouldBe(2);
+            ThenTheResult.LegacyShouldContain("xhtml");
+            ThenTheResult.LegacyShouldContain("xml");
         }
         [Test]
         public void matching_on_wildcard_returns_all_results()
@@ -63,9 +63,9 @@ namespace MediaTypeDictionary_Specification
 
             WhenMatching("*/*");
 
-            ThenTheResult.Count.ShouldBe(2);
-            ThenTheResult.ShouldContain("xhtml");
-            ThenTheResult.ShouldContain("xml");
+            ThenTheResult.Count.LegacyShouldBe(2);
+            ThenTheResult.LegacyShouldContain("xhtml");
+            ThenTheResult.LegacyShouldContain("xml");
         }
         [Test]
         public void registering_two_media_types_with_different_values_is_supported()
@@ -75,9 +75,9 @@ namespace MediaTypeDictionary_Specification
 
             WhenMatching("text/plain");
 
-            ThenTheResult.Count.ShouldBe(2);
-            ThenTheResult.ShouldContain("text1");
-            ThenTheResult.ShouldContain("text2");
+            ThenTheResult.Count.LegacyShouldBe(2);
+            ThenTheResult.LegacyShouldContain("text1");
+            ThenTheResult.LegacyShouldContain("text2");
         }
         [Test]
         public void registering_the_same_media_type_and_associated_value_adds_it_only_once()
@@ -87,8 +87,8 @@ namespace MediaTypeDictionary_Specification
 
             WhenMatching("text/plain");
 
-            ThenTheResult.Count.ShouldBe(1);
-            ThenTheResult.ShouldContain("text1");
+            ThenTheResult.Count.LegacyShouldBe(1);
+            ThenTheResult.LegacyShouldContain("text1");
 
         }
         [Test]
@@ -98,8 +98,8 @@ namespace MediaTypeDictionary_Specification
 
             WhenMatching("text/plain");
 
-            ThenTheResult.ShouldContain("wildcard")
-                .Count().ShouldBe(1);
+            ThenTheResult.LegacyShouldContain("wildcard")
+                .Count().LegacyShouldBe(1);
         }
     }
     public class media_type_context : context

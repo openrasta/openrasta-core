@@ -36,7 +36,7 @@ namespace given_an_authentication_contributor
             when_sending_notification<KnownStages.IOperationExecution>();
 
             // then
-            IsContributorExecuted.ShouldBeTrue();
+            IsContributorExecuted.LegacyShouldBeTrue();
         }
     }
 
@@ -51,7 +51,7 @@ namespace given_an_authentication_contributor
             when_sending_notification<KnownStages.IResponseCoding>();
 
             // then
-            IsContributorExecuted.ShouldBeTrue();
+            IsContributorExecuted.LegacyShouldBeTrue();
         }
     }
 

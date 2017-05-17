@@ -32,11 +32,11 @@ namespace PropertyPathManager_Specification
             var parseResult1 = components.Count > 0 ? components[0] : new PathComponent();
             var parseResult2 = components.Count > 1 ? components[1] : new PathComponent();
             
-            parseResult1.ParsedValue.ShouldBe(parsedPart);
-            parseResult1.Type.ShouldBe(type);
+            parseResult1.ParsedValue.LegacyShouldBe(parsedPart);
+            parseResult1.Type.LegacyShouldBe(type);
 
-            parseResult2.ParsedValue.ShouldBe(parsedPartTwo);
-            parseResult2.Type.ShouldBe(result2);
+            parseResult2.ParsedValue.LegacyShouldBe(parsedPartTwo);
+            parseResult2.Type.LegacyShouldBe(result2);
         }
         [TestCase(":0", ":0", PathComponentType.Member, new[]{""})]
         [TestCase("", "", PathComponentType.Constructor, new[] { "" })]
@@ -53,8 +53,8 @@ namespace PropertyPathManager_Specification
         {
             var pathType = new PathManager().GetPathType(prefixes, path);
 
-            pathType.Type.ShouldBe(componentType);
-            pathType.ParsedValue.ShouldBe(parsedPart);
+            pathType.Type.LegacyShouldBe(componentType);
+            pathType.ParsedValue.LegacyShouldBe(parsedPart);
         }
     }
 }

@@ -46,18 +46,18 @@ namespace HistoryStream_Specification
             GivenAHistoryStreamWithBufferSize(4096);
             // if buffer is 2048 we need another 2048 to trigger a response
 
-            ReadBytes(5000).Length.ShouldBe(4096);
-            Stream.Position.ShouldBe(4096);
+            ReadBytes(5000).Length.LegacyShouldBe(4096);
+            Stream.Position.LegacyShouldBe(4096);
             // now the buffer should be full, we seek back by half
 
             Executing(() => SeekBy(-2048))
-                .ShouldCompleteSuccessfully();
+                .LegacyShouldCompleteSuccessfully();
 
-            Stream.Position.ShouldBe(4096);
+            Stream.Position.LegacyShouldBe(4096);
             // issueing a new read request should trigger a new read on the stream for the leftover text
 
-            ReadBytes(5000).Length.ShouldBe(4096 - 2048 + 12);
-            Stream.Position.ShouldBe(Stream.Length);
+            ReadBytes(5000).Length.LegacyShouldBe(4096 - 2048 + 12);
+            Stream.Position.LegacyShouldBe(Stream.Length);
         }
 
         [Test]
@@ -67,24 +67,24 @@ namespace HistoryStream_Specification
             GivenAHistoryStreamWithBufferSize(2048);
 
             ReadBytes(2048).Length
-                .ShouldBe(2048);
+                .LegacyShouldBe(2048);
             Stream.Position
-                .ShouldBe(2048);
+                .LegacyShouldBe(2048);
 
             Executing(() => SeekBy(-1024))
-                .ShouldCompleteSuccessfully(); // b is at 1024
+                .LegacyShouldCompleteSuccessfully(); // b is at 1024
             Stream.Position
-                .ShouldBe(2048);
+                .LegacyShouldBe(2048);
 
             ReadBytes(1000).Length
-                .ShouldBe(1000);
+                .LegacyShouldBe(1000);
             Stream.Position
-                .ShouldBe(2048); // no change
+                .LegacyShouldBe(2048); // no change
 
             ReadBytes(2048).Length
-                .ShouldBe(2048); // b is at 2024+2048 = 4072
+                .LegacyShouldBe(2048); // b is at 2024+2048 = 4072
             Stream.Position
-                .ShouldBe(4072);
+                .LegacyShouldBe(4072);
         }
 
         [Test]
@@ -96,7 +96,7 @@ namespace HistoryStream_Specification
             ReadBytes(512);
 
             Executing(() => SeekBy(-513))
-                .ShouldThrow<InvalidOperationException>();
+                .LegacyShouldThrow<InvalidOperationException>();
         }
 
         [Test]
@@ -108,7 +108,7 @@ namespace HistoryStream_Specification
             ReadBytes(4096);
 
             Executing(() => SeekBy(-4097))
-                .ShouldThrow<InvalidOperationException>();
+                .LegacyShouldThrow<InvalidOperationException>();
         }
 
         [Test]
@@ -120,9 +120,9 @@ namespace HistoryStream_Specification
             ReadBytes(30);
 
             Executing(() => SeekBy(1, SeekOrigin.Begin))
-                .ShouldThrow<NotSupportedException>();
+                .LegacyShouldThrow<NotSupportedException>();
             Executing(() => SeekBy(1, SeekOrigin.End))
-                .ShouldThrow<NotSupportedException>();
+                .LegacyShouldThrow<NotSupportedException>();
         }
 
         [Test]
@@ -132,7 +132,7 @@ namespace HistoryStream_Specification
             GivenAHistoryStream();
 
             HistoryStream.BufferSize.
-                ShouldBe(4096);
+                LegacyShouldBe(4096);
         }
 
         [Test]
@@ -142,17 +142,17 @@ namespace HistoryStream_Specification
             GivenAHistoryStream();
 
             HistoryStream.CanRead.
-                ShouldBeTrue();
+                LegacyShouldBeTrue();
 
             HistoryStream.CanWrite.
-                ShouldBeFalse();
+                LegacyShouldBeFalse();
 
             HistoryStream.CanSeek.
-                ShouldBeTrue();
+                LegacyShouldBeTrue();
 
-            Executing(() => HistoryStream.Position = 0).ShouldThrow<NotSupportedException>();
-            Executing(() => { var result = HistoryStream.Position; }).ShouldThrow<NotSupportedException>();
-            Executing(() => { var result = HistoryStream.Length; }).ShouldThrow<NotSupportedException>();
+            Executing(() => HistoryStream.Position = 0).LegacyShouldThrow<NotSupportedException>();
+            Executing(() => { var result = HistoryStream.Position; }).LegacyShouldThrow<NotSupportedException>();
+            Executing(() => { var result = HistoryStream.Length; }).LegacyShouldThrow<NotSupportedException>();
         }
     }
 }

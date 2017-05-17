@@ -26,7 +26,7 @@ namespace DeterministicStreamWriter_Specification
             new DeterministicStreamWriter(stream, Encoding.UTF8, StreamActionOnDispose.Close).Close();
 
             // memorystreams return false to CanWrite when they've been closed
-            stream.CanWrite.ShouldBeFalse();
+            stream.CanWrite.LegacyShouldBeFalse();
         }
     }
 
@@ -37,7 +37,7 @@ namespace DeterministicStreamWriter_Specification
         {
             var stream = new MemoryStream();
             new DeterministicStreamWriter(stream, Encoding.UTF8, StreamActionOnDispose.None).Close();
-            stream.CanWrite.ShouldBeTrue();
+            stream.CanWrite.LegacyShouldBeTrue();
         }
     }
 }

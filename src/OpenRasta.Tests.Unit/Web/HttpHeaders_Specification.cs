@@ -21,14 +21,14 @@ namespace HttpHeaders_Specification
         public void a_parameter_value_without_quotes_results_in_an_error()
         {
             Executing(() => new ContentDispositionHeader("form-data; name=n"))
-                .ShouldThrow<FormatException>();
+                .LegacyShouldThrow<FormatException>();
         }
 
         [Test]
         public void an_empty_header_results_in_an_error()
         {
             Executing(() => new ContentDispositionHeader(""))
-                .ShouldThrow<FormatException>();
+                .LegacyShouldThrow<FormatException>();
         }
 
         [Test, Ignore("need to define the use cases better first")]
@@ -39,7 +39,7 @@ namespace HttpHeaders_Specification
         {
             var header = new ContentDispositionHeader("form-data;filename=\"test\"");
             header.FileName.
-                ShouldBe("test");
+                LegacyShouldBe("test");
         }
 
         [Test]
@@ -47,7 +47,7 @@ namespace HttpHeaders_Specification
         {
             var header = new ContentDispositionHeader("form-data;filename=\"test;name\"");
             header.FileName.
-                ShouldBe("test;name");
+                LegacyShouldBe("test;name");
         }
 
         [Test]
@@ -55,7 +55,7 @@ namespace HttpHeaders_Specification
         {
             var header = new ContentDispositionHeader("form-data");
             header.Disposition.
-                ShouldBe("form-data");
+                LegacyShouldBe("form-data");
         }
 
         [Test]
@@ -63,7 +63,7 @@ namespace HttpHeaders_Specification
         {
             var header = new ContentDispositionHeader("form-data;name=\"hi\"");
             header.Name.
-                ShouldBe("hi");
+                LegacyShouldBe("hi");
         }
 
         [Test]
@@ -71,7 +71,7 @@ namespace HttpHeaders_Specification
         {
             var header = new ContentDispositionHeader("form-data ; name= \"hi\";");
             header.ToString().
-                ShouldBe("form-data; name=\"hi\"");
+                LegacyShouldBe("form-data; name=\"hi\"");
         }
 
         [Test]
@@ -79,7 +79,7 @@ namespace HttpHeaders_Specification
         {
             var header = new ContentDispositionHeader("form-data ; name = \"hi \";");
             header.Name
-                .ShouldBe("hi ");
+                .LegacyShouldBe("hi ");
         }
     }
 }

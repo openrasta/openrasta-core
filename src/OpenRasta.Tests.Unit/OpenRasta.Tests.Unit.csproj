@@ -44,6 +44,9 @@
     <Reference Include="nunit.framework, Version=3.4.1.0, Culture=neutral, PublicKeyToken=2638cd05610744eb">
       <HintPath>..\..\packages\NUnit.3.4.1\lib\net45\nunit.framework.dll</HintPath>
     </Reference>
+    <Reference Include="Shouldly, Version=2.8.2.0, Culture=neutral, PublicKeyToken=6042cbcb05cbc941">
+      <HintPath>..\..\packages\Shouldly.2.8.2\lib\net451\Shouldly.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
   </ItemGroup>
@@ -193,7 +196,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\OpenRasta.Testing\OpenRasta.Testing.csproj">
-      <Project>{434205bd-81ff-44be-9911-7597ddeb3eab}</Project>
+      <Project>{434205BD-81FF-44BE-9911-7597DDEB3EAB}</Project>
       <Name>OpenRasta.Testing</Name>
     </ProjectReference>
     <ProjectReference Include="..\OpenRasta\OpenRasta.csproj">

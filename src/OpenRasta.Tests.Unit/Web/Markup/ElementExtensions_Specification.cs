@@ -23,10 +23,10 @@ namespace ElementExtensions_Specification
         {
             var element = new GenericElement("fake").ID(null);
 
-            element.ID.ShouldBe(null);
+            element.ID.LegacyShouldBe(null);
 
             element.ToString()
-                .ShouldNotContain("id=\"");
+                .LegacyShouldNotContain("id=\"");
         }
 
         [Test]
@@ -34,7 +34,7 @@ namespace ElementExtensions_Specification
         {
             var element = new GenericElement("fake").ID("fakeid");
 
-            element.ID.ShouldBe("fakeid");
+            element.ID.LegacyShouldBe("fakeid");
         }
     }
 
@@ -46,7 +46,7 @@ namespace ElementExtensions_Specification
             var element = Document.CreateElement<IDivElement>().Class("fakeclass");
 
             element.OuterXml
-                .ShouldContain("class=\"fakeclass\"");
+                .LegacyShouldContain("class=\"fakeclass\"");
         }
 
         [Test]
@@ -55,7 +55,7 @@ namespace ElementExtensions_Specification
             var element = Document.CreateElement<IDivElement>().Class("fakeclass").Class("fakeclass2");
 
             element.OuterXml
-                .ShouldContain("class=\"fakeclass fakeclass2\"");
+                .LegacyShouldContain("class=\"fakeclass fakeclass2\"");
         }
 
         [Test]
@@ -63,8 +63,8 @@ namespace ElementExtensions_Specification
         {
             var element = Document.CreateElement<IDivElement>().Class("fakeclass fakeclass2");
             element.Class
-                .ShouldContain("fakeclass")
-                .ShouldContain("fakeclass2");
+                .LegacyShouldContain("fakeclass")
+                .LegacyShouldContain("fakeclass2");
         }
     }
 }

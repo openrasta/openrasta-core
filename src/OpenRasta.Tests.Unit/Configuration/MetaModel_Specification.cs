@@ -57,8 +57,8 @@ namespace Configuration_Specification
         {
             ResourceSpaceHas.ResourcesOfType<Customer>();
 
-            MetaModel.ResourceRegistrations.Count.ShouldBe(1);
-            MetaModel.ResourceRegistrations[0].ResourceKey.ShouldBe(typeof(Customer));
+            MetaModel.ResourceRegistrations.Count.LegacyShouldBe(1);
+            MetaModel.ResourceRegistrations[0].ResourceKey.LegacyShouldBe(typeof(Customer));
         }
 
         [Test]
@@ -66,7 +66,7 @@ namespace Configuration_Specification
         {
             ResourceSpaceHas.ResourcesNamed("customers");
 
-            MetaModel.ResourceRegistrations[0].ResourceKey.ShouldBe("customers");
+            MetaModel.ResourceRegistrations[0].ResourceKey.LegacyShouldBe("customers");
         }
 
         [Test]
@@ -74,7 +74,7 @@ namespace Configuration_Specification
         {
             ResourceSpaceHas.ResourcesOfType(typeof(Customer));
 
-            MetaModel.ResourceRegistrations[0].ResourceKey.ShouldBe(typeof(Customer));
+            MetaModel.ResourceRegistrations[0].ResourceKey.LegacyShouldBe(typeof(Customer));
         }
 
         [Test]
@@ -83,7 +83,7 @@ namespace Configuration_Specification
             var key = new object();
             ResourceSpaceHas.ResourcesWithKey(key);
 
-            MetaModel.ResourceRegistrations[0].ResourceKey.ShouldBeTheSameInstanceAs(key);
+            MetaModel.ResourceRegistrations[0].ResourceKey.LegacyShouldBeTheSameInstanceAs(key);
         }
 
         [Test]
@@ -91,29 +91,29 @@ namespace Configuration_Specification
         {
             ResourceSpaceHas.ResourcesOfType(TypeSystems.Default.FromClr(typeof(Customer)));
 
-            MetaModel.ResourceRegistrations[0].ResourceKey.ShouldBeOfType<IType>().Name.ShouldBe("Customer");
+            MetaModel.ResourceRegistrations[0].ResourceKey.LegacyShouldBeOfType<IType>().Name.LegacyShouldBe("Customer");
         }
 
         [Test]
         public void cannot_execute_registration_on_null_IHas()
         {
             Executing(() => ((IHas)null).ResourcesWithKey(new object()))
-                .ShouldThrow<ArgumentNullException>();
+                .LegacyShouldThrow<ArgumentNullException>();
         }
         [Test]
         public void a_resource_of_type_strict_is_registered_as_a_strict_type()
         {
             ResourceSpaceHas.ResourcesOfType<Strictly<Customer>>();
 
-            MetaModel.ResourceRegistrations[0].ResourceKey.ShouldBeOfType<Type>().ShouldBe<Customer>();
-            MetaModel.ResourceRegistrations[0].IsStrictRegistration.ShouldBeTrue();
+            MetaModel.ResourceRegistrations[0].ResourceKey.LegacyShouldBeOfType<Type>().LegacyShouldBe<Customer>();
+            MetaModel.ResourceRegistrations[0].IsStrictRegistration.LegacyShouldBeTrue();
 
         }
         [Test]
         public void cannot_register_a_resource_with_a_null_key()
         {
             Executing(() => ResourceSpaceHas.ResourcesWithKey(null))
-                .ShouldThrow<ArgumentNullException>();
+                .LegacyShouldThrow<ArgumentNullException>();
         }
     }
 
@@ -128,14 +128,14 @@ namespace Configuration_Specification
         public void a_null_language_defaults_to_the_inviariant_culture()
         {
             ResourceSpaceHas.ResourcesOfType<Customer>().AtUri("/customer").InLanguage(null);
-            TheUris[0].Language.ShouldBe(CultureInfo.InvariantCulture);
+            TheUris[0].Language.LegacyShouldBe(CultureInfo.InvariantCulture);
         }
 
         [Test]
         public void a_resource_can_be_registered_with_no_uri()
         {
             ICodecParentDefinition reg = ResourceSpaceHas.ResourcesOfType<Customer>().WithoutUri;
-            TheUris.Count.ShouldBe(0);
+            TheUris.Count.LegacyShouldBe(0);
         }
 
         [Test]
@@ -143,15 +143,15 @@ namespace Configuration_Specification
         {
             ResourceSpaceHas.ResourcesOfType<Customer>().AtUri("/customer");
 
-            TheUris.Count.ShouldBe(1);
-            TheUris[0].Uri.ShouldBe("/customer");
+            TheUris.Count.LegacyShouldBe(1);
+            TheUris[0].Uri.LegacyShouldBe("/customer");
         }
 
         [Test]
         public void a_uri_language_is_registered()
         {
             ResourceSpaceHas.ResourcesOfType<Customer>().AtUri("/customer").InLanguage("fr");
-            TheUris[0].Language.Name.ShouldBe("fr");
+            TheUris[0].Language.Name.LegacyShouldBe("fr");
         }
 
         [Test]
@@ -159,7 +159,7 @@ namespace Configuration_Specification
         {
             ResourceSpaceHas.ResourcesOfType<Customer>().AtUri("/customer").Named("default");
 
-            TheUris[0].Name.ShouldBe("default");
+            TheUris[0].Name.LegacyShouldBe("default");
         }
 
         [Test]
@@ -170,9 +170,9 @@ namespace Configuration_Specification
                 .And
                 .AtUri("/lothlorien");
 
-            TheUris.Count.ShouldBe(2);
-            TheUris[0].Uri.ShouldBe("/theshire");
-            TheUris[1].Uri.ShouldBe("/lothlorien");
+            TheUris.Count.LegacyShouldBe(2);
+            TheUris[0].Uri.LegacyShouldBe("/theshire");
+            TheUris[1].Uri.LegacyShouldBe("/lothlorien");
         }
 
 
@@ -180,7 +180,7 @@ namespace Configuration_Specification
         public void lcannot_register_a_null_uri_for_a_resource()
         {
             Executing(() => ResourceSpaceHas.ResourcesOfType<Customer>().AtUri(null))
-                .ShouldThrow<ArgumentNullException>();
+                .LegacyShouldThrow<ArgumentNullException>();
         }
     }
 
@@ -192,7 +192,7 @@ namespace Configuration_Specification
             ResourceSpaceHas.ResourcesOfType<Frodo>().AtUri("/theshrine")
                 .HandledBy<CustomerHandler>();
 
-            FirstRegistration.Handlers[0].Type.Name.ShouldBe("CustomerHandler");
+            FirstRegistration.Handlers[0].Type.Name.LegacyShouldBe("CustomerHandler");
         }
 
         [Test]
@@ -200,7 +200,7 @@ namespace Configuration_Specification
         {
             ResourceSpaceHas.ResourcesOfType(typeof(Frodo)).AtUri("/theshrine")
                 .HandledBy(TypeSystems.Default.FromClr(typeof(CustomerHandler)));
-            FirstRegistration.Handlers[0].Type.Name.ShouldBe("CustomerHandler");
+            FirstRegistration.Handlers[0].Type.Name.LegacyShouldBe("CustomerHandler");
         }
 
         [Test]
@@ -208,16 +208,16 @@ namespace Configuration_Specification
         {
             ResourceSpaceHas.ResourcesOfType(typeof(Frodo)).AtUri("/theshrine")
                 .HandledBy(typeof(CustomerHandler));
-            FirstRegistration.Handlers[0].Type.Name.ShouldBe("CustomerHandler");
+            FirstRegistration.Handlers[0].Type.Name.LegacyShouldBe("CustomerHandler");
         }
 
         [Test]
         public void cannot_add_a_null_handler()
         {
             Executing(() => ResourceSpaceHas.ResourcesOfType<Frodo>().AtUri("/theshrine").HandledBy((IType)null))
-                .ShouldThrow<ArgumentNullException>();
+                .LegacyShouldThrow<ArgumentNullException>();
             Executing(() => ResourceSpaceHas.ResourcesOfType<Frodo>().AtUri("/theshrine").HandledBy((Type)null))
-                .ShouldThrow<ArgumentNullException>();
+                .LegacyShouldThrow<ArgumentNullException>();
         }
 
         [Test]
@@ -228,8 +228,8 @@ namespace Configuration_Specification
                 .And
                 .HandledBy<object>();
 
-            FirstRegistration.Handlers[0].Type.Name.ShouldBe("CustomerHandler");
-            FirstRegistration.Handlers[1].Type.Name.ShouldBe("Object");
+            FirstRegistration.Handlers[0].Type.Name.LegacyShouldBe("CustomerHandler");
+            FirstRegistration.Handlers[1].Type.Name.LegacyShouldBe("Object");
         }
     }
     public class when_registering_uri_decorators : configuration_context
@@ -240,8 +240,8 @@ namespace Configuration_Specification
             ResourceSpaceUses.UriDecorator<TestUriDecorator>();
 
             MetaModel.CustomRegistrations.OfType<DependencyRegistrationModel>().FirstOrDefault()
-                .ShouldNotBeNull()
-                .ConcreteType.ShouldBe<TestUriDecorator>();
+                .legacyShouldNotBeNull()
+                .ConcreteType.LegacyShouldBe<TestUriDecorator>();
         }
         public class TestUriDecorator : IUriDecorator
         {
@@ -266,7 +266,7 @@ namespace Configuration_Specification
                 {
                     parent.TranscodedBy<CustomerCodec>();
 
-                    FirstRegistration.Codecs[0].CodecType.ShouldBe<CustomerCodec>();
+                    FirstRegistration.Codecs[0].CodecType.LegacyShouldBe<CustomerCodec>();
                 });
         }
 
@@ -277,7 +277,7 @@ namespace Configuration_Specification
                 {
                     parent.TranscodedBy(typeof(CustomerCodec));
 
-                    FirstRegistration.Codecs[0].CodecType.ShouldBe<CustomerCodec>();
+                    FirstRegistration.Codecs[0].CodecType.LegacyShouldBe<CustomerCodec>();
                 });
         }
         [Test]
@@ -288,7 +288,7 @@ namespace Configuration_Specification
                 var configurationObject = new object();
                 parent.TranscodedBy(typeof(CustomerCodec),configurationObject);
 
-                FirstRegistration.Codecs[0].Configuration.ShouldBe(configurationObject);
+                FirstRegistration.Codecs[0].Configuration.LegacyShouldBe(configurationObject);
             });
         }
         [Test]
@@ -298,7 +298,7 @@ namespace Configuration_Specification
                 {
                     parent.TranscodedBy<CustomerCodec>().ForMediaType(MediaType.Javascript.ToString());
 
-                    FirstRegistration.Codecs[0].MediaTypes[0].MediaType.ShouldBe(MediaType.Javascript);
+                    FirstRegistration.Codecs[0].MediaTypes[0].MediaType.LegacyShouldBe(MediaType.Javascript);
                 });
         }
 
@@ -309,8 +309,8 @@ namespace Configuration_Specification
                 {
                     parent.TranscodedBy<CustomerCodec>().ForMediaType("application/xhtml+xml").ForMediaType("text/plain");
 
-                    FirstRegistration.Codecs[0].MediaTypes[0].MediaType.ToString().ShouldBe("application/xhtml+xml");
-                    FirstRegistration.Codecs[0].MediaTypes[1].MediaType.ToString().ShouldBe("text/plain");
+                    FirstRegistration.Codecs[0].MediaTypes[0].MediaType.ToString().LegacyShouldBe("application/xhtml+xml");
+                    FirstRegistration.Codecs[0].MediaTypes[1].MediaType.ToString().LegacyShouldBe("text/plain");
                 });
         }
         [Test]
@@ -321,8 +321,8 @@ namespace Configuration_Specification
                 parent.TranscodedBy<CustomerCodec>().ForMediaType("application/xhtml+xml").ForExtension("xml");
 
                 FirstRegistration.Codecs[0].MediaTypes[0]
-                    .Extensions.ShouldContain("xml")
-                    .Count().ShouldBe(1);
+                    .Extensions.LegacyShouldContain("xml")
+                    .Count().LegacyShouldBe(1);
             });
         }
 
@@ -337,13 +337,13 @@ namespace Configuration_Specification
 
                 FirstRegistration.Codecs[0].MediaTypes[0]
                     .Extensions
-                        .ShouldContain("xml")
-                        .ShouldContain("xhtml")
-                        .Count().ShouldBe(2);
+                        .LegacyShouldContain("xml")
+                        .LegacyShouldContain("xhtml")
+                        .Count().LegacyShouldBe(2);
                 FirstRegistration.Codecs[0].MediaTypes[1]
                     .Extensions
-                        .ShouldContain("html")
-                        .Count().ShouldBe(1);
+                        .LegacyShouldContain("html")
+                        .Count().LegacyShouldBe(1);
             });
         }
         [Test]
@@ -360,26 +360,26 @@ namespace Configuration_Specification
                     .TranscodedBy<CustomerWriterCodec>()
                     .ForMediaType("application/unknown");
 
-                FirstRegistration.Codecs[0].CodecType.ShouldBe<CustomerReaderCodec>();
+                FirstRegistration.Codecs[0].CodecType.LegacyShouldBe<CustomerReaderCodec>();
 
-                FirstRegistration.Codecs[1].CodecType.ShouldBe<CustomerCodec>();
+                FirstRegistration.Codecs[1].CodecType.LegacyShouldBe<CustomerCodec>();
                 FirstRegistration.Codecs[1].MediaTypes[0]
                     .Extensions
-                        .ShouldContain("xml")
-                        .ShouldContain("xhtml")
-                        .Count().ShouldBe(2);
+                        .LegacyShouldContain("xml")
+                        .LegacyShouldContain("xhtml")
+                        .Count().LegacyShouldBe(2);
 
-                FirstRegistration.Codecs[2].CodecType.ShouldBe<CustomerWriterCodec>();
+                FirstRegistration.Codecs[2].CodecType.LegacyShouldBe<CustomerWriterCodec>();
                 FirstRegistration.Codecs[2].MediaTypes[0]
                     .Extensions
-                        .Count().ShouldBe(0);
+                        .Count().LegacyShouldBe(0);
             });
         }
         [Test]
         public void cannot_register_codec_not_implementing_icodec()
         {
             Executing(() => ResourceSpaceHas.ResourcesOfType<Frodo>().WithoutUri.TranscodedBy(typeof(string)))
-                .ShouldThrow<ArgumentOutOfRangeException>();
+                .LegacyShouldThrow<ArgumentOutOfRangeException>();
         }
         void ExecuteTest(Action<ICodecParentDefinition> test)
         {
@@ -395,10 +395,10 @@ namespace Configuration_Specification
         {
             ResourceSpaceUses.CustomDependency<IUriResolver, TemplatedUriResolver>(DependencyLifetime.Singleton);
 
-            var first = MetaModel.CustomRegistrations.OfType<DependencyRegistrationModel>().ShouldHaveCountOf(1).First();
-            first.ConcreteType.ShouldBe<TemplatedUriResolver>();
-            first.ServiceType.ShouldBe<IUriResolver>();
-            first.Lifetime.ShouldBe(DependencyLifetime.Singleton);
+            var first = MetaModel.CustomRegistrations.OfType<DependencyRegistrationModel>().LegacyShouldHaveCountOf(1).First();
+            first.ConcreteType.LegacyShouldBe<TemplatedUriResolver>();
+            first.ServiceType.LegacyShouldBe<IUriResolver>();
+            first.Lifetime.LegacyShouldBe(DependencyLifetime.Singleton);
 
         }
     }

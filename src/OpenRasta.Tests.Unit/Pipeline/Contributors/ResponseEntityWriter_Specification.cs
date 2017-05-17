@@ -22,6 +22,7 @@ using OpenRasta.Tests.Unit.Fakes;
 using OpenRasta.TypeSystem;
 using OpenRasta.Web;
 using OpenRasta.Pipeline;
+using Shouldly;
 
 namespace ResponseEntityWriter_Specification
 {
@@ -34,9 +35,9 @@ namespace ResponseEntityWriter_Specification
             given_response_entity(null);
 
             when_sending_notification<KnownStages.ICodecResponseSelection>()
-                .ShouldBe(PipelineContinuation.Continue);
+                .LegacyShouldBe(PipelineContinuation.Continue);
 
-            Context.Response.Entity.Stream.Length.ShouldBe(0);
+            Context.Response.Entity.Stream.Length.LegacyShouldBe(0);
         }
 
         [Test]
@@ -46,9 +47,9 @@ namespace ResponseEntityWriter_Specification
             given_response_entity(null);
 
             when_sending_notification<KnownStages.ICodecResponseSelection>()
-                .ShouldBe(PipelineContinuation.Continue);
+                .LegacyShouldBe(PipelineContinuation.Continue);
 
-            Context.Response.HeadersSent.ShouldBeTrue();
+            Context.Response.HeadersSent.LegacyShouldBeTrue();
         }
     }
 
@@ -63,9 +64,9 @@ namespace ResponseEntityWriter_Specification
             given_response_codec<CustomerCodec>(new object());
 
             when_sending_notification<KnownStages.ICodecResponseSelection>()
-                .ShouldBe(PipelineContinuation.Continue);
+                .LegacyShouldBe(PipelineContinuation.Continue);
 
-            Context.Response.Entity.Headers["ENTITY_TYPE"].ShouldBe("Fake");
+            Context.Response.Entity.Headers["ENTITY_TYPE"].LegacyShouldBe("Fake");
             Context.Response.Entity.Codec.Configuration.ShouldNotBeNull();
         }
 
@@ -77,9 +78,9 @@ namespace ResponseEntityWriter_Specification
             given_response_codec<CustomerCodec>();
 
             when_sending_notification<KnownStages.ICodecResponseSelection>()
-                .ShouldBe(PipelineContinuation.Continue);
+                .LegacyShouldBe(PipelineContinuation.Continue);
 
-            Context.Response.Entity.Headers["ENTITY_TYPE"].ShouldBe("Fake");
+            Context.Response.Entity.Headers["ENTITY_TYPE"].LegacyShouldBe("Fake");
         }
 
         void given_response_codec<TCodec>()
@@ -112,10 +113,10 @@ namespace ResponseEntityWriter_Specification
             GivenAContentTypeWriter((instance, entity, codecParams) => entity.Stream.Write(new byte[50]));
 
             when_sending_notification<KnownStages.ICodecResponseSelection>()
-                .ShouldBe(PipelineContinuation.Continue);
+                .LegacyShouldBe(PipelineContinuation.Continue);
 
             Context.Response.Headers.ContentLength
-                .ShouldBe(50);
+                .LegacyShouldBe(50);
         }
 
         IMediaTypeWriter GivenAContentTypeWriter(Action<object, IHttpEntity, string[]> code)

@@ -24,7 +24,7 @@ namespace OpenRasta.Tests.Unit.Security
             var authenticationInterceptor = new RequiresRoleInterceptor(context) { Role = "Administrator" };
 
             authenticationInterceptor.BeforeExecute(new Mock<IOperation>().Object)
-                .ShouldBeTrue();
+                .LegacyShouldBeTrue();
         }
     }
 
@@ -39,8 +39,8 @@ namespace OpenRasta.Tests.Unit.Security
             var authenticationInterceptor = new RequiresRoleInterceptor(context) { Role = "SuperUser" };
 
             authenticationInterceptor.BeforeExecute(new Mock<IOperation>().Object)
-                .ShouldBeFalse();
-            context.OperationResult.ShouldBeOfType<OperationResult.Unauthorized>();
+                .LegacyShouldBeFalse();
+            context.OperationResult.LegacyShouldBeOfType<OperationResult.Unauthorized>();
 
         }
     }

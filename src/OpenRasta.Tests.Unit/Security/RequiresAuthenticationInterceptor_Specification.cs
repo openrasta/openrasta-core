@@ -20,8 +20,8 @@ namespace RequiresAuthenticationInterceptor_Specification
 
             var authenticationInterceptor = new RequiresAuthenticationInterceptor(context);
             authenticationInterceptor.BeforeExecute(new Mock<IOperation>().Object)
-                .ShouldBeFalse();
-            context.OperationResult.ShouldBeOfType<OperationResult.Unauthorized>();
+                .LegacyShouldBeFalse();
+            context.OperationResult.LegacyShouldBeOfType<OperationResult.Unauthorized>();
         }
     }
     public class when_the_user_is_authenticated : context
@@ -35,7 +35,7 @@ namespace RequiresAuthenticationInterceptor_Specification
             var authenticationInterceptor = new RequiresAuthenticationInterceptor(context);
 
             authenticationInterceptor.BeforeExecute(new Mock<IOperation>().Object)
-                .ShouldBeTrue();
+                .LegacyShouldBeTrue();
         }
     }
 }

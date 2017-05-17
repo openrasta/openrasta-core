@@ -24,7 +24,7 @@ namespace CollectionExtensions_Specification
         {
             object target = null;
             Executing(() => target.ToNameValueCollection())
-                .ShouldThrow<ArgumentNullException>();
+                .LegacyShouldThrow<ArgumentNullException>();
         }
         [Test]
 public void method_name()

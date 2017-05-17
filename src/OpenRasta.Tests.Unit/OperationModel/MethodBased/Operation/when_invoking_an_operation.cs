@@ -15,14 +15,14 @@ namespace OpenRasta.Tests.Unit.OperationModel.MethodBased.Operation
       given_operation("Post", typeof(int), typeof(string));
 
       Executing(Operation.InvokeAsync)
-        .ShouldThrow<InvalidOperationException>();
+        .LegacyShouldThrow<InvalidOperationException>();
     }
     [Test]
     public void a_result_is_returned()
     {
       given_operation("Get", typeof(int));
 
-      Operation.InvokeAsync().Result.Count().ShouldBe(1);
+      Operation.InvokeAsync().Result.Count().LegacyShouldBe(1);
     }
   }
 

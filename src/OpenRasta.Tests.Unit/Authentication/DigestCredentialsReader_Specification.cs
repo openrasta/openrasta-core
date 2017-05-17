@@ -31,7 +31,7 @@ namespace DigestCredentialsReader_Specification
             when_sending_notification<KnownStages.IBegin>();
 
             Result
-                .ShouldBe(PipelineContinuation.Continue);
+                .LegacyShouldBe(PipelineContinuation.Continue);
         }
     }
 
@@ -72,8 +72,8 @@ namespace DigestCredentialsReader_Specification
                  opaque=""5ccc069c403ebaf9f0171e9517f40e41""";
             var credentials = DigestHeader.Parse(authenticationHeader);
 
-            credentials.Username.ShouldBe("Mufasa");
-            credentials.Uri.ShouldBe("/dir/index.html");
+            credentials.Username.LegacyShouldBe("Mufasa");
+            credentials.Uri.LegacyShouldBe("/dir/index.html");
         }
 
         [Test]
@@ -81,7 +81,7 @@ namespace DigestCredentialsReader_Specification
         {
             string authenticationHeader = "Basic bla";
             DigestHeader.Parse(authenticationHeader)
-                .ShouldBeNull();
+                .LegacyShouldBeNull();
         }
         /// <summary>
         /// See #31 on trac.
@@ -96,8 +96,8 @@ namespace DigestCredentialsReader_Specification
             var authorizer = DependencyManager.GetService<DigestAuthorizerContributor>();
 
             authorizer.ReadCredentials(Context)
-                .ShouldBe(PipelineContinuation.Continue);
-            Context.OperationResult.ShouldBeNull();
+                .LegacyShouldBe(PipelineContinuation.Continue);
+            Context.OperationResult.LegacyShouldBeNull();
         }
 
         [Test, Ignore("no idea")]
@@ -111,8 +111,8 @@ namespace DigestCredentialsReader_Specification
             var authorizer = DependencyManager.GetService<DigestAuthorizerContributor>();
 
             authorizer.ReadCredentials(Context)
-                .ShouldBe(PipelineContinuation.Continue);
-            Context.OperationResult.ShouldBeNull();
+                .LegacyShouldBe(PipelineContinuation.Continue);
+            Context.OperationResult.LegacyShouldBeNull();
         }
 
         [Test, Ignore("no idea")]
@@ -125,8 +125,8 @@ namespace DigestCredentialsReader_Specification
             var authorizer = DependencyManager.GetService<DigestAuthorizerContributor>();
 
             authorizer.ReadCredentials(Context)
-                .ShouldBe(PipelineContinuation.Continue);
-            Context.OperationResult.ShouldBeNull();
+                .LegacyShouldBe(PipelineContinuation.Continue);
+            Context.OperationResult.LegacyShouldBeNull();
         }
         [Test,Ignore("no idea")]
         public void a_non_absolute_digest_uri_for_an_absolute_request_should_fail()
@@ -146,8 +146,8 @@ namespace DigestCredentialsReader_Specification
             var authorizer = DependencyManager.GetService<DigestAuthorizerContributor>();
 
             authorizer.ReadCredentials(Context)
-                .ShouldBe(PipelineContinuation.RenderNow);
-            Context.OperationResult.ShouldBeOfType<OperationResult.BadRequest>();
+                .LegacyShouldBe(PipelineContinuation.RenderNow);
+            Context.OperationResult.LegacyShouldBeOfType<OperationResult.BadRequest>();
         }
 
         [Test, Ignore("no idea")]
@@ -160,8 +160,8 @@ namespace DigestCredentialsReader_Specification
             var authorizer = DependencyManager.GetService<DigestAuthorizerContributor>();
 
             authorizer.ReadCredentials(Context)
-                .ShouldBe(PipelineContinuation.RenderNow);
-            Context.OperationResult.ShouldBeOfType<OperationResult.Unauthorized>();
+                .LegacyShouldBe(PipelineContinuation.RenderNow);
+            Context.OperationResult.LegacyShouldBeOfType<OperationResult.Unauthorized>();
         }
 
         [Test, Ignore("no idea")]
@@ -174,8 +174,8 @@ namespace DigestCredentialsReader_Specification
             var authorizer = DependencyManager.GetService<DigestAuthorizerContributor>();
 
             authorizer.ReadCredentials(Context)
-                .ShouldBe(PipelineContinuation.RenderNow);
-            Context.OperationResult.ShouldBeOfType<OperationResult.Unauthorized>();
+                .LegacyShouldBe(PipelineContinuation.RenderNow);
+            Context.OperationResult.LegacyShouldBeOfType<OperationResult.Unauthorized>();
         }
     }
 

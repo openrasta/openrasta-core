@@ -22,7 +22,7 @@ namespace TextNode_Specification
     //    public void the_node_is_rendered_as_an_empty_string()
     //    {
     //        WhenCreatingElement(() => new TextNode().Content(null));
-    //        ThenTheElementAsString.ShouldBe(string.Empty);
+    //        ThenTheElementAsString.LegacyShouldBe(string.Empty);
     //    }
     //}
 
@@ -32,7 +32,7 @@ namespace TextNode_Specification
     //    public void the_content_is_rendered()
     //    {
     //        WhenCreatingElement(() => new TextNode().Content("content of the link"));
-    //        ThenTheElementAsString.ShouldBe("content of the link");
+    //        ThenTheElementAsString.LegacyShouldBe("content of the link");
     //    }
     //}
 }

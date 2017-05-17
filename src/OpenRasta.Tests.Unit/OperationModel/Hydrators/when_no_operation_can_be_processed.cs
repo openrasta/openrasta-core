@@ -13,7 +13,7 @@ namespace OpenRasta.Tests.Unit.OperationModel.Hydrators
 
       when_filtering_operations();
 
-      ResultOperation.ShouldBeNull();
+      ResultOperation.LegacyShouldBeNull();
 
     }
   }

@@ -24,8 +24,8 @@ namespace OpenRasta.Tests.Unit.Web.Pipeline.Contributors
 
         when_executing_processor();
 
-        Result.ShouldBe(PipelineContinuation.RenderNow);
-        Context.OperationResult.ShouldBeOfType<OperationResult.RequestMediaTypeUnsupported>();
+        Result.LegacyShouldBe(PipelineContinuation.RenderNow);
+        Context.OperationResult.LegacyShouldBeOfType<OperationResult.RequestMediaTypeUnsupported>();
       }
 
       protected override RequestCodecSelector create_processor()

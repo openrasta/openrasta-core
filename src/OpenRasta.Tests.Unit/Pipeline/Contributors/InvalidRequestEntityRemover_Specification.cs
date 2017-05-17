@@ -29,8 +29,8 @@ namespace InvalidRequestEntityRemover_Specification
     //        given_pipeline_contributor<InvalidRequestEntityRemover>();
     //        when_sending_notification<RequestEntityCodecResolver>();
 
-    //        Context.Request.ContentLength.ShouldBe(0);
-    //        Context.Request.Entity.ContentType.ShouldBeNull();
+    //        Context.Request.ContentLength.LegacyShouldBe(0);
+    //        Context.Request.Entity.ContentType.LegacyShouldBeNull();
     //    }
     //}
 }

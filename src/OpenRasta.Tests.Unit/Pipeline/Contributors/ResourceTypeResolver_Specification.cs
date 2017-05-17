@@ -33,9 +33,9 @@ namespace ResourceTypeResolver_Specification
             var theOriginalMatch = Context.PipelineData.SelectedResource = new UriRegistration("/", "int");
 
             when_sending_notification<BootstrapperContributor>()
-                .ShouldBe(PipelineContinuation.Continue);
+                .LegacyShouldBe(PipelineContinuation.Continue);
 
-            Context.PipelineData.SelectedResource.ShouldBeTheSameInstanceAs(theOriginalMatch);
+            Context.PipelineData.SelectedResource.LegacyShouldBeTheSameInstanceAs(theOriginalMatch);
         }
     }
 
@@ -50,10 +50,10 @@ namespace ResourceTypeResolver_Specification
             given_registration_urimapping<Fake>("/somewhere");
 
             when_sending_notification<BootstrapperContributor>()
-                .ShouldBe(PipelineContinuation.RenderNow);
+                .LegacyShouldBe(PipelineContinuation.RenderNow);
 
-            Context.PipelineData.SelectedResource.ShouldBeNull();
-            Context.OperationResult.ShouldBeOfType<OperationResult.NotFound>();
+            Context.PipelineData.SelectedResource.LegacyShouldBeNull();
+            Context.OperationResult.LegacyShouldBeOfType<OperationResult.NotFound>();
         }
 
         [Test]
@@ -66,7 +66,7 @@ namespace ResourceTypeResolver_Specification
 
             when_sending_notification<BootstrapperContributor>();
 
-            Context.PipelineData.SelectedResource.ResourceKey.ShouldBe(TypeSystem.FromClr<Fake>());
+            Context.PipelineData.SelectedResource.ResourceKey.LegacyShouldBe(TypeSystem.FromClr<Fake>());
 
         }[Test]
         public void the_match_is_relative_to_the_app_base_uri()
@@ -79,8 +79,8 @@ namespace ResourceTypeResolver_Specification
             when_sending_notification<BootstrapperContributor>();
 
             Context.PipelineData.SelectedResource
-                .ShouldNotBeNull()
-                .ResourceKey.ShouldBe(TypeSystem.FromClr<Fake>());
+                .legacyShouldNotBeNull()
+                .ResourceKey.LegacyShouldBe(TypeSystem.FromClr<Fake>());
         }
 
         void given_app_base_uri(string appBaseUri)

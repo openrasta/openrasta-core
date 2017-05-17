@@ -44,9 +44,9 @@ namespace HandlerMethodFiltersInvoker_Specification
         //        typeof (when_a_filter_is_present).GetMethod("FakeMethod"), null);
 
         //    contributor.ExecuteFilters(Context)
-        //        .ShouldBe(PipelineContinuation.Abort);
+        //        .LegacyShouldBe(PipelineContinuation.Abort);
 
-        //    FakeAttribute.Called.ShouldBeTrue();
+        //    FakeAttribute.Called.LegacyShouldBeTrue();
         //}
     }
 }

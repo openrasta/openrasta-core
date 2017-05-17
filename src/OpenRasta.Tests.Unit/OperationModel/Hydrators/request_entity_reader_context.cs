@@ -68,7 +68,7 @@ namespace OpenRasta.Tests.Unit.OperationModel.Hydrators
         .Inputs.Required()
         .First(x => x.Member.Name == parameterName)
         .Binder.SetInstance(parameterValue)
-        .ShouldBeTrue();
+        .LegacyShouldBeTrue();
     }
 
     protected IOperationAsync ResultOperation { get; private set; }

@@ -28,6 +28,7 @@ using Moq;
 using Moq.Language;
 using OpenRasta.DI;
 using OpenRasta.Tests.Unit.Fakes;
+using Shouldly;
 
 namespace MultipartFormDataCodec_Specification
 {
@@ -67,7 +68,7 @@ namespace MultipartFormDataCodec_Specification
             when_decoding<string>("username");
 
             then_decoding_result<string>()
-                .ShouldBe("johndoe");
+                .LegacyShouldBe("johndoe");
         }
         [Test]
         public void a_datetime_is_assigned()
@@ -78,7 +79,7 @@ namespace MultipartFormDataCodec_Specification
             when_decoding<DateTime>("dateofbirth");
 
             then_decoding_result<DateTime>()
-                .ShouldBe(DateTime.Parse("10 Dec 2001"));
+                .LegacyShouldBe(DateTime.Parse("10 Dec 2001"));
         }
         [Test]
         public void a_large_field_value_is_stored_on_disk()
@@ -89,9 +90,9 @@ namespace MultipartFormDataCodec_Specification
             when_decoding<IDictionary<string, IList<IMultipartHttpEntity>>>("field");
 
             then_decoding_result<IDictionary<string, IList<IMultipartHttpEntity>>>()["field"].First().Stream.
-                ShouldBeOfType<FileStream>()
+                LegacyShouldBeOfType<FileStream>()
                 .Length
-                    .ShouldBe(85003);
+                    .LegacyShouldBe(85003);
             
         }
     }
@@ -104,7 +105,7 @@ namespace MultipartFormDataCodec_Specification
             GivenAMultipartRequestStream(Scenarios.TELEPHONE_FIELD_UTF8_QUOTED);
 
             when_decoding<string>("Téléphone");
-            then_decoding_result<string>().ShouldBe("077 777 7777");
+            then_decoding_result<string>().LegacyShouldBe("077 777 7777");
         }
         [Test]
         public void a_field_name_encoded_in_base64_for_utf_8_is_recognized()
@@ -113,7 +114,7 @@ namespace MultipartFormDataCodec_Specification
             GivenAMultipartRequestStream(Scenarios.TELEPHONE_FIELD_UTF8_BASE64);
 
             when_decoding<string>("Téléphone");
-            then_decoding_result<string>().ShouldBe("077 777 7777");
+            then_decoding_result<string>().LegacyShouldBe("077 777 7777");
         }
         [Test]
         public void a_field_name_encoded_in_base64_for_iso_is_recognized()
@@ -122,7 +123,7 @@ namespace MultipartFormDataCodec_Specification
             GivenAMultipartRequestStream(Scenarios.TELEPHONE_FIELD_ISO88591_QUOTED);
 
             when_decoding<string>("Téléphone");
-            then_decoding_result<string>().ShouldBe("077 777 7777");
+            then_decoding_result<string>().LegacyShouldBe("077 777 7777");
         }
         [Test]
         public void a_sub_codec_is_used_to_resolve_a_parameter_name()
@@ -132,8 +133,8 @@ namespace MultipartFormDataCodec_Specification
             GivenAMultipartRequestStream(Scenarios.FILE_FIELD);
 
             when_decoding<IFile>("file");
-            then_decoding_result<IFile>().FileName.ShouldBe("temp.txt");
-            then_decoding_result<IFile>().Length.ShouldBe(85000);
+            then_decoding_result<IFile>().FileName.LegacyShouldBe("temp.txt");
+            then_decoding_result<IFile>().Length.LegacyShouldBe(85000);
         }
     }
     public class when_parsing_parts_with_names_representing_types : multipart_codec
@@ -148,7 +149,7 @@ namespace MultipartFormDataCodec_Specification
             when_decoding<Customer>("customer");
 
             then_decoding_result<Customer>().Username
-                .ShouldBe("johndoe");
+                .LegacyShouldBe("johndoe");
         }
         [Test]
         public void a_datetime_property_is_assigned()
@@ -159,7 +160,7 @@ namespace MultipartFormDataCodec_Specification
             when_decoding<Customer>("customer");
 
             then_decoding_result<Customer>().DateOfBirth.Year
-                .ShouldBe(2001);
+                .LegacyShouldBe(2001);
 
         }
         [Test]
@@ -170,8 +171,8 @@ namespace MultipartFormDataCodec_Specification
 
             when_decoding<IDictionary<string,string[]>>("additions");
 
-            then_decoding_result<IDictionary<string, string[]>>()["oneplusone"][0].ShouldBe("two");
-            then_decoding_result<IDictionary<string, string[]>>()["oneplustwo"][0].ShouldBe("three");
+            then_decoding_result<IDictionary<string, string[]>>()["oneplusone"][0].LegacyShouldBe("two");
+            then_decoding_result<IDictionary<string, string[]>>()["oneplustwo"][0].LegacyShouldBe("three");
         }
         [Test]
         public void construction_of_objects_from_other_media_types_returns_the_correct_values()
@@ -181,9 +182,9 @@ namespace MultipartFormDataCodec_Specification
 
             when_decoding<Customer>("customer");
 
-            then_decoding_result<Customer>().DateOfBirth.Year.ShouldBe(2001);
-            then_decoding_result<Customer>().DateOfBirth.Month.ShouldBe(12);
-            then_decoding_result<Customer>().DateOfBirth.Day.ShouldBe(10);            
+            then_decoding_result<Customer>().DateOfBirth.Year.LegacyShouldBe(2001);
+            then_decoding_result<Customer>().DateOfBirth.Month.LegacyShouldBe(12);
+            then_decoding_result<Customer>().DateOfBirth.Day.LegacyShouldBe(10);            
         }
     }
     public class when_writing_multipart_formdata : context

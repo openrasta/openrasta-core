@@ -40,7 +40,7 @@ namespace OpenRasta.Testing.Contexts
         .Inputs.Required()
         .First(x => x.Member.Name == parameterName)
         .Binder.SetInstance(parameterValue)
-        .ShouldBeTrue();
+        .LegacyShouldBeTrue();
     }
   }
 }

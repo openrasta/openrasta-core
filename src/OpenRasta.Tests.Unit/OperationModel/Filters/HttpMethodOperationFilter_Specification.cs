@@ -20,7 +20,7 @@ namespace OpenRasta.Tests.Unit.OperationModel.Filters
 
             when_filtering_operations();
 
-            FilteredOperations.Single().Name.ShouldBe("ChangeData");
+            FilteredOperations.Single().Name.LegacyShouldBe("ChangeData");
         }
 
         [Test]
@@ -34,10 +34,10 @@ namespace OpenRasta.Tests.Unit.OperationModel.Filters
 
             when_filtering_operations();
 
-            FilteredOperations.ShouldHaveCountOf(2);
+            FilteredOperations.LegacyShouldHaveCountOf(2);
 
-            FilteredOperations.Count(x => x.Name == "Post").ShouldBe(1);
-            FilteredOperations.Count(x => x.Name == "PostForRouteName").ShouldBe(1);
+            FilteredOperations.Count(x => x.Name == "Post").LegacyShouldBe(1);
+            FilteredOperations.Count(x => x.Name == "PostForRouteName").LegacyShouldBe(1);
             
         }
     }

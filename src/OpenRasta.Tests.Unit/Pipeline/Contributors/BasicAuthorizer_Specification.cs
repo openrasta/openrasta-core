@@ -33,8 +33,8 @@ namespace OpenRasta.Tests.Unit.Pipeline.Contributors
             Context.Request.Headers.Add("Authorization", "Basic " + Convert.ToBase64String(Encoding.ASCII.GetBytes(username + ":" + password)));
 
             var result = when_sending_notification<KnownStages.IHandlerSelection>();
-            result.ShouldBe(PipelineContinuation.Continue);
-            Context.User.Identity.Name.ShouldBe(username);
+            result.LegacyShouldBe(PipelineContinuation.Continue);
+            Context.User.Identity.Name.LegacyShouldBe(username);
         }
     }
 }

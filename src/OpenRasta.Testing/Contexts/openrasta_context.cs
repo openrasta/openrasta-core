@@ -87,7 +87,7 @@ namespace OpenRasta.Testing.Contexts
 
     public void then_contributor_is_executed()
     {
-      IsContributorExecuted.ShouldBeTrue();
+      IsContributorExecuted.LegacyShouldBeTrue();
     }
 
     public PipelineContinuation when_sending_notification<TTrigger>()

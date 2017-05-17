@@ -18,6 +18,7 @@ using OpenRasta.Testing;
 using OpenRasta.Tests.Unit.Fakes;
 using OpenRasta.Web.Markup;
 using OpenRasta.Web.Markup.Modules;
+using Shouldly;
 
 namespace ExpressionTreeXHtmlProducer_Specification
 {
@@ -34,7 +35,7 @@ namespace ExpressionTreeXHtmlProducer_Specification
         {
             XHtml.TextBox<Customer>(c => c.FirstName)
                 .Name
-                .ShouldBe("Customer.FirstName");
+                .LegacyShouldBe("Customer.FirstName");
         }
 
         [Test]
@@ -42,7 +43,7 @@ namespace ExpressionTreeXHtmlProducer_Specification
         {
             XHtml.Password<Customer>(c => c.FirstName)
                 .Name
-                .ShouldBe("Customer.FirstName");
+                .LegacyShouldBe("Customer.FirstName");
         }
 
         [Test]
@@ -50,7 +51,7 @@ namespace ExpressionTreeXHtmlProducer_Specification
         {
             XHtml.TextBox<Customer>(c => c.DateOfBirth.Day)
                 .Name
-                .ShouldBe("Customer.DateOfBirth.Day");
+                .LegacyShouldBe("Customer.DateOfBirth.Day");
         }
     }
 
@@ -62,7 +63,7 @@ namespace ExpressionTreeXHtmlProducer_Specification
             var customer = new Customer();
             var textbox = XHtml.TextBox(() => customer.FirstName);
 
-            textbox.Value.ShouldBeNull();
+            textbox.Value.LegacyShouldBeNull();
         }
 
         [Test]
@@ -72,11 +73,11 @@ namespace ExpressionTreeXHtmlProducer_Specification
             var textbox = XHtml.TextBox(() => customer.FirstName);
 
             textbox.OuterXml
-                .ShouldContain("<input")
-                .ShouldContain("type=\"text\"")
-                .ShouldContain("value=\"John\"")
-                .ShouldContain("name=\"Customer.FirstName\"")
-                .ShouldContain("/>");
+                .LegacyShouldContain("<input")
+                .LegacyShouldContain("type=\"text\"")
+                .LegacyShouldContain("value=\"John\"")
+                .LegacyShouldContain("name=\"Customer.FirstName\"")
+                .LegacyShouldContain("/>");
         }
 
         [Test]
@@ -85,7 +86,7 @@ namespace ExpressionTreeXHtmlProducer_Specification
             var customer = new Customer {FirstName = "John"};
             var textbox = XHtml.TextBox(() => customer.FirstName);
 
-            textbox.Name.ShouldBe("Customer.FirstName");
+            textbox.Name.LegacyShouldBe("Customer.FirstName");
         }
 
         [Test]
@@ -93,7 +94,7 @@ namespace ExpressionTreeXHtmlProducer_Specification
         {
             var customer = (new Customer {FirstName = "John"});
             var textbox = XHtml.TextBox(() => customer.FirstName);
-            textbox.Type.ShouldBe(InputType.Text);
+            textbox.Type.LegacyShouldBe(InputType.Text);
         }
 
         [Test]
@@ -102,7 +103,7 @@ namespace ExpressionTreeXHtmlProducer_Specification
             var customer = new Customer {FirstName = "John"};
             var textbox = XHtml.TextBox(() => customer.FirstName);
 
-            textbox.Value.ShouldBe("John");
+            textbox.Value.LegacyShouldBe("John");
         }
     }
 
@@ -114,13 +115,13 @@ namespace ExpressionTreeXHtmlProducer_Specification
             var t = new Test();
             var select = XHtml.Select(() => t.Enum,
                                             new Dictionary<string, string> { { "key1", "value1" }, { "key2", "value2" } });
-            var first = select.ChildNodes[0].ShouldBeOfType<IOptionElement>();
-            first.InnerText.ShouldBe("value1");
-            first.Value.ShouldBe("key1");
+            var first = select.ChildNodes[0].LegacyShouldBeOfType<IOptionElement>();
+            first.InnerText.LegacyShouldBe("value1");
+            first.Value.LegacyShouldBe("key1");
 
-            var second = select.ChildNodes[1].ShouldBeOfType<IOptionElement>();
-            second.InnerText.ShouldBe("value2");
-            second.Value.ShouldBe("key2");
+            var second = select.ChildNodes[1].LegacyShouldBeOfType<IOptionElement>();
+            second.InnerText.LegacyShouldBe("value2");
+            second.Value.LegacyShouldBe("key2");
         }
 
         [Test]
@@ -128,22 +129,22 @@ namespace ExpressionTreeXHtmlProducer_Specification
         {
             var target = new Test { Enum = AttributeTargets.All };
             var select = XHtml.Select(() => target.Enum);
-            select.Name.ShouldBe("Test.Enum");
-            select.ChildNodes.Cast<IOptionElement>().SingleOrDefault(x => x.InnerText == "All")
-                .ShouldNotBeNull()
-                .Selected.ShouldBeTrue();
-            select.ChildNodes.Count.ShouldBe(Enum.GetNames(typeof (AttributeTargets)).Length);
+            select.Name.LegacyShouldBe("Test.Enum");
+          var node = @select.ChildNodes.Cast<IOptionElement>().SingleOrDefault(x => x.InnerText == "All");
+          node.ShouldNotBeNull();
+          node.Selected.LegacyShouldBeTrue();
+            select.ChildNodes.Count.LegacyShouldBe(Enum.GetNames(typeof (AttributeTargets)).Length);
         }
         [Test]
         public void a_nullable_enum_property_sets_to_null_selects_an_empty_option_element_in_first_position()
         {
             var target = new Test();
             var select = XHtml.Select(() => target.NullableEnum);
-            select.Name.ShouldBe("Test.NullableEnum");
-            select.ChildNodes.Cast<IOptionElement>().SingleOrDefault(x => x.InnerText == "")
-                .ShouldNotBeNull()
-                .Selected.ShouldBeTrue();
-            select.ChildNodes.Count.ShouldBe(Enum.GetNames(typeof(AttributeTargets)).Length+1);
+            select.Name.LegacyShouldBe("Test.NullableEnum");
+          var node = @select.ChildNodes.Cast<IOptionElement>().SingleOrDefault(x => x.InnerText == "");
+          node.ShouldNotBeNull();
+          node.Selected.LegacyShouldBeTrue();
+            select.ChildNodes.Count.LegacyShouldBe(Enum.GetNames(typeof(AttributeTargets)).Length+1);
         }
     }
     public class when_building_checkboxes:xhtml_context
@@ -153,10 +154,10 @@ namespace ExpressionTreeXHtmlProducer_Specification
             var target = new Test {IsSelected = true};
             var checkbox = XHtml.CheckBox(() => target.IsSelected);
 
-            checkbox.Type.ShouldBe(InputType.CheckBox);
-            checkbox.Checked.ShouldBeTrue();
-            checkbox.Name.ShouldBe("Test.IsSelected");
-            checkbox.ToString().ShouldContain("<input type=\"checkbox\"");
+            checkbox.Type.LegacyShouldBe(InputType.CheckBox);
+            checkbox.Checked.LegacyShouldBeTrue();
+            checkbox.Name.LegacyShouldBe("Test.IsSelected");
+            checkbox.ToString().LegacyShouldContain("<input type=\"checkbox\"");
         }
     }
 

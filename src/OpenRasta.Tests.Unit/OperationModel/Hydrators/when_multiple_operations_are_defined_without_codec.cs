@@ -32,7 +32,7 @@ namespace OpenRasta.Tests.Unit.OperationModel.Hydrators
 
       when_entity_is_read();
 
-      Error.ShouldBeOfType<AmbiguousRequestException>();
+      Error.LegacyShouldBeOfType<AmbiguousRequestException>();
     }
 
     [Test]
@@ -48,7 +48,7 @@ namespace OpenRasta.Tests.Unit.OperationModel.Hydrators
 
       when_entity_is_read();
 
-      ResultOperation.Name.ShouldBe("PostAddress");
+      ResultOperation.Name.LegacyShouldBe("PostAddress");
     }
   }
 }

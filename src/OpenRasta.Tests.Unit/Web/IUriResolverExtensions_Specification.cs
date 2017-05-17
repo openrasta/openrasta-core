@@ -70,7 +70,7 @@ namespace IUriResolverExtensions_Specification
             Executing(() =>
                       ((Customer)null).CreateUri(null, null)
                 )
-                .ShouldThrow<ArgumentNullException>();
+                .LegacyShouldThrow<ArgumentNullException>();
         }
 
         [Test]
@@ -81,7 +81,7 @@ namespace IUriResolverExtensions_Specification
 
             new Customer().CreateUri(new Uri("http://localhost"),
                                      new NameValueCollection { { "firstname", "John" } })
-                .ShouldBe(new Uri("http://localhost/customer/John"));
+                .LegacyShouldBe(new Uri("http://localhost/customer/John"));
         }
 
         [Test]
@@ -91,7 +91,7 @@ namespace IUriResolverExtensions_Specification
             GivenUriMapping<Customer>("/customer/{firstname}", null, null);
 
             new Customer { FirstName = "John" }.CreateUri(new Uri("http://localhost"))
-                .ShouldBe(new Uri("http://localhost/customer/John"));
+                .LegacyShouldBe(new Uri("http://localhost/customer/John"));
         }
 
         [Test]
@@ -103,7 +103,7 @@ namespace IUriResolverExtensions_Specification
             var customer = new Customer();
 
             customer.CreateUri(new Uri("http://localhost"), null)
-                .ShouldBe(new Uri("http://localhost/customer"));
+                .LegacyShouldBe(new Uri("http://localhost/customer"));
         }
         [Test]
         public void the_correct_uri_is_selected_for_a_type()
@@ -112,8 +112,8 @@ namespace IUriResolverExtensions_Specification
             GivenUriMapping<Frodo>("/theshrine", null, null);
             GivenUriMapping<Sauron>("/mordor", null, null);
 
-            typeof(Frodo).CreateUri(new Uri("http://localhost")).ShouldBe("http://localhost/theshrine");
-            typeof(Sauron).CreateUri(new Uri("http://localhost")).ShouldBe("http://localhost/mordor");
+            typeof(Frodo).CreateUri(new Uri("http://localhost")).LegacyShouldBe("http://localhost/theshrine");
+            typeof(Sauron).CreateUri(new Uri("http://localhost")).LegacyShouldBe("http://localhost/mordor");
         }
         [Test]
         public void the_uri_is_created_using_contextual_base_address_from_the_context()
@@ -126,7 +126,7 @@ namespace IUriResolverExtensions_Specification
 
             WhenCreatingUriFor<string>();
 
-            ThenTheUri.ShouldBe(new Uri("http://tempserver/test"));
+            ThenTheUri.LegacyShouldBe(new Uri("http://tempserver/test"));
         }
 
         void GivenUriMapping<T>(string uri, CultureInfo culture, string uriName)
