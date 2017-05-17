@@ -55,7 +55,6 @@
     <Compile Include="Contexts\operation_filter_context.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SpecExtensions.cs" />
-    <Compile Include="SpecExtensionsFixture.cs" />
     <Compile Include="TestErrorCollector.cs" />
   </ItemGroup>
   <ItemGroup>

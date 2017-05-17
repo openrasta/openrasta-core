@@ -9,6 +9,7 @@ using OpenRasta.Pipeline;
 using OpenRasta.Testing;
 using OpenRasta.Tests.Unit.DI;
 using OpenRasta.Tests.Unit.Fakes;
+using Shouldly;
 
 namespace InternalDependencyResolver_Specification
 {

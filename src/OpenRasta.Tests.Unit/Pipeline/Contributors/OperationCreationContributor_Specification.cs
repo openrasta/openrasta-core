@@ -11,6 +11,7 @@ using OpenRasta.TypeSystem;
 using OpenRasta.Web;
 using OpenRasta.Pipeline;
 using OpenRasta.Tests.Unit.Fakes;
+using Shouldly;
 
 namespace OperationCreationContributor_Specification
 {

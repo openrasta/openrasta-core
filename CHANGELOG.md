@@ -7,17 +7,16 @@ OpenRasta adheres to [Semantic Versioning](http://semver.org/).
  - A new pipeline with "double tap" semantics, which makes most of the old pipeline
    look like an old picture, keen memories but visibly dated.
  - Things don't always happen when we want them too, so everything has been made
-   async. This includes async contributors with `IPipelineContributorAsync`, async
+   async. This includes async contributors with a new `NotifyAsync`, async
    handlers (just return `Task` or `Task<T>`), codecs with `IMediaTypeReaderAsync`
    and `IMediaTypeWriterAsync`, and async interceptor with `IOperationInterceptorAsync`
 
 ### Changed
- - Cool kids have moved on, so we follow. .net 4.5 is now a minimum.
+ - Cool kids have moved on, so we follow. .net 4.6.1 is now a minimum.
  - The AppVeyor build is now under the OpenRasta organisation. We were not
    really organised before, so we (well, @holytshirt) sorted it out, and we feel
    much cleaner.
- - `IPipeline` used to have a read-only `IList` Contributors property. This was
-   really as useless as a web framework with no web, so it's now an
+ - `IPipeline` can now only be used in the contributor configuration pahse
    `IEnumerable`.
  - Methods on handlers returning `void` or `Task` will now return a 202 accepted
    instead of a 204 no content. If we can't know the semantics we shouldn't give
@@ -25,6 +24,12 @@ OpenRasta adheres to [Semantic Versioning](http://semver.org/).
  - Operations that were not ready for invocation would sometime fail. Now,
    either we respond with a 400 when we can't match the request to the response,
    or a `500` if we can't chose the correct method because the call was ambiguous.
+ - I think errors should be given as much attention as non-errors, that's why we
+   always content negotiate those errors, so we can exceptionally render exceptional
+   exceptions using whatever codec you want to use, which is great for your APIs,
+   but a bit less for your tests. You can now chose if you want that functionality
+   or if you'd rather let exceptions bubble up, so your server can show their default
+   error page or whatever.
 
 
 ### Deprecated
@@ -40,11 +45,13 @@ OpenRasta adheres to [Semantic Versioning](http://semver.org/).
    he will never lie again.
 
 ### Removed
+
 ### Fixed
  - When padding error messages in HTML for IE clients, we would send an
    incorrect Length, and no one wants that, so we made it accurate and bigger.
  - We would try and pad the result even if the response stream is not seekable,
    now we check correctly.
+
 ### Security
 
 ## [2.5.1050] - 2016-12-15

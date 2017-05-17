@@ -2,6 +2,7 @@
 using NUnit.Framework;
 using OpenRasta.Testing;
 using OpenRasta.Testing.Contexts;
+using Shouldly;
 
 namespace OpenRasta.Tests.Unit.OperationModel.MethodBased.Operation
 {
