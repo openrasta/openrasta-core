@@ -10,6 +10,7 @@ using OpenRasta.Testing.Contexts;
 using OpenRasta.Web;
 using OpenRasta.TypeSystem;
 using OpenRasta.Web.UriDecorators;
+using Shouldly;
 
 namespace OpenRasta.Tests.Unit.Web.UriDecorators
 {
@@ -27,8 +28,8 @@ namespace OpenRasta.Tests.Unit.Web.UriDecorators
             ProcessedUri.LegacyShouldBe("http://localhost/vdir/customer/1");
 
             when_applying();
-            Context.PipelineData.ResponseCodec.CodecType.LegacyShouldBe<XmlCodec>();
-            Context.Response.Entity.ContentType.LegacyShouldBe(MediaType.Xml);
+          Context.PipelineData.ResponseCodec.CodecType.ShouldBe(typeof(XmlCodec));
+          Context.Response.Entity.ContentType.LegacyShouldBe(MediaType.Xml);
 
         }
 

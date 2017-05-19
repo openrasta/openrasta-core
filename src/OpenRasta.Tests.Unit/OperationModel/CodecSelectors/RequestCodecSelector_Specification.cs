@@ -96,8 +96,7 @@ namespace OpenRasta.Tests.Unit.OperationModel.CodecSelectors
 
           var requestCodec = FilteredOperations.First(x => x.Name == "GetFrodo").GetRequestCodec();
           requestCodec.ShouldNotBeNull();
-          requestCodec.CodecRegistration.CodecType
-                    .LegacyShouldBe<ApplicationXWwwFormUrlencodedKeyedValuesCodec>();
+          requestCodec.CodecRegistration.CodecType.ShouldBe(typeof(ApplicationXWwwFormUrlencodedKeyedValuesCodec));
         }
 
         void given_operation_property(Func<IOperationAsync, bool> predicate, string propertyName, string propertyValue)

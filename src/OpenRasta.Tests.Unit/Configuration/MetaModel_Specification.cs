@@ -15,6 +15,7 @@ using OpenRasta.TypeSystem;
 using OpenRasta.TypeSystem.ReflectionBased;
 using OpenRasta.Web;
 using OpenRasta.Web.UriDecorators;
+using Shouldly;
 using TypeSystems = OpenRasta.TypeSystem.TypeSystems;
 
 namespace Configuration_Specification
@@ -105,8 +106,8 @@ namespace Configuration_Specification
         {
             ResourceSpaceHas.ResourcesOfType<Strictly<Customer>>();
 
-            MetaModel.ResourceRegistrations[0].ResourceKey.LegacyShouldBeOfType<Type>().LegacyShouldBe<Customer>();
-            MetaModel.ResourceRegistrations[0].IsStrictRegistration.LegacyShouldBeTrue();
+          MetaModel.ResourceRegistrations[0].ResourceKey.LegacyShouldBeOfType<Type>().ShouldBe(typeof(Customer));
+          MetaModel.ResourceRegistrations[0].IsStrictRegistration.LegacyShouldBeTrue();
 
         }
         [Test]
@@ -239,9 +240,9 @@ namespace Configuration_Specification
         {
             ResourceSpaceUses.UriDecorator<TestUriDecorator>();
 
-            MetaModel.CustomRegistrations.OfType<DependencyRegistrationModel>().FirstOrDefault()
-                .legacyShouldNotBeNull()
-                .ConcreteType.LegacyShouldBe<TestUriDecorator>();
+          MetaModel.CustomRegistrations.OfType<DependencyRegistrationModel>().FirstOrDefault()
+            .legacyShouldNotBeNull()
+            .ConcreteType.ShouldBe(typeof(TestUriDecorator));
         }
         public class TestUriDecorator : IUriDecorator
         {
@@ -266,7 +267,7 @@ namespace Configuration_Specification
                 {
                     parent.TranscodedBy<CustomerCodec>();
 
-                    FirstRegistration.Codecs[0].CodecType.LegacyShouldBe<CustomerCodec>();
+                  FirstRegistration.Codecs[0].CodecType.ShouldBe(typeof(CustomerCodec));
                 });
         }
 
@@ -277,7 +278,7 @@ namespace Configuration_Specification
                 {
                     parent.TranscodedBy(typeof(CustomerCodec));
 
-                    FirstRegistration.Codecs[0].CodecType.LegacyShouldBe<CustomerCodec>();
+                  FirstRegistration.Codecs[0].CodecType.ShouldBe(typeof(CustomerCodec));
                 });
         }
         [Test]
@@ -360,17 +361,17 @@ namespace Configuration_Specification
                     .TranscodedBy<CustomerWriterCodec>()
                     .ForMediaType("application/unknown");
 
-                FirstRegistration.Codecs[0].CodecType.LegacyShouldBe<CustomerReaderCodec>();
+              FirstRegistration.Codecs[0].CodecType.ShouldBe(typeof(CustomerReaderCodec));
 
-                FirstRegistration.Codecs[1].CodecType.LegacyShouldBe<CustomerCodec>();
-                FirstRegistration.Codecs[1].MediaTypes[0]
+              FirstRegistration.Codecs[1].CodecType.ShouldBe(typeof(CustomerCodec));
+              FirstRegistration.Codecs[1].MediaTypes[0]
                     .Extensions
                         .LegacyShouldContain("xml")
                         .LegacyShouldContain("xhtml")
                         .Count().LegacyShouldBe(2);
 
-                FirstRegistration.Codecs[2].CodecType.LegacyShouldBe<CustomerWriterCodec>();
-                FirstRegistration.Codecs[2].MediaTypes[0]
+              FirstRegistration.Codecs[2].CodecType.ShouldBe(typeof(CustomerWriterCodec));
+              FirstRegistration.Codecs[2].MediaTypes[0]
                     .Extensions
                         .Count().LegacyShouldBe(0);
             });
@@ -396,9 +397,9 @@ namespace Configuration_Specification
             ResourceSpaceUses.CustomDependency<IUriResolver, TemplatedUriResolver>(DependencyLifetime.Singleton);
 
             var first = MetaModel.CustomRegistrations.OfType<DependencyRegistrationModel>().LegacyShouldHaveCountOf(1).First();
-            first.ConcreteType.LegacyShouldBe<TemplatedUriResolver>();
-            first.ServiceType.LegacyShouldBe<IUriResolver>();
-            first.Lifetime.LegacyShouldBe(DependencyLifetime.Singleton);
+          first.ConcreteType.ShouldBe(typeof(TemplatedUriResolver));
+          first.ServiceType.ShouldBe(typeof(IUriResolver));
+          first.Lifetime.LegacyShouldBe(DependencyLifetime.Singleton);
 
         }
     }

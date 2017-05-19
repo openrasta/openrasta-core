@@ -15,6 +15,7 @@ using OpenRasta;
 using OpenRasta.Reflection;
 using OpenRasta.Testing;
 using OpenRasta.Tests.Unit.Fakes;
+using Shouldly;
 
 namespace PropertyPathExpressionTree_Specification
 {
@@ -28,8 +29,8 @@ namespace PropertyPathExpressionTree_Specification
 
             pp.Path.TypePrefix.LegacyShouldBe("Customer");
             pp.Path.TypeSuffix.LegacyShouldBe("DateOfBirth.Day");
-            pp.PropertyType.LegacyShouldBe<int>();
-            pp.Value.LegacyShouldBe(14);
+          pp.PropertyType.ShouldBe(typeof(int));
+          pp.Value.LegacyShouldBe(14);
         }
 
         [Test]
@@ -41,8 +42,8 @@ namespace PropertyPathExpressionTree_Specification
 
             pp.Path.TypePrefix.LegacyShouldBe("Customer");
             pp.Path.TypeSuffix.LegacyShouldBe("Username");
-            pp.PropertyType.LegacyShouldBe<string>();
-            pp.Value.LegacyShouldBe("johndoe");
+          pp.PropertyType.ShouldBe(typeof(string));
+          pp.Value.LegacyShouldBe("johndoe");
         }
 
         [Test]

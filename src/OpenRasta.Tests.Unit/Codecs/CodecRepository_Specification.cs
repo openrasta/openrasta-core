@@ -34,8 +34,7 @@ namespace CodecRepository_Specification
 
       WhenFindingCodec("application/xml", typeof(Customer));
 
-      ThenTheResult.CodecType
-        .LegacyShouldBe<CustomerCodec>();
+      ThenTheResult.CodecType.ShouldBe(typeof(CustomerCodec));
     }
 
     [Test]
@@ -56,7 +55,7 @@ namespace CodecRepository_Specification
       WhenFindingCodec("application/xml", typeof(Customer));
 
       ThenTheResult.ShouldNotBeNull();
-      ThenTheResult.CodecType.LegacyShouldBe<CustomerCodec>();
+      ThenTheResult.CodecType.ShouldBe(typeof(CustomerCodec));
     }
 
     [Test]
@@ -77,7 +76,7 @@ namespace CodecRepository_Specification
 
       WhenFindingCodec("multipart/form-data", typeof(IFile));
 
-      ThenTheResult.CodecType.LegacyShouldBe<MultipartFormDataObjectCodec>();
+      ThenTheResult.CodecType.ShouldBe(typeof(MultipartFormDataObjectCodec));
     }
 
     [Test]
@@ -88,7 +87,7 @@ namespace CodecRepository_Specification
 
       WhenFindingCodec("text/plain", typeof(IFile));
 
-      ThenTheResult.CodecType.LegacyShouldBe<ApplicationOctetStreamCodec>();
+      ThenTheResult.CodecType.ShouldBe(typeof(ApplicationOctetStreamCodec));
     }
 
     [Test]
@@ -99,7 +98,7 @@ namespace CodecRepository_Specification
 
       WhenFindingCodec("*/*", typeof(Customer));
 
-      ThenTheResult.CodecType.LegacyShouldBe<CustomerCodec>();
+      ThenTheResult.CodecType.ShouldBe(typeof(CustomerCodec));
     }
 
     [Test]
@@ -110,8 +109,7 @@ namespace CodecRepository_Specification
 
       WhenFindingCodec("application/xml", typeof(Customer));
 
-      ThenTheResult.CodecType
-        .LegacyShouldBe<AnotherCustomerCodec>();
+      ThenTheResult.CodecType.ShouldBe(typeof(AnotherCustomerCodec));
       ThenTheResult.Configuration
         .LegacyShouldBe("specific");
     }
@@ -124,8 +122,7 @@ namespace CodecRepository_Specification
 
       WhenFindingCodec("application/xml", typeof(Customer));
 
-      ThenTheResult.CodecType
-        .LegacyShouldBe<CustomerCodec>();
+      ThenTheResult.CodecType.ShouldBe(typeof(CustomerCodec));
       ThenTheResult.Configuration
         .LegacyShouldBe("specific");
     }
@@ -158,8 +155,7 @@ namespace CodecRepository_Specification
 
       ThenTheResult.Count.LegacyShouldBe(1);
       ThenTheResult[0]
-        .CodecType
-        .LegacyShouldBe<CustomerCodec>();
+        .CodecType.ShouldBe(typeof(CustomerCodec));
     }
 
     [Test]
@@ -171,8 +167,7 @@ namespace CodecRepository_Specification
 
       ThenTheResult.Count.LegacyShouldBe(1);
       ThenTheResult[0]
-        .CodecType
-        .LegacyShouldBe<CustomerCodec>();
+        .CodecType.ShouldBe(typeof(CustomerCodec));
     }
 
     [Test]
@@ -184,8 +179,7 @@ namespace CodecRepository_Specification
 
       ThenTheResult.Count.LegacyShouldBe(1);
       ThenTheResult[0]
-        .CodecType
-        .LegacyShouldBe<CustomerCodec>();
+        .CodecType.ShouldBe(typeof(CustomerCodec));
     }
 
     [Test]
@@ -197,8 +191,7 @@ namespace CodecRepository_Specification
 
       ThenTheResult.Count.LegacyShouldBe(1);
       ThenTheResult[0]
-        .CodecType
-        .LegacyShouldBe<AnotherCustomerCodec>();
+        .CodecType.ShouldBe(typeof(AnotherCustomerCodec));
     }
 
     [Test]
@@ -210,8 +203,7 @@ namespace CodecRepository_Specification
 
       ThenTheResult.Count.LegacyShouldBe(1);
       ThenTheResult[0]
-        .CodecType
-        .LegacyShouldBe<AnotherCustomerCodec>();
+        .CodecType.ShouldBe(typeof(AnotherCustomerCodec));
     }
 
     [Test]
@@ -224,8 +216,7 @@ namespace CodecRepository_Specification
 
       ThenTheResult.Count.LegacyShouldBe(1);
       ThenTheResult[0]
-        .CodecType
-        .LegacyShouldBe<AnotherCustomerCodec>();
+        .CodecType.ShouldBe(typeof(AnotherCustomerCodec));
     }
 
     [Test]
@@ -237,7 +228,7 @@ namespace CodecRepository_Specification
       WhenFindingCodecsFor<string>("*/*");
 
       ThenTheResult.Count.LegacyShouldBe(2);
-      ThenTheResult[0].CodecType.LegacyShouldBe<AnotherCustomerCodec>();
+      ThenTheResult[0].CodecType.ShouldBe(typeof(AnotherCustomerCodec));
     }
 
     [Test]

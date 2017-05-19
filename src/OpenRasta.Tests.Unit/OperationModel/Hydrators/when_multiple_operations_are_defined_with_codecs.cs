@@ -4,6 +4,7 @@ using OpenRasta.Codecs;
 using OpenRasta.OperationModel;
 using OpenRasta.Testing;
 using OpenRasta.Web;
+using Shouldly;
 
 namespace OpenRasta.Tests.Unit.OperationModel.Hydrators
 {
@@ -32,8 +33,7 @@ namespace OpenRasta.Tests.Unit.OperationModel.Hydrators
 
       when_filtering_operations();
 
-      ResultOperation.GetRequestCodec().CodecRegistration.CodecType
-        .LegacyShouldBe<ApplicationXWwwFormUrlencodedKeyedValuesCodec>();
+      ResultOperation.GetRequestCodec().CodecRegistration.CodecType.ShouldBe(typeof(ApplicationXWwwFormUrlencodedKeyedValuesCodec));
     }
     [Test]
     public void the_one_without_a_codec_is_not_selected()
@@ -45,8 +45,7 @@ namespace OpenRasta.Tests.Unit.OperationModel.Hydrators
 
       when_filtering_operations();
 
-      ResultOperation.GetRequestCodec().CodecRegistration.CodecType
-        .LegacyShouldBe<ApplicationOctetStreamCodec>();
+      ResultOperation.GetRequestCodec().CodecRegistration.CodecType.ShouldBe(typeof(ApplicationOctetStreamCodec));
     }
   }
 }

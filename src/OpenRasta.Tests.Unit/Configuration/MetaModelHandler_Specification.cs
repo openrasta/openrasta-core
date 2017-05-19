@@ -12,6 +12,7 @@ using OpenRasta.Testing;
 using OpenRasta.Tests.Unit.Fakes;
 using OpenRasta.TypeSystem;
 using OpenRasta.Web;
+using Shouldly;
 
 namespace MetaModelHandler_Specification
 {
@@ -212,14 +213,14 @@ namespace MetaModelHandler_Specification
 
             CodecRepository.Count().LegacyShouldBe(4);
             var first = CodecRepository.First();
-            first.CodecType.LegacyShouldBe<CustomerCodec>();
-            first.MediaType.LegacyShouldBe(MediaType.Json);
+          first.CodecType.ShouldBe(typeof(CustomerCodec));
+          first.MediaType.LegacyShouldBe(MediaType.Json);
             first.Extensions.LegacyShouldContain("json");
             first.Extensions.Count.LegacyShouldBe(1);
 
             var second = CodecRepository.Skip(1).First();
-            second.CodecType.LegacyShouldBe<CustomerCodec>();
-            second.MediaType.LegacyShouldBe(MediaType.Xml);
+          second.CodecType.ShouldBe(typeof(CustomerCodec));
+          second.MediaType.LegacyShouldBe(MediaType.Xml);
             second.Extensions.LegacyShouldContain("xml");
             second.Extensions.Count.LegacyShouldBe(1);
 

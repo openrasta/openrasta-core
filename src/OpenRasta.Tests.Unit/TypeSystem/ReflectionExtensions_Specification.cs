@@ -5,6 +5,7 @@ using System.Text;
 using NUnit.Framework;
 using OpenRasta.Testing;
 using OpenRasta.TypeSystem.ReflectionBased;
+using Shouldly;
 
 namespace ReflectionExtensions_Specification
 {
@@ -13,20 +14,17 @@ namespace ReflectionExtensions_Specification
         [Test]
         public void an_interface_on_a_type_is_discovered()
         {
-            typeof(List<string>).FindInterface(typeof(IList<>))
-                .LegacyShouldBe<IList<string>>();
+          typeof(List<string>).FindInterface(typeof(IList<>)).ShouldBe(typeof(IList<string>));
         }
         [Test]
         public void an_interface_on_an_interface_is_discovered()
         {
-            typeof(IList<string>).FindInterface(typeof(IEnumerable<>))
-                .LegacyShouldBe<IEnumerable<string>>();
+          typeof(IList<string>).FindInterface(typeof(IEnumerable<>)).ShouldBe(typeof(IEnumerable<string>));
         }
         [Test]
         public void an_interface_that_is_the_provided_interface_is_discovered()
         {
-            typeof(IList<string>).FindInterface(typeof(IList<>))
-                .LegacyShouldBe <IList<string>>();
+          typeof(IList<string>).FindInterface(typeof(IList<>)).ShouldBe(typeof(IList<string>));
         }
     }
 }

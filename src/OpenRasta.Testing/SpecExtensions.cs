@@ -16,11 +16,6 @@ namespace OpenRasta.Testing
     }
 
 
-    public static void LegacyShouldBe<T>(this Type valueToAnalyse)
-    {
-      valueToAnalyse.ShouldBe(typeof(T));
-    }
-
     public static void LegacyShouldBe(this Uri actual, string expected)
     {
       actual.ShouldBe(new Uri(expected));
