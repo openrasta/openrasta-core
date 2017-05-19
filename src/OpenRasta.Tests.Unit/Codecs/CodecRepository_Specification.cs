@@ -238,7 +238,7 @@ namespace CodecRepository_Specification
         "application/xhtml+xml;q=0.9,text/html,application/vnd.openrasta.htmlfragment+xml;q=0.5");
       WhenFindingCodecsFor<object>("text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
 
-      ThenTheResult.Count.LegacyShouldBeGreaterThan(0);
+      ThenTheResult.Count.ShouldBeGreaterThan(0);
       ThenTheResult[0].MediaType.ToString().LegacyShouldBe("text/html");
     }
 

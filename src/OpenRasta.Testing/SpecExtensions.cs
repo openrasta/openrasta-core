@@ -16,11 +16,6 @@ namespace OpenRasta.Testing
     }
 
 
-    public static void LegacyShouldBeGreaterThan<T>(this T actual, T expected) where T : IComparable<T>
-    {
-      actual.ShouldBeGreaterThan(expected);
-    }
-
     public static void LegacyShouldBeNull<T>(this T obj)
     {
       obj.ShouldBeNull();
