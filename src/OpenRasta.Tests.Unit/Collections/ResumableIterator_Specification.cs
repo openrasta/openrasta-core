@@ -2,6 +2,7 @@
 using NUnit.Framework;
 using OpenRasta.Collections;
 using OpenRasta.Testing;
+using Shouldly;
 
 namespace OpenRasta.Tests.Unit.Collections
 {
@@ -41,8 +42,8 @@ namespace OpenRasta.Tests.Unit.Collections
         public void enumerating_values_from_a_starting_point_is_successfull()
         {
             var iterator = CreateIterator();
-            iterator.ResumeFrom(2).LegacyShouldBeTrue();
-            when_enumerating_values(iterator);
+          iterator.ResumeFrom(2).ShouldBeTrue();
+          when_enumerating_values(iterator);
             _resulting.LegacyShouldHaveSameElementsAs(new[] { 2, 3, 4, 5 });
         }
 
@@ -50,8 +51,8 @@ namespace OpenRasta.Tests.Unit.Collections
         public void enumerating_values_from_unknown_starting_point_fails()
         {
             var iterator = CreateIterator();
-            iterator.ResumeFrom(10).LegacyShouldBeFalse();
-            iterator.GetEnumerator().MoveNext().LegacyShouldBeFalse();
+          iterator.ResumeFrom(10).ShouldBeFalse();
+          iterator.GetEnumerator().MoveNext().ShouldBeFalse();
         }
 
         ResumableIterator<int, int> CreateIterator()

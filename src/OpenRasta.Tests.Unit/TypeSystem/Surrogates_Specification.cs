@@ -19,6 +19,7 @@ using OpenRasta.Testing;
 using OpenRasta.Tests.Unit.Fakes;
 using OpenRasta.Tests.Unit.TypeSystem;
 using OpenRasta.TypeSystem;
+using Shouldly;
 using Frodo = OpenRasta.Tests.Unit.Fakes.Frodo;
 
 namespace Surrogates_Specification
@@ -33,10 +34,10 @@ namespace Surrogates_Specification
         {
             given_builder();
 
-            _theBuilder.GetProperty(":1").TrySetValue("hello").LegacyShouldBeTrue();
-            _theBuilder.GetProperty(":0").TrySetValue("hello2").LegacyShouldBeTrue();
+          _theBuilder.GetProperty(":1").TrySetValue("hello").ShouldBeTrue();
+          _theBuilder.GetProperty(":0").TrySetValue("hello2").ShouldBeTrue();
 
-            var theList = (List<string>)_theBuilder.Create();
+          var theList = (List<string>)_theBuilder.Create();
             theList[0].LegacyShouldBe("hello");
             theList[1].LegacyShouldBe("hello2");
         }
@@ -45,10 +46,9 @@ namespace Surrogates_Specification
         {
             given_builder();
 
-            _theBuilder.GetProperty(":0").TrySetValue("hello")
-                .LegacyShouldBeTrue();
+          _theBuilder.GetProperty(":0").TrySetValue("hello").ShouldBeTrue();
 
-            var theList = (List<string>)_theBuilder.Create();
+          var theList = (List<string>)_theBuilder.Create();
             theList[0].LegacyShouldBe("hello");
         }
 
@@ -67,10 +67,9 @@ namespace Surrogates_Specification
         {
             GivenTypeInstance();
 
-            _theBuilder.GetProperty("ListOfStrings:0").TrySetValue("hello")
-                .LegacyShouldBeTrue();
+          _theBuilder.GetProperty("ListOfStrings:0").TrySetValue("hello").ShouldBeTrue();
 
-            var theList = (ListContainer)_theBuilder.Create();
+          var theList = (ListContainer)_theBuilder.Create();
             theList.ListOfStrings[0].LegacyShouldBe("hello");
         }
         [Test]
@@ -214,7 +213,7 @@ namespace Surrogates_Specification
             }
             protected void given_successful_property(string key, object value)
             {
-                builder.GetProperty(key).TrySetValue(value).LegacyShouldBeTrue();
+              builder.GetProperty(key).TrySetValue(value).ShouldBeTrue();
             }
             protected void when_object_built()
             {

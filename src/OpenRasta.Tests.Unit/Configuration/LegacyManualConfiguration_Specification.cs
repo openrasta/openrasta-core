@@ -113,8 +113,7 @@ namespace LegacyManualConfiguration_Specification
 
       WhenTheConfigurationIsFinished();
 
-      ThenTheCodecFor<Customer, Codec>("application/vnd.rasta.test")
-        .LegacyShouldBeNull();
+      ThenTheCodecFor<Customer, Codec>("application/vnd.rasta.test").ShouldBeNull();
       ThenTheCodecFor<Customer, Codec>("application/vnd.rasta.custom")
         .legacyShouldNotBeNull();
     }

@@ -18,6 +18,7 @@ using OpenRasta.Testing.Contexts;
 using OpenRasta.Tests;
 using OpenRasta.Web;
 using OpenRasta.Pipeline;
+using Shouldly;
 
 namespace DigestCredentialsReader_Specification
 {
@@ -80,8 +81,7 @@ namespace DigestCredentialsReader_Specification
         public void the_parsing_returns_null_if_the_authentication_is_not_digest()
         {
             string authenticationHeader = "Basic bla";
-            DigestHeader.Parse(authenticationHeader)
-                .LegacyShouldBeNull();
+          DigestHeader.Parse(authenticationHeader).ShouldBeNull();
         }
         /// <summary>
         /// See #31 on trac.
@@ -97,7 +97,7 @@ namespace DigestCredentialsReader_Specification
 
             authorizer.ReadCredentials(Context)
                 .LegacyShouldBe(PipelineContinuation.Continue);
-            Context.OperationResult.LegacyShouldBeNull();
+          Context.OperationResult.ShouldBeNull();
         }
 
         [Test, Ignore("no idea")]
@@ -112,7 +112,7 @@ namespace DigestCredentialsReader_Specification
 
             authorizer.ReadCredentials(Context)
                 .LegacyShouldBe(PipelineContinuation.Continue);
-            Context.OperationResult.LegacyShouldBeNull();
+          Context.OperationResult.ShouldBeNull();
         }
 
         [Test, Ignore("no idea")]
@@ -126,7 +126,7 @@ namespace DigestCredentialsReader_Specification
 
             authorizer.ReadCredentials(Context)
                 .LegacyShouldBe(PipelineContinuation.Continue);
-            Context.OperationResult.LegacyShouldBeNull();
+          Context.OperationResult.ShouldBeNull();
         }
         [Test,Ignore("no idea")]
         public void a_non_absolute_digest_uri_for_an_absolute_request_should_fail()

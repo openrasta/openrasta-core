@@ -14,6 +14,7 @@ using System.Text;
 using NUnit.Framework;
 using OpenRasta.Testing;
 using OpenRasta.Web;
+using Shouldly;
 
 namespace MultipartReader_Specification
 {
@@ -21,10 +22,9 @@ namespace MultipartReader_Specification
     {
         void CheckEntity(IHttpEntity entity, MediaType httpContentType, string expectedContent)
         {
-            entity.ContentType
-                .Matches(httpContentType)
-                .LegacyShouldBeTrue();
-            string actualContent = new StreamReader(entity.Stream).ReadToEnd();
+          entity.ContentType
+            .Matches(httpContentType).ShouldBeTrue();
+          string actualContent = new StreamReader(entity.Stream).ReadToEnd();
             actualContent.LegacyShouldBe(expectedContent);
         }
 
@@ -67,10 +67,9 @@ text
                                                          new MemoryStream(Encoding.ASCII.GetBytes(TEXT_MULTIPART_NOHEAD)));
 
             var enumerator = reader.GetParts().GetEnumerator();
-            enumerator.MoveNext()
-                .LegacyShouldBeTrue();
+          enumerator.MoveNext().ShouldBeTrue();
 
-            enumerator.Current.Headers.Count.LegacyShouldBe(0);
+          enumerator.Current.Headers.Count.LegacyShouldBe(0);
             TheTextIn(enumerator.Current.Stream).LegacyShouldBe("text");
         }
 
@@ -107,8 +106,8 @@ text
             enumerator.MoveNext();
             CheckEntity(enumerator.Current, new MediaType("text/x-whatever"), "text\r\n...");
 
-            enumerator.MoveNext().LegacyShouldBeFalse();
-            enumerator.Dispose();
+          enumerator.MoveNext().ShouldBeFalse();
+          enumerator.Dispose();
         }
     }
 }

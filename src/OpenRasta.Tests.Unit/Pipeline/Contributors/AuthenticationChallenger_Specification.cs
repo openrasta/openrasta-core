@@ -1,4 +1,5 @@
 ﻿using OpenRasta.Testing.Contexts;
+using Shouldly;
 #pragma warning disable 618
 using System;
 using System.Collections.Generic;
@@ -36,7 +37,7 @@ namespace given_an_authentication_contributor
             when_sending_notification<KnownStages.IOperationExecution>();
 
             // then
-            IsContributorExecuted.LegacyShouldBeTrue();
+          IsContributorExecuted.ShouldBeTrue();
         }
     }
 
@@ -51,7 +52,7 @@ namespace given_an_authentication_contributor
             when_sending_notification<KnownStages.IResponseCoding>();
 
             // then
-            IsContributorExecuted.LegacyShouldBeTrue();
+          IsContributorExecuted.ShouldBeTrue();
         }
     }
 

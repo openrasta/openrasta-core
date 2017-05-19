@@ -12,6 +12,7 @@ using OpenRasta.Testing;
 using OpenRasta.Testing.Contexts;
 using OpenRasta.TypeSystem;
 using OpenRasta.Web;
+using Shouldly;
 
 namespace OpenRasta.Tests.Unit.OperationModel.Hydrators
 {
@@ -67,8 +68,7 @@ namespace OpenRasta.Tests.Unit.OperationModel.Hydrators
       Operations.First(x => x.Name == methodName)
         .Inputs.Required()
         .First(x => x.Member.Name == parameterName)
-        .Binder.SetInstance(parameterValue)
-        .LegacyShouldBeTrue();
+        .Binder.SetInstance(parameterValue).ShouldBeTrue();
     }
 
     protected IOperationAsync ResultOperation { get; private set; }

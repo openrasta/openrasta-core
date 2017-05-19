@@ -17,6 +17,7 @@ using OpenRasta.Pipeline;
 using OpenRasta.Security;
 using OpenRasta.TypeSystem;
 using OpenRasta.Web;
+using Shouldly;
 
 namespace OpenRasta.Testing.Contexts
 {
@@ -87,7 +88,7 @@ namespace OpenRasta.Testing.Contexts
 
     public void then_contributor_is_executed()
     {
-      IsContributorExecuted.LegacyShouldBeTrue();
+      IsContributorExecuted.ShouldBeTrue();
     }
 
     public PipelineContinuation when_sending_notification<TTrigger>()

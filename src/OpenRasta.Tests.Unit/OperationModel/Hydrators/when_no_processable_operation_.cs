@@ -1,5 +1,6 @@
 ﻿using NUnit.Framework;
 using OpenRasta.Testing;
+using Shouldly;
 
 namespace OpenRasta.Tests.Unit.OperationModel.Hydrators
 {
@@ -13,7 +14,7 @@ namespace OpenRasta.Tests.Unit.OperationModel.Hydrators
 
       when_filtering_operations();
 
-      ResultOperation.LegacyShouldBeNull();
+      ResultOperation.ShouldBeNull();
     }
   }
 }

@@ -67,8 +67,7 @@ namespace ApplicationOctetStreamCodec_Specification
 
             when_decoding();
 
-            ThenTheResult.FileName.
-                LegacyShouldBeNull();
+          ThenTheResult.FileName.ShouldBeNull();
         }
 
         [Test]
@@ -103,7 +102,7 @@ namespace ApplicationOctetStreamCodec_Specification
 
             when_coding();
 
-            Response.Headers.ContentDisposition.LegacyShouldBeNull();
+          Response.Headers.ContentDisposition.ShouldBeNull();
         }
         [Test]
         public void a_file_with_a_name_generates_an_inline_content_disposition()
@@ -178,8 +177,7 @@ namespace ApplicationOctetStreamCodec_Specification
             Response.Headers.ContentDisposition.ShouldNotBeNull();
 
             Response.Headers.ContentDisposition.Disposition.LegacyShouldBe("attachment");
-            Response.Headers.ContentDisposition.FileName.LegacyShouldBeNull();
-
+          Response.Headers.ContentDisposition.FileName.ShouldBeNull();
         }
         void when_coding()
         {

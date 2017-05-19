@@ -63,7 +63,7 @@ namespace ExpressionTreeXHtmlProducer_Specification
             var customer = new Customer();
             var textbox = XHtml.TextBox(() => customer.FirstName);
 
-            textbox.Value.LegacyShouldBeNull();
+          textbox.Value.ShouldBeNull();
         }
 
         [Test]
@@ -132,8 +132,8 @@ namespace ExpressionTreeXHtmlProducer_Specification
             select.Name.LegacyShouldBe("Test.Enum");
           var node = @select.ChildNodes.Cast<IOptionElement>().SingleOrDefault(x => x.InnerText == "All");
           node.ShouldNotBeNull();
-          node.Selected.LegacyShouldBeTrue();
-            select.ChildNodes.Count.LegacyShouldBe(Enum.GetNames(typeof (AttributeTargets)).Length);
+          node.Selected.ShouldBeTrue();
+          select.ChildNodes.Count.LegacyShouldBe(Enum.GetNames(typeof (AttributeTargets)).Length);
         }
         [Test]
         public void a_nullable_enum_property_sets_to_null_selects_an_empty_option_element_in_first_position()
@@ -143,8 +143,8 @@ namespace ExpressionTreeXHtmlProducer_Specification
             select.Name.LegacyShouldBe("Test.NullableEnum");
           var node = @select.ChildNodes.Cast<IOptionElement>().SingleOrDefault(x => x.InnerText == "");
           node.ShouldNotBeNull();
-          node.Selected.LegacyShouldBeTrue();
-            select.ChildNodes.Count.LegacyShouldBe(Enum.GetNames(typeof(AttributeTargets)).Length+1);
+          node.Selected.ShouldBeTrue();
+          select.ChildNodes.Count.LegacyShouldBe(Enum.GetNames(typeof(AttributeTargets)).Length+1);
         }
     }
     public class when_building_checkboxes:xhtml_context
@@ -155,8 +155,8 @@ namespace ExpressionTreeXHtmlProducer_Specification
             var checkbox = XHtml.CheckBox(() => target.IsSelected);
 
             checkbox.Type.LegacyShouldBe(InputType.CheckBox);
-            checkbox.Checked.LegacyShouldBeTrue();
-            checkbox.Name.LegacyShouldBe("Test.IsSelected");
+          checkbox.Checked.ShouldBeTrue();
+          checkbox.Name.LegacyShouldBe("Test.IsSelected");
             checkbox.ToString().LegacyShouldContain("<input type=\"checkbox\"");
         }
     }

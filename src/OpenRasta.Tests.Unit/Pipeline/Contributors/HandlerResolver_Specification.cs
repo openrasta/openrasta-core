@@ -19,6 +19,7 @@ using OpenRasta.Web;
 using OpenRasta.TypeSystem;
 using OpenRasta.Pipeline;
 using ResourceTypeResolver_Specification;
+using Shouldly;
 
 namespace HandlerResolver_Specification
 {
@@ -31,7 +32,7 @@ namespace HandlerResolver_Specification
             given_pipeline_resourceKey<Fake>();
             when_sending_notification<KnownStages.IUriMatching>();
 
-            Context.PipelineData.SelectedHandlers.LegacyShouldBeNull();
+          Context.PipelineData.SelectedHandlers.ShouldBeNull();
         }
     }
 

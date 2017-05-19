@@ -15,6 +15,7 @@ using System.ComponentModel;
 using NUnit.Framework;
 using OpenRasta.Testing;
 using OpenRasta.TypeSystem.ReflectionBased;
+using Shouldly;
 
 namespace Extensions_Specification
 {
@@ -194,8 +195,7 @@ namespace Extensions_Specification
         [Test]
         public void reference_types_return_null()
         {
-            typeof (SimpleType).GetDefaultValue()
-                .LegacyShouldBeNull();
+          typeof (SimpleType).GetDefaultValue().ShouldBeNull();
         }
 
         [Test]

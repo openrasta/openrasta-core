@@ -16,6 +16,7 @@ using OpenRasta.Hosting.InMemory;
 using OpenRasta.OperationModel;
 using OpenRasta.Security;
 using OpenRasta.Testing;
+using Shouldly;
 
 namespace PrincipalAuthorizationResolver_Specification
 {
@@ -47,7 +48,7 @@ namespace PrincipalAuthorizationResolver_Specification
                 .LegacyShouldBe(true);
 
 
-            rastaContext.OperationResult.LegacyShouldBeNull();
+          rastaContext.OperationResult.ShouldBeNull();
         }
 
         [Test, Ignore("no idea")]
@@ -60,7 +61,7 @@ namespace PrincipalAuthorizationResolver_Specification
             authorizer.BeforeExecute(new Mock<IOperation>().Object)
               .LegacyShouldBe(true);
 
-            rastaContext.OperationResult.LegacyShouldBeNull();
+          rastaContext.OperationResult.ShouldBeNull();
         }
     }
 }

@@ -36,7 +36,7 @@ namespace TemplatedUriResolver_Specification
             matching_result
                 .ShouldNotBeNull();
           matching_result.ResourceKey.LegacyShouldBeOfType<IType>()
-                .Equals<Gandalf>().LegacyShouldBeTrue();
+            .Equals<Gandalf>().ShouldBeTrue();
         }
 
         void when_matching_uri(string uri)

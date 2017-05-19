@@ -17,6 +17,7 @@ using OpenRasta.Tests.Unit.Fakes;
 using OpenRasta.Testing;
 using OpenRasta.TypeSystem;
 using OpenRasta.TypeSystem.ReflectionBased;
+using Shouldly;
 using TypeSystems = OpenRasta.TypeSystem.TypeSystems;
 
 namespace KeyedValuesBinder_Specification
@@ -61,8 +62,8 @@ namespace KeyedValuesBinder_Specification
             var binder = new KeyedValuesBinder(TypeOf<List<Customer>>());
 
             var result = binder.BuildObject();
-            result.Successful.LegacyShouldBeTrue();
-            result.Instance
+          result.Successful.ShouldBeTrue();
+          result.Instance
                 .legacyShouldNotBeNull()
                 .LegacyShouldBeOfType<List<Customer>>();
         }
@@ -72,14 +73,12 @@ namespace KeyedValuesBinder_Specification
             var binder = new KeyedValuesBinder(TypeOf<IEnumerable<Customer>>(), "customer");
             ValueConverter<string> valueConverter = (str, type) => BindingResult.Success(type.CreateInstanceFrom(str));
 
-            binder.SetProperty(":0.FirstName", new[] { "Frodo" }, valueConverter)
-                .LegacyShouldBeTrue();
+          binder.SetProperty(":0.FirstName", new[] { "Frodo" }, valueConverter).ShouldBeTrue();
 
 
-            binder.SetProperty(":1.FirstName", new[] { "Sam" }, valueConverter)
-                .LegacyShouldBeTrue();
+          binder.SetProperty(":1.FirstName", new[] { "Sam" }, valueConverter).ShouldBeTrue();
 
-            var customers = (IEnumerable<Customer>)binder.BuildObject().Instance;
+          var customers = (IEnumerable<Customer>)binder.BuildObject().Instance;
             customers.Count().LegacyShouldBe(2);
             customers.First().FirstName.LegacyShouldBe("Frodo");
             customers.Skip(1).First().FirstName.LegacyShouldBe("Sam");
@@ -90,10 +89,9 @@ namespace KeyedValuesBinder_Specification
             var binder = new KeyedValuesBinder(TypeOf<Customer>(), "firstname");
             ValueConverter<string> valueConverter = (str, type) => BindingResult.Success(type.CreateInstanceFrom(str));
 
-            binder.SetProperty("firstName", new[] { "Smeagol" }, valueConverter)
-                .LegacyShouldBeTrue();
+          binder.SetProperty("firstName", new[] { "Smeagol" }, valueConverter).ShouldBeTrue();
 
-            binder.BuildObject().Instance
+          binder.BuildObject().Instance
                 .LegacyShouldBeOfType<Customer>()
                 .FirstName.LegacyShouldBe("Smeagol");
         }
@@ -103,35 +101,29 @@ namespace KeyedValuesBinder_Specification
             var binder = new KeyedValuesBinder(TypeOf<Customer>(), "customer");
             ValueConverter<string> valueConverter = (str, type) => BindingResult.Success(type.CreateInstanceFrom(str));
 
-            binder.SetProperty("Orders:0.Description", new[] { "something" }, valueConverter)
-                .LegacyShouldBeTrue();
+          binder.SetProperty("Orders:0.Description", new[] { "something" }, valueConverter).ShouldBeTrue();
 
 
-            binder.SetProperty("Orders:1.Description", new[] { "something else" }, valueConverter)
-                .LegacyShouldBeTrue();
-            binder.SetProperty("Orders:1.IsSelected", new[] { "on" }, valueConverter)
-                .LegacyShouldBeTrue();
+          binder.SetProperty("Orders:1.Description", new[] { "something else" }, valueConverter).ShouldBeTrue();
+          binder.SetProperty("Orders:1.IsSelected", new[] { "on" }, valueConverter).ShouldBeTrue();
 
-            binder.SetProperty("Orders:2.Description", new[] { "something" }, valueConverter)
-                .LegacyShouldBeTrue();
+          binder.SetProperty("Orders:2.Description", new[] { "something" }, valueConverter).ShouldBeTrue();
 
-            var customer = (Customer)binder.BuildObject().Instance;
+          var customer = (Customer)binder.BuildObject().Instance;
             customer.Orders.Count.LegacyShouldBe(3);
-            customer.Orders[0].IsSelected.LegacyShouldBeFalse();
-            customer.Orders[1].IsSelected.LegacyShouldBeTrue();
-            customer.Orders[2].IsSelected.LegacyShouldBeFalse();
+          customer.Orders[0].IsSelected.ShouldBeFalse();
+          customer.Orders[1].IsSelected.ShouldBeTrue();
+          customer.Orders[2].IsSelected.ShouldBeFalse();
         }
         [Test]
         public void multiple_values_with_the_same_name_for_an_icollection_appends_to_the_collection()
         {
             var binder = new KeyedValuesBinder(TypeOf<Customer>(), "firstname");
             ValueConverter<string> valueConverter = (str, type) => BindingResult.Success(type.CreateInstanceFrom(str));
-            binder.SetProperty("Attributes", new[] { "blue eyes" }, valueConverter)
-                .LegacyShouldBeTrue();
-            binder.SetProperty("Attributes", new[] { "green eyes" }, valueConverter)
-                .LegacyShouldBeTrue();
+          binder.SetProperty("Attributes", new[] { "blue eyes" }, valueConverter).ShouldBeTrue();
+          binder.SetProperty("Attributes", new[] { "green eyes" }, valueConverter).ShouldBeTrue();
 
-            var customer = binder.BuildObject().Instance as Customer;
+          var customer = binder.BuildObject().Instance as Customer;
             customer.Attributes.Count().LegacyShouldBe(2);
             customer.Attributes.First().LegacyShouldBe("blue eyes");
             customer.Attributes.Skip(1).First().LegacyShouldBe("green eyes");

@@ -16,19 +16,9 @@ namespace OpenRasta.Testing
     }
 
 
-    public static void LegacyShouldBeNull<T>(this T obj)
-    {
-      obj.ShouldBeNull();
-    }
-
     public static void LegacyShouldBeTheSameInstanceAs(this object actual, object expected)
     {
       actual.ShouldBeSameAs(expected);
-    }
-
-    public static void LegacyShouldBeTrue(this bool value)
-    {
-      value.ShouldBeTrue();
     }
 
     public static void LegacyShouldCompleteSuccessfully(this Action codeToExecute)
@@ -90,12 +80,6 @@ namespace OpenRasta.Testing
     {
       valueToAnalyse.ShouldBe(expectedValue);
       return valueToAnalyse;
-    }
-
-    public static bool LegacyShouldBeFalse(this bool value)
-    {
-      value.ShouldBeFalse();
-      return false;
     }
 
     public static IEnumerable<T> LegacyShouldContain<T>(this IEnumerable<T> list, T expected)

@@ -1,4 +1,5 @@
 ﻿using OpenRasta.Testing.Contexts;
+using Shouldly;
 #pragma warning disable 618
 using System;
 using System.Collections.Generic;
@@ -29,7 +30,7 @@ namespace Authentication_Specification
             when_sending_notification<KnownStages.IBegin>();
 
             // then
-            IsContributorExecuted.LegacyShouldBeTrue();
+          IsContributorExecuted.ShouldBeTrue();
         }
 
         [Test]
@@ -42,7 +43,7 @@ namespace Authentication_Specification
             when_sending_notification<KnownStages.IHandlerSelection>();
 
             // then
-            IsContributorExecuted.LegacyShouldBeTrue();
+          IsContributorExecuted.ShouldBeTrue();
         }
 
         [Test]

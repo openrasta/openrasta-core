@@ -71,7 +71,7 @@ namespace Instances_Specification
     {
       given_builder_for<string>();
 
-      TypeBuilder.GetProperty("Length").CanWrite.LegacyShouldBeFalse();
+      TypeBuilder.GetProperty("Length").CanWrite.ShouldBeFalse();
     }
 
     [Test]
@@ -79,7 +79,7 @@ namespace Instances_Specification
     {
       given_builder_for<string>();
 
-      TypeBuilder.GetProperty("unknown").LegacyShouldBeNull();
+      TypeBuilder.GetProperty("unknown").ShouldBeNull();
     }
   }
 
@@ -91,8 +91,7 @@ namespace Instances_Specification
       given_builder_for<Customer>();
 
       TypeBuilder.GetProperty("FirstName")
-        .TrySetValue(2)
-        .LegacyShouldBeFalse();
+        .TrySetValue(2).ShouldBeFalse();
 
       TypeBuilder.Changes.Count.LegacyShouldBe(0);
     }
@@ -105,7 +104,7 @@ namespace Instances_Specification
       TypeBuilder.GetProperty("FirstName").TrySetValue("Frodo");
 
       TypeBuilder.Changes.Count.LegacyShouldBe(1);
-      TypeBuilder.Changes.ContainsKey("FirstName").LegacyShouldBeTrue();
+      TypeBuilder.Changes.ContainsKey("FirstName").ShouldBeTrue();
     }
 
     [Test]
@@ -124,7 +123,7 @@ namespace Instances_Specification
     {
       given_builder_for<Customer>();
 
-      TypeBuilder.Changes.IsReadOnly.LegacyShouldBeTrue();
+      TypeBuilder.Changes.IsReadOnly.ShouldBeTrue();
       Executing(() => TypeBuilder.Changes.Add(null, null))
         .ShouldThrow<NotSupportedException>();
 
@@ -152,7 +151,7 @@ namespace Instances_Specification
     {
       given_builder_for<Customer>();
 
-      TypeBuilder.GetProperty("Username").TrySetValue(3).LegacyShouldBeFalse();
+      TypeBuilder.GetProperty("Username").TrySetValue(3).ShouldBeFalse();
     }
 
     [Test]
@@ -161,8 +160,7 @@ namespace Instances_Specification
       given_builder_for<Customer>();
 
       TypeBuilder.GetProperty("Username")
-        .TrySetValue("hello")
-        .LegacyShouldBeTrue();
+        .TrySetValue("hello").ShouldBeTrue();
 
       TypeBuilder.GetProperty("Username")
         .Value.LegacyShouldBe("hello");
@@ -185,15 +183,14 @@ namespace Instances_Specification
       result.ShouldNotBeNull();
 
       TypeBuilder.GetProperty("FirstName")
-        .TrySetValue("Frodo")
-        .LegacyShouldBeTrue();
+        .TrySetValue("Frodo").ShouldBeTrue();
 
       var customer = (Customer) result;
       customer.LastName = "Baggins";
       customer = TypeBuilder.Create() as Customer;
 
       customer.FirstName.LegacyShouldBe("Frodo");
-      customer.LastName.LegacyShouldBeNull();
+      customer.LastName.ShouldBeNull();
     }
 
     [Test]
@@ -221,8 +218,7 @@ namespace Instances_Specification
       TypeBuilder.Update(customer);
 
       TypeBuilder.GetProperty("FirstName")
-        .TrySetValue("Frodo")
-        .LegacyShouldBeTrue();
+        .TrySetValue("Frodo").ShouldBeTrue();
 
       object newCustomer = TypeBuilder.Create();
       newCustomer.LegacyShouldNotBeTheSameInstanceAs(customer);
@@ -264,9 +260,8 @@ namespace Instances_Specification
     {
       given_builder_for<int>();
 
-      TypeBuilder.TrySetValue(3)
-        .LegacyShouldBeTrue();
-      TypeBuilder.HasValue.LegacyShouldBeTrue();
+      TypeBuilder.TrySetValue(3).ShouldBeTrue();
+      TypeBuilder.HasValue.ShouldBeTrue();
       TypeBuilder.Value.LegacyShouldBe(3);
     }
 
@@ -275,10 +270,9 @@ namespace Instances_Specification
     {
       given_builder_for<int>();
 
-      TypeBuilder.TrySetValue("hello")
-        .LegacyShouldBeFalse();
+      TypeBuilder.TrySetValue("hello").ShouldBeFalse();
 
-      TypeBuilder.HasValue.LegacyShouldBeFalse();
+      TypeBuilder.HasValue.ShouldBeFalse();
     }
 
     [Test]
@@ -338,7 +332,7 @@ namespace Instances_Specification
 
     protected void given_property(string prop, object value)
     {
-      TypeBuilder.GetProperty(prop).TrySetValue(value).LegacyShouldBeTrue();
+      TypeBuilder.GetProperty(prop).TrySetValue(value).ShouldBeTrue();
     }
   }
 }

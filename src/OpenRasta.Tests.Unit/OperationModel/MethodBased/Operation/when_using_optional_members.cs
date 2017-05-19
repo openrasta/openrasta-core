@@ -4,6 +4,7 @@ using OpenRasta.OperationModel;
 using OpenRasta.Testing;
 using OpenRasta.Testing.Contexts;
 using OpenRasta.TypeSystem;
+using Shouldly;
 
 namespace OpenRasta.Tests.Unit.OperationModel.MethodBased
 {
@@ -14,7 +15,7 @@ namespace OpenRasta.Tests.Unit.OperationModel.MethodBased
         {
             given_operation("Get", typeof(int));
 
-            Operation.Inputs.AllReady().LegacyShouldBeTrue();
+          Operation.Inputs.AllReady().ShouldBeTrue();
         }
         [Test]
         public void all_parameters_are_satisfied()
@@ -28,8 +29,8 @@ namespace OpenRasta.Tests.Unit.OperationModel.MethodBased
         {
             given_operation("Search",typeof(string));
 
-            Operation.Inputs.Optional().First().IsOptional.LegacyShouldBeTrue();
-            Operation.Inputs.Optional().First().Member.LegacyShouldBeOfType<IParameter>().DefaultValue
+          Operation.Inputs.Optional().First().IsOptional.ShouldBeTrue();
+          Operation.Inputs.Optional().First().Member.LegacyShouldBeOfType<IParameter>().DefaultValue
                 .LegacyShouldBe("*");
         }
     }
@@ -42,7 +43,7 @@ namespace OpenRasta.Tests.Unit.OperationModel.MethodBased
     {
       given_operation("SearchNative", typeof(string));
 
-      Operation.Inputs.AllReady().LegacyShouldBeTrue();
+      Operation.Inputs.AllReady().ShouldBeTrue();
     }
 
     [Test]
@@ -58,7 +59,7 @@ namespace OpenRasta.Tests.Unit.OperationModel.MethodBased
     {
       given_operation("SearchNative", typeof(string));
 
-      Operation.Inputs.Optional().First().IsOptional.LegacyShouldBeTrue();
+      Operation.Inputs.Optional().First().IsOptional.ShouldBeTrue();
       Operation.Inputs.Optional().First().Member.LegacyShouldBeOfType<IParameter>().DefaultValue
         .LegacyShouldBe("*");
     }

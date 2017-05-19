@@ -61,8 +61,7 @@ namespace OpenRasta.Tests.Unit.OperationModel.CodecSelectors
             when_filtering_operations();
 
             var selectedCodec = FilteredOperations.First(x=>x.Name == "PostForStream");
-            selectedCodec.GetRequestCodec().CodecRegistration.MediaType.Matches(MediaType.ApplicationOctetStream)
-                .LegacyShouldBeTrue();
+          selectedCodec.GetRequestCodec().CodecRegistration.MediaType.Matches(MediaType.ApplicationOctetStream).ShouldBeTrue();
         }
     }
     public class when_there_is_a_request_entity : requestcodecselector_context
@@ -78,7 +77,7 @@ namespace OpenRasta.Tests.Unit.OperationModel.CodecSelectors
 
             when_filtering_operations();
 
-            FilteredOperations.First(x => x.Name == "Get").GetRequestCodec().LegacyShouldBeNull();   
+          FilteredOperations.First(x => x.Name == "Get").GetRequestCodec().ShouldBeNull();
         }
         [Test]
         public void operations_with_partially_filled_members_still_get_codec_assigned()
@@ -120,7 +119,7 @@ namespace OpenRasta.Tests.Unit.OperationModel.CodecSelectors
 
             when_filtering_operations();
 
-            FilteredOperations.FirstOrDefault(x => x.Name == "Post").LegacyShouldBeNull();
+          FilteredOperations.FirstOrDefault(x => x.Name == "Post").ShouldBeNull();
         }
     }
 

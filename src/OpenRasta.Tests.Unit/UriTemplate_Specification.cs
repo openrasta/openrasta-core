@@ -120,7 +120,7 @@ namespace UriTemplate_Specification
         public void matching_urls_with_different_host_names_returns_no_match()
         {
             var table = new OpenRasta.UriTemplate("/temp");
-            table.Match(new Uri("http://localhost"), new Uri("http://notlocalhost/temp")).LegacyShouldBeNull();
+          table.Match(new Uri("http://localhost"), new Uri("http://notlocalhost/temp")).ShouldBeNull();
         }
 
         [Test]
@@ -173,7 +173,7 @@ namespace UriTemplate_Specification
         {
             GivenAMatching("/weather/{state}/{city}", "http://localhost/temperature/Washington/Seattle");
 
-            ThenTheMatch.LegacyShouldBeNull();
+          ThenTheMatch.ShouldBeNull();
         }
 
         [Test]
@@ -181,7 +181,7 @@ namespace UriTemplate_Specification
         {
             GivenAMatching("/weather/{state}/{city}", "http://localhost/nowt");
 
-            ThenTheMatch.LegacyShouldBeNull();
+          ThenTheMatch.ShouldBeNull();
         }
     }
 
@@ -245,15 +245,15 @@ namespace UriTemplate_Specification
         {
             var table = new OpenRasta.UriTemplate("/test?query=literal");
             OpenRasta.UriTemplateMatch match = table.Match(new Uri("http://localhost"), new Uri("http://localhost/test?query=notliteral"));
-            match.LegacyShouldBeNull();
+          match.ShouldBeNull();
         }
 
         [Test]
         public void multiple_query_parameters_are_processed()
         {
             var template = new OpenRasta.UriTemplate("/test?query1={test}&query2={test2}");
-            template.QueryStringVariableNames.Contains("test").LegacyShouldBeTrue();
-            template.QueryStringVariableNames.Contains("test2").LegacyShouldBeTrue();
+          template.QueryStringVariableNames.Contains("test").ShouldBeTrue();
+          template.QueryStringVariableNames.Contains("test2").ShouldBeTrue();
         }
          [Test]  
         public void a_url_matching_multiple_query_parameters_should_match()  
@@ -277,10 +277,10 @@ namespace UriTemplate_Specification
         [Test]  
         public void more_than_two_query_parameters_with_similar_names_are_processed()  
         {  
-           var template = new OpenRasta.UriTemplate("/test?query1={test}&query2={test2}&query3={test3}");  
-           template.QueryStringVariableNames.Contains("test").LegacyShouldBeTrue();  
-           template.QueryStringVariableNames.Contains("test2").LegacyShouldBeTrue();  
-           template.QueryStringVariableNames.Contains("test3").LegacyShouldBeTrue();  
+           var template = new OpenRasta.UriTemplate("/test?query1={test}&query2={test2}&query3={test3}");
+          template.QueryStringVariableNames.Contains("test").ShouldBeTrue();
+          template.QueryStringVariableNames.Contains("test2").ShouldBeTrue();
+          template.QueryStringVariableNames.Contains("test3").ShouldBeTrue();
         }  
    
         [Test]  
@@ -307,7 +307,7 @@ namespace UriTemplate_Specification
         public void the_query_parameters_are_exposed()
         {
             var table = new OpenRasta.UriTemplate("/test?query={queryValue}");
-            table.QueryStringVariableNames.Contains("queryValue").LegacyShouldBeTrue();
+          table.QueryStringVariableNames.Contains("queryValue").ShouldBeTrue();
         }
 
         [Test]
@@ -360,7 +360,7 @@ namespace UriTemplate_Specification
         {
             TheResult = new OpenRasta.UriTemplate("weather/{state}/{city}").IsEquivalentTo(null);
 
-            TheResult.LegacyShouldBeFalse();
+          TheResult.ShouldBeFalse();
         }
 
         [Test]
@@ -370,7 +370,7 @@ namespace UriTemplate_Specification
                 "weather/{state}/*",
                 "weather/{state}/something");
 
-            TheResult.LegacyShouldBeFalse();
+          TheResult.ShouldBeFalse();
         }
 
         [Test]
@@ -380,7 +380,7 @@ namespace UriTemplate_Specification
                 "weather/{state}/{city}",
                 "weather/{country}/");
 
-            TheResult.LegacyShouldBeFalse();
+          TheResult.ShouldBeFalse();
         }
 
         [Test]
@@ -389,7 +389,7 @@ namespace UriTemplate_Specification
             GivenTwoTemplates(
                 "weather/{state}/{city}?forecast={day}&temp=1",
                 "weather/{state}/{city}?forecast={day}");
-            TheResult.LegacyShouldBeFalse();
+          TheResult.ShouldBeFalse();
         }
 
         [Test]
@@ -398,7 +398,7 @@ namespace UriTemplate_Specification
             GivenTwoTemplates(
                 "weather/{state}/test",
                 "weather/{state}/test2");
-            TheResult.LegacyShouldBeFalse();
+          TheResult.ShouldBeFalse();
         }
 
         [Test]
@@ -407,7 +407,7 @@ namespace UriTemplate_Specification
             GivenTwoTemplates(
                 "weather/{state}/{city}?forecast={day}",
                 "/weather/{country}/{village}?forecast={type}");
-            TheResult.LegacyShouldBeTrue();
+          TheResult.ShouldBeTrue();
         }
 
         [Test]
@@ -416,7 +416,7 @@ namespace UriTemplate_Specification
             GivenTwoTemplates(
                 "weather/{state}/{city}",
                 "weather/{country}/{village}/");
-            TheResult.LegacyShouldBeTrue();
+          TheResult.ShouldBeTrue();
         }
 
         [Test]
@@ -425,7 +425,7 @@ namespace UriTemplate_Specification
             GivenTwoTemplates(
                 "weather/{state}/*",
                 "weather/{state}/*/");
-            TheResult.LegacyShouldBeFalse();
+          TheResult.ShouldBeFalse();
         }
     }
 }

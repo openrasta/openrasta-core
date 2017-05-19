@@ -44,7 +44,7 @@ namespace CodecRepository_Specification
 
       WhenFindingCodec("application/xml", typeof(Customer));
 
-      ThenTheResult.LegacyShouldBeNull();
+      ThenTheResult.ShouldBeNull();
     }
 
     [Test]
@@ -65,7 +65,7 @@ namespace CodecRepository_Specification
 
       WhenFindingCodec("application/xml", typeof(Customer), typeof(Frodo));
 
-      ThenTheResult.LegacyShouldBeNull();
+      ThenTheResult.ShouldBeNull();
     }
 
     [Test]

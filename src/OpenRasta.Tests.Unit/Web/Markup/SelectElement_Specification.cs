@@ -16,6 +16,7 @@ using NUnit.Framework;
 using OpenRasta.Testing;
 using OpenRasta.Web.Markup;
 using OpenRasta.Web.Markup.Modules;
+using Shouldly;
 
 namespace SelectElement_Specification
 {
@@ -30,8 +31,8 @@ namespace SelectElement_Specification
         {
             WhenCreatingElement(()=>((IXhtmlAnchor) null).Select(() => this.PropertyReturningFalse));
 
-            ThenTheElement.ChildElements.OfType<IOptionElement>().Where(x => x.InnerText == "Interface").Single().Selected.LegacyShouldBeTrue();
-            ThenTheElement.ChildElements.OfType<IOptionElement>().Where(x => x.InnerText != "Interface").All(x => x.Selected.LegacyShouldBeFalse());
+          ThenTheElement.ChildElements.OfType<IOptionElement>().Where(x => x.InnerText == "Interface").Single().Selected.ShouldBeTrue();
+          ThenTheElement.ChildElements.OfType<IOptionElement>().Where(x => x.InnerText != "Interface").ShouldAllBe(x => x.Selected == false);
             ThenTheElementAsString.Contains("<option value=\"Interface\" selected=\"selected\" />");
             ThenTheElementAsString.Contains("<option value=\"Method\" />");
         }

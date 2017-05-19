@@ -8,6 +8,7 @@ using OpenRasta.OperationModel;
 using OpenRasta.Security;
 using OpenRasta.Testing;
 using OpenRasta.Web;
+using Shouldly;
 
 namespace RequiresAuthenticationInterceptor_Specification
 {
@@ -19,9 +20,8 @@ namespace RequiresAuthenticationInterceptor_Specification
             var context = new InMemoryCommunicationContext();
 
             var authenticationInterceptor = new RequiresAuthenticationInterceptor(context);
-            authenticationInterceptor.BeforeExecute(new Mock<IOperation>().Object)
-                .LegacyShouldBeFalse();
-            context.OperationResult.LegacyShouldBeOfType<OperationResult.Unauthorized>();
+          authenticationInterceptor.BeforeExecute(new Mock<IOperation>().Object).ShouldBeFalse();
+          context.OperationResult.LegacyShouldBeOfType<OperationResult.Unauthorized>();
         }
     }
     public class when_the_user_is_authenticated : context
@@ -34,8 +34,7 @@ namespace RequiresAuthenticationInterceptor_Specification
 
             var authenticationInterceptor = new RequiresAuthenticationInterceptor(context);
 
-            authenticationInterceptor.BeforeExecute(new Mock<IOperation>().Object)
-                .LegacyShouldBeTrue();
+          authenticationInterceptor.BeforeExecute(new Mock<IOperation>().Object).ShouldBeTrue();
         }
     }
 }

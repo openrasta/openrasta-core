@@ -18,6 +18,7 @@ using OpenRasta.Testing.Contexts;
 using OpenRasta.Tests;
 using OpenRasta.Pipeline;
 using OpenRasta.Web.UriDecorators;
+using Shouldly;
 
 namespace UriDecoratorsController_Specification
 {
@@ -41,8 +42,8 @@ namespace UriDecoratorsController_Specification
 
             when_sending_notification<KnownStages.IUriMatching>();
 
-            RemoveLastHello.ApplyWasCalled.LegacyShouldBeTrue();
-            Context.Request.Uri.LegacyShouldBe(new Uri("http://localhost/segment"));
+          RemoveLastHello.ApplyWasCalled.ShouldBeTrue();
+          Context.Request.Uri.LegacyShouldBe(new Uri("http://localhost/segment"));
         }
 
     }

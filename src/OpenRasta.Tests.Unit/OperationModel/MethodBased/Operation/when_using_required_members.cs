@@ -2,6 +2,7 @@
 using OpenRasta.OperationModel;
 using OpenRasta.Testing;
 using OpenRasta.Testing.Contexts;
+using Shouldly;
 
 namespace OpenRasta.Tests.Unit.OperationModel.MethodBased.Operation
 {
@@ -12,7 +13,7 @@ namespace OpenRasta.Tests.Unit.OperationModel.MethodBased.Operation
     {
       given_operation("Post", typeof(int), typeof(string));
 
-      Operation.Inputs.AllReady().LegacyShouldBeFalse();
+      Operation.Inputs.AllReady().ShouldBeFalse();
     }
     [Test]
     public void no_parameter_is_satisfied()

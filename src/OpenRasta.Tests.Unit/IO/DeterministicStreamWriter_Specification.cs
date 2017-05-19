@@ -14,6 +14,7 @@ using System.Text;
 using NUnit.Framework;
 using OpenRasta.IO;
 using OpenRasta.Testing;
+using Shouldly;
 
 namespace DeterministicStreamWriter_Specification
 {
@@ -26,7 +27,7 @@ namespace DeterministicStreamWriter_Specification
             new DeterministicStreamWriter(stream, Encoding.UTF8, StreamActionOnDispose.Close).Close();
 
             // memorystreams return false to CanWrite when they've been closed
-            stream.CanWrite.LegacyShouldBeFalse();
+          stream.CanWrite.ShouldBeFalse();
         }
     }
 
@@ -37,7 +38,7 @@ namespace DeterministicStreamWriter_Specification
         {
             var stream = new MemoryStream();
             new DeterministicStreamWriter(stream, Encoding.UTF8, StreamActionOnDispose.None).Close();
-            stream.CanWrite.LegacyShouldBeTrue();
+          stream.CanWrite.ShouldBeTrue();
         }
     }
 }

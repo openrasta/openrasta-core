@@ -107,8 +107,7 @@ namespace Configuration_Specification
             ResourceSpaceHas.ResourcesOfType<Strictly<Customer>>();
 
           MetaModel.ResourceRegistrations[0].ResourceKey.LegacyShouldBeOfType<Type>().ShouldBe(typeof(Customer));
-          MetaModel.ResourceRegistrations[0].IsStrictRegistration.LegacyShouldBeTrue();
-
+          MetaModel.ResourceRegistrations[0].IsStrictRegistration.ShouldBeTrue();
         }
         [Test]
         public void cannot_register_a_resource_with_a_null_key()

@@ -36,39 +36,34 @@ namespace Accessors_Specification
         [Test]
         public void a_reflection_type_cannot_be_equal_to_null()
         {
-            new ReflectionBasedType(_typeSystem,typeof(string)).Equals(null)
-                .LegacyShouldBeFalse();
+          new ReflectionBasedType(_typeSystem,typeof(string)).Equals(null).ShouldBeFalse();
         }
 
         [Test]
         public void a_type_can_be_created()
         {
             object result;
-            new ReflectionBasedType(_typeSystem,typeof(string)).TryCreateInstance(new[] { "value" }, (str, type) => BindingResult.Success(str), out result)
-                .LegacyShouldBeTrue();
-            result.LegacyShouldBe("value");
+          new ReflectionBasedType(_typeSystem,typeof(string)).TryCreateInstance(new[] { "value" }, (str, type) => BindingResult.Success(str), out result).ShouldBeTrue();
+          result.LegacyShouldBe("value");
         }
 
         [Test]
         public void a_type_creation_resulting_in_a_failure_doesnt_get_created()
         {
             object result;
-            new ReflectionBasedType(_typeSystem,typeof(string)).TryCreateInstance(new[] { "value" }, (str, type) => BindingResult.Failure(), out result)
-                .LegacyShouldBeFalse();
+          new ReflectionBasedType(_typeSystem,typeof(string)).TryCreateInstance(new[] { "value" }, (str, type) => BindingResult.Failure(), out result).ShouldBeFalse();
         }
 
         [Test]
         public void a_value_type_cannot_be_assigned_a_null_value()
         {
-            new ReflectionBasedType(_typeSystem,typeof(int)).CanSetValue(null)
-                .LegacyShouldBeFalse();
+          new ReflectionBasedType(_typeSystem,typeof(int)).CanSetValue(null).ShouldBeFalse();
         }
 
         [Test]
         public void an_incorrect_type_cannot_be_assigned()
         {
-            new ReflectionBasedType(_typeSystem,typeof(int)).CanSetValue("hello")
-                .LegacyShouldBeFalse();
+          new ReflectionBasedType(_typeSystem,typeof(int)).CanSetValue("hello").ShouldBeFalse();
         }
 
         [Test, Ignore("no idea")]
@@ -90,8 +85,8 @@ namespace Accessors_Specification
         {
             var type1 = new ReflectionBasedType(_typeSystem,typeof(string));
             var type2 = new ReflectionBasedType(_typeSystem,typeof(string));
-            type1.Equals(type2).LegacyShouldBeTrue();
-            type1.GetHashCode().LegacyShouldBe(type2.GetHashCode());
+          type1.Equals(type2).ShouldBeTrue();
+          type1.GetHashCode().LegacyShouldBe(type2.GetHashCode());
         }
 
         [Test]
@@ -99,8 +94,8 @@ namespace Accessors_Specification
         {
             var type1 = new ReflectionBasedType(_typeSystem,typeof(string));
             var type2 = new ReflectionBasedType(_typeSystem,typeof(object));
-            type1.Equals(type2).LegacyShouldBeFalse();
-            type1.GetHashCode().LegacyShouldNotBe(type2.GetHashCode());
+          type1.Equals(type2).ShouldBeFalse();
+          type1.GetHashCode().LegacyShouldNotBe(type2.GetHashCode());
         }
     }
 
@@ -126,15 +121,13 @@ namespace Accessors_Specification
         [Test]
         public void a_type_is_assingable_to_a_parent_type()
         {
-            TypeForClr<Customer>().IsAssignableTo(TypeForClr<object>())
-                .LegacyShouldBeTrue();
+          TypeForClr<Customer>().IsAssignableTo(TypeForClr<object>()).ShouldBeTrue();
         }
         [Test]
         public void a_type_is_not_assignable_to_a_type_not_in_its_inheritance_hierarchy()
         {
-            // I realize that theoretically, Frodo could be a Customer. But you know, Frodo doesn't really exist.
-            TypeForClr<Customer>().IsAssignableTo(TypeForClr<Frodo>())
-                .LegacyShouldBeFalse();
+          // I realize that theoretically, Frodo could be a Customer. But you know, Frodo doesn't really exist.
+          TypeForClr<Customer>().IsAssignableTo(TypeForClr<Frodo>()).ShouldBeFalse();
         }
     }
 
@@ -144,7 +137,7 @@ namespace Accessors_Specification
         public void a_nested_property_is_returned()
         {
             GivenTypeFor<Type>();
-            ThenTheProperty("Namespace.Length").Type.Equals<int>().LegacyShouldBeTrue();
+          ThenTheProperty("Namespace.Length").Type.Equals<int>().ShouldBeTrue();
         }
 
         [Test]
@@ -152,49 +145,49 @@ namespace Accessors_Specification
         {
             GivenTypeFor<string>();
 
-            ThenTheProperty("Length").Type.Equals<int>().LegacyShouldBeTrue();
+          ThenTheProperty("Length").Type.Equals<int>().ShouldBeTrue();
         }
 
         [Test]
         public void a_property_on_the_result_of_an_indexer_is_found()
         {
             GivenTypeFor<House>();
-            ThenTheProperty("Customers:0.FirstName").Type.Equals<string>().LegacyShouldBeTrue();
+          ThenTheProperty("Customers:0.FirstName").Type.Equals<string>().ShouldBeTrue();
         }
 
         [Test]
         public void a_wongly_formatted_property_returns_nothing()
         {
             GivenTypeFor<int>();
-            ThenTheProperty(".").LegacyShouldBeNull();
+          ThenTheProperty(".").ShouldBeNull();
         }
 
         [Test]
         public void an_indexer_for_a_type_without_an_indexer_returns_nothing()
         {
             GivenTypeFor<int>();
-            ThenTheProperty(":0").LegacyShouldBeNull();
+          ThenTheProperty(":0").ShouldBeNull();
         }
 
         [Test]
         public void an_indexer_is_found_and_recognized()
         {
             GivenTypeFor<House>();
-            ThenTheProperty("Customers:0").Type.Equals<Customer>().LegacyShouldBeTrue();
+          ThenTheProperty("Customers:0").Type.Equals<Customer>().ShouldBeTrue();
         }
 
         [Test]
         public void an_unknown_nested_property_returns_nothing()
         {
             GivenTypeFor<int>();
-            ThenTheProperty("something.orsomethingelse").LegacyShouldBeNull();
+          ThenTheProperty("something.orsomethingelse").ShouldBeNull();
         }
 
         [Test]
         public void an_unkown_property_returns_nothing()
         {
             GivenTypeFor<int>();
-            ThenTheProperty("something").LegacyShouldBeNull();
+          ThenTheProperty("something").ShouldBeNull();
         }
 
         [Test]
@@ -202,9 +195,8 @@ namespace Accessors_Specification
         {
             GivenTypeFor<Customer>();
             var newCustomer = new Customer();
-            ThenTheProperty("FirstName").TrySetValue(newCustomer, new[] { "Frodo" }, (str, t) => BindingResult.Success(str))
-                .LegacyShouldBeTrue();
-            newCustomer.FirstName.LegacyShouldBe("Frodo");
+          ThenTheProperty("FirstName").TrySetValue(newCustomer, new[] { "Frodo" }, (str, t) => BindingResult.Success(str)).ShouldBeTrue();
+          newCustomer.FirstName.LegacyShouldBe("Frodo");
         }
 
         [Test]
@@ -212,8 +204,7 @@ namespace Accessors_Specification
         {
             GivenTypeFor<string>();
 
-            ThenTheProperty("Length").TrySetValue(string.Empty, 20)
-                .LegacyShouldBeFalse();
+          ThenTheProperty("Length").TrySetValue(string.Empty, 20).ShouldBeFalse();
         }
 
         [Test]

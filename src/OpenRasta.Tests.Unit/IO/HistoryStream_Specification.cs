@@ -13,6 +13,7 @@ using System.IO;
 using NUnit.Framework;
 using OpenRasta.IO;
 using OpenRasta.Testing;
+using Shouldly;
 
 namespace HistoryStream_Specification
 {
@@ -141,16 +142,13 @@ namespace HistoryStream_Specification
             GivenAMemoryStream();
             GivenAHistoryStream();
 
-            HistoryStream.CanRead.
-                LegacyShouldBeTrue();
+          HistoryStream.CanRead.ShouldBeTrue();
 
-            HistoryStream.CanWrite.
-                LegacyShouldBeFalse();
+          HistoryStream.CanWrite.ShouldBeFalse();
 
-            HistoryStream.CanSeek.
-                LegacyShouldBeTrue();
+          HistoryStream.CanSeek.ShouldBeTrue();
 
-            Executing(() => HistoryStream.Position = 0).LegacyShouldThrow<NotSupportedException>();
+          Executing(() => HistoryStream.Position = 0).LegacyShouldThrow<NotSupportedException>();
             Executing(() => { var result = HistoryStream.Position; }).LegacyShouldThrow<NotSupportedException>();
             Executing(() => { var result = HistoryStream.Length; }).LegacyShouldThrow<NotSupportedException>();
         }

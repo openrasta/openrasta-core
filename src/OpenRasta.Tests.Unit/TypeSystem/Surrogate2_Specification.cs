@@ -29,9 +29,9 @@ namespace OpenRasta.Tests.Unit.TypeSystem
       property.ShouldNotBeNull();
 
       var saruman = new Saruman();
-      property.TrySetValue(saruman, false).LegacyShouldBeTrue();
+      property.TrySetValue(saruman, false).ShouldBeTrue();
 
-      saruman.IsEvil.LegacyShouldBeFalse();
+      saruman.IsEvil.ShouldBeFalse();
     }
 
     [Test]
@@ -43,9 +43,9 @@ namespace OpenRasta.Tests.Unit.TypeSystem
       property.ShouldNotBeNull();
 
       var frodo = new Frodo();
-      property.TrySetValue(frodo, true).LegacyShouldBeTrue();
+      property.TrySetValue(frodo, true).ShouldBeTrue();
 
-      frodo.IsGood.LegacyShouldBeFalse();
+      frodo.IsGood.ShouldBeFalse();
     }
 
     [Test]
@@ -70,10 +70,9 @@ namespace OpenRasta.Tests.Unit.TypeSystem
       var frodoType = _ts.FromClr<Frodo>();
       var naughty = new Frodo();
       frodoType.FindPropertyByPath("IsGood")
-        .TrySetValue(naughty, false)
-        .LegacyShouldBeTrue();
+        .TrySetValue(naughty, false).ShouldBeTrue();
 
-      naughty.IsGood.LegacyShouldBeFalse();
+      naughty.IsGood.ShouldBeFalse();
     }
   }
 

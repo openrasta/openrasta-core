@@ -14,6 +14,7 @@ using System.Text;
 using NUnit.Framework;
 using OpenRasta.IO;
 using OpenRasta.Testing;
+using Shouldly;
 
 namespace BoundaryStreamReader_Specification
 {
@@ -105,7 +106,7 @@ namespace BoundaryStreamReader_Specification
 
             ThenTheNextPartShouldBe(TextInASCII("abc"));
 
-            Reader.ReadLine().LegacyShouldBeNull();
+          Reader.ReadLine().ShouldBeNull();
         }
 
         [Test]
@@ -162,7 +163,7 @@ namespace BoundaryStreamReader_Specification
 
             Reader.GetNextPart().ReadToEnd().LegacyShouldBe(TextInASCII("content"));
             Reader.SeekToNextPart();
-            Reader.GetNextPart().LegacyShouldBeNull();
+          Reader.GetNextPart().ShouldBeNull();
         }
 
         [Test]
@@ -239,7 +240,7 @@ namespace BoundaryStreamReader_Specification
             Reader.ReadLine().LegacyShouldBe("Header: value");
             Reader.ReadLine().LegacyShouldBe("");
             Reader.ReadNextPart().LegacyShouldHaveSameElementsAs(unicodeText);
-            Reader.ReadLine().LegacyShouldBeNull();
+          Reader.ReadLine().ShouldBeNull();
         }
 
         [Test]

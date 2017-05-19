@@ -24,7 +24,7 @@ namespace OpenRasta.Tests.Unit.Web.UriDecorators
             given_context_applicationBase("http://localhost/vdir");
 
             when_parsing();
-            ParsingResult.LegacyShouldBeTrue();
+          ParsingResult.ShouldBeTrue();
           ProcessedUri.ShouldBe(new Uri("http://localhost/vdir/customer/1"));
 
           when_applying();

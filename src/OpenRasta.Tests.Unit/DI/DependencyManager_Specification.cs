@@ -12,6 +12,7 @@ using System;
 using NUnit.Framework;
 using OpenRasta.DI;
 using OpenRasta.Testing;
+using Shouldly;
 
 namespace DependencyManager_Specification
 {
@@ -28,8 +29,7 @@ namespace DependencyManager_Specification
         [Test]
         public void resolving_a_null_dependency_returns_null()
         {
-            DependencyManager.GetService(null).
-                LegacyShouldBeNull();
+          DependencyManager.GetService(null).ShouldBeNull();
         }
     }
 }

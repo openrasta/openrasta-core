@@ -49,7 +49,7 @@ namespace ResponseEntityWriter_Specification
             when_sending_notification<KnownStages.ICodecResponseSelection>()
                 .LegacyShouldBe(PipelineContinuation.Continue);
 
-            Context.Response.HeadersSent.LegacyShouldBeTrue();
+          Context.Response.HeadersSent.ShouldBeTrue();
         }
     }
 

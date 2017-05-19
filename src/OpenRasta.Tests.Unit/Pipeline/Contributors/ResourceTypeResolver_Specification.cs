@@ -18,6 +18,7 @@ using OpenRasta.Tests;
 using OpenRasta.Web;
 using OpenRasta.Pipeline;
 using OpenRasta.TypeSystem;
+using Shouldly;
 
 namespace ResourceTypeResolver_Specification
 {
@@ -52,8 +53,8 @@ namespace ResourceTypeResolver_Specification
             when_sending_notification<BootstrapperContributor>()
                 .LegacyShouldBe(PipelineContinuation.RenderNow);
 
-            Context.PipelineData.SelectedResource.LegacyShouldBeNull();
-            Context.OperationResult.LegacyShouldBeOfType<OperationResult.NotFound>();
+          Context.PipelineData.SelectedResource.ShouldBeNull();
+          Context.OperationResult.LegacyShouldBeOfType<OperationResult.NotFound>();
         }
 
         [Test]

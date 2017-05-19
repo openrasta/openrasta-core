@@ -11,6 +11,7 @@ using OpenRasta.OperationModel.Interceptors;
 using OpenRasta.Testing;
 using OpenRasta.Testing.Contexts;
 using OpenRasta.Tests.Unit.OperationModel.MethodBased;
+using Shouldly;
 
 namespace OpenRasta.Tests.Unit.OperationModel.Interceptors
 {
@@ -87,7 +88,7 @@ namespace OpenRasta.Tests.Unit.OperationModel.Interceptors
 
       Executing(()=>invoking_wrapped_operation())
         .LegacyShouldThrow<InterceptorException>()
-        .InnerException.LegacyShouldBeNull();
+        .InnerException.ShouldBeNull();
     }
 
     [Test]
@@ -120,7 +121,7 @@ namespace OpenRasta.Tests.Unit.OperationModel.Interceptors
 
       Executing(()=>invoking_wrapped_operation())
         .LegacyShouldThrow<InterceptorException>()
-        .InnerException.LegacyShouldBeNull();
+        .InnerException.ShouldBeNull();
       MockOperation.Verify(x => x.Invoke());
     }
 

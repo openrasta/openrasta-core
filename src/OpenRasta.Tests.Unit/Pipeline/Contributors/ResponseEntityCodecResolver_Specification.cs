@@ -48,8 +48,7 @@ namespace ResponseEntityCodecResolver_Specification
             when_sending_notification<KnownStages.IOperationResultInvocation>()
                 .LegacyShouldBe(PipelineContinuation.Continue);
 
-            Context.Response.Entity.Headers["Vary"].LegacyShouldBeNull();
-            
+          Context.Response.Entity.Headers["Vary"].ShouldBeNull();
         }
     }
 
@@ -124,9 +123,9 @@ namespace ResponseEntityCodecResolver_Specification
             given_request_header_accept("text/plain");
 
             when_running_pipeline();
-            
-            Context.PipelineData.ResponseCodec.LegacyShouldBeNull();
-            Context.Response.Entity.ContentType.LegacyShouldBeNull();
+
+          Context.PipelineData.ResponseCodec.ShouldBeNull();
+          Context.Response.Entity.ContentType.ShouldBeNull();
         }
 
         [Test]

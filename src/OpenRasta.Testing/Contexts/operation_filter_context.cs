@@ -4,6 +4,7 @@ using OpenRasta.Binding;
 using OpenRasta.OperationModel;
 using OpenRasta.OperationModel.MethodBased;
 using OpenRasta.TypeSystem;
+using Shouldly;
 
 namespace OpenRasta.Testing.Contexts
 {
@@ -39,8 +40,7 @@ namespace OpenRasta.Testing.Contexts
       Operations.First(x => x.Name == methodName)
         .Inputs.Required()
         .First(x => x.Member.Name == parameterName)
-        .Binder.SetInstance(parameterValue)
-        .LegacyShouldBeTrue();
+        .Binder.SetInstance(parameterValue).ShouldBeTrue();
     }
   }
 }

@@ -32,8 +32,7 @@ namespace InternalDependencyResolver_Specification
         {
             Resolver.AddDependency<RecursiveProperty>();
 
-            Resolver.Resolve<RecursiveProperty>().Property.
-                LegacyShouldBeNull();
+          Resolver.Resolve<RecursiveProperty>().Property.ShouldBeNull();
         }
 
         [Test]
@@ -141,9 +140,9 @@ namespace InternalDependencyResolver_Specification
 
             using (new ContextScope(scope2))
             {
-                Resolver.HasDependency(typeof (TheClass)).LegacyShouldBeFalse();
+              Resolver.HasDependency(typeof (TheClass)).ShouldBeFalse();
 
-                Executing(() => Resolver.Resolve<TheClass>()).LegacyShouldThrow<DependencyResolutionException>();
+              Executing(() => Resolver.Resolve<TheClass>()).LegacyShouldThrow<DependencyResolutionException>();
             }
         }
 
@@ -270,8 +269,7 @@ namespace InternalDependencyResolver_Specification
 
             var result = Resolver.ResolveAll<TheClass>();
 
-            (result.Contains(firstInstance) || result.Contains(secondInstance))
-                .LegacyShouldBeTrue();
+          (result.Contains(firstInstance) || result.Contains(secondInstance)).ShouldBeTrue();
         }
 
         [Test]
@@ -354,15 +352,14 @@ namespace InternalDependencyResolver_Specification
         {
             Resolver.AddDependency<ISimple, Simple>();
 
-            Resolver.HasDependencyImplementation(typeof (ISimple), typeof (Simple)).LegacyShouldBeTrue();
+          Resolver.HasDependencyImplementation(typeof (ISimple), typeof (Simple)).ShouldBeTrue();
         }
 
         [Test]
         public void registering_a_concrete_type_results_in_the_type_being_registered()
         {
             Resolver.AddDependency(typeof (Simple), DependencyLifetime.Transient);
-            Resolver.HasDependency(typeof (Simple))
-                .LegacyShouldBeTrue();
+          Resolver.HasDependency(typeof (Simple)).ShouldBeTrue();
         }
 
         [Test]
@@ -410,7 +407,7 @@ namespace InternalDependencyResolver_Specification
         [Test]
         public void the_null_value_is_never_registered()
         {
-            Resolver.HasDependency(null).LegacyShouldBeFalse();
+          Resolver.HasDependency(null).ShouldBeFalse();
         }
 
         [Test]

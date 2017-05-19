@@ -58,8 +58,7 @@ namespace MetaModelHandler_Specification
 
             when_executing_the_handler();
 
-            Resolver.HasDependencyImplementation(typeof(IMetaModelHandler), typeof(DependencyRegistrationMetaModelHandler))
-                .LegacyShouldBeTrue();
+          Resolver.HasDependencyImplementation(typeof(IMetaModelHandler), typeof(DependencyRegistrationMetaModelHandler)).ShouldBeTrue();
         }
         [Test]
         public void cannot_add_registrations_for_null_types()
@@ -136,9 +135,8 @@ namespace MetaModelHandler_Specification
             var typeSystem = TypeSystems.Default.FromClr(typeof(Customer));
             var registeredHandlers = HandlerRepository.GetHandlerTypesFor(typeSystem);
 
-            registeredHandlers.Any(x => x.Name == "CustomerHandler").LegacyShouldBeTrue();
-            registeredHandlers.Any(x => x.Name == "Object").LegacyShouldBeTrue();
-                
+          registeredHandlers.Any(x => x.Name == "CustomerHandler").ShouldBeTrue();
+          registeredHandlers.Any(x => x.Name == "Object").ShouldBeTrue();
         }
 
         void given_handler_registration()
@@ -201,8 +199,8 @@ namespace MetaModelHandler_Specification
             var htmlCodec = CodecRepository.Where(x => x.CodecType == typeof(HtmlErrorCodec));
 
             htmlCodec.Count().LegacyShouldBe(2);
-            htmlCodec.First().MediaType.Matches(MediaType.Xhtml).LegacyShouldBeTrue();
-            htmlCodec.Skip(1).First().MediaType.Matches(MediaType.Html).LegacyShouldBeTrue();
+          htmlCodec.First().MediaType.Matches(MediaType.Xhtml).ShouldBeTrue();
+          htmlCodec.Skip(1).First().MediaType.Matches(MediaType.Html).ShouldBeTrue();
         }
         [Test]
         public void all_registered_codecs_for_a_resource_key_are_registered()

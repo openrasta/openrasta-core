@@ -10,6 +10,7 @@ using OpenRasta.OperationModel;
 using OpenRasta.Security;
 using OpenRasta.Testing;
 using OpenRasta.Web;
+using Shouldly;
 
 namespace OpenRasta.Tests.Unit.Security
 {
@@ -23,8 +24,7 @@ namespace OpenRasta.Tests.Unit.Security
 
             var authenticationInterceptor = new RequiresRoleInterceptor(context) { Role = "Administrator" };
 
-            authenticationInterceptor.BeforeExecute(new Mock<IOperation>().Object)
-                .LegacyShouldBeTrue();
+          authenticationInterceptor.BeforeExecute(new Mock<IOperation>().Object).ShouldBeTrue();
         }
     }
 
@@ -38,9 +38,8 @@ namespace OpenRasta.Tests.Unit.Security
 
             var authenticationInterceptor = new RequiresRoleInterceptor(context) { Role = "SuperUser" };
 
-            authenticationInterceptor.BeforeExecute(new Mock<IOperation>().Object)
-                .LegacyShouldBeFalse();
-            context.OperationResult.LegacyShouldBeOfType<OperationResult.Unauthorized>();
+          authenticationInterceptor.BeforeExecute(new Mock<IOperation>().Object).ShouldBeFalse();
+          context.OperationResult.LegacyShouldBeOfType<OperationResult.Unauthorized>();
 
         }
     }
