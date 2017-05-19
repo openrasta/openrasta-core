@@ -6,6 +6,7 @@ using OpenRasta.Codecs;
 using OpenRasta.IO;
 using OpenRasta.TypeSystem;
 using OpenRasta.Web;
+using Shouldly;
 
 namespace OpenRasta.Testing.Contexts
 {
@@ -50,7 +51,7 @@ namespace OpenRasta.Testing.Contexts
     {
       _theResult.legacyShouldNotBeNull();
       _theResult.LegacyShouldNotBe(Missing.Value);
-      _theResult.LegacyShouldBeAssignableTo<T>();
+      _theResult.ShouldBeAssignableTo<T>();
       return (T) _theResult;
     }
 

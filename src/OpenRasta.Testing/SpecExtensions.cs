@@ -16,12 +16,6 @@ namespace OpenRasta.Testing
     }
 
 
-    public static void LegacyShouldBeAssignableTo<TExpected>(this object obj)
-    {
-      obj.ShouldBeAssignableTo<TExpected>();
-    }
-
-
     public static void LegacyShouldBeGreaterThan<T>(this T actual, T expected) where T : IComparable<T>
     {
       actual.ShouldBeGreaterThan(expected);

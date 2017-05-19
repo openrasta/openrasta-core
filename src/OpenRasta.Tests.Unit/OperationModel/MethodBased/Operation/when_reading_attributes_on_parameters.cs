@@ -2,6 +2,7 @@
 using NUnit.Framework;
 using OpenRasta.Testing;
 using OpenRasta.Testing.Contexts;
+using Shouldly;
 
 namespace OpenRasta.Tests.Unit.OperationModel.MethodBased.Operation
 {
@@ -12,7 +13,7 @@ namespace OpenRasta.Tests.Unit.OperationModel.MethodBased.Operation
     {
       given_operation("GetHasParameterAttribute", typeof(int));
 
-      Operation.Inputs.First().Binder.LegacyShouldBeAssignableTo<ParameterBinder>();
+      Operation.Inputs.First().Binder.ShouldBeAssignableTo<ParameterBinder>();
     }
   }
 }
