@@ -31,7 +31,7 @@ namespace SelectElement_Specification
         {
             WhenCreatingElement(()=>((IXhtmlAnchor) null).Select(() => this.PropertyReturningFalse));
 
-          ThenTheElement.ChildElements.OfType<IOptionElement>().Where(x => x.InnerText == "Interface").Single().Selected.ShouldBeTrue();
+          ThenTheElement.ChildElements.OfType<IOptionElement>().Single(x => x.InnerText == "Interface").Selected.ShouldBeTrue();
           ThenTheElement.ChildElements.OfType<IOptionElement>().Where(x => x.InnerText != "Interface").ShouldAllBe(x => x.Selected == false);
             ThenTheElementAsString.Contains("<option value=\"Interface\" selected=\"selected\" />");
             ThenTheElementAsString.Contains("<option value=\"Method\" />");

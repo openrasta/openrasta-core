@@ -13,6 +13,7 @@ using NUnit.Framework;
 using OpenRasta.Testing;
 using OpenRasta.Web.Markup;
 using OpenRasta.Web.Markup.Elements;
+using Shouldly;
 
 namespace ElementExtensions_Specification
 {
@@ -25,8 +26,7 @@ namespace ElementExtensions_Specification
 
             element.ID.LegacyShouldBe(null);
 
-            element.ToString()
-                .LegacyShouldNotContain("id=\"");
+          element.ToString().ShouldNotContain("id=\"");
         }
 
         [Test]

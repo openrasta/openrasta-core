@@ -7,6 +7,7 @@ using NUnit.Framework;
 using OpenRasta.Testing;
 using OpenRasta.Web.Markup;
 using OpenRasta.Web.Markup.Modules;
+using Shouldly;
 
 namespace IIframeModule_Specification
 {
@@ -28,7 +29,7 @@ namespace IIframeModule_Specification
         public void the_boreder_is_not_set_by_default()
         {
             WhenCreatingElement(()=>Document.CreateElement<IIFrameElement>());
-            ThenTheElementAsString.LegacyShouldNotContain("frameborder=");
+          ThenTheElementAsString.ShouldNotContain("frameborder=");
         }
     }
     public class when_setting_scrolling : markup_element_context<IIFrameElement>
@@ -37,7 +38,7 @@ namespace IIframeModule_Specification
         public void the_scrolling_is_not_rendered_by_default()
         {
             WhenCreatingElement(() => Document.CreateElement<IIFrameElement>());
-            ThenTheElementAsString.LegacyShouldNotContain("scrolling=");
+          ThenTheElementAsString.ShouldNotContain("scrolling=");
         }
 
         [Test]

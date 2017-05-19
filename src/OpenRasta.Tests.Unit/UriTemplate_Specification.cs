@@ -142,8 +142,7 @@ namespace UriTemplate_Specification
         {
             GivenAMatching("/weather/{state}/{city}", "http://localhost/weather/Washington/Seattle");
 
-            ThenTheMatch.PathSegmentVariables
-                .LegacyShouldHaveSameElementsAs(new NameValueCollection().With("STATE", "Washington").With("city", "Seattle"));
+          SpecializedCollectionExtensions.ToDictionary(ThenTheMatch.PathSegmentVariables).ShouldBe(SpecializedCollectionExtensions.ToDictionary(new NameValueCollection().With("STATE", "Washington").With("city", "Seattle")));
         }
 
         [Test]

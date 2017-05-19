@@ -7,6 +7,7 @@ using NUnit.Framework;
 using OpenRasta.Testing;
 using OpenRasta.Web.Markup;
 using OpenRasta.Web.Markup.Modules;
+using Shouldly;
 
 namespace StyleSheetModule_Specifications
 {
@@ -16,7 +17,7 @@ namespace StyleSheetModule_Specifications
         public void the_media_is_not_defined_by_default()
         {
             WhenCreatingElement(Document.CreateElement<IStyleElement>);
-            ThenTheElementAsString.LegacyShouldNotContain("media=");
+          ThenTheElementAsString.ShouldNotContain("media=");
         }
         [Test]
         public void the_media_attribute_is_generated()
