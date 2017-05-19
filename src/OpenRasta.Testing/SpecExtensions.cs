@@ -10,11 +10,6 @@ namespace OpenRasta.Testing
 {
   public static class SpecExtensions
   {
-    public static void LegacyShouldAllBe<T>(this IEnumerable<T> values, T expected)
-    {
-      values.ShouldAllBe(item => Equals(expected, item));
-    }
-
     public static void LegacyShouldCompleteSuccessfully(this Action codeToExecute)
     {
       codeToExecute();
@@ -37,22 +32,12 @@ namespace OpenRasta.Testing
       baseString.ShouldNotContain(textToFind);
     }
 
-    public static void LegacyShouldThrow<T>(this Func<Task> codeToExecute) where T : Exception
-    {
-      codeToExecute.ShouldThrow<T>();
-    }
-
     public static IDictionary<T, U> LegacyShouldContain<T, U>(this IDictionary<T, U> dic, T key, U value)
     {
       dic.ShouldContainKey(key);
       dic[key].ShouldBe(value);
 
       return dic;
-    }
-
-    public static TExpected LegacyShouldBeOfType<TExpected>(this object obj)
-    {
-      return obj.ShouldBeAssignableTo<TExpected>();
     }
 
     public static T LegacyShouldBe<T>(this T valueToAnalyse, T expectedValue)
@@ -77,11 +62,6 @@ namespace OpenRasta.Testing
     {
       values.Count().ShouldBe(count);
       return values;
-    }
-
-    public static T LegacyShouldThrow<T>(this Action codeToExecute) where T : Exception
-    {
-      return codeToExecute.ShouldThrow<T>();
     }
 
     public static T legacyShouldNotBeNull<T>(this T obj) where T : class

@@ -69,9 +69,8 @@ namespace IUriResolverExtensions_Specification
             GivenContext();
             GivenUriMapping<Customer>("/customer", null, null);
             Executing(() =>
-                      ((Customer)null).CreateUri(null, null)
-                )
-                .LegacyShouldThrow<ArgumentNullException>();
+              ((Customer)null).CreateUri(null, null)
+            ).ShouldThrow<ArgumentNullException>();
         }
 
         [Test]

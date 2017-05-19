@@ -64,8 +64,7 @@ namespace KeyedValuesBinder_Specification
             var result = binder.BuildObject();
           result.Successful.ShouldBeTrue();
           result.Instance
-                .legacyShouldNotBeNull()
-                .LegacyShouldBeOfType<List<Customer>>();
+            .legacyShouldNotBeNull().ShouldBeAssignableTo<List<Customer>>();
         }
         [Test]
         public void enumerables_can_be_built_without_headers()
@@ -91,8 +90,7 @@ namespace KeyedValuesBinder_Specification
 
           binder.SetProperty("firstName", new[] { "Smeagol" }, valueConverter).ShouldBeTrue();
 
-          binder.BuildObject().Instance
-                .LegacyShouldBeOfType<Customer>()
+          binder.BuildObject().Instance.ShouldBeAssignableTo<Customer>()
                 .FirstName.LegacyShouldBe("Smeagol");
         }
         [Test]

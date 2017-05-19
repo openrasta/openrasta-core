@@ -98,7 +98,7 @@ namespace Authentication_Specification
 
             // then
             Context.Response.Headers["Warning"].LegacyShouldBe("199 Malformed credentials");
-            Context.OperationResult.LegacyShouldBeOfType<OperationResult.BadRequest>();
+            Context.OperationResult.ShouldBeAssignableTo<OperationResult.BadRequest>();
             result.LegacyShouldBe(PipelineContinuation.RenderNow);
         }
 
@@ -124,7 +124,7 @@ namespace Authentication_Specification
             var result = when_sending_notification<KnownStages.IHandlerSelection>();
 
             // then
-            Context.OperationResult.LegacyShouldBeOfType<OperationResult.Unauthorized>();
+            Context.OperationResult.ShouldBeAssignableTo<OperationResult.Unauthorized>();
             result.LegacyShouldBe(PipelineContinuation.Continue);
         }
 

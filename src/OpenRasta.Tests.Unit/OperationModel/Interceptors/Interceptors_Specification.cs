@@ -74,9 +74,8 @@ namespace OpenRasta.Tests.Unit.OperationModel.Interceptors
       given_mock_interceptor(i => i.BeforeExecute = op=>{throw new ArgumentException();});
       given_wrapper();
 
-      Executing(()=>invoking_wrapped_operation())
-        .LegacyShouldThrow<InterceptorException>()
-        .InnerException.LegacyShouldBeOfType<ArgumentException>();
+      Executing(()=>invoking_wrapped_operation()).ShouldThrow<InterceptorException>()
+        .InnerException.ShouldBeAssignableTo<ArgumentException>();
     }
 
     [Test]
@@ -86,8 +85,7 @@ namespace OpenRasta.Tests.Unit.OperationModel.Interceptors
       given_mock_interceptor(i => i.BeforeExecute = op=>false);
       given_wrapper();
 
-      Executing(()=>invoking_wrapped_operation())
-        .LegacyShouldThrow<InterceptorException>()
+      Executing(()=>invoking_wrapped_operation()).ShouldThrow<InterceptorException>()
         .InnerException.ShouldBeNull();
     }
 
@@ -101,9 +99,8 @@ namespace OpenRasta.Tests.Unit.OperationModel.Interceptors
 
       given_wrapper();
 
-      Executing(()=>invoking_wrapped_operation())
-        .LegacyShouldThrow<InterceptorException>()
-        .InnerException.LegacyShouldBeOfType<ArgumentException>();
+      Executing(()=>invoking_wrapped_operation()).ShouldThrow<InterceptorException>()
+        .InnerException.ShouldBeAssignableTo<ArgumentException>();
       MockOperation.Verify(x => x.Invoke());
     }
 
@@ -119,8 +116,7 @@ namespace OpenRasta.Tests.Unit.OperationModel.Interceptors
       });
       given_wrapper();
 
-      Executing(()=>invoking_wrapped_operation())
-        .LegacyShouldThrow<InterceptorException>()
+      Executing(()=>invoking_wrapped_operation()).ShouldThrow<InterceptorException>()
         .InnerException.ShouldBeNull();
       MockOperation.Verify(x => x.Invoke());
     }

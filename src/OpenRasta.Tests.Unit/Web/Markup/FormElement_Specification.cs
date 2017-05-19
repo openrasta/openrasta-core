@@ -16,6 +16,7 @@ using OpenRasta.Testing;
 using OpenRasta.Web.Markup;
 using OpenRasta.Web.Markup.Modules;
 using OpenRasta.Web.UriDecorators;
+using Shouldly;
 
 namespace FormElement_Specification
 {
@@ -25,9 +26,9 @@ namespace FormElement_Specification
         public void non_html_methods_are_not_allowed_without_the_url_modifier_in_place()
         {
             Executing(() =>
-                      WhenCreatingElement(
-                          () => new FormElement(false).Method("PUT").Action("http://localhost/test"))
-                ).LegacyShouldThrow<InvalidOperationException>();
+              WhenCreatingElement(
+                () => new FormElement(false).Method("PUT").Action("http://localhost/test"))
+            ).ShouldThrow<InvalidOperationException>();
         }
 
         [Test]

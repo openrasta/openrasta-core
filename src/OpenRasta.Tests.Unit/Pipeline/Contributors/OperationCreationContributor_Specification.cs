@@ -54,7 +54,7 @@ namespace OperationCreationContributor_Specification
             when_sending_notification();
 
             then_contributor_returns(PipelineContinuation.RenderNow);
-            Context.OperationResult.LegacyShouldBeOfType<OperationResult.MethodNotAllowed>();
+            Context.OperationResult.ShouldBeAssignableTo<OperationResult.MethodNotAllowed>();
         }
     }
 

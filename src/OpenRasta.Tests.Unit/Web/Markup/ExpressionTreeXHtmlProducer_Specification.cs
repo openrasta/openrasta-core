@@ -115,11 +115,11 @@ namespace ExpressionTreeXHtmlProducer_Specification
             var t = new Test();
             var select = XHtml.Select(() => t.Enum,
                                             new Dictionary<string, string> { { "key1", "value1" }, { "key2", "value2" } });
-            var first = select.ChildNodes[0].LegacyShouldBeOfType<IOptionElement>();
+            var first = @select.ChildNodes[0].ShouldBeAssignableTo<IOptionElement>();
             first.InnerText.LegacyShouldBe("value1");
             first.Value.LegacyShouldBe("key1");
 
-            var second = select.ChildNodes[1].LegacyShouldBeOfType<IOptionElement>();
+            var second = @select.ChildNodes[1].ShouldBeAssignableTo<IOptionElement>();
             second.InnerText.LegacyShouldBe("value2");
             second.Value.LegacyShouldBe("key2");
         }

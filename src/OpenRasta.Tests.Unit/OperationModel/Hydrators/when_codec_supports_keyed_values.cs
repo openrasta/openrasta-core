@@ -5,6 +5,7 @@ using OpenRasta.OperationModel;
 using OpenRasta.Testing;
 using OpenRasta.Tests.Unit.Fakes;
 using OpenRasta.Web;
+using Shouldly;
 
 namespace OpenRasta.Tests.Unit.OperationModel.Hydrators
 {
@@ -21,7 +22,7 @@ namespace OpenRasta.Tests.Unit.OperationModel.Hydrators
       when_entity_is_read();
 
       ResultOperation.Inputs.Required().First().Binder.BuildObject()
-        .Instance.LegacyShouldBeOfType<Frodo>()
+        .Instance.ShouldBeAssignableTo<Frodo>()
         .LastName.LegacyShouldBe("Baggins");
     }
   }

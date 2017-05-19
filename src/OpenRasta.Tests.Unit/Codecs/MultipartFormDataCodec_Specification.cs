@@ -89,8 +89,7 @@ namespace MultipartFormDataCodec_Specification
 
             when_decoding<IDictionary<string, IList<IMultipartHttpEntity>>>("field");
 
-            then_decoding_result<IDictionary<string, IList<IMultipartHttpEntity>>>()["field"].First().Stream.
-                LegacyShouldBeOfType<FileStream>()
+            then_decoding_result<IDictionary<string, IList<IMultipartHttpEntity>>>()["field"].First().Stream.ShouldBeAssignableTo<FileStream>()
                 .Length
                     .LegacyShouldBe(85003);
             

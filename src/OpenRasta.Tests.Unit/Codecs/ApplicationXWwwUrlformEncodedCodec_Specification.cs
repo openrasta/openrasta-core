@@ -170,8 +170,7 @@ namespace ApplicationXWwwUrlformEncodedCodec_Specification
 
             when_decoding<Customer>();
 
-            then_decoding_result<Customer>()
-                .LegacyShouldBeOfType<Customer>();
+            then_decoding_result<Customer>().ShouldBeAssignableTo<Customer>();
 
             then_decoding_result<Customer>().FirstName
                     .LegacyShouldBe("John");

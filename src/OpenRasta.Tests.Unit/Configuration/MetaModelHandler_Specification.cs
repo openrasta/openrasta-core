@@ -63,10 +63,8 @@ namespace MetaModelHandler_Specification
         [Test]
         public void cannot_add_registrations_for_null_types()
         {
-            Executing(() => new DependencyRegistrationModel(null, typeof(IMetaModelHandler), DependencyLifetime.Transient))
-                .LegacyShouldThrow<ArgumentNullException>();
-            Executing(() => new DependencyRegistrationModel(typeof(IMetaModelHandler), null, DependencyLifetime.Transient))
-                .LegacyShouldThrow<ArgumentNullException>();
+            Executing(() => new DependencyRegistrationModel(null, typeof(IMetaModelHandler), DependencyLifetime.Transient)).ShouldThrow<ArgumentNullException>();
+            Executing(() => new DependencyRegistrationModel(typeof(IMetaModelHandler), null, DependencyLifetime.Transient)).ShouldThrow<ArgumentNullException>();
         }
     }
     public class when_registering_uris : metamodelhandler_context<UriRegistrationMetaModelHandler>
@@ -86,11 +84,11 @@ namespace MetaModelHandler_Specification
             Handler.Process(MetaModel);
 
             var uri1 = UriResolver.Match("http://localhost/customer".ToUri());
-            uri1.ResourceKey.LegacyShouldBeOfType<IType>().Name.LegacyShouldBe("Customer");
+            uri1.ResourceKey.ShouldBeAssignableTo<IType>().Name.LegacyShouldBe("Customer");
             uri1.UriName.LegacyShouldBe("model");
 
             var uri2 = UriResolver.Match("http://localhost/preferedCustomer".ToUri());
-            uri2.ResourceKey.LegacyShouldBeOfType<IType>().Name.LegacyShouldBe("Customer");
+            uri2.ResourceKey.ShouldBeAssignableTo<IType>().Name.LegacyShouldBe("Customer");
             uri2.UriCulture.LegacyShouldBe(CultureInfo.GetCultureInfo("fr-FR"));
 
         }
@@ -170,8 +168,7 @@ namespace MetaModelHandler_Specification
 
             when_executing_the_handler();
 
-            MetaModel.ResourceRegistrations[0].ResourceKey
-                .LegacyShouldBeOfType<IType>()
+            MetaModel.ResourceRegistrations[0].ResourceKey.ShouldBeAssignableTo<IType>()
                 .CompareTo(TypeSystem.FromClr(typeof(Customer)))
                     .LegacyShouldBe(0);
         }
@@ -227,8 +224,7 @@ namespace MetaModelHandler_Specification
         [Test]
         public void cannot_add_a_codec_not_implementing_the_correct_interfaces()
         {
-            Executing(() => given_unknown_type_registered_as_codec())
-                .LegacyShouldThrow<ArgumentOutOfRangeException>();
+            Executing(() => given_unknown_type_registered_as_codec()).ShouldThrow<ArgumentOutOfRangeException>();
         }
 
         void given_unknown_type_registered_as_codec()

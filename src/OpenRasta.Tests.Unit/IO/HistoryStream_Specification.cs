@@ -96,8 +96,7 @@ namespace HistoryStream_Specification
 
             ReadBytes(512);
 
-            Executing(() => SeekBy(-513))
-                .LegacyShouldThrow<InvalidOperationException>();
+            Executing(() => SeekBy(-513)).ShouldThrow<InvalidOperationException>();
         }
 
         [Test]
@@ -108,8 +107,7 @@ namespace HistoryStream_Specification
 
             ReadBytes(4096);
 
-            Executing(() => SeekBy(-4097))
-                .LegacyShouldThrow<InvalidOperationException>();
+            Executing(() => SeekBy(-4097)).ShouldThrow<InvalidOperationException>();
         }
 
         [Test]
@@ -120,10 +118,8 @@ namespace HistoryStream_Specification
 
             ReadBytes(30);
 
-            Executing(() => SeekBy(1, SeekOrigin.Begin))
-                .LegacyShouldThrow<NotSupportedException>();
-            Executing(() => SeekBy(1, SeekOrigin.End))
-                .LegacyShouldThrow<NotSupportedException>();
+            Executing(() => SeekBy(1, SeekOrigin.Begin)).ShouldThrow<NotSupportedException>();
+            Executing(() => SeekBy(1, SeekOrigin.End)).ShouldThrow<NotSupportedException>();
         }
 
         [Test]
@@ -148,9 +144,9 @@ namespace HistoryStream_Specification
 
           HistoryStream.CanSeek.ShouldBeTrue();
 
-          Executing(() => HistoryStream.Position = 0).LegacyShouldThrow<NotSupportedException>();
-            Executing(() => { var result = HistoryStream.Position; }).LegacyShouldThrow<NotSupportedException>();
-            Executing(() => { var result = HistoryStream.Length; }).LegacyShouldThrow<NotSupportedException>();
+          Executing(() => HistoryStream.Position = 0).ShouldThrow<NotSupportedException>();
+            Executing(() => { var result = HistoryStream.Position; }).ShouldThrow<NotSupportedException>();
+            Executing(() => { var result = HistoryStream.Length; }).ShouldThrow<NotSupportedException>();
         }
     }
 }

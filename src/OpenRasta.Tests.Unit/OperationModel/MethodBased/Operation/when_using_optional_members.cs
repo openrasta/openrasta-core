@@ -30,7 +30,7 @@ namespace OpenRasta.Tests.Unit.OperationModel.MethodBased
             given_operation("Search",typeof(string));
 
           Operation.Inputs.Optional().First().IsOptional.ShouldBeTrue();
-          Operation.Inputs.Optional().First().Member.LegacyShouldBeOfType<IParameter>().DefaultValue
+          Operation.Inputs.Optional().First().Member.ShouldBeAssignableTo<IParameter>().DefaultValue
                 .LegacyShouldBe("*");
         }
     }
@@ -60,7 +60,7 @@ namespace OpenRasta.Tests.Unit.OperationModel.MethodBased
       given_operation("SearchNative", typeof(string));
 
       Operation.Inputs.Optional().First().IsOptional.ShouldBeTrue();
-      Operation.Inputs.Optional().First().Member.LegacyShouldBeOfType<IParameter>().DefaultValue
+      Operation.Inputs.Optional().First().Member.ShouldBeAssignableTo<IParameter>().DefaultValue
         .LegacyShouldBe("*");
     }
   }

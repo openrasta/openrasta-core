@@ -14,6 +14,7 @@ using System.Text;
 using OpenRasta.Collections.Specialized;
 using OpenRasta.Testing;
 using NUnit.Framework;
+using Shouldly;
 
 namespace CollectionExtensions_Specification
 {
@@ -23,8 +24,7 @@ namespace CollectionExtensions_Specification
         public void passing_a_null_ojbect_results_in_an_error()
         {
             object target = null;
-            Executing(() => target.ToNameValueCollection())
-                .LegacyShouldThrow<ArgumentNullException>();
+            Executing(() => target.ToNameValueCollection()).ShouldThrow<ArgumentNullException>();
         }
         [Test]
 public void method_name()

@@ -12,6 +12,7 @@ using System;
 using NUnit.Framework;
 using OpenRasta.Testing;
 using OpenRasta.Web;
+using Shouldly;
 
 namespace HttpHeaders_Specification
 {
@@ -20,15 +21,13 @@ namespace HttpHeaders_Specification
         [Test]
         public void a_parameter_value_without_quotes_results_in_an_error()
         {
-            Executing(() => new ContentDispositionHeader("form-data; name=n"))
-                .LegacyShouldThrow<FormatException>();
+            Executing(() => new ContentDispositionHeader("form-data; name=n")).ShouldThrow<FormatException>();
         }
 
         [Test]
         public void an_empty_header_results_in_an_error()
         {
-            Executing(() => new ContentDispositionHeader(""))
-                .LegacyShouldThrow<FormatException>();
+            Executing(() => new ContentDispositionHeader("")).ShouldThrow<FormatException>();
         }
 
         [Test, Ignore("need to define the use cases better first")]

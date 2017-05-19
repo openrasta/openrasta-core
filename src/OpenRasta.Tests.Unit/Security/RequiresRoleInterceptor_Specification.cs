@@ -39,7 +39,7 @@ namespace OpenRasta.Tests.Unit.Security
             var authenticationInterceptor = new RequiresRoleInterceptor(context) { Role = "SuperUser" };
 
           authenticationInterceptor.BeforeExecute(new Mock<IOperation>().Object).ShouldBeFalse();
-          context.OperationResult.LegacyShouldBeOfType<OperationResult.Unauthorized>();
+          context.OperationResult.ShouldBeAssignableTo<OperationResult.Unauthorized>();
 
         }
     }

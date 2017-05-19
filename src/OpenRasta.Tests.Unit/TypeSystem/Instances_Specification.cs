@@ -179,7 +179,7 @@ namespace Instances_Specification
     {
       given_builder_for<Customer>();
       var result = TypeBuilder.Create();
-      result.LegacyShouldBeOfType<Customer>();
+      result.ShouldBeAssignableTo<Customer>();
       result.ShouldNotBeNull();
 
       TypeBuilder.GetProperty("FirstName")

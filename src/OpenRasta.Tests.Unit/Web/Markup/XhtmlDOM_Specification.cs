@@ -17,6 +17,7 @@ using OpenRasta.Web;
 using OpenRasta.Web.Markup.Attributes;
 using OpenRasta.Web.Markup.Elements;
 using OpenRasta.Web.Markup;
+using Shouldly;
 
 namespace XhtmlDOM_Specification
 {
@@ -30,7 +31,7 @@ namespace XhtmlDOM_Specification
 
             attribs.SetAttribute("name", "value");
 
-            attribs["name"].LegacyShouldBeOfType<IAttribute<string>>();
+            attribs["name"].ShouldBeAssignableTo<IAttribute<string>>();
         }
         [Test]
         public void list_of_media_types_are_of_type_nmtoken()

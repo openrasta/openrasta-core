@@ -9,6 +9,7 @@ using OpenRasta.Testing.Contexts;
 using OpenRasta.Web;
 using OpenRasta.Pipeline;
 using OperationCreationContributor_Specification;
+using Shouldly;
 
 namespace OpenRasta.Tests.Unit.Web.Pipeline.Contributors
 {
@@ -25,7 +26,7 @@ namespace OpenRasta.Tests.Unit.Web.Pipeline.Contributors
         when_executing_processor();
 
         Result.LegacyShouldBe(PipelineContinuation.RenderNow);
-        Context.OperationResult.LegacyShouldBeOfType<OperationResult.RequestMediaTypeUnsupported>();
+        Context.OperationResult.ShouldBeAssignableTo<OperationResult.RequestMediaTypeUnsupported>();
       }
 
       protected override RequestCodecSelector create_processor()

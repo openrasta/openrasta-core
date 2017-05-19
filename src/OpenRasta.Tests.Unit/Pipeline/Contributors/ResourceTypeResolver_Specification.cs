@@ -54,7 +54,7 @@ namespace ResourceTypeResolver_Specification
                 .LegacyShouldBe(PipelineContinuation.RenderNow);
 
           Context.PipelineData.SelectedResource.ShouldBeNull();
-          Context.OperationResult.LegacyShouldBeOfType<OperationResult.NotFound>();
+          Context.OperationResult.ShouldBeAssignableTo<OperationResult.NotFound>();
         }
 
         [Test]

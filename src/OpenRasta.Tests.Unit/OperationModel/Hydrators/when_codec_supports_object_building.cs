@@ -6,6 +6,7 @@ using OpenRasta.OperationModel;
 using OpenRasta.Testing;
 using OpenRasta.Web;
 using OpenRasta.Web.Codecs;
+using Shouldly;
 
 namespace OpenRasta.Tests.Unit.OperationModel.Hydrators
 {
@@ -23,7 +24,7 @@ namespace OpenRasta.Tests.Unit.OperationModel.Hydrators
 
       ResultOperation.Name.LegacyShouldBe("PostStream");
       ResultOperation.Inputs.Required().First().Binder.BuildObject()
-        .Instance.LegacyShouldBeOfType<Stream>()
+        .Instance.ShouldBeAssignableTo<Stream>()
         .ReadByte().LegacyShouldBe(0);
     }
     [Test]

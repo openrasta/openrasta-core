@@ -2,6 +2,7 @@
 using NUnit.Framework;
 using OpenRasta.Testing;
 using OpenRasta.Testing.Contexts;
+using Shouldly;
 
 namespace OpenRasta.Tests.Unit.OperationModel.MethodBased.Operation
 {
@@ -24,8 +25,7 @@ namespace OpenRasta.Tests.Unit.OperationModel.MethodBased.Operation
     [Test]
     public void property_getters_are_not_selected()
     {
-      Executing(()=>given_operation("get_Dependency"))
-        .LegacyShouldThrow<InvalidOperationException>();
+      Executing(()=>given_operation("get_Dependency")).ShouldThrow<InvalidOperationException>();
 
 
     }

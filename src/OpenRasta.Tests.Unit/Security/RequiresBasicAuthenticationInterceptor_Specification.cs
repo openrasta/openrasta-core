@@ -21,7 +21,7 @@ namespace RequiresBasicAuthenticationInterceptor_Specification
             const string REALM = "Test Realm";
             var authenticationInterceptor = new RequiresBasicAuthenticationInterceptor(context, REALM);
           authenticationInterceptor.BeforeExecute(new Mock<IOperation>().Object).ShouldBeFalse();
-          context.OperationResult.LegacyShouldBeOfType<OperationResult.Unauthorized>();
+          context.OperationResult.ShouldBeAssignableTo<OperationResult.Unauthorized>();
             var expectedHeader = String.Format("Basic realm=\"{0}\"", REALM);
             context.Response.Headers["WWW-Authenticate"].LegacyShouldBe(expectedHeader);
         }

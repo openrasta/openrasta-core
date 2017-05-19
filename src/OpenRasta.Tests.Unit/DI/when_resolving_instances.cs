@@ -40,8 +40,7 @@ namespace InternalDependencyResolver_Specification
         {
             Resolver.AddDependency<IAnother, Another>();
 
-            Executing(() => Resolver.Resolve<IAnother>())
-                .LegacyShouldThrow<DependencyResolutionException>();
+            Executing(() => Resolver.Resolve<IAnother>()).ShouldThrow<DependencyResolutionException>();
         }
 
         [Test]
@@ -142,7 +141,7 @@ namespace InternalDependencyResolver_Specification
             {
               Resolver.HasDependency(typeof (TheClass)).ShouldBeFalse();
 
-              Executing(() => Resolver.Resolve<TheClass>()).LegacyShouldThrow<DependencyResolutionException>();
+              Executing(() => Resolver.Resolve<TheClass>()).ShouldThrow<DependencyResolutionException>();
             }
         }
 
@@ -151,8 +150,7 @@ namespace InternalDependencyResolver_Specification
         {
             Resolver.AddDependency<ISimple, Simple>(DependencyLifetime.PerRequest);
 
-            Executing(() => Resolver.Resolve<ISimple>())
-              .LegacyShouldThrow<DependencyResolutionException>();
+            Executing(() => Resolver.Resolve<ISimple>()).ShouldThrow<DependencyResolutionException>();
         }
 
         [Test]
@@ -304,8 +302,7 @@ namespace InternalDependencyResolver_Specification
 
           Resolver.HandleIncomingRequestProcessed();
 
-            Executing(() => Resolver.Resolve<TheClass>())
-          .LegacyShouldThrow<DependencyResolutionException>();
+            Executing(() => Resolver.Resolve<TheClass>()).ShouldThrow<DependencyResolutionException>();
         }
     }
 
@@ -316,15 +313,13 @@ namespace InternalDependencyResolver_Specification
         [Test]
         public void an_abstract_type_cannot_be_registered()
         {
-            Executing(() => Resolver.AddDependency<ISimple, SimpleAbstract>())
-              .LegacyShouldThrow<InvalidOperationException>();
+            Executing(() => Resolver.AddDependency<ISimple, SimpleAbstract>()).ShouldThrow<InvalidOperationException>();
         }
 
         [Test]
         public void an_interface_cannot_be_registered_as_a_concrete_implementation()
         {
-            Executing(() => Resolver.AddDependency<ISimple, IAnotherSimple>())
-              .LegacyShouldThrow<InvalidOperationException>();
+            Executing(() => Resolver.AddDependency<ISimple, IAnotherSimple>()).ShouldThrow<InvalidOperationException>();
         }
 
         [Test]
@@ -332,8 +327,7 @@ namespace InternalDependencyResolver_Specification
         {
             Resolver.AddDependency<RecursiveConstructor>();
 
-            Executing(() => Resolver.Resolve<RecursiveConstructor>())
-              .LegacyShouldThrow<DependencyResolutionException>();
+            Executing(() => Resolver.Resolve<RecursiveConstructor>()).ShouldThrow<DependencyResolutionException>();
         }
 
         [Test]
@@ -343,8 +337,7 @@ namespace InternalDependencyResolver_Specification
             Resolver.AddDependency<ISimpleChild, SimpleChild>();
 
             ((Simple) Resolver.Resolve<ISimple>()).Property
-                .legacyShouldNotBeNull()
-                .LegacyShouldBeOfType<SimpleChild>();
+              .legacyShouldNotBeNull().ShouldBeAssignableTo<SimpleChild>();
         }
 
         [Test]
@@ -365,22 +358,20 @@ namespace InternalDependencyResolver_Specification
         [Test]
         public void registering_a_concrete_type_with_an_unknown_dependency_lifetime_value_results_in__an_error()
         {
-            Executing(() => Resolver.AddDependency<Simple>((DependencyLifetime) 999))
-              .LegacyShouldThrow<InvalidOperationException>();
+            Executing(() => Resolver.AddDependency<Simple>((DependencyLifetime) 999)).ShouldThrow<InvalidOperationException>();
         }
 
         [Test]
         public void registering_a_service_type_with_an_unknown_dependency_lifetime_value_results_in__an_error()
         {
-            Executing(() => Resolver.AddDependency<ISimple, Simple>((DependencyLifetime) 999))
-              .LegacyShouldThrow<InvalidOperationException>();
+            Executing(() => Resolver.AddDependency<ISimple, Simple>((DependencyLifetime) 999)).ShouldThrow<InvalidOperationException>();
         }
 
         [Test]
         public void requesting_a_type_with_a_public_constructor_returns_a_new_instance_of_that_type()
         {
             Resolver.AddDependency<ISimple, Simple>();
-            Resolver.Resolve<ISimple>().LegacyShouldBeOfType<Simple>();
+            Resolver.Resolve<ISimple>().ShouldBeAssignableTo<Simple>();
         }
 
         [Test]
@@ -389,7 +380,7 @@ namespace InternalDependencyResolver_Specification
             Resolver.AddDependency<ISimple, Simple>();
             Resolver.AddDependency<IAnother, Another>();
 
-            ((Another) Resolver.Resolve<IAnother>()).Dependent.LegacyShouldBeOfType<Simple>();
+            ((Another) Resolver.Resolve<IAnother>()).Dependent.ShouldBeAssignableTo<Simple>();
         }
 
         [Test]

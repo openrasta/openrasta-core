@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using NUnit.Framework;
 using OpenRasta.Testing;
 using OpenRasta.Testing.Contexts;
+using Shouldly;
 
 namespace OpenRasta.Tests.Unit.OperationModel.MethodBased.Operation
 {
@@ -14,8 +15,7 @@ namespace OpenRasta.Tests.Unit.OperationModel.MethodBased.Operation
     {
       given_operation("Post", typeof(int), typeof(string));
 
-      Executing(Operation.InvokeAsync)
-        .LegacyShouldThrow<InvalidOperationException>();
+      Executing(Operation.InvokeAsync).ShouldThrow<InvalidOperationException>();
     }
     [Test]
     public void a_result_is_returned()

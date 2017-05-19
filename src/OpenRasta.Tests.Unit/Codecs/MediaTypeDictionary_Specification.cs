@@ -15,6 +15,7 @@ using OpenRasta.Testing;
 using NUnit.Framework;
 using OpenRasta.Codecs;
 using OpenRasta.Web;
+using Shouldly;
 
 namespace MediaTypeDictionary_Specification
 {
@@ -23,8 +24,7 @@ namespace MediaTypeDictionary_Specification
         [Test]
         public void adding_a_null_media_type_raises_an_error()
         {
-            Executing(() => GivenMediaType(null, null))
-                .LegacyShouldThrow<ArgumentNullException>();
+            Executing(() => GivenMediaType(null, null)).ShouldThrow<ArgumentNullException>();
         }
     }
     public class when_matching_media_types : media_type_context

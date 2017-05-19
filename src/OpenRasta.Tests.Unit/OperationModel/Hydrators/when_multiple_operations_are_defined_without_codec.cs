@@ -16,6 +16,7 @@ using OpenRasta.Tests.Unit.OperationModel.Filters;
 using OpenRasta.TypeSystem;
 using OpenRasta.Web;
 using OpenRasta.Web.Codecs;
+using Shouldly;
 
 namespace OpenRasta.Tests.Unit.OperationModel.Hydrators
 {
@@ -32,7 +33,7 @@ namespace OpenRasta.Tests.Unit.OperationModel.Hydrators
 
       when_entity_is_read();
 
-      Error.LegacyShouldBeOfType<AmbiguousRequestException>();
+      Error.ShouldBeAssignableTo<AmbiguousRequestException>();
     }
 
     [Test]

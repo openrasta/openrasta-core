@@ -14,6 +14,7 @@ using System.Linq;
 using NUnit.Framework;
 using OpenRasta.Data;
 using OpenRasta.Testing;
+using Shouldly;
 
 namespace PagedData_Specification
 {
@@ -25,8 +26,7 @@ namespace PagedData_Specification
         [Test]
         public void asking_for_a_page_when_it_doesnt_exist_because_there_are_not_enough_results_will_throw_an_exception()
         {
-            Executing(() => rangeOfValues.SelectPagedData(3, 10, null))
-                .LegacyShouldThrow<ArgumentOutOfRangeException>();
+            Executing(() => rangeOfValues.SelectPagedData(3, 10, null)).ShouldThrow<ArgumentOutOfRangeException>();
         }
 
         [Test]
@@ -34,15 +34,13 @@ namespace PagedData_Specification
         {
             var listToQuery = Enumerable.Range(1, 20).AsQueryable();
 
-            Executing(() => rangeOfValues.SelectPagedData(0, 10, null))
-                .LegacyShouldThrow<ArgumentOutOfRangeException>();
+            Executing(() => rangeOfValues.SelectPagedData(0, 10, null)).ShouldThrow<ArgumentOutOfRangeException>();
         }
 
         [Test]
         public void asking_for_an_invalid_page_size_raises_an_exception()
         {
-            Executing(() => rangeOfValues.SelectPagedData(0, 0, null))
-                .LegacyShouldThrow<ArgumentOutOfRangeException>();
+            Executing(() => rangeOfValues.SelectPagedData(0, 0, null)).ShouldThrow<ArgumentOutOfRangeException>();
         }
 
         [Test]

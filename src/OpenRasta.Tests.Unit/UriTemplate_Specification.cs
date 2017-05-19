@@ -56,13 +56,13 @@ namespace UriTemplate_Specification
         [Test]
         public void the_values_in_the_query_string_are_injected()
         {
-          BindingUriByName("/test?query={value}", new {value = "myQuery"}).LegacyShouldAllBe("http://localhost/test?query=myQuery");
+          BindingUriByName("/test?query={value}", new {value = "myQuery"}).ShouldAllBe(item => item == "http://localhost/test?query=myQuery");
         }
 
         [Test]
         public void a_query_string_with_seperator_is_injected()
         {
-          BindingUriByName("/test?first={first}&?second={second}", new { first = "1", second = "2" }).LegacyShouldAllBe("http://localhost/test?first=1&second=2");
+          BindingUriByName("/test?first={first}&?second={second}", new { first = "1", second = "2" }).ShouldAllBe(item => item == "http://localhost/test?first=1&second=2");
         }
     }
 
@@ -77,18 +77,18 @@ namespace UriTemplate_Specification
         [Test]
         public void a_query_string_is_appended_successfully()
         {
-          BindingUriByName("?query={value}", new {value = "myQuery"}).LegacyShouldAllBe("http://localhost/foo/?query=myQuery");
+          BindingUriByName("?query={value}", new {value = "myQuery"}).ShouldAllBe(item => item == "http://localhost/foo/?query=myQuery");
         }
        
         [Test]
         public void a_segment_is_appended_successfully()
         {
-          BindingUriByName("/{value}", new {value = "myQuery"}).LegacyShouldAllBe("http://localhost/foo/myQuery");
+          BindingUriByName("/{value}", new {value = "myQuery"}).ShouldAllBe(item => item == "http://localhost/foo/myQuery");
         }
         [Test]
         public void an_unprefixed_segment_is_appended_successfully()
         {
-          BindingUriByName("{value}", new { value = "myQuery" }).LegacyShouldAllBe("http://localhost/foo/myQuery");
+          BindingUriByName("{value}", new { value = "myQuery" }).ShouldAllBe(item => item == "http://localhost/foo/myQuery");
         }
     }
 

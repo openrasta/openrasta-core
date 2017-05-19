@@ -92,28 +92,26 @@ namespace Configuration_Specification
         {
             ResourceSpaceHas.ResourcesOfType(TypeSystems.Default.FromClr(typeof(Customer)));
 
-            MetaModel.ResourceRegistrations[0].ResourceKey.LegacyShouldBeOfType<IType>().Name.LegacyShouldBe("Customer");
+            MetaModel.ResourceRegistrations[0].ResourceKey.ShouldBeAssignableTo<IType>().Name.LegacyShouldBe("Customer");
         }
 
         [Test]
         public void cannot_execute_registration_on_null_IHas()
         {
-            Executing(() => ((IHas)null).ResourcesWithKey(new object()))
-                .LegacyShouldThrow<ArgumentNullException>();
+            Executing(() => ((IHas)null).ResourcesWithKey(new object())).ShouldThrow<ArgumentNullException>();
         }
         [Test]
         public void a_resource_of_type_strict_is_registered_as_a_strict_type()
         {
             ResourceSpaceHas.ResourcesOfType<Strictly<Customer>>();
 
-          MetaModel.ResourceRegistrations[0].ResourceKey.LegacyShouldBeOfType<Type>().ShouldBe(typeof(Customer));
+          MetaModel.ResourceRegistrations[0].ResourceKey.ShouldBeAssignableTo<Type>().ShouldBe(typeof(Customer));
           MetaModel.ResourceRegistrations[0].IsStrictRegistration.ShouldBeTrue();
         }
         [Test]
         public void cannot_register_a_resource_with_a_null_key()
         {
-            Executing(() => ResourceSpaceHas.ResourcesWithKey(null))
-                .LegacyShouldThrow<ArgumentNullException>();
+            Executing(() => ResourceSpaceHas.ResourcesWithKey(null)).ShouldThrow<ArgumentNullException>();
         }
     }
 
@@ -179,8 +177,7 @@ namespace Configuration_Specification
         [Test]
         public void lcannot_register_a_null_uri_for_a_resource()
         {
-            Executing(() => ResourceSpaceHas.ResourcesOfType<Customer>().AtUri(null))
-                .LegacyShouldThrow<ArgumentNullException>();
+            Executing(() => ResourceSpaceHas.ResourcesOfType<Customer>().AtUri(null)).ShouldThrow<ArgumentNullException>();
         }
     }
 
@@ -214,10 +211,8 @@ namespace Configuration_Specification
         [Test]
         public void cannot_add_a_null_handler()
         {
-            Executing(() => ResourceSpaceHas.ResourcesOfType<Frodo>().AtUri("/theshrine").HandledBy((IType)null))
-                .LegacyShouldThrow<ArgumentNullException>();
-            Executing(() => ResourceSpaceHas.ResourcesOfType<Frodo>().AtUri("/theshrine").HandledBy((Type)null))
-                .LegacyShouldThrow<ArgumentNullException>();
+            Executing(() => ResourceSpaceHas.ResourcesOfType<Frodo>().AtUri("/theshrine").HandledBy((IType)null)).ShouldThrow<ArgumentNullException>();
+            Executing(() => ResourceSpaceHas.ResourcesOfType<Frodo>().AtUri("/theshrine").HandledBy((Type)null)).ShouldThrow<ArgumentNullException>();
         }
 
         [Test]
@@ -378,8 +373,7 @@ namespace Configuration_Specification
         [Test]
         public void cannot_register_codec_not_implementing_icodec()
         {
-            Executing(() => ResourceSpaceHas.ResourcesOfType<Frodo>().WithoutUri.TranscodedBy(typeof(string)))
-                .LegacyShouldThrow<ArgumentOutOfRangeException>();
+            Executing(() => ResourceSpaceHas.ResourcesOfType<Frodo>().WithoutUri.TranscodedBy(typeof(string))).ShouldThrow<ArgumentOutOfRangeException>();
         }
         void ExecuteTest(Action<ICodecParentDefinition> test)
         {

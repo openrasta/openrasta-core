@@ -8,6 +8,7 @@ using OpenRasta.Handlers;
 using OpenRasta.Testing;
 using OpenRasta.Tests.Unit.Fakes;
 using OpenRasta.TypeSystem;
+using Shouldly;
 
 namespace HandlerRepository_Specification
 {
@@ -49,8 +50,7 @@ namespace HandlerRepository_Specification
     {
       var repo = new HandlerRepository();
 
-      Executing(() => repo.AddResourceHandler(null, TypeSystems.Default.FromClr(typeof(Frodo))))
-        .LegacyShouldThrow<ArgumentNullException>();
+      Executing(() => repo.AddResourceHandler(null, TypeSystems.Default.FromClr(typeof(Frodo)))).ShouldThrow<ArgumentNullException>();
     }
 
     [Test]
@@ -58,8 +58,7 @@ namespace HandlerRepository_Specification
     {
       var repo = new HandlerRepository();
 
-      Executing(() => repo.AddResourceHandler(null, TypeSystems.Default.FromClr(typeof(Frodo))))
-        .LegacyShouldThrow<ArgumentNullException>();
+      Executing(() => repo.AddResourceHandler(null, TypeSystems.Default.FromClr(typeof(Frodo)))).ShouldThrow<ArgumentNullException>();
     }
 
     [Test]

@@ -80,7 +80,7 @@ namespace ResponseEntityCodecResolver_Specification
 
             when_sending_notification<KnownStages.IOperationResultInvocation>().LegacyShouldBe(PipelineContinuation.RenderNow);
             
-            Context.OperationResult.LegacyShouldBeOfType<OperationResult.BadRequest>();
+            Context.OperationResult.ShouldBeAssignableTo<OperationResult.BadRequest>();
             Context.Response.Headers["Warning"].LegacyShouldBe("199 Malformed accept header");
         }
 
@@ -110,8 +110,7 @@ namespace ResponseEntityCodecResolver_Specification
                             .LegacyShouldBe(PipelineContinuation.RenderNow);
             
 
-            Context.OperationResult
-                .LegacyShouldBeOfType<OperationResult.ResponseMediaTypeUnsupported>();
+            Context.OperationResult.ShouldBeAssignableTo<OperationResult.ResponseMediaTypeUnsupported>();
         }
 
         [Test]

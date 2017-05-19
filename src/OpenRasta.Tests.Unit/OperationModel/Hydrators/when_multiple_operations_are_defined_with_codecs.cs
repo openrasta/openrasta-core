@@ -20,7 +20,7 @@ namespace OpenRasta.Tests.Unit.OperationModel.Hydrators
 
       when_filtering_operations();
 
-      Error.LegacyShouldBeOfType<AmbiguousRequestException>();
+      Error.ShouldBeAssignableTo<AmbiguousRequestException>();
     }
 
     [Test]

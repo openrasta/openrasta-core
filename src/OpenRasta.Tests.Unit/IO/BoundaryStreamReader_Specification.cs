@@ -123,8 +123,7 @@ namespace BoundaryStreamReader_Specification
         public void building_a_boundary_stream_reader_necessitates_a_non_null_stream()
         {
             GivenANullStream();
-            Executing(() => GivenABoundaryStreamReader("b"))
-                .LegacyShouldThrow<ArgumentNullException>();
+            Executing(() => GivenABoundaryStreamReader("b")).ShouldThrow<ArgumentNullException>();
         }
 
         [Test]
@@ -132,8 +131,7 @@ namespace BoundaryStreamReader_Specification
         {
             GivenANonSeekableStream();
 
-            Executing(() => GivenABoundaryStreamReader("b"))
-                .LegacyShouldThrow<ArgumentException>();
+            Executing(() => GivenABoundaryStreamReader("b")).ShouldThrow<ArgumentException>();
         }
 
         [Test]
@@ -221,8 +219,7 @@ namespace BoundaryStreamReader_Specification
         public void the_buffer_of_the_reader_must_be_big_enough_to_seek_for_a_boundary()
         {
             GivenAMemoryStreamContaining(new byte[0]);
-            Executing(() => GivenABoundaryStreamReader("four", 9))
-                .LegacyShouldThrow<ArgumentOutOfRangeException>();
+            Executing(() => GivenABoundaryStreamReader("four", 9)).ShouldThrow<ArgumentOutOfRangeException>();
         }
 
         [Test]

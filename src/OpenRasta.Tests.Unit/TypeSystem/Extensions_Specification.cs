@@ -24,23 +24,20 @@ namespace Extensions_Specification
         [Test]
         public void array_types_are_parsed()
         {
-            typeof (int[]).CreateInstanceFrom(new[] {"1"})
-                .LegacyShouldBeOfType<int[]>()
+            typeof (int[]).CreateInstanceFrom(new[] {"1"}).ShouldBeAssignableTo<int[]>()
                 .LegacyShouldContain(1);
         }
 
         [Test]
         public void arrays_of_strings_return_the_provided_values()
         {
-          typeof (string[]).CreateInstanceFrom(new[] {"one", "two", "three"})
-            .LegacyShouldBeOfType<string[]>().ShouldBe((IEnumerable<string>) new[] {"one", "two", "three"});
+          typeof (string[]).CreateInstanceFrom(new[] {"one", "two", "three"}).ShouldBeAssignableTo<string[]>().ShouldBe((IEnumerable<string>) new[] {"one", "two", "three"});
         }
 
         [Test]
         public void lists_are_parsed()
         {
-            typeof (List<string>).CreateInstanceFrom(new[] {"one", "two"})
-                .LegacyShouldBeOfType<List<string>>()
+            typeof (List<string>).CreateInstanceFrom(new[] {"one", "two"}).ShouldBeAssignableTo<List<string>>()
                 .LegacyShouldContain("one")
                 .LegacyShouldContain("two");
         }
@@ -48,23 +45,20 @@ namespace Extensions_Specification
         [Test]
         public void non_array_types_are_not_parsed_if_there_are_multiple_values()
         {
-            Executing(() => typeof (int).CreateInstanceFrom(new[] {"1", "2"}))
-                .LegacyShouldThrow<NotSupportedException>();
+            Executing(() => typeof (int).CreateInstanceFrom(new[] {"1", "2"})).ShouldThrow<NotSupportedException>();
         }
 
         [Test]
         public void non_array_types_are_parsed_if_theres_one_value()
         {
-            typeof (int).CreateInstanceFrom(new[] {"1"})
-                .LegacyShouldBeOfType<int>()
+            typeof (int).CreateInstanceFrom(new[] {"1"}).ShouldBeAssignableTo<int>()
                 .LegacyShouldBe(1);
         }
 
         [Test]
         public void types_implementing_ICollection_of_T_are_parsed()
         {
-            typeof (LinkedList<string>).CreateInstanceFrom(new[] {"one", "two"})
-                .LegacyShouldBeOfType<LinkedList<string>>()
+            typeof (LinkedList<string>).CreateInstanceFrom(new[] {"one", "two"}).ShouldBeAssignableTo<LinkedList<string>>()
                 .LegacyShouldContain("one")
                 .LegacyShouldContain("two");
         }
@@ -89,8 +83,7 @@ namespace Extensions_Specification
         [Test]
         public void null_types_result_in_an_error()
         {
-            Executing(() => ((Type) null).GetTypeString())
-                .LegacyShouldThrow<ArgumentNullException>();
+            Executing(() => ((Type) null).GetTypeString()).ShouldThrow<ArgumentNullException>();
         }
 
         [Test]
@@ -113,8 +106,7 @@ namespace Extensions_Specification
         [Test]
         public void generic_types_that_are_not_constructed_do_not_have_a_typestring()
         {
-            Executing(() => typeof (GenericType<>).GetTypeString())
-                .LegacyShouldThrow<InvalidOperationException>();
+            Executing(() => typeof (GenericType<>).GetTypeString()).ShouldThrow<InvalidOperationException>();
         }
 
         [Test]

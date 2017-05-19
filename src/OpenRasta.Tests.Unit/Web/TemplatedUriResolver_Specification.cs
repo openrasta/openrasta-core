@@ -35,7 +35,7 @@ namespace TemplatedUriResolver_Specification
 
             matching_result
                 .ShouldNotBeNull();
-          matching_result.ResourceKey.LegacyShouldBeOfType<IType>()
+          matching_result.ResourceKey.ShouldBeAssignableTo<IType>()
             .Equals<Gandalf>().ShouldBeTrue();
         }
 

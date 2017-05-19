@@ -21,7 +21,7 @@ namespace RequiresAuthenticationInterceptor_Specification
 
             var authenticationInterceptor = new RequiresAuthenticationInterceptor(context);
           authenticationInterceptor.BeforeExecute(new Mock<IOperation>().Object).ShouldBeFalse();
-          context.OperationResult.LegacyShouldBeOfType<OperationResult.Unauthorized>();
+          context.OperationResult.ShouldBeAssignableTo<OperationResult.Unauthorized>();
         }
     }
     public class when_the_user_is_authenticated : context

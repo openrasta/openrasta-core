@@ -55,7 +55,7 @@ namespace BasicAuthenticationScheme_Specification
             var result = _basicScheme.Authenticate(_request);
 
             // then
-            result.LegacyShouldBeOfType<AuthenticationResult.Success>();
+            result.ShouldBeAssignableTo<AuthenticationResult.Success>();
             var success = result as AuthenticationResult.Success;
 
             success.Username.LegacyShouldBe(username);
@@ -73,7 +73,7 @@ namespace BasicAuthenticationScheme_Specification
             var result = _basicScheme.Authenticate(_request);
 
             // then
-            result.LegacyShouldBeOfType<AuthenticationResult.MalformedCredentials>();
+            result.ShouldBeAssignableTo<AuthenticationResult.MalformedCredentials>();
         }
 
         [Test]
@@ -93,7 +93,7 @@ namespace BasicAuthenticationScheme_Specification
             var result = _basicScheme.Authenticate(_request);
 
             // then
-            result.LegacyShouldBeOfType<AuthenticationResult.Failed>();
+            result.ShouldBeAssignableTo<AuthenticationResult.Failed>();
         }
 
         [Test]
@@ -112,7 +112,7 @@ namespace BasicAuthenticationScheme_Specification
             var result = _basicScheme.Authenticate(_request);
 
             // then
-            result.LegacyShouldBeOfType<AuthenticationResult.Success>();
+            result.ShouldBeAssignableTo<AuthenticationResult.Success>();
         }
 
         [Test]

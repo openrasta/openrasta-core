@@ -15,6 +15,7 @@ using OpenRasta.Testing;
 using OpenRasta.Testing.Contexts;
 using OpenRasta.Tests;
 using OpenRasta.Pipeline;
+using Shouldly;
 
 namespace HttpMethodOverrider_Specification
 {
@@ -30,7 +31,7 @@ namespace HttpMethodOverrider_Specification
             var result = when_sending_notification<KnownStages.IHandlerSelection>();
 
             result.LegacyShouldBe(PipelineContinuation.Abort);
-            Context.ServerErrors[0].LegacyShouldBeOfType<HttpMethodOverriderContributor.MethodIsNotPostError>();
+            Context.ServerErrors[0].ShouldBeAssignableTo<HttpMethodOverriderContributor.MethodIsNotPostError>();
         }
 
         [Test]

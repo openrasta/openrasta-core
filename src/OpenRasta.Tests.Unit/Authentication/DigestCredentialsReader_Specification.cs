@@ -147,7 +147,7 @@ namespace DigestCredentialsReader_Specification
 
             authorizer.ReadCredentials(Context)
                 .LegacyShouldBe(PipelineContinuation.RenderNow);
-            Context.OperationResult.LegacyShouldBeOfType<OperationResult.BadRequest>();
+            Context.OperationResult.ShouldBeAssignableTo<OperationResult.BadRequest>();
         }
 
         [Test, Ignore("no idea")]
@@ -161,7 +161,7 @@ namespace DigestCredentialsReader_Specification
 
             authorizer.ReadCredentials(Context)
                 .LegacyShouldBe(PipelineContinuation.RenderNow);
-            Context.OperationResult.LegacyShouldBeOfType<OperationResult.Unauthorized>();
+            Context.OperationResult.ShouldBeAssignableTo<OperationResult.Unauthorized>();
         }
 
         [Test, Ignore("no idea")]
@@ -175,7 +175,7 @@ namespace DigestCredentialsReader_Specification
 
             authorizer.ReadCredentials(Context)
                 .LegacyShouldBe(PipelineContinuation.RenderNow);
-            Context.OperationResult.LegacyShouldBeOfType<OperationResult.Unauthorized>();
+            Context.OperationResult.ShouldBeAssignableTo<OperationResult.Unauthorized>();
         }
     }
 
