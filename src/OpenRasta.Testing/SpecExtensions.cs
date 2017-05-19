@@ -16,12 +16,6 @@ namespace OpenRasta.Testing
     }
 
 
-    public static void LegacyShouldContain<T, U>(this IDictionary<T, U> dic, T key, U value)
-    {
-      dic.ShouldContainKey(key);
-      dic[key].ShouldBe(value);
-    }
-
     public static T LegacyShouldBe<T>(this T valueToAnalyse, T expectedValue)
     {
       valueToAnalyse.ShouldBe(expectedValue);
@@ -30,7 +24,7 @@ namespace OpenRasta.Testing
 
     public static IEnumerable<T> LegacyShouldContain<T>(this IEnumerable<T> list, T expected)
     {
-      list.ShouldContain(item => ((Func<T, T, bool>) ((t, t2) => t.Equals(t2)))(item, expected));
+      list.ShouldContain(expected);
       return list;
     }
 

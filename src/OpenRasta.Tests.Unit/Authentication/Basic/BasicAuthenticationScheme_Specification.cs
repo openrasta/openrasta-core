@@ -9,6 +9,7 @@ using OpenRasta.Authentication;
 using OpenRasta.Authentication.Basic;
 using OpenRasta.Hosting.InMemory;
 using OpenRasta.Testing;
+using OpenRasta.Web;
 using Shouldly;
 
 namespace BasicAuthenticationScheme_Specification
@@ -131,7 +132,8 @@ namespace BasicAuthenticationScheme_Specification
 
             // then
             var expectedChallengeHeader = string.Format("Basic realm=\"{0}\"", realm);
-            response.Headers.LegacyShouldContain("WWW-Authenticate", expectedChallengeHeader);
+          response.Headers.ShouldContainKey("WWW-Authenticate");
+          response.Headers["WWW-Authenticate"].ShouldBe(expectedChallengeHeader);
         }
     }
 }

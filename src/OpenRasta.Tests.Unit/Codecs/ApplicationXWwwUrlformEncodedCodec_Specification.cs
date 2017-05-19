@@ -39,10 +39,10 @@ namespace ApplicationXWwwUrlformEncodedCodec_Specification
 
       when_decoding<Dictionary<string, string[]>>();
 
-      ThenTheResult
-        .LegacyShouldContain("Customer.Something", new[] {"John"});
-      ThenTheResult
-        .LegacyShouldContain("Customer.SomethingElse", new[] {"Doe"});
+      ThenTheResult.ShouldContainKey("Customer.Something");
+      ThenTheResult["Customer.Something"].ShouldBe(new[] {"John"});
+      ThenTheResult.ShouldContainKey("Customer.SomethingElse");
+      ThenTheResult["Customer.SomethingElse"].ShouldBe(new[] {"Doe"});
     }
 
     private Dictionary<string, string[]> ThenTheResult
