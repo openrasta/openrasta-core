@@ -16,11 +16,6 @@ namespace OpenRasta.Testing
     }
 
 
-    public static void LegacyShouldBe(this Uri actual, string expected)
-    {
-      actual.ShouldBe(new Uri(expected));
-    }
-
     public static void LegacyShouldBeAssignableTo<TExpected>(this object obj)
     {
       obj.ShouldBeAssignableTo<TExpected>();

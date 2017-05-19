@@ -216,8 +216,7 @@ namespace UriTemplate_Specification
             NameValueCollection variableValues = new NameValueCollection().With("state", "washington").With("city",
                                                                                                             "seattle");
 
-            new OpenRasta.UriTemplate("weather/{state}/{city}/").BindByName("http://localhost".ToUri(), variableValues)
-                .LegacyShouldBe("http://localhost/weather/washington/seattle/");
+          new OpenRasta.UriTemplate("weather/{state}/{city}/").BindByName("http://localhost".ToUri(), variableValues).ShouldBe(new Uri("http://localhost/weather/washington/seattle/"));
         }
     }
 

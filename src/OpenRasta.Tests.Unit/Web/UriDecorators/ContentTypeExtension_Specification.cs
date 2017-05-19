@@ -25,9 +25,9 @@ namespace OpenRasta.Tests.Unit.Web.UriDecorators
 
             when_parsing();
             ParsingResult.LegacyShouldBeTrue();
-            ProcessedUri.LegacyShouldBe("http://localhost/vdir/customer/1");
+          ProcessedUri.ShouldBe(new Uri("http://localhost/vdir/customer/1"));
 
-            when_applying();
+          when_applying();
           Context.PipelineData.ResponseCodec.CodecType.ShouldBe(typeof(XmlCodec));
           Context.Response.Entity.ContentType.LegacyShouldBe(MediaType.Xml);
 

@@ -17,6 +17,7 @@ using OpenRasta.DI;
 using OpenRasta.Testing;
 using OpenRasta.Tests.Unit.Fakes;
 using OpenRasta.Web;
+using Shouldly;
 
 namespace IUriResolverExtensions_Specification
 {
@@ -112,8 +113,8 @@ namespace IUriResolverExtensions_Specification
             GivenUriMapping<Frodo>("/theshrine", null, null);
             GivenUriMapping<Sauron>("/mordor", null, null);
 
-            typeof(Frodo).CreateUri(new Uri("http://localhost")).LegacyShouldBe("http://localhost/theshrine");
-            typeof(Sauron).CreateUri(new Uri("http://localhost")).LegacyShouldBe("http://localhost/mordor");
+          typeof(Frodo).CreateUri(new Uri("http://localhost")).ShouldBe(new Uri("http://localhost/theshrine"));
+          typeof(Sauron).CreateUri(new Uri("http://localhost")).ShouldBe(new Uri("http://localhost/mordor"));
         }
         [Test]
         public void the_uri_is_created_using_contextual_base_address_from_the_context()

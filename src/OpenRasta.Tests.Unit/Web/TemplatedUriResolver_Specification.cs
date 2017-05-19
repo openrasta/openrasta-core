@@ -55,7 +55,7 @@ namespace TemplatedUriResolver_Specification
 
             when_creating_uri<IConvertible>("location2", null);
 
-            Result.LegacyShouldBe("http://localhost/location2");
+          Result.ShouldBe(new Uri("http://localhost/location2"));
         }
 
 
@@ -101,7 +101,7 @@ namespace TemplatedUriResolver_Specification
 
             when_creating_uri<IConvertible>(null);
 
-            Result.LegacyShouldBe("http://localhost/location1");
+          Result.ShouldBe(new Uri("http://localhost/location1"));
         }
 
         [Test]
@@ -112,7 +112,7 @@ namespace TemplatedUriResolver_Specification
 
             when_creating_uri<Frodo>(null);
 
-            Result.LegacyShouldBe("http://localhost/theshire");
+          Result.ShouldBe(new Uri("http://localhost/theshire"));
         }
 
         [Test]
@@ -122,7 +122,7 @@ namespace TemplatedUriResolver_Specification
 
             when_creating_uri<Frodo>("http://localhost/lotr/".ToUri(), null);
 
-            Result.LegacyShouldBe("http://localhost/lotr/theshire");
+          Result.ShouldBe(new Uri("http://localhost/lotr/theshire"));
         }
 
         [Test]
@@ -132,7 +132,7 @@ namespace TemplatedUriResolver_Specification
 
             when_creating_uri<Frodo>("http://localhost/lotr".ToUri(), null);
 
-            Result.LegacyShouldBe("http://localhost/lotr/theshire");
+          Result.ShouldBe(new Uri("http://localhost/lotr/theshire"));
         }
 
         [Test]
@@ -143,7 +143,7 @@ namespace TemplatedUriResolver_Specification
 
             when_creating_uri<Frodo>(new NameValueCollection{{"character", "frodo"}});
 
-            Result.LegacyShouldBe("http://localhost/theshire/frodo");
+          Result.ShouldBe(new Uri("http://localhost/theshire/frodo"));
         }
     }
     namespace context
