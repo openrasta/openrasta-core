@@ -15,6 +15,7 @@ namespace OpenRasta.Testing
       values.ShouldAllBe(item => Equals(expected, item));
     }
 
+
     public static void LegacyShouldBe<T>(this Type valueToAnalyse)
     {
       valueToAnalyse.ShouldBe(typeof(T));
@@ -95,15 +96,15 @@ namespace OpenRasta.Testing
 
     public static IDictionary<T, U> LegacyShouldContain<T, U>(this IDictionary<T, U> dic, T key, U value)
     {
-      dic.ShouldContainKeyAndValue(key, value);
+      dic.ShouldContainKey(key);
+      dic[key].ShouldBe(value);
 
       return dic;
     }
 
     public static TExpected LegacyShouldBeOfType<TExpected>(this object obj)
     {
-      obj.ShouldBeOfType<TExpected>();
-      return (TExpected) obj;
+      return obj.ShouldBeAssignableTo<TExpected>();
     }
 
     public static T LegacyShouldBe<T>(this T valueToAnalyse, T expectedValue)
