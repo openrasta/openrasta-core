@@ -35,8 +35,9 @@ namespace StyleSheetModule_Specifications
         public void adding_a_media_with_a_comma_results_in_two_media_values()
         {
             WhenCreatingElement(()=>Document.CreateElement<IStyleElement>().Media("screen,alternate"));
-            ThenTheElement.Media.Count.LegacyShouldBe(2);
-            ThenTheElement.Media.LegacyShouldContain("screen");
+          ThenTheElement.Media.Count.ShouldBe(2);
+          //return valueToAnalyse;
+          ThenTheElement.Media.LegacyShouldContain("screen");
             ThenTheElement.Media.LegacyShouldContain("alternate");
         }
     }

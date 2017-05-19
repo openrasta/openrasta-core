@@ -110,8 +110,8 @@ namespace CodecRepository_Specification
       WhenFindingCodec("application/xml", typeof(Customer));
 
       ThenTheResult.CodecType.ShouldBe(typeof(AnotherCustomerCodec));
-      ThenTheResult.Configuration
-        .LegacyShouldBe("specific");
+      ThenTheResult.Configuration.ShouldBe("specific");
+      //return valueToAnalyse;
     }
 
     [Test]
@@ -123,8 +123,8 @@ namespace CodecRepository_Specification
       WhenFindingCodec("application/xml", typeof(Customer));
 
       ThenTheResult.CodecType.ShouldBe(typeof(CustomerCodec));
-      ThenTheResult.Configuration
-        .LegacyShouldBe("specific");
+      ThenTheResult.Configuration.ShouldBe("specific");
+      //return valueToAnalyse;
     }
   }
 
@@ -153,7 +153,8 @@ namespace CodecRepository_Specification
 
       WhenFindingCodecsFor<IList<Customer>>("application/xml");
 
-      ThenTheResult.Count.LegacyShouldBe(1);
+      ThenTheResult.Count.ShouldBe(1);
+      //return valueToAnalyse;
       ThenTheResult[0]
         .CodecType.ShouldBe(typeof(CustomerCodec));
     }
@@ -165,7 +166,8 @@ namespace CodecRepository_Specification
 
       WhenFindingCodecsFor<IList<Customer>>("application/xml");
 
-      ThenTheResult.Count.LegacyShouldBe(1);
+      ThenTheResult.Count.ShouldBe(1);
+      //return valueToAnalyse;
       ThenTheResult[0]
         .CodecType.ShouldBe(typeof(CustomerCodec));
     }
@@ -177,7 +179,8 @@ namespace CodecRepository_Specification
 
       WhenFindingCodecsFor<List<Customer>>("application/xml");
 
-      ThenTheResult.Count.LegacyShouldBe(1);
+      ThenTheResult.Count.ShouldBe(1);
+      //return valueToAnalyse;
       ThenTheResult[0]
         .CodecType.ShouldBe(typeof(CustomerCodec));
     }
@@ -189,7 +192,8 @@ namespace CodecRepository_Specification
 
       WhenFindingCodecsFor<IList<Customer>>("text/plain");
 
-      ThenTheResult.Count.LegacyShouldBe(1);
+      ThenTheResult.Count.ShouldBe(1);
+      //return valueToAnalyse;
       ThenTheResult[0]
         .CodecType.ShouldBe(typeof(AnotherCustomerCodec));
     }
@@ -201,7 +205,8 @@ namespace CodecRepository_Specification
 
       WhenFindingCodecsFor<IList<Customer>>("text/plain");
 
-      ThenTheResult.Count.LegacyShouldBe(1);
+      ThenTheResult.Count.ShouldBe(1);
+      //return valueToAnalyse;
       ThenTheResult[0]
         .CodecType.ShouldBe(typeof(AnotherCustomerCodec));
     }
@@ -214,7 +219,8 @@ namespace CodecRepository_Specification
 
       WhenFindingCodecsFor<IList<Customer>>("text/plain");
 
-      ThenTheResult.Count.LegacyShouldBe(1);
+      ThenTheResult.Count.ShouldBe(1);
+      //return valueToAnalyse;
       ThenTheResult[0]
         .CodecType.ShouldBe(typeof(AnotherCustomerCodec));
     }
@@ -227,7 +233,8 @@ namespace CodecRepository_Specification
 
       WhenFindingCodecsFor<string>("*/*");
 
-      ThenTheResult.Count.LegacyShouldBe(2);
+      ThenTheResult.Count.ShouldBe(2);
+      //return valueToAnalyse;
       ThenTheResult[0].CodecType.ShouldBe(typeof(AnotherCustomerCodec));
     }
 
@@ -239,7 +246,8 @@ namespace CodecRepository_Specification
       WhenFindingCodecsFor<object>("text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
 
       ThenTheResult.Count.ShouldBeGreaterThan(0);
-      ThenTheResult[0].MediaType.ToString().LegacyShouldBe("text/html");
+      ShouldBeTestExtensions.ShouldBe(ThenTheResult[0].MediaType.ToString(), "text/html");
+      //return valueToAnalyse;
     }
 
     protected void WhenFindingCodecsFor<TResourceType>(params string[] contentTypes)

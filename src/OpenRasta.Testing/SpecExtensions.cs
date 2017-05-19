@@ -10,18 +10,6 @@ namespace OpenRasta.Testing
 {
   public static class SpecExtensions
   {
-    public static void LegacyShouldCompleteSuccessfully(this Action codeToExecute)
-    {
-      codeToExecute();
-    }
-
-
-    public static T LegacyShouldBe<T>(this T valueToAnalyse, T expectedValue)
-    {
-      valueToAnalyse.ShouldBe(expectedValue);
-      return valueToAnalyse;
-    }
-
     public static IEnumerable<T> LegacyShouldContain<T>(this IEnumerable<T> list, T expected)
     {
       list.ShouldContain(expected);
@@ -38,12 +26,6 @@ namespace OpenRasta.Testing
     {
       values.Count().ShouldBe(count);
       return values;
-    }
-
-    public static T legacyShouldNotBeNull<T>(this T obj) where T : class
-    {
-      obj.ShouldNotBeNull();
-      return obj;
     }
   }
 }

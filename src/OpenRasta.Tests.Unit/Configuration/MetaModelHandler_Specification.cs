@@ -84,13 +84,16 @@ namespace MetaModelHandler_Specification
             Handler.Process(MetaModel);
 
             var uri1 = UriResolver.Match("http://localhost/customer".ToUri());
-            uri1.ResourceKey.ShouldBeAssignableTo<IType>().Name.LegacyShouldBe("Customer");
-            uri1.UriName.LegacyShouldBe("model");
+          ShouldBeTestExtensions.ShouldBe(uri1.ResourceKey.ShouldBeAssignableTo<IType>().Name, "Customer");
+          //return valueToAnalyse;
+          ShouldBeTestExtensions.ShouldBe(uri1.UriName, "model");
+          //return valueToAnalyse;
 
-            var uri2 = UriResolver.Match("http://localhost/preferedCustomer".ToUri());
-            uri2.ResourceKey.ShouldBeAssignableTo<IType>().Name.LegacyShouldBe("Customer");
-            uri2.UriCulture.LegacyShouldBe(CultureInfo.GetCultureInfo("fr-FR"));
-
+          var uri2 = UriResolver.Match("http://localhost/preferedCustomer".ToUri());
+          ShouldBeTestExtensions.ShouldBe(uri2.ResourceKey.ShouldBeAssignableTo<IType>().Name, "Customer");
+          //return valueToAnalyse;
+          uri2.UriCulture.ShouldBe(CultureInfo.GetCultureInfo("fr-FR"));
+          //return valueToAnalyse;
         }
 
         void given_uri_registration()
@@ -168,9 +171,9 @@ namespace MetaModelHandler_Specification
 
             when_executing_the_handler();
 
-            MetaModel.ResourceRegistrations[0].ResourceKey.ShouldBeAssignableTo<IType>()
-                .CompareTo(TypeSystem.FromClr(typeof(Customer)))
-                    .LegacyShouldBe(0);
+          MetaModel.ResourceRegistrations[0].ResourceKey.ShouldBeAssignableTo<IType>()
+            .CompareTo(TypeSystem.FromClr(typeof(Customer))).ShouldBe(0);
+          //return valueToAnalyse;
         }
         void given_resource_registration()
         {
@@ -195,7 +198,8 @@ namespace MetaModelHandler_Specification
 
             var htmlCodec = CodecRepository.Where(x => x.CodecType == typeof(HtmlErrorCodec));
 
-            htmlCodec.Count().LegacyShouldBe(2);
+          htmlCodec.Count().ShouldBe(2);
+          //return valueToAnalyse;
           htmlCodec.First().MediaType.Matches(MediaType.Xhtml).ShouldBeTrue();
           htmlCodec.Skip(1).First().MediaType.Matches(MediaType.Html).ShouldBeTrue();
         }
@@ -206,20 +210,23 @@ namespace MetaModelHandler_Specification
 
             when_executing_the_handler();
 
-            CodecRepository.Count().LegacyShouldBe(4);
-            var first = CodecRepository.First();
+          CodecRepository.Count().ShouldBe(4);
+          //return valueToAnalyse;
+          var first = CodecRepository.First();
           first.CodecType.ShouldBe(typeof(CustomerCodec));
-          first.MediaType.LegacyShouldBe(MediaType.Json);
-            first.Extensions.LegacyShouldContain("json");
-            first.Extensions.Count.LegacyShouldBe(1);
+          first.MediaType.ShouldBe(MediaType.Json);
+          //return valueToAnalyse;
+          first.Extensions.LegacyShouldContain("json");
+          first.Extensions.Count.ShouldBe(1);
+          //return valueToAnalyse;
 
-            var second = CodecRepository.Skip(1).First();
+          var second = CodecRepository.Skip(1).First();
           second.CodecType.ShouldBe(typeof(CustomerCodec));
-          second.MediaType.LegacyShouldBe(MediaType.Xml);
-            second.Extensions.LegacyShouldContain("xml");
-            second.Extensions.Count.LegacyShouldBe(1);
-
-
+          second.MediaType.ShouldBe(MediaType.Xml);
+          //return valueToAnalyse;
+          second.Extensions.LegacyShouldContain("xml");
+          second.Extensions.Count.ShouldBe(1);
+          //return valueToAnalyse;
         }
         [Test]
         public void cannot_add_a_codec_not_implementing_the_correct_interfaces()

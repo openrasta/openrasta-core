@@ -5,6 +5,7 @@ using System.Text;
 using NUnit.Framework;
 using OpenRasta.Testing;
 using OpenRasta.TypeSystem;
+using Shouldly;
 
 namespace PropertyPathManager_Specification
 {
@@ -31,12 +32,16 @@ namespace PropertyPathManager_Specification
 
             var parseResult1 = components.Count > 0 ? components[0] : new PathComponent();
             var parseResult2 = components.Count > 1 ? components[1] : new PathComponent();
-            
-            parseResult1.ParsedValue.LegacyShouldBe(parsedPart);
-            parseResult1.Type.LegacyShouldBe(type);
 
-            parseResult2.ParsedValue.LegacyShouldBe(parsedPartTwo);
-            parseResult2.Type.LegacyShouldBe(result2);
+          ShouldBeTestExtensions.ShouldBe(parseResult1.ParsedValue, parsedPart);
+          //return valueToAnalyse;
+          parseResult1.Type.ShouldBe(type);
+          //return valueToAnalyse;
+
+          ShouldBeTestExtensions.ShouldBe(parseResult2.ParsedValue, parsedPartTwo);
+          //return valueToAnalyse;
+          parseResult2.Type.ShouldBe(result2);
+          //return valueToAnalyse;
         }
         [TestCase(":0", ":0", PathComponentType.Member, new[]{""})]
         [TestCase("", "", PathComponentType.Constructor, new[] { "" })]
@@ -53,8 +58,10 @@ namespace PropertyPathManager_Specification
         {
             var pathType = new PathManager().GetPathType(prefixes, path);
 
-            pathType.Type.LegacyShouldBe(componentType);
-            pathType.ParsedValue.LegacyShouldBe(parsedPart);
+          pathType.Type.ShouldBe(componentType);
+          //return valueToAnalyse;
+          ShouldBeTestExtensions.ShouldBe(pathType.ParsedValue, parsedPart);
+          //return valueToAnalyse;
         }
     }
 }

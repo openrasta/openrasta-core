@@ -27,7 +27,8 @@ namespace OpenRasta.Tests.Unit.OperationModel.Interceptors
 
       when_creating_interceptors();
 
-      Interceptors.OfType<SystemInterceptor>().Count().LegacyShouldBe(1);
+      Interceptors.OfType<SystemInterceptor>().Count().ShouldBe(1);
+      //return valueToAnalyse;
     }
 
     [Test]
@@ -38,7 +39,8 @@ namespace OpenRasta.Tests.Unit.OperationModel.Interceptors
 
       when_creating_interceptors();
 
-      Interceptors.OfType<SomeKindOfInterceptorAttribute.InlineInterceptor>().Count().LegacyShouldBe(1);
+      Interceptors.OfType<SomeKindOfInterceptorAttribute.InlineInterceptor>().Count().ShouldBe(1);
+      //return valueToAnalyse;
     }
 
     [Test]
@@ -49,7 +51,8 @@ namespace OpenRasta.Tests.Unit.OperationModel.Interceptors
 
       when_creating_interceptors();
 
-      Interceptors.OfType<AttributePosingAsAnInterceptor>().Count().LegacyShouldBe(1);
+      Interceptors.OfType<AttributePosingAsAnInterceptor>().Count().ShouldBe(1);
+      //return valueToAnalyse;
     }
   }
 
@@ -132,7 +135,8 @@ namespace OpenRasta.Tests.Unit.OperationModel.Interceptors
       when_creating_wrapper();
       invoking_wrapped_operation();
 
-      InvokeResult.Single().Value.LegacyShouldBe("Calm down dear!");
+      InvokeResult.Single().Value.ShouldBe("Calm down dear!");
+      //return valueToAnalyse;
     }
   }
 

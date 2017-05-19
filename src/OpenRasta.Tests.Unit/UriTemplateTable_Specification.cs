@@ -17,6 +17,7 @@ using System.Linq;
 using NUnit.Framework;
 using OpenRasta;
 using OpenRasta.Testing;
+using Shouldly;
 
 namespace UriTemplateTable_Specification
 {
@@ -32,10 +33,14 @@ namespace UriTemplateTable_Specification
                 new KeyValuePair<OpenRasta.UriTemplate, object>(new OpenRasta.UriTemplate("resource1?query2={queryText}"), null)
             });
             Collection<OpenRasta.UriTemplateMatch> match = table.Match(new Uri("http://localhost/resource1?query=testing a query"));
-            match.Count.LegacyShouldBe(2);
-            match[0].QueryStringVariables.Count.LegacyShouldBe(1);
-            match[1].QueryStringVariables.Count.LegacyShouldBe(0);
-            match[0].QueryStringVariables["queryText"].LegacyShouldBe("testing a query");
+          match.Count.ShouldBe(2);
+          //return valueToAnalyse;
+          match[0].QueryStringVariables.Count.ShouldBe(1);
+          //return valueToAnalyse;
+          match[1].QueryStringVariables.Count.ShouldBe(0);
+          //return valueToAnalyse;
+          ShouldBeTestExtensions.ShouldBe(match[0].QueryStringVariables["queryText"], "testing a query");
+          //return valueToAnalyse;
         }
 
         [Test]
@@ -49,9 +54,12 @@ namespace UriTemplateTable_Specification
             });
             Collection<OpenRasta.UriTemplateMatch> match = table.Match(new Uri("http://localhost/resource1"));
 
-            match.Count.LegacyShouldBe(3);
-            match[0].PathSegmentVariables.Count.LegacyShouldBe(0);
-            match[0].PathSegmentVariables.Count.LegacyShouldBe(0);
+          match.Count.ShouldBe(3);
+          //return valueToAnalyse;
+          match[0].PathSegmentVariables.Count.ShouldBe(0);
+          //return valueToAnalyse;
+          match[0].PathSegmentVariables.Count.ShouldBe(0);
+          //return valueToAnalyse;
         }
 
         [Test]
@@ -65,10 +73,14 @@ namespace UriTemplateTable_Specification
             });
             Collection<OpenRasta.UriTemplateMatch> match = table.Match(new Uri("http://localhost/resource1?query=ceci_nest_pas_un_value"));
 
-            match.Count.LegacyShouldBe(3);
-            match[0].QueryStringVariables.Count.LegacyShouldBe(1);
-            match[0].QueryParameters.Count.LegacyShouldBe(1);
-            match[0].QueryStringVariables["quasiText"].LegacyShouldBe("ceci_nest_pas_un_value");
+          match.Count.ShouldBe(3);
+          //return valueToAnalyse;
+          match[0].QueryStringVariables.Count.ShouldBe(1);
+          //return valueToAnalyse;
+          match[0].QueryParameters.Count.ShouldBe(1);
+          //return valueToAnalyse;
+          ShouldBeTestExtensions.ShouldBe(match[0].QueryStringVariables["quasiText"], "ceci_nest_pas_un_value");
+          //return valueToAnalyse;
         }
 
         [Test]
@@ -83,10 +95,14 @@ namespace UriTemplateTable_Specification
             });
             Collection<OpenRasta.UriTemplateMatch> match = table.Match(new Uri("http://localhost/resource1?query=ceci_nest_pas_un_value&irrelevant=value"));
 
-            match.Count.LegacyShouldBe(4);
-            match[0].QueryStringVariables.Count.LegacyShouldBe(1);
-            match[0].QueryParameters.Count.LegacyShouldBe(1);
-            match[0].QueryStringVariables["quasiText"].LegacyShouldBe("ceci_nest_pas_un_value");
+          match.Count.ShouldBe(4);
+          //return valueToAnalyse;
+          match[0].QueryStringVariables.Count.ShouldBe(1);
+          //return valueToAnalyse;
+          match[0].QueryParameters.Count.ShouldBe(1);
+          //return valueToAnalyse;
+          ShouldBeTestExtensions.ShouldBe(match[0].QueryStringVariables["quasiText"], "ceci_nest_pas_un_value");
+          //return valueToAnalyse;
         }
 
         [Test]
@@ -99,11 +115,15 @@ namespace UriTemplateTable_Specification
             });
 
             Collection<OpenRasta.UriTemplateMatch> match = table.Match(new Uri("http://localhost/resource1/123?query=ceci_nest_pas_un_value"));
-            
-            match.Count.LegacyShouldBe(2);
-            match.First().QueryStringVariables.Count.LegacyShouldBe(1);
-            match.First().PathSegmentVariables.Count.LegacyShouldBe(1);
-            match.First().QueryParameters.Count.LegacyShouldBe(2);
+
+          match.Count.ShouldBe(2);
+          //return valueToAnalyse;
+          match.First().QueryStringVariables.Count.ShouldBe(1);
+          //return valueToAnalyse;
+          match.First().PathSegmentVariables.Count.ShouldBe(1);
+          //return valueToAnalyse;
+          match.First().QueryParameters.Count.ShouldBe(2);
+          //return valueToAnalyse;
         }
         [Test]
         public void literal_takes_precedence_over_template()
@@ -116,8 +136,9 @@ namespace UriTemplateTable_Specification
                                              });
             var match = table.Match("http://localhost/resource1/new".ToUri());
 
-            match.LegacyShouldHaveCountOf(2)
-                    .First().Template.ToString().LegacyShouldBe("/resource1/new");
+          ShouldBeTestExtensions.ShouldBe(match.LegacyShouldHaveCountOf(2)
+              .First().Template.ToString(), "/resource1/new");
+          //return valueToAnalyse;
         }
     }
 }

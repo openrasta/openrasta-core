@@ -26,8 +26,8 @@ namespace OpenRasta.Tests.Unit.OperationModel.Filters
                 when_filtering_operations();
 
               FilteredOperations.ShouldBe(Operations);
-              Errors.Errors.Count.LegacyShouldBe(0);
-
+              Errors.Errors.Count.ShouldBe(0);
+              //return valueToAnalyse;
             }
         }
         
@@ -42,9 +42,10 @@ namespace OpenRasta.Tests.Unit.OperationModel.Filters
 
                 when_filtering_operations();
 
-                FilteredOperations.LegacyShouldHaveCountOf(1).First().Name.LegacyShouldBe("Post");
-                Errors.Errors.Count.LegacyShouldBe(0);
-                
+              ShouldBeTestExtensions.ShouldBe(FilteredOperations.LegacyShouldHaveCountOf(1).First().Name, "Post");
+              //return valueToAnalyse;
+              Errors.Errors.Count.ShouldBe(0);
+              //return valueToAnalyse;
             }
 
             [Test]

@@ -3,6 +3,7 @@ using System.Linq;
 using System.Reflection;
 using NUnit.Framework;
 using OpenRasta.Testing;
+using Shouldly;
 
 namespace OpenRasta.Tests.Unit.OperationModel.MethodBased
 {
@@ -20,10 +21,11 @@ namespace OpenRasta.Tests.Unit.OperationModel.MethodBased
     }
     void then_operation_count_should_be_same_as_public_methods_on_handler(Type handlerType)
     {
-      Operations.Count().LegacyShouldBe(handlerType.GetMethods(BindingFlags.Instance |
+      Operations.Count().ShouldBe(handlerType.GetMethods(BindingFlags.Instance |
                                                          BindingFlags.Static |
                                                          BindingFlags.Public |
                                                          BindingFlags.FlattenHierarchy).Length);
+      //return valueToAnalyse;
     }
   }
 }

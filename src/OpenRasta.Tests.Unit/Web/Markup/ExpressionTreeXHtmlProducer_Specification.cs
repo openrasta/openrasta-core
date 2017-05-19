@@ -33,25 +33,25 @@ namespace ExpressionTreeXHtmlProducer_Specification
         [Test]
         public void a_reference_type_property_is_identified_correctly()
         {
-            XHtml.TextBox<Customer>(c => c.FirstName)
-                .Name
-                .LegacyShouldBe("Customer.FirstName");
+          ShouldBeTestExtensions.ShouldBe(XHtml.TextBox<Customer>(c => c.FirstName)
+              .Name, "Customer.FirstName");
+          //return valueToAnalyse;
         }
 
         [Test]
         public void a_reference_type_property_is_identified_correctly_on_password()
         {
-            XHtml.Password<Customer>(c => c.FirstName)
-                .Name
-                .LegacyShouldBe("Customer.FirstName");
+          ShouldBeTestExtensions.ShouldBe(XHtml.Password<Customer>(c => c.FirstName)
+              .Name, "Customer.FirstName");
+          //return valueToAnalyse;
         }
 
         [Test]
         public void a_value_type_property_is_identified_correctly()
         {
-            XHtml.TextBox<Customer>(c => c.DateOfBirth.Day)
-                .Name
-                .LegacyShouldBe("Customer.DateOfBirth.Day");
+          ShouldBeTestExtensions.ShouldBe(XHtml.TextBox<Customer>(c => c.DateOfBirth.Day)
+              .Name, "Customer.DateOfBirth.Day");
+          //return valueToAnalyse;
         }
     }
 
@@ -86,7 +86,8 @@ namespace ExpressionTreeXHtmlProducer_Specification
             var customer = new Customer {FirstName = "John"};
             var textbox = XHtml.TextBox(() => customer.FirstName);
 
-            textbox.Name.LegacyShouldBe("Customer.FirstName");
+          ShouldBeTestExtensions.ShouldBe(textbox.Name, "Customer.FirstName");
+          //return valueToAnalyse;
         }
 
         [Test]
@@ -94,7 +95,8 @@ namespace ExpressionTreeXHtmlProducer_Specification
         {
             var customer = (new Customer {FirstName = "John"});
             var textbox = XHtml.TextBox(() => customer.FirstName);
-            textbox.Type.LegacyShouldBe(InputType.Text);
+          textbox.Type.ShouldBe(InputType.Text);
+          //return valueToAnalyse;
         }
 
         [Test]
@@ -103,7 +105,8 @@ namespace ExpressionTreeXHtmlProducer_Specification
             var customer = new Customer {FirstName = "John"};
             var textbox = XHtml.TextBox(() => customer.FirstName);
 
-            textbox.Value.LegacyShouldBe("John");
+          ShouldBeTestExtensions.ShouldBe(textbox.Value, "John");
+          //return valueToAnalyse;
         }
     }
 
@@ -116,12 +119,16 @@ namespace ExpressionTreeXHtmlProducer_Specification
             var select = XHtml.Select(() => t.Enum,
                                             new Dictionary<string, string> { { "key1", "value1" }, { "key2", "value2" } });
             var first = @select.ChildNodes[0].ShouldBeAssignableTo<IOptionElement>();
-            first.InnerText.LegacyShouldBe("value1");
-            first.Value.LegacyShouldBe("key1");
+          ShouldBeTestExtensions.ShouldBe(first.InnerText, "value1");
+          //return valueToAnalyse;
+          ShouldBeTestExtensions.ShouldBe(first.Value, "key1");
+          //return valueToAnalyse;
 
-            var second = @select.ChildNodes[1].ShouldBeAssignableTo<IOptionElement>();
-            second.InnerText.LegacyShouldBe("value2");
-            second.Value.LegacyShouldBe("key2");
+          var second = @select.ChildNodes[1].ShouldBeAssignableTo<IOptionElement>();
+          ShouldBeTestExtensions.ShouldBe(second.InnerText, "value2");
+          //return valueToAnalyse;
+          ShouldBeTestExtensions.ShouldBe(second.Value, "key2");
+          //return valueToAnalyse;
         }
 
         [Test]
@@ -129,22 +136,26 @@ namespace ExpressionTreeXHtmlProducer_Specification
         {
             var target = new Test { Enum = AttributeTargets.All };
             var select = XHtml.Select(() => target.Enum);
-            select.Name.LegacyShouldBe("Test.Enum");
+          ShouldBeTestExtensions.ShouldBe(@select.Name, "Test.Enum");
+          //return valueToAnalyse;
           var node = @select.ChildNodes.Cast<IOptionElement>().SingleOrDefault(x => x.InnerText == "All");
           node.ShouldNotBeNull();
           node.Selected.ShouldBeTrue();
-          select.ChildNodes.Count.LegacyShouldBe(Enum.GetNames(typeof (AttributeTargets)).Length);
+          @select.ChildNodes.Count.ShouldBe(Enum.GetNames(typeof (AttributeTargets)).Length);
+          //return valueToAnalyse;
         }
         [Test]
         public void a_nullable_enum_property_sets_to_null_selects_an_empty_option_element_in_first_position()
         {
             var target = new Test();
             var select = XHtml.Select(() => target.NullableEnum);
-            select.Name.LegacyShouldBe("Test.NullableEnum");
+          ShouldBeTestExtensions.ShouldBe(@select.Name, "Test.NullableEnum");
+          //return valueToAnalyse;
           var node = @select.ChildNodes.Cast<IOptionElement>().SingleOrDefault(x => x.InnerText == "");
           node.ShouldNotBeNull();
           node.Selected.ShouldBeTrue();
-          select.ChildNodes.Count.LegacyShouldBe(Enum.GetNames(typeof(AttributeTargets)).Length+1);
+          @select.ChildNodes.Count.ShouldBe(Enum.GetNames(typeof(AttributeTargets)).Length+1);
+          //return valueToAnalyse;
         }
     }
     public class when_building_checkboxes:xhtml_context
@@ -154,10 +165,12 @@ namespace ExpressionTreeXHtmlProducer_Specification
             var target = new Test {IsSelected = true};
             var checkbox = XHtml.CheckBox(() => target.IsSelected);
 
-            checkbox.Type.LegacyShouldBe(InputType.CheckBox);
+          checkbox.Type.ShouldBe(InputType.CheckBox);
+          //return valueToAnalyse;
           checkbox.Checked.ShouldBeTrue();
-          checkbox.Name.LegacyShouldBe("Test.IsSelected");
-            checkbox.ToString().LegacyShouldContain("<input type=\"checkbox\"");
+          ShouldBeTestExtensions.ShouldBe(checkbox.Name, "Test.IsSelected");
+          //return valueToAnalyse;
+          checkbox.ToString().LegacyShouldContain("<input type=\"checkbox\"");
         }
     }
 

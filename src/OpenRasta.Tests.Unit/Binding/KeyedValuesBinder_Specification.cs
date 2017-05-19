@@ -30,7 +30,8 @@ namespace KeyedValuesBinder_Specification
             var binder = new KeyedValuesBinder(TypeOf<Customer>(), "customer");
             binder.SetProperty("username", new[] { "johndoe" }, (str, type) => BindingResult.Success(str));
             var customer = (Customer)binder.BuildObject().Instance;
-            customer.Username.LegacyShouldBe("johndoe");
+          ShouldBeTestExtensions.ShouldBe(customer.Username, "johndoe");
+          //return valueToAnalyse;
         }
         [Test]
         public void the_same_object_is_returned_when_building_twice_without_changes()
@@ -53,8 +54,10 @@ namespace KeyedValuesBinder_Specification
             binder.SetProperty("firstname", new[] { "john" }, (str, type) => BindingResult.Success(str));
             var customer = (Customer)binder.BuildObject().Instance;
 
-            customer.Username.LegacyShouldBe("johndoe");
-            customer.FirstName.LegacyShouldBe("john");
+          ShouldBeTestExtensions.ShouldBe(customer.Username, "johndoe");
+          //return valueToAnalyse;
+          ShouldBeTestExtensions.ShouldBe(customer.FirstName, "john");
+          //return valueToAnalyse;
         }
         [Test]
         public void enumerables_are_initialized_as_empty_by_default()
@@ -63,8 +66,8 @@ namespace KeyedValuesBinder_Specification
 
             var result = binder.BuildObject();
           result.Successful.ShouldBeTrue();
-          result.Instance
-            .legacyShouldNotBeNull().ShouldBeAssignableTo<List<Customer>>();
+          result.Instance.ShouldNotBeNull();
+          result.Instance.ShouldBeAssignableTo<List<Customer>>();
         }
         [Test]
         public void enumerables_can_be_built_without_headers()
@@ -78,9 +81,12 @@ namespace KeyedValuesBinder_Specification
           binder.SetProperty(":1.FirstName", new[] { "Sam" }, valueConverter).ShouldBeTrue();
 
           var customers = (IEnumerable<Customer>)binder.BuildObject().Instance;
-            customers.Count().LegacyShouldBe(2);
-            customers.First().FirstName.LegacyShouldBe("Frodo");
-            customers.Skip(1).First().FirstName.LegacyShouldBe("Sam");
+          customers.Count().ShouldBe(2);
+          //return valueToAnalyse;
+          ShouldBeTestExtensions.ShouldBe(customers.First().FirstName, "Frodo");
+          //return valueToAnalyse;
+          ShouldBeTestExtensions.ShouldBe(customers.Skip(1).First().FirstName, "Sam");
+          //return valueToAnalyse;
         }
         [Test]
         public void the_property_is_assigned_even_when_the_prefix_has_the_same_name()
@@ -90,8 +96,9 @@ namespace KeyedValuesBinder_Specification
 
           binder.SetProperty("firstName", new[] { "Smeagol" }, valueConverter).ShouldBeTrue();
 
-          binder.BuildObject().Instance.ShouldBeAssignableTo<Customer>()
-                .FirstName.LegacyShouldBe("Smeagol");
+          ShouldBeTestExtensions.ShouldBe(binder.BuildObject().Instance.ShouldBeAssignableTo<Customer>()
+              .FirstName, "Smeagol");
+          //return valueToAnalyse;
         }
         [Test]
         public void multiple_properties_on_child_objects_are_assigned_correctly()
@@ -108,7 +115,8 @@ namespace KeyedValuesBinder_Specification
           binder.SetProperty("Orders:2.Description", new[] { "something" }, valueConverter).ShouldBeTrue();
 
           var customer = (Customer)binder.BuildObject().Instance;
-            customer.Orders.Count.LegacyShouldBe(3);
+          customer.Orders.Count.ShouldBe(3);
+          //return valueToAnalyse;
           customer.Orders[0].IsSelected.ShouldBeFalse();
           customer.Orders[1].IsSelected.ShouldBeTrue();
           customer.Orders[2].IsSelected.ShouldBeFalse();
@@ -122,9 +130,12 @@ namespace KeyedValuesBinder_Specification
           binder.SetProperty("Attributes", new[] { "green eyes" }, valueConverter).ShouldBeTrue();
 
           var customer = binder.BuildObject().Instance as Customer;
-            customer.Attributes.Count().LegacyShouldBe(2);
-            customer.Attributes.First().LegacyShouldBe("blue eyes");
-            customer.Attributes.Skip(1).First().LegacyShouldBe("green eyes");
+          customer.Attributes.Count().ShouldBe(2);
+          //return valueToAnalyse;
+          ShouldBeTestExtensions.ShouldBe(customer.Attributes.First(), "blue eyes");
+          //return valueToAnalyse;
+          ShouldBeTestExtensions.ShouldBe(customer.Attributes.Skip(1).First(), "green eyes");
+          //return valueToAnalyse;
         }
         protected IType TypeOf<T>()
         {

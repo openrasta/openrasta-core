@@ -43,16 +43,21 @@ namespace Instances_Specification
 
       TypeBuilder.Update(newCustomer);
 
-      newCustomer.Username.LegacyShouldBe("johndoe");
-      newCustomer.FirstName.LegacyShouldBe("John");
+      ShouldBeTestExtensions.ShouldBe(newCustomer.Username, "johndoe");
+      //return valueToAnalyse;
+      ShouldBeTestExtensions.ShouldBe(newCustomer.FirstName, "John");
+      //return valueToAnalyse;
 
       given_property("lastname", "doe");
       newCustomer = new Customer {FirstName = "John"};
       TypeBuilder.Update(newCustomer);
 
-      newCustomer.Username.LegacyShouldBe("johndoe");
-      newCustomer.FirstName.LegacyShouldBe("John");
-      newCustomer.LastName.LegacyShouldBe("doe");
+      ShouldBeTestExtensions.ShouldBe(newCustomer.Username, "johndoe");
+      //return valueToAnalyse;
+      ShouldBeTestExtensions.ShouldBe(newCustomer.FirstName, "John");
+      //return valueToAnalyse;
+      ShouldBeTestExtensions.ShouldBe(newCustomer.LastName, "doe");
+      //return valueToAnalyse;
     }
   }
 
@@ -93,7 +98,8 @@ namespace Instances_Specification
       TypeBuilder.GetProperty("FirstName")
         .TrySetValue(2).ShouldBeFalse();
 
-      TypeBuilder.Changes.Count.LegacyShouldBe(0);
+      TypeBuilder.Changes.Count.ShouldBe(0);
+      //return valueToAnalyse;
     }
 
     [Test]
@@ -103,7 +109,8 @@ namespace Instances_Specification
 
       TypeBuilder.GetProperty("FirstName").TrySetValue("Frodo");
 
-      TypeBuilder.Changes.Count.LegacyShouldBe(1);
+      TypeBuilder.Changes.Count.ShouldBe(1);
+      //return valueToAnalyse;
       TypeBuilder.Changes.ContainsKey("FirstName").ShouldBeTrue();
     }
 
@@ -140,7 +147,8 @@ namespace Instances_Specification
       given_builder_for<Customer>();
       TypeBuilder.GetProperty("FirstName")
         .TrySetValue("Frodo");
-      TypeBuilder.Changes["firstname"].Value.LegacyShouldBe("Frodo");
+      TypeBuilder.Changes["firstname"].Value.ShouldBe("Frodo");
+      //return valueToAnalyse;
     }
   }
 
@@ -163,7 +171,8 @@ namespace Instances_Specification
         .TrySetValue("hello").ShouldBeTrue();
 
       TypeBuilder.GetProperty("Username")
-        .Value.LegacyShouldBe("hello");
+        .Value.ShouldBe("hello");
+      //return valueToAnalyse;
     }
   }
 
@@ -189,7 +198,8 @@ namespace Instances_Specification
       customer.LastName = "Baggins";
       customer = TypeBuilder.Create() as Customer;
 
-      customer.FirstName.LegacyShouldBe("Frodo");
+      ShouldBeTestExtensions.ShouldBe(customer.FirstName, "Frodo");
+      //return valueToAnalyse;
       customer.LastName.ShouldBeNull();
     }
 
@@ -207,7 +217,8 @@ namespace Instances_Specification
       firstName.TrySetValue(new[] {"Smeagol"}, IdentityConverter);
 
       TypeBuilder.Update(customerInstance);
-      customerInstance.FirstName.LegacyShouldBe("Smeagol");
+      ShouldBeTestExtensions.ShouldBe(customerInstance.FirstName, "Smeagol");
+      //return valueToAnalyse;
     }
 
     [Test]
@@ -222,7 +233,8 @@ namespace Instances_Specification
 
       object newCustomer = TypeBuilder.Create();
       newCustomer.ShouldNotBeSameAs(customer);
-      customer.FirstName.LegacyShouldBe(null);
+      ShouldBeTestExtensions.ShouldBe(customer.FirstName, null);
+      //return valueToAnalyse;
     }
   }
 
@@ -251,8 +263,10 @@ namespace Instances_Specification
       given_property("FirstName", "John");
       WhenCreatingTheObject();
 
-      ThenTheObject<Customer>().FirstName.LegacyShouldBe("John");
-      ThenTheObject<Customer>().Username.LegacyShouldBe("johndoe");
+      ShouldBeTestExtensions.ShouldBe(ThenTheObject<Customer>().FirstName, "John");
+      //return valueToAnalyse;
+      ShouldBeTestExtensions.ShouldBe(ThenTheObject<Customer>().Username, "johndoe");
+      //return valueToAnalyse;
     }
 
     [Test]
@@ -262,7 +276,8 @@ namespace Instances_Specification
 
       TypeBuilder.TrySetValue(3).ShouldBeTrue();
       TypeBuilder.HasValue.ShouldBeTrue();
-      TypeBuilder.Value.LegacyShouldBe(3);
+      TypeBuilder.Value.ShouldBe(3);
+      //return valueToAnalyse;
     }
 
     [Test]
@@ -284,8 +299,10 @@ namespace Instances_Specification
 
       WhenCreatingTheObject();
 
-      ThenTheObject<Customer>().Address.Line1.LegacyShouldBe("Cadbury Street");
-      ThenTheObject<Customer>().Address.City.LegacyShouldBe("London");
+      ShouldBeTestExtensions.ShouldBe(ThenTheObject<Customer>().Address.Line1, "Cadbury Street");
+      //return valueToAnalyse;
+      ShouldBeTestExtensions.ShouldBe(ThenTheObject<Customer>().Address.City, "London");
+      //return valueToAnalyse;
     }
 
     [Test]
@@ -296,8 +313,10 @@ namespace Instances_Specification
       given_property("CustomersByName:john.FirstName", "John");
       given_property("CustomersByName:john.LastName", "Doe");
       WhenCreatingTheObject();
-      ThenTheObject<House>().CustomersByName["john"].FirstName.LegacyShouldBe("John");
-      ThenTheObject<House>().CustomersByName["john"].LastName.LegacyShouldBe("Doe");
+      ShouldBeTestExtensions.ShouldBe(ThenTheObject<House>().CustomersByName["john"].FirstName, "John");
+      //return valueToAnalyse;
+      ShouldBeTestExtensions.ShouldBe(ThenTheObject<House>().CustomersByName["john"].LastName, "Doe");
+      //return valueToAnalyse;
     }
 
     [Test]
@@ -308,8 +327,10 @@ namespace Instances_Specification
       given_property("FirstName", "john");
 
       WhenCreatingTheObject();
-      ThenTheObject<Customer>().Username.LegacyShouldBe("johndoe");
-      ThenTheObject<Customer>().FirstName.LegacyShouldBe("john");
+      ShouldBeTestExtensions.ShouldBe(ThenTheObject<Customer>().Username, "johndoe");
+      //return valueToAnalyse;
+      ShouldBeTestExtensions.ShouldBe(ThenTheObject<Customer>().FirstName, "john");
+      //return valueToAnalyse;
     }
   }
 

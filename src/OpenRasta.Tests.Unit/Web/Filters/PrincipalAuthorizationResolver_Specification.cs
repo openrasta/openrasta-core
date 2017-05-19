@@ -28,8 +28,8 @@ namespace PrincipalAuthorizationResolver_Specification
             var context = new InMemoryCommunicationContext();
             var principal = new PrincipalAuthorizationInterceptor(context) { InRoles = new[] { "Administrators"}};
 
-            principal.BeforeExecute(new Mock<IOperation>().Object)
-                .LegacyShouldBe(true);
+          principal.BeforeExecute(new Mock<IOperation>().Object).ShouldBe(true);
+          //return valueToAnalyse;
         }
     }
 
@@ -44,8 +44,8 @@ namespace PrincipalAuthorizationResolver_Specification
             var rastaContext = new InMemoryCommunicationContext();
             var principal = new PrincipalAuthorizationInterceptor(rastaContext) { InRoles = new[] { "Administrators" } };
 
-            principal.BeforeExecute(new Mock<IOperation>().Object)
-                .LegacyShouldBe(true);
+          principal.BeforeExecute(new Mock<IOperation>().Object).ShouldBe(true);
+          //return valueToAnalyse;
 
 
           rastaContext.OperationResult.ShouldBeNull();
@@ -58,8 +58,8 @@ namespace PrincipalAuthorizationResolver_Specification
 
             var rastaContext = new InMemoryCommunicationContext();
             var authorizer = new PrincipalAuthorizationInterceptor(rastaContext) { Users = new[] { "johndoe" } };
-            authorizer.BeforeExecute(new Mock<IOperation>().Object)
-              .LegacyShouldBe(true);
+          authorizer.BeforeExecute(new Mock<IOperation>().Object).ShouldBe(true);
+          //return valueToAnalyse;
 
           rastaContext.OperationResult.ShouldBeNull();
         }

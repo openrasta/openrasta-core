@@ -23,7 +23,8 @@ namespace RequiresBasicAuthenticationInterceptor_Specification
           authenticationInterceptor.BeforeExecute(new Mock<IOperation>().Object).ShouldBeFalse();
           context.OperationResult.ShouldBeAssignableTo<OperationResult.Unauthorized>();
             var expectedHeader = String.Format("Basic realm=\"{0}\"", REALM);
-            context.Response.Headers["WWW-Authenticate"].LegacyShouldBe(expectedHeader);
+          ShouldBeTestExtensions.ShouldBe(context.Response.Headers["WWW-Authenticate"], expectedHeader);
+          //return valueToAnalyse;
         }
     }
 }

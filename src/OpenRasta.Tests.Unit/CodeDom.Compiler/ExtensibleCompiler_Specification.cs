@@ -5,6 +5,7 @@ using System.Text;
 using NUnit.Framework;
 using OpenRasta.CodeDom.Compiler;
 using OpenRasta.Testing;
+using Shouldly;
 
 namespace ExtensibleCompiler_Specification
 {
@@ -13,7 +14,8 @@ namespace ExtensibleCompiler_Specification
         [Test]
         public void there_are_no_snippet_modifiers()
         {
-            ExtensibleCSharpCodeProvider.SnippetModifiers.Count().LegacyShouldBe(0);
+          ExtensibleCSharpCodeProvider.SnippetModifiers.Count().ShouldBe(0);
+          //return valueToAnalyse;
         }
     }
 }

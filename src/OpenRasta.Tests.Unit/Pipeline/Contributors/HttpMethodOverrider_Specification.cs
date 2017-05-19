@@ -30,8 +30,9 @@ namespace HttpMethodOverrider_Specification
             given_pipeline_contributor<HttpMethodOverriderContributor>();
             var result = when_sending_notification<KnownStages.IHandlerSelection>();
 
-            result.LegacyShouldBe(PipelineContinuation.Abort);
-            Context.ServerErrors[0].ShouldBeAssignableTo<HttpMethodOverriderContributor.MethodIsNotPostError>();
+          result.ShouldBe(PipelineContinuation.Abort);
+          //return valueToAnalyse;
+          Context.ServerErrors[0].ShouldBeAssignableTo<HttpMethodOverriderContributor.MethodIsNotPostError>();
         }
 
         [Test]
@@ -43,7 +44,8 @@ namespace HttpMethodOverrider_Specification
             given_pipeline_contributor<HttpMethodOverriderContributor>();
             when_sending_notification<KnownStages.IHandlerSelection>();
 
-            Context.Request.HttpMethod.LegacyShouldBe("PUT");
+          ShouldBeTestExtensions.ShouldBe(Context.Request.HttpMethod, "PUT");
+          //return valueToAnalyse;
         }
     }
 
@@ -57,8 +59,10 @@ namespace HttpMethodOverrider_Specification
             given_pipeline_contributor<HttpMethodOverriderContributor>();
             when_sending_notification<KnownStages.IHandlerSelection>();
 
-            Context.Request.HttpMethod.LegacyShouldBe("POST");
-            Context.ServerErrors.Count.LegacyShouldBe(0);
+          ShouldBeTestExtensions.ShouldBe(Context.Request.HttpMethod, "POST");
+          //return valueToAnalyse;
+          Context.ServerErrors.Count.ShouldBe(0);
+          //return valueToAnalyse;
         }
     }
 }

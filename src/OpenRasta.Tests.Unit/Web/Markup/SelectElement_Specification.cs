@@ -44,7 +44,8 @@ namespace SelectElement_Specification
         {
             var element = Document.CreateElement<IOptionElement>().Value("value")["content"];
             element.Selected = true;
-            element.ToString().LegacyShouldBe("<option value=\"value\" selected=\"selected\">content</option>");
+          ShouldBeTestExtensions.ShouldBe(element.ToString(), "<option value=\"value\" selected=\"selected\">content</option>");
+          //return valueToAnalyse;
         }
         [Test]
         public void the_markup_for_not_selected_options_is_correct()
@@ -52,7 +53,8 @@ namespace SelectElement_Specification
 
             var element = Document.CreateElement<IOptionElement>().Value("value")["content"];
             element.Selected = false;
-            element.ToString().LegacyShouldBe("<option value=\"value\">content</option>");
+          ShouldBeTestExtensions.ShouldBe(element.ToString(), "<option value=\"value\">content</option>");
+          //return valueToAnalyse;
         }
     }
 }

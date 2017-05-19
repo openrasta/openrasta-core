@@ -14,6 +14,7 @@ using System.Text;
 using NUnit.Framework;
 using OpenRasta.Testing;
 using OpenRasta.Web;
+using Shouldly;
 
 namespace MultipartWriter_Specification
 {
@@ -62,14 +63,14 @@ namespace MultipartWriter_Specification
 
             WhenWritingTheMultipartMessage();
 
-            ThenTheResult.LegacyShouldBe(
-                @"
+          ShouldBeTestExtensions.ShouldBe(ThenTheResult, @"
 --boundary
 Content-Disposition: form-data; name=""user""
 
 username
 --boundary--
 ");
+          //return valueToAnalyse;
         }
     }
 }

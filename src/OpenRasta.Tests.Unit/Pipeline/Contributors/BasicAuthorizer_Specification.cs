@@ -8,6 +8,7 @@ using OpenRasta.Security;
 using OpenRasta.Testing;
 using OpenRasta.Testing.Contexts;
 using OpenRasta.Web;
+using Shouldly;
 
 namespace OpenRasta.Tests.Unit.Pipeline.Contributors
 {
@@ -33,8 +34,10 @@ namespace OpenRasta.Tests.Unit.Pipeline.Contributors
             Context.Request.Headers.Add("Authorization", "Basic " + Convert.ToBase64String(Encoding.ASCII.GetBytes(username + ":" + password)));
 
             var result = when_sending_notification<KnownStages.IHandlerSelection>();
-            result.LegacyShouldBe(PipelineContinuation.Continue);
-            Context.User.Identity.Name.LegacyShouldBe(username);
+          result.ShouldBe(PipelineContinuation.Continue);
+          //return valueToAnalyse;
+          ShouldBeTestExtensions.ShouldBe(Context.User.Identity.Name, username);
+          //return valueToAnalyse;
         }
     }
 }

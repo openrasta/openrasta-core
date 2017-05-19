@@ -47,8 +47,8 @@ namespace FormElement_Specification
         {
             WhenCreatingElement(() => new FormElement(false).Action("htp://localhost/"));
 
-            ThenTheElement.Method
-                .LegacyShouldBe("GET");
+          ShouldBeTestExtensions.ShouldBe(ThenTheElement.Method, "GET");
+          //return valueToAnalyse;
         }
         [Test]
         public void multiple_media_types_in_accept_results_in_a_comma_separated_list()

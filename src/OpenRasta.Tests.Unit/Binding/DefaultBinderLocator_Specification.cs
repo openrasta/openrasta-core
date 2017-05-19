@@ -7,6 +7,7 @@ using NUnit.Framework;
 using OpenRasta.Binding;
 using OpenRasta.Testing;
 using OpenRasta.TypeSystem;
+using Shouldly;
 
 namespace DefaultBinderLocator_Specification
 {
@@ -19,7 +20,8 @@ namespace DefaultBinderLocator_Specification
             var type = TypeSystems.Default.FromClr(typeof(ClassWithStaticBinder));
             var binderLocator = new DefaultObjectBinderLocator();
 
-            binderLocator.GetBinder(type).LegacyShouldBe(ClassWithStaticBinder.StaticBinder);
+          binderLocator.GetBinder(type).ShouldBe(ClassWithStaticBinder.StaticBinder);
+          //return valueToAnalyse;
         }
         private class ClassWithStaticBinder
         {

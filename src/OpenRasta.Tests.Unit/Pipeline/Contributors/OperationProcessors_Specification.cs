@@ -25,7 +25,8 @@ namespace OpenRasta.Tests.Unit.Web.Pipeline.Contributors
 
         when_executing_processor();
 
-        Result.LegacyShouldBe(PipelineContinuation.RenderNow);
+        Result.ShouldBe(PipelineContinuation.RenderNow);
+        //return valueToAnalyse;
         Context.OperationResult.ShouldBeAssignableTo<OperationResult.RequestMediaTypeUnsupported>();
       }
 

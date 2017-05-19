@@ -13,7 +13,8 @@ namespace OpenRasta.Tests.Unit.OperationModel.MethodBased.Operation
     {
       given_operation("GetText");
       Operation.InvokeAsync().Result.LegacyShouldHaveCountOf(1)
-        .First().Value.LegacyShouldBe("Hello, is it me you're looking for?");
+        .First().Value.ShouldBe("Hello, is it me you're looking for?");
+      //return valueToAnalyse;
     }
   }
 

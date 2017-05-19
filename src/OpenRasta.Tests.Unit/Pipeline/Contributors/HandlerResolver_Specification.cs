@@ -49,11 +49,12 @@ namespace HandlerResolver_Specification
             given_pipeline_resourceKey<Fake>();
             given_registration_handler<Fake, FakeHandler>();
 
-            when_sending_notification<KnownStages.IUriMatching>()
-                .LegacyShouldBe(PipelineContinuation.Continue);
+          when_sending_notification<KnownStages.IUriMatching>().ShouldBe(PipelineContinuation.Continue);
+          //return valueToAnalyse;
 
-            Context.PipelineData.SelectedHandlers.Count().LegacyShouldBe(1);
-            Context.PipelineData.SelectedHandlers.First().Equals<Fake>();
+          Context.PipelineData.SelectedHandlers.Count().ShouldBe(1);
+          //return valueToAnalyse;
+          Context.PipelineData.SelectedHandlers.First().Equals<Fake>();
             
         }
     }

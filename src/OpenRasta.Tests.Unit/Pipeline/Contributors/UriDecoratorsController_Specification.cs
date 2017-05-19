@@ -43,7 +43,8 @@ namespace UriDecoratorsController_Specification
             when_sending_notification<KnownStages.IUriMatching>();
 
           RemoveLastHello.ApplyWasCalled.ShouldBeTrue();
-          Context.Request.Uri.LegacyShouldBe(new Uri("http://localhost/segment"));
+          Context.Request.Uri.ShouldBe(new Uri("http://localhost/segment"));
+          //return valueToAnalyse;
         }
 
     }

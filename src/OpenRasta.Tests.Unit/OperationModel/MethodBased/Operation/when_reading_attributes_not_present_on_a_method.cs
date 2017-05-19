@@ -20,7 +20,7 @@ namespace OpenRasta.Tests.Unit.OperationModel.MethodBased.Operation
     {
       given_operation("GetHasOneAttribute", typeof(int));
 
-      Operation.FindAttributes<AttributeUsageAttribute>().legacyShouldNotBeNull().ShouldBeEmpty();
+      Operation.FindAttributes<AttributeUsageAttribute>().ShouldBeEmpty();
     }
   }
 }

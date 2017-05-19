@@ -5,6 +5,7 @@ using OpenRasta.OperationModel;
 using OpenRasta.OperationModel.MethodBased;
 using OpenRasta.Testing;
 using OpenRasta.TypeSystem;
+using Shouldly;
 
 namespace OpenRasta.Tests.Unit.OperationModel.MethodBased
 {
@@ -15,7 +16,8 @@ namespace OpenRasta.Tests.Unit.OperationModel.MethodBased
 
     protected void then_operation_count_should_be(int count)
     {
-      Operations.Count().LegacyShouldBe(count);
+      Operations.Count().ShouldBe(count);
+      //return valueToAnalyse;
     }
 
     protected void given_operation_creator(IMethodFilter[] filters)

@@ -24,7 +24,8 @@ namespace ElementExtensions_Specification
         {
             var element = new GenericElement("fake").ID(null);
 
-            element.ID.LegacyShouldBe(null);
+          ShouldBeTestExtensions.ShouldBe(element.ID, null);
+          //return valueToAnalyse;
 
           element.ToString().ShouldNotContain("id=\"");
         }
@@ -34,7 +35,8 @@ namespace ElementExtensions_Specification
         {
             var element = new GenericElement("fake").ID("fakeid");
 
-            element.ID.LegacyShouldBe("fakeid");
+          ShouldBeTestExtensions.ShouldBe(element.ID, "fakeid");
+          //return valueToAnalyse;
         }
     }
 

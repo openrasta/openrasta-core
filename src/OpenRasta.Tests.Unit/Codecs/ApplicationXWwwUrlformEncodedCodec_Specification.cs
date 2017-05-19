@@ -61,8 +61,8 @@ namespace ApplicationXWwwUrlformEncodedCodec_Specification
 
       when_decoding<string>("thecustomer");
 
-      then_decoding_result<string>()
-        .LegacyShouldBe("John Doe");
+      ShouldBeTestExtensions.ShouldBe(then_decoding_result<string>(), "John Doe");
+      //return valueToAnalyse;
     }
 
     [Test]
@@ -84,8 +84,8 @@ namespace ApplicationXWwwUrlformEncodedCodec_Specification
 
       when_decoding<string>("thecustomer");
 
-      then_decoding_result<string>()
-        .LegacyShouldBe("John");
+      ShouldBeTestExtensions.ShouldBe(then_decoding_result<string>(), "John");
+      //return valueToAnalyse;
     }
 
     [Test]
@@ -96,8 +96,8 @@ namespace ApplicationXWwwUrlformEncodedCodec_Specification
 
       when_decoding<Guid>("myguid");
 
-      then_decoding_result<Guid>()
-        .LegacyShouldBe(new Guid("044A624B-466A-4383-89FA-A02B629C78B9"));
+      then_decoding_result<Guid>().ShouldBe(new Guid("044A624B-466A-4383-89FA-A02B629C78B9"));
+      //return valueToAnalyse;
     }
 
     [Test]
@@ -130,8 +130,8 @@ namespace ApplicationXWwwUrlformEncodedCodec_Specification
 
       when_decoding<int>("thecustomerid");
 
-      then_decoding_result<int>()
-        .LegacyShouldBe(3);
+      then_decoding_result<int>().ShouldBe(3);
+      //return valueToAnalyse;
     }
   }
 
@@ -145,9 +145,9 @@ namespace ApplicationXWwwUrlformEncodedCodec_Specification
 
       when_decoding<Customer>("thecustomer");
 
-      then_decoding_result<Customer>()
-        .FirstName
-        .LegacyShouldBe("John");
+      ShouldBeTestExtensions.ShouldBe(then_decoding_result<Customer>()
+          .FirstName, "John");
+      //return valueToAnalyse;
     }
 
     [Test]
@@ -158,9 +158,9 @@ namespace ApplicationXWwwUrlformEncodedCodec_Specification
 
       when_decoding<Customer>();
 
-      then_decoding_result<Customer>()
-        .FirstName
-        .LegacyShouldBe("John");
+      ShouldBeTestExtensions.ShouldBe(then_decoding_result<Customer>()
+          .FirstName, "John");
+      //return valueToAnalyse;
     }
 
     [Test]
@@ -170,8 +170,10 @@ namespace ApplicationXWwwUrlformEncodedCodec_Specification
       given_request_stream("Customer.FirstName=John&Customer.FirstName=Jack&Customer.LastName=Doe");
 
       when_decoding<Customer>();
-      then_decoding_result<Customer>().FirstName.LegacyShouldBe(null);
-      then_decoding_result<Customer>().LastName.LegacyShouldBe("Doe");
+      ShouldBeTestExtensions.ShouldBe(then_decoding_result<Customer>().FirstName, null);
+      //return valueToAnalyse;
+      ShouldBeTestExtensions.ShouldBe(then_decoding_result<Customer>().LastName, "Doe");
+      //return valueToAnalyse;
     }
 
     [Test]
@@ -184,16 +186,16 @@ namespace ApplicationXWwwUrlformEncodedCodec_Specification
 
       then_decoding_result<Customer>().ShouldBeAssignableTo<Customer>();
 
-      then_decoding_result<Customer>()
-        .FirstName
-        .LegacyShouldBe("John");
-      then_decoding_result<Customer>()
-        .LastName
-        .LegacyShouldBe("Doe");
+      ShouldBeTestExtensions.ShouldBe(then_decoding_result<Customer>()
+          .FirstName, "John");
+      //return valueToAnalyse;
+      ShouldBeTestExtensions.ShouldBe(then_decoding_result<Customer>()
+          .LastName, "Doe");
+      //return valueToAnalyse;
 
       then_decoding_result<Customer>()
-        .DateOfBirth.Day
-        .LegacyShouldBe(10);
+        .DateOfBirth.Day.ShouldBe(10);
+      //return valueToAnalyse;
     }
 
     [Test]
@@ -208,13 +210,13 @@ namespace ApplicationXWwwUrlformEncodedCodec_Specification
       then_decoding_result<ChangeSet<Customer>>()
         .Apply(customer);
 
-      customer.FirstName
-        .LegacyShouldBe("John");
-      customer.LastName
-        .LegacyShouldBe("Doe");
+      ShouldBeTestExtensions.ShouldBe(customer.FirstName, "John");
+      //return valueToAnalyse;
+      ShouldBeTestExtensions.ShouldBe(customer.LastName, "Doe");
+      //return valueToAnalyse;
 
-      customer.DateOfBirth.Day
-        .LegacyShouldBe(10);
+      customer.DateOfBirth.Day.ShouldBe(10);
+      //return valueToAnalyse;
     }
 
     [Test]
@@ -226,8 +228,8 @@ namespace ApplicationXWwwUrlformEncodedCodec_Specification
       when_decoding<Customer>();
 
       then_decoding_result<Customer>()
-        .Attributes.Count()
-        .LegacyShouldBe(2);
+        .Attributes.Count().ShouldBe(2);
+      //return valueToAnalyse;
     }
   }
 

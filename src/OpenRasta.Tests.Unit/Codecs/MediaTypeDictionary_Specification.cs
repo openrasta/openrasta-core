@@ -39,8 +39,9 @@ namespace MediaTypeDictionary_Specification
 
             ThenTheResult
                 .LegacyShouldContain("xml");
-            ThenTheResult
-                .Count.LegacyShouldBe(1);
+          ThenTheResult
+            .Count.ShouldBe(1);
+          //return valueToAnalyse;
         }
         [Test]
         public void registering_a_specific_media_type_and_matching_on_sub_type_wildcard_returns_two_results()
@@ -51,8 +52,9 @@ namespace MediaTypeDictionary_Specification
 
             WhenMatching("application/*");
 
-            ThenTheResult.Count.LegacyShouldBe(2);
-            ThenTheResult.LegacyShouldContain("xhtml");
+          ThenTheResult.Count.ShouldBe(2);
+          //return valueToAnalyse;
+          ThenTheResult.LegacyShouldContain("xhtml");
             ThenTheResult.LegacyShouldContain("xml");
         }
         [Test]
@@ -63,8 +65,9 @@ namespace MediaTypeDictionary_Specification
 
             WhenMatching("*/*");
 
-            ThenTheResult.Count.LegacyShouldBe(2);
-            ThenTheResult.LegacyShouldContain("xhtml");
+          ThenTheResult.Count.ShouldBe(2);
+          //return valueToAnalyse;
+          ThenTheResult.LegacyShouldContain("xhtml");
             ThenTheResult.LegacyShouldContain("xml");
         }
         [Test]
@@ -75,8 +78,9 @@ namespace MediaTypeDictionary_Specification
 
             WhenMatching("text/plain");
 
-            ThenTheResult.Count.LegacyShouldBe(2);
-            ThenTheResult.LegacyShouldContain("text1");
+          ThenTheResult.Count.ShouldBe(2);
+          //return valueToAnalyse;
+          ThenTheResult.LegacyShouldContain("text1");
             ThenTheResult.LegacyShouldContain("text2");
         }
         [Test]
@@ -87,8 +91,9 @@ namespace MediaTypeDictionary_Specification
 
             WhenMatching("text/plain");
 
-            ThenTheResult.Count.LegacyShouldBe(1);
-            ThenTheResult.LegacyShouldContain("text1");
+          ThenTheResult.Count.ShouldBe(1);
+          //return valueToAnalyse;
+          ThenTheResult.LegacyShouldContain("text1");
 
         }
         [Test]
@@ -98,8 +103,9 @@ namespace MediaTypeDictionary_Specification
 
             WhenMatching("text/plain");
 
-            ThenTheResult.LegacyShouldContain("wildcard")
-                .Count().LegacyShouldBe(1);
+          ThenTheResult.LegacyShouldContain("wildcard")
+            .Count().ShouldBe(1);
+          //return valueToAnalyse;
         }
     }
     public class media_type_context : context

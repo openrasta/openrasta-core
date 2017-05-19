@@ -27,10 +27,13 @@ namespace PropertyPathExpressionTree_Specification
             var customer = new Customer { DateOfBirth = DateTime.Parse("14 Nov 2000") };
             var pp = new PropertyPathForInstance<int>(() => customer.DateOfBirth.Day);
 
-            pp.Path.TypePrefix.LegacyShouldBe("Customer");
-            pp.Path.TypeSuffix.LegacyShouldBe("DateOfBirth.Day");
+          ShouldBeTestExtensions.ShouldBe(pp.Path.TypePrefix, "Customer");
+          //return valueToAnalyse;
+          ShouldBeTestExtensions.ShouldBe(pp.Path.TypeSuffix, "DateOfBirth.Day");
+          //return valueToAnalyse;
           pp.PropertyType.ShouldBe(typeof(int));
-          pp.Value.LegacyShouldBe(14);
+          pp.Value.ShouldBe(14);
+          //return valueToAnalyse;
         }
 
         [Test]
@@ -40,10 +43,13 @@ namespace PropertyPathExpressionTree_Specification
             var pp = new PropertyPathForInstance<object>(
                 () => customer.Username);
 
-            pp.Path.TypePrefix.LegacyShouldBe("Customer");
-            pp.Path.TypeSuffix.LegacyShouldBe("Username");
+          ShouldBeTestExtensions.ShouldBe(pp.Path.TypePrefix, "Customer");
+          //return valueToAnalyse;
+          ShouldBeTestExtensions.ShouldBe(pp.Path.TypeSuffix, "Username");
+          //return valueToAnalyse;
           pp.PropertyType.ShouldBe(typeof(string));
-          pp.Value.LegacyShouldBe("johndoe");
+          pp.Value.ShouldBe("johndoe");
+          //return valueToAnalyse;
         }
 
         [Test]
@@ -69,8 +75,10 @@ namespace PropertyPathExpressionTree_Specification
                 ObjectPaths.Add(Customer, new PropertyPath { TypePrefix = "Customer", TypeSuffix = "TheFirst" });
 
                 var pp = new PropertyPathForInstance<object>(() => Customer.FirstName);
-                pp.Path.TypePrefix.LegacyShouldBe("Customer");
-                pp.Path.TypeSuffix.LegacyShouldBe("TheFirst.FirstName");
+              ShouldBeTestExtensions.ShouldBe(pp.Path.TypePrefix, "Customer");
+              //return valueToAnalyse;
+              ShouldBeTestExtensions.ShouldBe(pp.Path.TypeSuffix, "TheFirst.FirstName");
+              //return valueToAnalyse;
             }
             finally
             {
@@ -84,9 +92,12 @@ namespace PropertyPathExpressionTree_Specification
             var pp = new PropertyPathForInstance<object>(
                 () => Customer.FirstName);
 
-            pp.Path.TypePrefix.LegacyShouldBe("Customer");
-            pp.Path.TypeSuffix.LegacyShouldBe("FirstName");
-            pp.Value.LegacyShouldBe("John");
+          ShouldBeTestExtensions.ShouldBe(pp.Path.TypePrefix, "Customer");
+          //return valueToAnalyse;
+          ShouldBeTestExtensions.ShouldBe(pp.Path.TypeSuffix, "FirstName");
+          //return valueToAnalyse;
+          pp.Value.ShouldBe("John");
+          //return valueToAnalyse;
         }
     }
 }

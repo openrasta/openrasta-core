@@ -27,9 +27,10 @@ namespace XhtmlDOM_Specification
         public void any_attribute_with_simple_types_is_created_automatically()
         {
             var attribs = new XhtmlAttributeCollection();
-            attribs.Count.LegacyShouldBe(0);
+          attribs.Count.ShouldBe(0);
+          //return valueToAnalyse;
 
-            attribs.SetAttribute("name", "value");
+          attribs.SetAttribute("name", "value");
 
             attribs["name"].ShouldBeAssignableTo<IAttribute<string>>();
         }
@@ -39,7 +40,8 @@ namespace XhtmlDOM_Specification
             var attribs = new XhtmlAttributeCollection();
             attribs.GetAttribute<IList<MediaType>>("types").Add(MediaType.Xml);
 
-            attribs["types"].SerializedValue.LegacyShouldBe("application/xml");
+          ShouldBeTestExtensions.ShouldBe(attribs["types"].SerializedValue, "application/xml");
+          //return valueToAnalyse;
         }
         [Test]
         public void attributes_not_in_initial_list_are_added_as_generic_strings()
@@ -56,12 +58,15 @@ namespace XhtmlDOM_Specification
             attribs.SetAttribute("name", "a name");
             attribs.SetAttribute<int?>("value", 3);
 
-            attribs["name"].SerializedValue.LegacyShouldBe("a name");
-            attribs["value"].SerializedValue.LegacyShouldBe("3");
+          ShouldBeTestExtensions.ShouldBe(attribs["name"].SerializedValue, "a name");
+          //return valueToAnalyse;
+          ShouldBeTestExtensions.ShouldBe(attribs["value"].SerializedValue, "3");
+          //return valueToAnalyse;
 
-            attribs.SetAttribute("unknownValue", "25");
+          attribs.SetAttribute("unknownValue", "25");
 
-            attribs["unknownValue"].SerializedValue.LegacyShouldBe("25");
+          ShouldBeTestExtensions.ShouldBe(attribs["unknownValue"].SerializedValue, "25");
+          //return valueToAnalyse;
         }
 
     }
@@ -74,19 +79,22 @@ namespace XhtmlDOM_Specification
             var element = Document.CreateElement<IScriptElement>("script").Type(MediaType.Javascript);
             element.Defer = true;
 
-            element.OuterXml.LegacyShouldBe("<script type=\"text/javascript\" defer=\"defer\"></script>");
+          ShouldBeTestExtensions.ShouldBe(element.OuterXml, "<script type=\"text/javascript\" defer=\"defer\"></script>");
+          //return valueToAnalyse;
         }
         [Test]
         public void elements_without_content_model_are_rendered_without_a_closing_tag()
         {
             var element = Document.CreateElement<IEmptyElement>("br") as IEmptyElement;
-            element.OuterXml.LegacyShouldBe("<br />");
+          ShouldBeTestExtensions.ShouldBe(element.OuterXml, "<br />");
+          //return valueToAnalyse;
         }
         [Test]
         public void elements_with_uri_attributes_are_generated_properly()
         {
             var el = Document.CreateElement<IImgElement>("img");
-            el.Src("image.jpg").OuterXml.LegacyShouldBe("<img src=\"image.jpg\" />");
+          ShouldBeTestExtensions.ShouldBe(el.Src("image.jpg").OuterXml, "<img src=\"image.jpg\" />");
+          //return valueToAnalyse;
         }
     }
 }

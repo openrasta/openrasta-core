@@ -4,6 +4,7 @@ using OpenRasta.OperationModel.Filters;
 using OpenRasta.Testing;
 using OpenRasta.Testing.Contexts;
 using OpenRasta.Web;
+using Shouldly;
 
 namespace OpenRasta.Tests.Unit.OperationModel.Filters
 {
@@ -20,7 +21,8 @@ namespace OpenRasta.Tests.Unit.OperationModel.Filters
 
             when_filtering_operations();
 
-            FilteredOperations.Single().Name.LegacyShouldBe("ChangeData");
+          ShouldBeTestExtensions.ShouldBe(FilteredOperations.Single().Name, "ChangeData");
+          //return valueToAnalyse;
         }
 
         [Test]
@@ -36,9 +38,10 @@ namespace OpenRasta.Tests.Unit.OperationModel.Filters
 
             FilteredOperations.LegacyShouldHaveCountOf(2);
 
-            FilteredOperations.Count(x => x.Name == "Post").LegacyShouldBe(1);
-            FilteredOperations.Count(x => x.Name == "PostForRouteName").LegacyShouldBe(1);
-            
+          FilteredOperations.Count(x => x.Name == "Post").ShouldBe(1);
+          //return valueToAnalyse;
+          FilteredOperations.Count(x => x.Name == "PostForRouteName").ShouldBe(1);
+          //return valueToAnalyse;
         }
     }
 

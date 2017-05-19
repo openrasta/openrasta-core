@@ -16,6 +16,7 @@ using NUnit.Framework;
 using OpenRasta.Testing;
 using OpenRasta.Web.Markup;
 using OpenRasta.Web.Markup.Modules;
+using Shouldly;
 
 namespace TextArea_Specification
 {
@@ -25,7 +26,8 @@ namespace TextArea_Specification
         public void the_content_is_written()
         {
             WhenCreatingElement(() => Document.CreateElement<ITextAreaElement>()["hello"]);
-            ThenTheElementAsString.LegacyShouldBe("<textarea>hello</textarea>");
+          ShouldBeTestExtensions.ShouldBe(ThenTheElementAsString, "<textarea>hello</textarea>");
+          //return valueToAnalyse;
         }
     }
 }

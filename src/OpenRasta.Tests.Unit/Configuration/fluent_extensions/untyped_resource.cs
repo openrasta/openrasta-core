@@ -4,6 +4,7 @@ using OpenRasta.Configuration;
 using OpenRasta.Testing;
 using OpenRasta.TypeSystem;
 using OpenRasta.Configuration.Fluent;
+using Shouldly;
 
 namespace Tests.Configuration.fluent_extensions
 {
@@ -24,7 +25,8 @@ namespace Tests.Configuration.fluent_extensions
     [Test]
     public void property_is_persisted()
     {
-      Config.ResourceRegistrations.Single().Properties["test"].LegacyShouldBe("test");
+      Config.ResourceRegistrations.Single().Properties["test"].ShouldBe("test");
+      //return valueToAnalyse;
     }
   }
 
@@ -45,7 +47,8 @@ namespace Tests.Configuration.fluent_extensions
     [Test]
     public void property_is_persisted()
     {
-      Config.ResourceRegistrations.Single().Properties["test"].LegacyShouldBe("test");
+      Config.ResourceRegistrations.Single().Properties["test"].ShouldBe("test");
+      //return valueToAnalyse;
     }
   }
 
@@ -79,7 +82,8 @@ namespace Tests.Configuration.fluent_extensions
     [Test]
     public void property_is_persisted()
     {
-      Config.ResourceRegistrations.Single().Properties["test"].LegacyShouldBe("test<Resource>");
+      Config.ResourceRegistrations.Single().Properties["test"].ShouldBe("test<Resource>");
+      //return valueToAnalyse;
     }
   }
 

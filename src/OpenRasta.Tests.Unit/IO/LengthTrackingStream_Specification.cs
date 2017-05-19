@@ -1,4 +1,5 @@
 #region License
+
 /* Authors:
  *      Sebastien Lambla (seb@serialseb.com)
  * Copyright:
@@ -6,6 +7,7 @@
  * License:
  *      This file is distributed under the terms of the MIT License found at the end of this file.
  */
+
 #endregion
 
 using System;
@@ -14,43 +16,46 @@ using System.IO.Compression;
 using NUnit.Framework;
 using OpenRasta.IO;
 using OpenRasta.Testing;
+using Shouldly;
 
 namespace LengthTrackingStream_Specification
 {
-    public class when_writing_to_a_non_seekable_stream : context
+  public class when_writing_to_a_non_seekable_stream : context
+  {
+    [Test]
+    public void the_correct_number_of_bytes_is_recorded()
     {
-        [Test]
-        public void the_correct_number_of_bytes_is_recorded()
-        {
-            var stream = new DeflateStream(new MemoryStream(), CompressionMode.Compress);
+      var stream = new DeflateStream(new MemoryStream(), CompressionMode.Compress);
 
-            var tracker = new LengthTrackingStream(stream);
+      var tracker = new LengthTrackingStream(stream);
 
-            tracker.Write(new byte[50]);
+      tracker.Write(new byte[50]);
 
-            tracker.Length
-                .LegacyShouldBe(50);
-        }
+      tracker.Length.ShouldBe(50);
+      //return valueToAnalyse;
     }
+  }
 
-    public class when_writing_to_a_seekable_stream : context
+  public class when_writing_to_a_seekable_stream : context
+  {
+    [Test]
+    public void the_correct_number_of_bytes_is_recorded()
     {
-        [Test]
-        public void the_correct_number_of_bytes_is_recorded()
-        {
-            var stream = new MemoryStream();
-            var tracker = new LengthTrackingStream(stream);
+      var stream = new MemoryStream();
+      var tracker = new LengthTrackingStream(stream);
 
-            stream.Write(new byte[2 << 4]);
+      stream.Write(new byte[2 << 4]);
 
-            tracker.Length
-                .LegacyShouldBe(stream.Length)
-                .LegacyShouldBe(32);
-        }
+      tracker.Length.ShouldBe(stream.Length);
+      //return valueToAnalyse;
+      tracker.Length.ShouldBe(32);
+      //return valueToAnalyse;
     }
+  }
 }
 
 #region Full license
+
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -71,4 +76,5 @@ namespace LengthTrackingStream_Specification
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+
 #endregion

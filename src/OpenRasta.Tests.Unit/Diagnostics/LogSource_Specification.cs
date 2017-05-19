@@ -5,6 +5,7 @@ using System.Text;
 using NUnit.Framework;
 using OpenRasta.Diagnostics;
 using OpenRasta.Testing;
+using Shouldly;
 
 namespace OpenRasta.Diagnostics
 {
@@ -13,15 +14,15 @@ namespace OpenRasta.Diagnostics
         [Test]
         public void the_category_is_read_from_an_attribute()
         {
-            LogSource<MockLogSource>.Category
-                .LegacyShouldBe(MockLogSource.CATEGORY_NAME);
+          ShouldBeTestExtensions.ShouldBe(LogSource<MockLogSource>.Category, MockLogSource.CATEGORY_NAME);
+          //return valueToAnalyse;
         }
         [Test]
         public void a_log_source_without_category_is_named_after_the_type()
         {
-            LogSource<LogSourceNoCategory>.Category
-                .LegacyShouldBe("LogSourceNoCategory");
-         }
+          ShouldBeTestExtensions.ShouldBe(LogSource<LogSourceNoCategory>.Category, "LogSourceNoCategory");
+          //return valueToAnalyse;
+        }
 
         public class LogSourceNoCategory : ILogSource
         {

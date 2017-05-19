@@ -7,6 +7,7 @@ using OpenRasta.Codecs;
 using OpenRasta.Testing;
 using OpenRasta.TypeSystem;
 using OpenRasta.Web;
+using Shouldly;
 
 namespace CodecMatch_Specification
 {
@@ -20,7 +21,8 @@ namespace CodecMatch_Specification
 
             List<CodecMatch> list = GetSoretedList(codec1, codec2);
 
-            list[0].LegacyShouldBe(codec2);
+          list[0].ShouldBe(codec2);
+          //return valueToAnalyse;
         }
         [Test]
         public void when_score_is_the_same_the_highest_matching_parameters_is_selected()
@@ -30,7 +32,8 @@ namespace CodecMatch_Specification
 
             List<CodecMatch> list = GetSoretedList(codec1, codec2);
 
-            list[0].LegacyShouldBe(codec2);
+          list[0].ShouldBe(codec2);
+          //return valueToAnalyse;
         }
         [Test]
         public void when_score_and_param_matching_are_the_same_the_highest_quality_is_selected()
@@ -40,8 +43,8 @@ namespace CodecMatch_Specification
 
             List<CodecMatch> list = GetSoretedList(codec1, codec2);
 
-            list[0].LegacyShouldBe(codec2);
-            
+          list[0].ShouldBe(codec2);
+          //return valueToAnalyse;
         }
         [Test]
         public void a_null_value_is_never_at_the_top_of_the_list()
@@ -50,8 +53,8 @@ namespace CodecMatch_Specification
 
             var list = GetSoretedList(codec, null);
 
-            list[0].LegacyShouldBe(codec);
-
+          list[0].ShouldBe(codec);
+          //return valueToAnalyse;
         }
         private List<CodecMatch> GetSoretedList(params CodecMatch[] codecs)
         {

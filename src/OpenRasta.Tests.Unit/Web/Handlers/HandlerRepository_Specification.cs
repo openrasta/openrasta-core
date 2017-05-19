@@ -41,8 +41,8 @@ namespace HandlerRepository_Specification
       repo.AddResourceHandler("ring of power", handler1);
       repo.AddResourceHandler("ring of power", handler2);
 
-      repo.GetHandlerTypesFor("ring of power").FirstOrDefault()
-        .LegacyShouldBe(handler1);
+      repo.GetHandlerTypesFor("ring of power").FirstOrDefault().ShouldBe(handler1);
+      //return valueToAnalyse;
     }
 
     [Test]
@@ -71,8 +71,10 @@ namespace HandlerRepository_Specification
       repo.AddResourceHandler("Narya", gilGalad);
       repo.AddResourceHandler("Vilya", gilGalad);
 
-      repo.GetHandlerTypesFor("Narya").FirstOrDefault().LegacyShouldBe(gilGalad);
-      repo.GetHandlerTypesFor("Vilya").FirstOrDefault().LegacyShouldBe(gilGalad);
+      repo.GetHandlerTypesFor("Narya").FirstOrDefault().ShouldBe(gilGalad);
+      //return valueToAnalyse;
+      repo.GetHandlerTypesFor("Vilya").FirstOrDefault().ShouldBe(gilGalad);
+      //return valueToAnalyse;
     }
 
     [Test]
@@ -85,7 +87,8 @@ namespace HandlerRepository_Specification
       repo.AddResourceHandler("Narya", gilGalad);
       repo.AddResourceHandler("Vilya", gilGalad);
 
-      repo.GetHandlerTypes().LegacyShouldContain(gilGalad).Count().LegacyShouldBe(1);
+      repo.GetHandlerTypes().LegacyShouldContain(gilGalad).Count().ShouldBe(1);
+      //return valueToAnalyse;
     }
   }
 }

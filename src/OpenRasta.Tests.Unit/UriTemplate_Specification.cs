@@ -126,8 +126,8 @@ namespace UriTemplate_Specification
         public void the_base_uri_is_the_one_provided_in_the_match()
         {
             GivenAMatching("/weather/{state}/{city}", "http://localhost/weather/Washington/Seattle");
-            ThenTheMatch.BaseUri
-                .LegacyShouldBe(BaseUris.First());
+          ThenTheMatch.BaseUri.ShouldBe(BaseUris.First());
+          //return valueToAnalyse;
         }
 
         [Test]
@@ -149,7 +149,8 @@ namespace UriTemplate_Specification
         public void the_match_includes_dots()
         {
             GivenAMatching("/users/{username}", "http://localhost/users/sebastien.lambla");
-            ThenTheMatch.PathSegmentVariables.LegacyShouldBe(new NameValueCollection().With("username", "sebastien.lambla"));
+          ThenTheMatch.PathSegmentVariables.ShouldBe(new NameValueCollection().With("username", "sebastien.lambla"));
+          //return valueToAnalyse;
         }
 
         [Test]
@@ -192,8 +193,8 @@ namespace UriTemplate_Specification
             NameValueCollection variableValues = new NameValueCollection().With("state", "washington").With("CitY",
                                                                                                             "seattle");
 
-            new OpenRasta.UriTemplate("weather/{state}/{city}/*").BindByName(baseUri, variableValues)
-                .LegacyShouldBe("http://localhost/weather/washington/seattle/".ToUri());
+          new OpenRasta.UriTemplate("weather/{state}/{city}/*").BindByName(baseUri, variableValues).ShouldBe("http://localhost/weather/washington/seattle/".ToUri());
+          //return valueToAnalyse;
         }
 
         [Test]
@@ -203,8 +204,8 @@ namespace UriTemplate_Specification
             NameValueCollection variableValues = new NameValueCollection().With("StAte", "washington").With("CitY",
                                                                                                             "seattle");
 
-            new OpenRasta.UriTemplate("weather/{state}/{city}/").BindByName(baseUri, variableValues)
-                .LegacyShouldBe("http://localhost/weather/washington/seattle/".ToUri());
+          new OpenRasta.UriTemplate("weather/{state}/{city}/").BindByName(baseUri, variableValues).ShouldBe("http://localhost/weather/washington/seattle/".ToUri());
+          //return valueToAnalyse;
         }
 
         [Test]
@@ -223,7 +224,8 @@ namespace UriTemplate_Specification
         public void a_query_parameter_with_no_variable_is_ignored()
         {
             var template = new OpenRasta.UriTemplate("/test?query=3");
-            template.QueryStringVariableNames.Count.LegacyShouldBe(0);
+          template.QueryStringVariableNames.Count.ShouldBe(0);
+          //return valueToAnalyse;
         }
 
         [Test]
@@ -234,7 +236,8 @@ namespace UriTemplate_Specification
 
             match.ShouldNotBeNull();
 
-            match.QueryStringVariables["queryValue"].LegacyShouldBe("search");
+          ShouldBeTestExtensions.ShouldBe(match.QueryStringVariables["queryValue"], "search");
+          //return valueToAnalyse;
         }
 
         [Test]
@@ -266,9 +269,12 @@ namespace UriTemplate_Specification
            var template = new OpenRasta.UriTemplate("/test?query1={test}&query2={test2}");
            var match = template.Match(new Uri("http://localhost"), new Uri("http://localhost/test?query1=test1&query3=test2"));
            match.ShouldNotBeNull();
-           match.PathSegmentVariables.Count.LegacyShouldBe(0);
-            match.QueryStringVariables.Count.LegacyShouldBe(1);
-           match.QueryParameters.Count.LegacyShouldBe(2);
+          match.PathSegmentVariables.Count.ShouldBe(0);
+          //return valueToAnalyse;
+          match.QueryStringVariables.Count.ShouldBe(1);
+          //return valueToAnalyse;
+          match.QueryParameters.Count.ShouldBe(2);
+          //return valueToAnalyse;
         }  
    
         [Test]  
@@ -285,10 +291,13 @@ namespace UriTemplate_Specification
         {  
            var table = new OpenRasta.UriTemplate("/test?q={searchTerm}&p={pageNumber}&s={pageSize}");  
            OpenRasta.UriTemplateMatch match = table.Match(new Uri("http://localhost"), new Uri("http://localhost/test?q=&p=1&s=10"));  
-           match.ShouldNotBeNull();  
-           match.QueryStringVariables["searchTerm"].LegacyShouldBe(string.Empty);
-           match.QueryStringVariables["pageNumber"].LegacyShouldBe("1");
-           match.QueryStringVariables["pageSize"].LegacyShouldBe("10");  
+           match.ShouldNotBeNull();
+          ShouldBeTestExtensions.ShouldBe(match.QueryStringVariables["searchTerm"], string.Empty);
+          //return valueToAnalyse;
+          ShouldBeTestExtensions.ShouldBe(match.QueryStringVariables["pageNumber"], "1");
+          //return valueToAnalyse;
+          ShouldBeTestExtensions.ShouldBe(match.QueryStringVariables["pageSize"], "10");
+          //return valueToAnalyse;
         }  
    
         [Test]  
@@ -315,8 +324,10 @@ namespace UriTemplate_Specification
             var match = template.Match(new Uri("http://localhost"), new Uri("http://localhost/test?pAgE=2"));
 
             match.ShouldNotBeNull();
-            match.QueryStringVariables.Count.LegacyShouldBe(1);
-            match.QueryStringVariables["PAGE"].LegacyShouldBe("2");
+          match.QueryStringVariables.Count.ShouldBe(1);
+          //return valueToAnalyse;
+          ShouldBeTestExtensions.ShouldBe(match.QueryStringVariables["PAGE"], "2");
+          //return valueToAnalyse;
         }
 
         [Test]
@@ -326,8 +337,10 @@ namespace UriTemplate_Specification
             var match = template.Match(new Uri("http://localhost"), new Uri("http://localhost/temperature"));
 
             match.ShouldNotBeNull();
-            match.PathSegmentVariables.Count.LegacyShouldBe(0);
-            match.QueryParameters.Count.LegacyShouldBe(1);
+          match.PathSegmentVariables.Count.ShouldBe(0);
+          //return valueToAnalyse;
+          match.QueryParameters.Count.ShouldBe(1);
+          //return valueToAnalyse;
         }
 
         [Test]
@@ -337,8 +350,10 @@ namespace UriTemplate_Specification
             var match = template.Match(new Uri("http://localhost"), new Uri("http://localhost/temperature"));
 
             match.ShouldNotBeNull();
-            match.PathSegmentVariables.Count.LegacyShouldBe(0);
-            match.QueryParameters.Count.LegacyShouldBe(1);
+          match.PathSegmentVariables.Count.ShouldBe(0);
+          //return valueToAnalyse;
+          match.QueryParameters.Count.ShouldBe(1);
+          //return valueToAnalyse;
         }
     }
 

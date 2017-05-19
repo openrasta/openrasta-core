@@ -56,7 +56,8 @@ namespace Authentication_Specification
             var result = when_sending_notification<KnownStages.IHandlerSelection>();
 
             // then
-            result.LegacyShouldBe(PipelineContinuation.Continue);
+          result.ShouldBe(PipelineContinuation.Continue);
+          //return valueToAnalyse;
         }
 
         [Test]
@@ -71,8 +72,10 @@ namespace Authentication_Specification
             var result = when_sending_notification<KnownStages.IHandlerSelection>();
 
             // then
-            Context.Response.Headers["Warning"].LegacyShouldBe("199 Unsupported Authentication Scheme");
-            result.LegacyShouldBe(PipelineContinuation.Continue);
+          ShouldBeTestExtensions.ShouldBe(Context.Response.Headers["Warning"], "199 Unsupported Authentication Scheme");
+          //return valueToAnalyse;
+          result.ShouldBe(PipelineContinuation.Continue);
+          //return valueToAnalyse;
         }
 
         [Test]
@@ -97,9 +100,11 @@ namespace Authentication_Specification
             var result = when_sending_notification<KnownStages.IHandlerSelection>();
 
             // then
-            Context.Response.Headers["Warning"].LegacyShouldBe("199 Malformed credentials");
-            Context.OperationResult.ShouldBeAssignableTo<OperationResult.BadRequest>();
-            result.LegacyShouldBe(PipelineContinuation.RenderNow);
+          ShouldBeTestExtensions.ShouldBe(Context.Response.Headers["Warning"], "199 Malformed credentials");
+          //return valueToAnalyse;
+          Context.OperationResult.ShouldBeAssignableTo<OperationResult.BadRequest>();
+          result.ShouldBe(PipelineContinuation.RenderNow);
+          //return valueToAnalyse;
         }
 
         [Test]
@@ -125,7 +130,8 @@ namespace Authentication_Specification
 
             // then
             Context.OperationResult.ShouldBeAssignableTo<OperationResult.Unauthorized>();
-            result.LegacyShouldBe(PipelineContinuation.Continue);
+          result.ShouldBe(PipelineContinuation.Continue);
+          //return valueToAnalyse;
         }
 
         [Test]
@@ -153,10 +159,12 @@ namespace Authentication_Specification
             var result = when_sending_notification<KnownStages.IHandlerSelection>();
 
             // then
-            result.LegacyShouldBe(PipelineContinuation.Continue);
+          result.ShouldBe(PipelineContinuation.Continue);
+          //return valueToAnalyse;
 
-            Context.User.Identity.Name.LegacyShouldBe(username);
-            Context.User.IsInRole(roles[0]);
+          ShouldBeTestExtensions.ShouldBe(Context.User.Identity.Name, username);
+          //return valueToAnalyse;
+          Context.User.IsInRole(roles[0]);
             Context.User.IsInRole(roles[1]);
         }
     }

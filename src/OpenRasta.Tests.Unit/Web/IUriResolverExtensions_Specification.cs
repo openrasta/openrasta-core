@@ -79,9 +79,9 @@ namespace IUriResolverExtensions_Specification
             GivenContext();
             GivenUriMapping<Customer>("/customer/{firstname}", null, null);
 
-            new Customer().CreateUri(new Uri("http://localhost"),
-                                     new NameValueCollection { { "firstname", "John" } })
-                .LegacyShouldBe(new Uri("http://localhost/customer/John"));
+          new Customer().CreateUri(new Uri("http://localhost"),
+            new NameValueCollection { { "firstname", "John" } }).ShouldBe(new Uri("http://localhost/customer/John"));
+          //return valueToAnalyse;
         }
 
         [Test]
@@ -90,8 +90,8 @@ namespace IUriResolverExtensions_Specification
             GivenContext();
             GivenUriMapping<Customer>("/customer/{firstname}", null, null);
 
-            new Customer { FirstName = "John" }.CreateUri(new Uri("http://localhost"))
-                .LegacyShouldBe(new Uri("http://localhost/customer/John"));
+          new Customer { FirstName = "John" }.CreateUri(new Uri("http://localhost")).ShouldBe(new Uri("http://localhost/customer/John"));
+          //return valueToAnalyse;
         }
 
         [Test]
@@ -102,8 +102,8 @@ namespace IUriResolverExtensions_Specification
 
             var customer = new Customer();
 
-            customer.CreateUri(new Uri("http://localhost"), null)
-                .LegacyShouldBe(new Uri("http://localhost/customer"));
+          customer.CreateUri(new Uri("http://localhost"), null).ShouldBe(new Uri("http://localhost/customer"));
+          //return valueToAnalyse;
         }
         [Test]
         public void the_correct_uri_is_selected_for_a_type()
@@ -126,7 +126,8 @@ namespace IUriResolverExtensions_Specification
 
             WhenCreatingUriFor<string>();
 
-            ThenTheUri.LegacyShouldBe(new Uri("http://tempserver/test"));
+          ThenTheUri.ShouldBe(new Uri("http://tempserver/test"));
+          //return valueToAnalyse;
         }
 
         void GivenUriMapping<T>(string uri, CultureInfo culture, string uriName)

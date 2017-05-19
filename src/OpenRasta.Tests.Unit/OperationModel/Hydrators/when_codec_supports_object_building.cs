@@ -22,10 +22,12 @@ namespace OpenRasta.Tests.Unit.OperationModel.Hydrators
 
       when_entity_is_read();
 
-      ResultOperation.Name.LegacyShouldBe("PostStream");
+      ShouldBeTestExtensions.ShouldBe(ResultOperation.Name, "PostStream");
+      //return valueToAnalyse;
       ResultOperation.Inputs.Required().First().Binder.BuildObject()
         .Instance.ShouldBeAssignableTo<Stream>()
-        .ReadByte().LegacyShouldBe(0);
+        .ReadByte().ShouldBe(0);
+      //return valueToAnalyse;
     }
     [Test]
     public void an_error_is_collected_if_codec_raises_an_error()
@@ -38,7 +40,8 @@ namespace OpenRasta.Tests.Unit.OperationModel.Hydrators
       given_request_entity_body(new byte[] { 0 });
 
       when_filtering_operations();
-      ResultOperation.Name.LegacyShouldBe("PostName");
+      ShouldBeTestExtensions.ShouldBe(ResultOperation.Name, "PostName");
+      //return valueToAnalyse;
       Errors.Errors.LegacyShouldHaveCountOf(1);
     }
   }

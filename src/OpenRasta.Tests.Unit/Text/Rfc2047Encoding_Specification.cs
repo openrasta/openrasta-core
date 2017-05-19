@@ -12,6 +12,7 @@ using System;
 using NUnit.Framework;
 using OpenRasta.Testing;
 using OpenRasta.Text;
+using Shouldly;
 
 namespace Rfc2047Encoding_Specification
 {
@@ -25,23 +26,35 @@ namespace Rfc2047Encoding_Specification
             "=?ISO-8859-1?B?SWYgeW91IGNhbiByZWFkIHRoaXMgeW8=?==?ISO-8859-2?B?dSB1bmRlcnN0YW5kIHRoZSBleGFtcGxlLg==?=";
 
         [Test]
-        public void encoded_characters_are_decoded() { Rfc2047Encoding.DecodeTextToken(ISO).LegacyShouldBe("Keld Jørn Simonsen"); }
+        public void encoded_characters_are_decoded() {
+          ShouldBeTestExtensions.ShouldBe(Rfc2047Encoding.DecodeTextToken(ISO), "Keld Jørn Simonsen");
+          //return valueToAnalyse;
+        }
 
         [Test]
-        public void mutliple_encodings_are_supported() { Rfc2047Encoding.DecodeTextToken(ISO_SUBJECT).LegacyShouldBe("If you can read this you understand the example."); }
+        public void mutliple_encodings_are_supported() {
+          ShouldBeTestExtensions.ShouldBe(Rfc2047Encoding.DecodeTextToken(ISO_SUBJECT), "If you can read this you understand the example.");
+          //return valueToAnalyse;
+        }
 
         [Test]
         public void the_decoding_is_done_including_spaces()
         {
-            Rfc2047Encoding.DecodeTextToken(US_ASCII)
-                .LegacyShouldBe("Keith Moore <moore@cs.utk.edu>");
+          ShouldBeTestExtensions.ShouldBe(Rfc2047Encoding.DecodeTextToken(US_ASCII), "Keith Moore <moore@cs.utk.edu>");
+          //return valueToAnalyse;
         }
 
         [Test]
-        public void the_text_is_not_decoded_if_the_charset_is_unknown() { Rfc2047Encoding.DecodeTextToken(KLINGON).LegacyShouldBe(KLINGON); }
+        public void the_text_is_not_decoded_if_the_charset_is_unknown() {
+          ShouldBeTestExtensions.ShouldBe(Rfc2047Encoding.DecodeTextToken(KLINGON), KLINGON);
+          //return valueToAnalyse;
+        }
 
         [Test]
-        public void the_text_is_not_decoded_if_the_encoding_is_unknown() { Rfc2047Encoding.DecodeTextToken(UNKNOWN_ENCODING).LegacyShouldBe(UNKNOWN_ENCODING); }
+        public void the_text_is_not_decoded_if_the_encoding_is_unknown() {
+          ShouldBeTestExtensions.ShouldBe(Rfc2047Encoding.DecodeTextToken(UNKNOWN_ENCODING), UNKNOWN_ENCODING);
+          //return valueToAnalyse;
+        }
     }
 }
 

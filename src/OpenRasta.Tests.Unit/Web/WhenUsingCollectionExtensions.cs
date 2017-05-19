@@ -10,6 +10,7 @@
 
 using NUnit.Framework;
 using OpenRasta.Testing;
+using Shouldly;
 
 namespace OpenRasta.Collections.Specialized
 {
@@ -22,9 +23,12 @@ namespace OpenRasta.Collections.Specialized
             var testObject = new {Key1 = "value1", Key2 = "value2"};
 
             var testResult = testObject.ToCaseInvariantDictionary();
-            testResult["Key1"].LegacyShouldBe("value1");
-            testResult["Key2"].LegacyShouldBe("value2");
-            testResult.Count.LegacyShouldBe(2);
+          ShouldBeTestExtensions.ShouldBe(testResult["Key1"], "value1");
+          //return valueToAnalyse;
+          ShouldBeTestExtensions.ShouldBe(testResult["Key2"], "value2");
+          //return valueToAnalyse;
+          testResult.Count.ShouldBe(2);
+          //return valueToAnalyse;
         }
 
         [Test]
@@ -32,8 +36,10 @@ namespace OpenRasta.Collections.Specialized
         {
             var testObject = new {Key1 = "value1", Key2 = "value2"}.ToCaseInvariantDictionary();
 
-            testObject["key1"].LegacyShouldBe("value1");
-            testObject["Key1"].LegacyShouldBe("value1");
+          ShouldBeTestExtensions.ShouldBe(testObject["key1"], "value1");
+          //return valueToAnalyse;
+          ShouldBeTestExtensions.ShouldBe(testObject["Key1"], "value1");
+          //return valueToAnalyse;
         }
     }
 }

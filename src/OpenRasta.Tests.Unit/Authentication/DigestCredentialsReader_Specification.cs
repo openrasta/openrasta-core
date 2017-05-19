@@ -31,8 +31,8 @@ namespace DigestCredentialsReader_Specification
 
             when_sending_notification<KnownStages.IBegin>();
 
-            Result
-                .LegacyShouldBe(PipelineContinuation.Continue);
+          Result.ShouldBe(PipelineContinuation.Continue);
+          //return valueToAnalyse;
         }
     }
 
@@ -73,8 +73,10 @@ namespace DigestCredentialsReader_Specification
                  opaque=""5ccc069c403ebaf9f0171e9517f40e41""";
             var credentials = DigestHeader.Parse(authenticationHeader);
 
-            credentials.Username.LegacyShouldBe("Mufasa");
-            credentials.Uri.LegacyShouldBe("/dir/index.html");
+          ShouldBeTestExtensions.ShouldBe(credentials.Username, "Mufasa");
+          //return valueToAnalyse;
+          ShouldBeTestExtensions.ShouldBe(credentials.Uri, "/dir/index.html");
+          //return valueToAnalyse;
         }
 
         [Test]
@@ -95,8 +97,8 @@ namespace DigestCredentialsReader_Specification
             GivenAUser("username", "password");
             var authorizer = DependencyManager.GetService<DigestAuthorizerContributor>();
 
-            authorizer.ReadCredentials(Context)
-                .LegacyShouldBe(PipelineContinuation.Continue);
+          authorizer.ReadCredentials(Context).ShouldBe(PipelineContinuation.Continue);
+          //return valueToAnalyse;
           Context.OperationResult.ShouldBeNull();
         }
 
@@ -110,8 +112,8 @@ namespace DigestCredentialsReader_Specification
             GivenAUser("username", "password");
             var authorizer = DependencyManager.GetService<DigestAuthorizerContributor>();
 
-            authorizer.ReadCredentials(Context)
-                .LegacyShouldBe(PipelineContinuation.Continue);
+          authorizer.ReadCredentials(Context).ShouldBe(PipelineContinuation.Continue);
+          //return valueToAnalyse;
           Context.OperationResult.ShouldBeNull();
         }
 
@@ -124,8 +126,8 @@ namespace DigestCredentialsReader_Specification
             GivenAUser("username", "password");
             var authorizer = DependencyManager.GetService<DigestAuthorizerContributor>();
 
-            authorizer.ReadCredentials(Context)
-                .LegacyShouldBe(PipelineContinuation.Continue);
+          authorizer.ReadCredentials(Context).ShouldBe(PipelineContinuation.Continue);
+          //return valueToAnalyse;
           Context.OperationResult.ShouldBeNull();
         }
         [Test,Ignore("no idea")]
@@ -145,9 +147,9 @@ namespace DigestCredentialsReader_Specification
             GivenAUser("username", "password");
             var authorizer = DependencyManager.GetService<DigestAuthorizerContributor>();
 
-            authorizer.ReadCredentials(Context)
-                .LegacyShouldBe(PipelineContinuation.RenderNow);
-            Context.OperationResult.ShouldBeAssignableTo<OperationResult.BadRequest>();
+          authorizer.ReadCredentials(Context).ShouldBe(PipelineContinuation.RenderNow);
+          //return valueToAnalyse;
+          Context.OperationResult.ShouldBeAssignableTo<OperationResult.BadRequest>();
         }
 
         [Test, Ignore("no idea")]
@@ -159,9 +161,9 @@ namespace DigestCredentialsReader_Specification
             GivenAUser("username", "password");
             var authorizer = DependencyManager.GetService<DigestAuthorizerContributor>();
 
-            authorizer.ReadCredentials(Context)
-                .LegacyShouldBe(PipelineContinuation.RenderNow);
-            Context.OperationResult.ShouldBeAssignableTo<OperationResult.Unauthorized>();
+          authorizer.ReadCredentials(Context).ShouldBe(PipelineContinuation.RenderNow);
+          //return valueToAnalyse;
+          Context.OperationResult.ShouldBeAssignableTo<OperationResult.Unauthorized>();
         }
 
         [Test, Ignore("no idea")]
@@ -173,9 +175,9 @@ namespace DigestCredentialsReader_Specification
             GivenAUser("username", "password");
             var authorizer = DependencyManager.GetService<DigestAuthorizerContributor>();
 
-            authorizer.ReadCredentials(Context)
-                .LegacyShouldBe(PipelineContinuation.RenderNow);
-            Context.OperationResult.ShouldBeAssignableTo<OperationResult.Unauthorized>();
+          authorizer.ReadCredentials(Context).ShouldBe(PipelineContinuation.RenderNow);
+          //return valueToAnalyse;
+          Context.OperationResult.ShouldBeAssignableTo<OperationResult.Unauthorized>();
         }
     }
 

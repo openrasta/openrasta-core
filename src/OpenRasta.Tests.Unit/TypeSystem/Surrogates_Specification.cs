@@ -38,8 +38,10 @@ namespace Surrogates_Specification
           _theBuilder.GetProperty(":0").TrySetValue("hello2").ShouldBeTrue();
 
           var theList = (List<string>)_theBuilder.Create();
-            theList[0].LegacyShouldBe("hello");
-            theList[1].LegacyShouldBe("hello2");
+          ShouldBeTestExtensions.ShouldBe(theList[0], "hello");
+          //return valueToAnalyse;
+          ShouldBeTestExtensions.ShouldBe(theList[1], "hello2");
+          //return valueToAnalyse;
         }
         [Test]
         public void the_indexer_is_surrogated()
@@ -49,7 +51,8 @@ namespace Surrogates_Specification
           _theBuilder.GetProperty(":0").TrySetValue("hello").ShouldBeTrue();
 
           var theList = (List<string>)_theBuilder.Create();
-            theList[0].LegacyShouldBe("hello");
+          ShouldBeTestExtensions.ShouldBe(theList[0], "hello");
+          //return valueToAnalyse;
         }
 
         void given_builder()
@@ -70,7 +73,8 @@ namespace Surrogates_Specification
           _theBuilder.GetProperty("ListOfStrings:0").TrySetValue("hello").ShouldBeTrue();
 
           var theList = (ListContainer)_theBuilder.Create();
-            theList.ListOfStrings[0].LegacyShouldBe("hello");
+          ShouldBeTestExtensions.ShouldBe(theList.ListOfStrings[0], "hello");
+          //return valueToAnalyse;
         }
         [Test]
         public void indexer_value_is_ignored_when_surrogate_is_an_intermediary()
@@ -81,7 +85,8 @@ namespace Surrogates_Specification
             instance.GetProperty("Customers:0.FirstName").TrySetValue("Skywalker");
 
             var result = (House)instance.Create();
-            result.Customers[0].FirstName.LegacyShouldBe("Anakin");
+          ShouldBeTestExtensions.ShouldBe(result.Customers[0].FirstName, "Anakin");
+          //return valueToAnalyse;
         }
         void GivenTypeInstance()
         {
@@ -110,8 +115,10 @@ namespace Surrogates_Specification
 
             when_creating_object();
 
-            result_as<Customer>().DateOfBirth.Day.LegacyShouldBe(14);
-            result_as<Customer>().DateOfBirth.Month.LegacyShouldBe(12);
+          result_as<Customer>().DateOfBirth.Day.ShouldBe(14);
+          //return valueToAnalyse;
+          result_as<Customer>().DateOfBirth.Month.ShouldBe(12);
+          //return valueToAnalyse;
         }
 
         [Test]
@@ -122,7 +129,8 @@ namespace Surrogates_Specification
 
             when_creating_object();
 
-            result_as<DateTime>().Day.LegacyShouldBe(14);
+          result_as<DateTime>().Day.ShouldBe(14);
+          //return valueToAnalyse;
         }
 
         T result_as<T>()
@@ -194,8 +202,10 @@ namespace Surrogates_Specification
 
             when_object_built();
 
-            result.First().FirstName.LegacyShouldBe("Frodo");
-            result.First().LastName.LegacyShouldBe("Baggins");
+          ShouldBeTestExtensions.ShouldBe(result.First().FirstName, "Frodo");
+          //return valueToAnalyse;
+          ShouldBeTestExtensions.ShouldBe(result.First().LastName, "Baggins");
+          //return valueToAnalyse;
         }
     }
     namespace context
@@ -223,7 +233,8 @@ namespace Surrogates_Specification
             {
                 for (int i = 0; i < values.Length; i++)
                 {
-                    result.Skip(i).FirstOrDefault().LegacyShouldBe(values[i]);
+                  result.Skip(i).FirstOrDefault().ShouldBe(values[i]);
+                  //return valueToAnalyse;
                 }
             }
         }

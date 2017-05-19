@@ -47,18 +47,22 @@ namespace HistoryStream_Specification
             GivenAHistoryStreamWithBufferSize(4096);
             // if buffer is 2048 we need another 2048 to trigger a response
 
-            ReadBytes(5000).Length.LegacyShouldBe(4096);
-            Stream.Position.LegacyShouldBe(4096);
-            // now the buffer should be full, we seek back by half
+          ReadBytes(5000).Length.ShouldBe(4096);
+          //return valueToAnalyse;
+          Stream.Position.ShouldBe(4096);
+          //return valueToAnalyse;
+          // now the buffer should be full, we seek back by half
 
-            Executing(() => SeekBy(-2048))
-                .LegacyShouldCompleteSuccessfully();
+          Should.NotThrow(Executing(() => SeekBy(-2048)));
 
-            Stream.Position.LegacyShouldBe(4096);
-            // issueing a new read request should trigger a new read on the stream for the leftover text
+          Stream.Position.ShouldBe(4096);
+          //return valueToAnalyse;
+          // issueing a new read request should trigger a new read on the stream for the leftover text
 
-            ReadBytes(5000).Length.LegacyShouldBe(4096 - 2048 + 12);
-            Stream.Position.LegacyShouldBe(Stream.Length);
+          ReadBytes(5000).Length.ShouldBe(4096 - 2048 + 12);
+          //return valueToAnalyse;
+          Stream.Position.ShouldBe(Stream.Length);
+          //return valueToAnalyse;
         }
 
         [Test]
@@ -67,25 +71,24 @@ namespace HistoryStream_Specification
             GivenAMemoryStreamContaining(new byte[4096]);
             GivenAHistoryStreamWithBufferSize(2048);
 
-            ReadBytes(2048).Length
-                .LegacyShouldBe(2048);
-            Stream.Position
-                .LegacyShouldBe(2048);
+          ReadBytes(2048).Length.ShouldBe(2048);
+          //return valueToAnalyse;
+          Stream.Position.ShouldBe(2048);
+          //return valueToAnalyse;
 
-            Executing(() => SeekBy(-1024))
-                .LegacyShouldCompleteSuccessfully(); // b is at 1024
-            Stream.Position
-                .LegacyShouldBe(2048);
+          Should.NotThrow(Executing(() => SeekBy(-1024)));
+          Stream.Position.ShouldBe(2048);
+          //return valueToAnalyse;
 
-            ReadBytes(1000).Length
-                .LegacyShouldBe(1000);
-            Stream.Position
-                .LegacyShouldBe(2048); // no change
+          ReadBytes(1000).Length.ShouldBe(1000);
+          //return valueToAnalyse;
+          Stream.Position.ShouldBe(2048);
+          //return valueToAnalyse;
 
-            ReadBytes(2048).Length
-                .LegacyShouldBe(2048); // b is at 2024+2048 = 4072
-            Stream.Position
-                .LegacyShouldBe(4072);
+          ReadBytes(2048).Length.ShouldBe(2048);
+          //return valueToAnalyse;
+          Stream.Position.ShouldBe(4072);
+          //return valueToAnalyse;
         }
 
         [Test]
@@ -128,8 +131,8 @@ namespace HistoryStream_Specification
             GivenAMemoryStream();
             GivenAHistoryStream();
 
-            HistoryStream.BufferSize.
-                LegacyShouldBe(4096);
+          HistoryStream.BufferSize.ShouldBe(4096);
+          //return valueToAnalyse;
         }
 
         [Test]

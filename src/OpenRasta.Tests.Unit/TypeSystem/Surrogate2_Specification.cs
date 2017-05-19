@@ -53,7 +53,8 @@ namespace OpenRasta.Tests.Unit.TypeSystem
     {
       var frodoType = _ts.FromClr<Frodo>();
 
-      frodoType.FindPropertyByPath("IsEvil").Owner.LegacyShouldBe(frodoType);
+      frodoType.FindPropertyByPath("IsEvil").Owner.ShouldBe(frodoType);
+      //return valueToAnalyse;
     }
 
     [Test]
@@ -61,7 +62,8 @@ namespace OpenRasta.Tests.Unit.TypeSystem
     {
       var frodoType = _ts.FromClr<Frodo>();
 
-      frodoType.FindPropertyByPath("IsGood").Owner.LegacyShouldBe(frodoType);
+      frodoType.FindPropertyByPath("IsGood").Owner.ShouldBe(frodoType);
+      //return valueToAnalyse;
     }
 
     [Test]
@@ -101,7 +103,8 @@ namespace OpenRasta.Tests.Unit.TypeSystem
       bool isMoreEvil = isMoreEvilProperty.TrySetValue(true);
 
       var builtFrodo = (Frodo) frodo.Create();
-      builtFrodo.SarumanMessing.LegacyShouldBe(2);
+      builtFrodo.SarumanMessing.ShouldBe(2);
+      //return valueToAnalyse;
     }
   }
 

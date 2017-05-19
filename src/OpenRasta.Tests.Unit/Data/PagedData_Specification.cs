@@ -47,24 +47,31 @@ namespace PagedData_Specification
         public void requesting_page_1_is_a_valida_action_even_when_tehre_are_no_results()
         {
             var page = new List<int>().AsQueryable().SelectPagedData(1, 10);
-            page.CurrentPage.LegacyShouldBe(1);
+          page.CurrentPage.ShouldBe(1);
+          //return valueToAnalyse;
         }
 
         [Test]
         public void requesting_the_second_page_for_a_page_size_of_5_returns_5_items_and_4_pages()
         {
             var page = rangeOfValues.SelectPagedData(2, 5, null);
-            page.Items.Count.LegacyShouldBe(5);
-            page.CurrentPage.LegacyShouldBe(2);
-            page.OtherPages.Count.LegacyShouldBe(3);
+          page.Items.Count.ShouldBe(5);
+          //return valueToAnalyse;
+          page.CurrentPage.ShouldBe(2);
+          //return valueToAnalyse;
+          page.OtherPages.Count.ShouldBe(3);
+          //return valueToAnalyse;
         }
         [Test]
         public void there_are_two_pages_when_the_page_count_is_19()
         {
             var page = rangeOfValues.SelectPagedData(1, 19);
-            page.Items.Count.LegacyShouldBe(19);
-            page.CurrentPage.LegacyShouldBe(1);
-            page.OtherPages.Count.LegacyShouldBe(1);
+          page.Items.Count.ShouldBe(19);
+          //return valueToAnalyse;
+          page.CurrentPage.ShouldBe(1);
+          //return valueToAnalyse;
+          page.OtherPages.Count.ShouldBe(1);
+          //return valueToAnalyse;
         }
     }
 }

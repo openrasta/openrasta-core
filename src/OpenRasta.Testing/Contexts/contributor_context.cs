@@ -1,4 +1,5 @@
 using OpenRasta.Pipeline;
+using Shouldly;
 
 namespace OpenRasta.Testing.Contexts
 {
@@ -12,7 +13,8 @@ namespace OpenRasta.Testing.Contexts
 
         protected void then_contributor_returns(PipelineContinuation continuation)
         {
-            Result.LegacyShouldBe(continuation);
+          Result.ShouldBe(continuation);
+          //return valueToAnalyse;
         }
     }
 }

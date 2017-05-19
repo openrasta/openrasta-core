@@ -34,10 +34,11 @@ namespace ResponseEntityWriter_Specification
             given_pipeline_contributor<ResponseEntityWriterContributor>();
             given_response_entity(null);
 
-            when_sending_notification<KnownStages.ICodecResponseSelection>()
-                .LegacyShouldBe(PipelineContinuation.Continue);
+          when_sending_notification<KnownStages.ICodecResponseSelection>().ShouldBe(PipelineContinuation.Continue);
+          //return valueToAnalyse;
 
-            Context.Response.Entity.Stream.Length.LegacyShouldBe(0);
+          Context.Response.Entity.Stream.Length.ShouldBe(0);
+          //return valueToAnalyse;
         }
 
         [Test]
@@ -46,8 +47,8 @@ namespace ResponseEntityWriter_Specification
             given_pipeline_contributor<ResponseEntityWriterContributor>();
             given_response_entity(null);
 
-            when_sending_notification<KnownStages.ICodecResponseSelection>()
-                .LegacyShouldBe(PipelineContinuation.Continue);
+          when_sending_notification<KnownStages.ICodecResponseSelection>().ShouldBe(PipelineContinuation.Continue);
+          //return valueToAnalyse;
 
           Context.Response.HeadersSent.ShouldBeTrue();
         }
@@ -63,11 +64,12 @@ namespace ResponseEntityWriter_Specification
             given_response_entity(new Fake());
             given_response_codec<CustomerCodec>(new object());
 
-            when_sending_notification<KnownStages.ICodecResponseSelection>()
-                .LegacyShouldBe(PipelineContinuation.Continue);
+          when_sending_notification<KnownStages.ICodecResponseSelection>().ShouldBe(PipelineContinuation.Continue);
+          //return valueToAnalyse;
 
-            Context.Response.Entity.Headers["ENTITY_TYPE"].LegacyShouldBe("Fake");
-            Context.Response.Entity.Codec.Configuration.ShouldNotBeNull();
+          ShouldBeTestExtensions.ShouldBe(Context.Response.Entity.Headers["ENTITY_TYPE"], "Fake");
+          //return valueToAnalyse;
+          Context.Response.Entity.Codec.Configuration.ShouldNotBeNull();
         }
 
         [Test]
@@ -77,10 +79,11 @@ namespace ResponseEntityWriter_Specification
             given_response_entity(new Fake());
             given_response_codec<CustomerCodec>();
 
-            when_sending_notification<KnownStages.ICodecResponseSelection>()
-                .LegacyShouldBe(PipelineContinuation.Continue);
+          when_sending_notification<KnownStages.ICodecResponseSelection>().ShouldBe(PipelineContinuation.Continue);
+          //return valueToAnalyse;
 
-            Context.Response.Entity.Headers["ENTITY_TYPE"].LegacyShouldBe("Fake");
+          ShouldBeTestExtensions.ShouldBe(Context.Response.Entity.Headers["ENTITY_TYPE"], "Fake");
+          //return valueToAnalyse;
         }
 
         void given_response_codec<TCodec>()
@@ -112,11 +115,11 @@ namespace ResponseEntityWriter_Specification
 
             GivenAContentTypeWriter((instance, entity, codecParams) => entity.Stream.Write(new byte[50]));
 
-            when_sending_notification<KnownStages.ICodecResponseSelection>()
-                .LegacyShouldBe(PipelineContinuation.Continue);
+          when_sending_notification<KnownStages.ICodecResponseSelection>().ShouldBe(PipelineContinuation.Continue);
+          //return valueToAnalyse;
 
-            Context.Response.Headers.ContentLength
-                .LegacyShouldBe(50);
+          Context.Response.Headers.ContentLength.ShouldBe(50);
+          //return valueToAnalyse;
         }
 
         IMediaTypeWriter GivenAContentTypeWriter(Action<object, IHttpEntity, string[]> code)

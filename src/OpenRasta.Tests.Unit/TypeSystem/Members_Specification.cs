@@ -29,8 +29,8 @@ namespace Accessors_Specification
         [Test]
         public void a_reference_type_can_be_assigned_a_null_value()
         {
-            new ReflectionBasedType(_typeSystem,typeof(string)).CanSetValue(null)
-                .LegacyShouldBe(true);
+          new ReflectionBasedType(_typeSystem,typeof(string)).CanSetValue(null).ShouldBe(true);
+          //return valueToAnalyse;
         }
 
         [Test]
@@ -44,7 +44,8 @@ namespace Accessors_Specification
         {
             object result;
           new ReflectionBasedType(_typeSystem,typeof(string)).TryCreateInstance(new[] { "value" }, (str, type) => BindingResult.Success(str), out result).ShouldBeTrue();
-          result.LegacyShouldBe("value");
+          result.ShouldBe("value");
+          //return valueToAnalyse;
         }
 
         [Test]
@@ -76,8 +77,8 @@ namespace Accessors_Specification
         [Test]
         public void the_name_is_the_type_name()
         {
-            new ReflectionBasedType(_typeSystem,typeof(string)).Name
-                .LegacyShouldBe("String");
+          ShouldBeTestExtensions.ShouldBe(new ReflectionBasedType(_typeSystem,typeof(string)).Name, "String");
+          //return valueToAnalyse;
         }
 
         [Test]
@@ -86,7 +87,8 @@ namespace Accessors_Specification
             var type1 = new ReflectionBasedType(_typeSystem,typeof(string));
             var type2 = new ReflectionBasedType(_typeSystem,typeof(string));
           type1.Equals(type2).ShouldBeTrue();
-          type1.GetHashCode().LegacyShouldBe(type2.GetHashCode());
+          type1.GetHashCode().ShouldBe(type2.GetHashCode());
+          //return valueToAnalyse;
         }
 
         [Test]
@@ -104,15 +106,15 @@ namespace Accessors_Specification
         [Test]
         public void a_type_compared_to_a_null_results_in_minus_one()
         {
-            new ReflectionBasedType(_typeSystem,typeof(int)).CompareTo(null)
-                .LegacyShouldBe(-1);
+          new ReflectionBasedType(_typeSystem,typeof(int)).CompareTo(null).ShouldBe(-1);
+          //return valueToAnalyse;
         }
 
         [Test]
         public void two_types_not_in_an_inheritance_hierarchy_compare_to_minus_one()
         {
-            new ReflectionBasedType(_typeSystem,typeof(int)).CompareTo(new ReflectionBasedType(_typeSystem,typeof(string)))
-                .LegacyShouldBe(-1);
+          new ReflectionBasedType(_typeSystem,typeof(int)).CompareTo(new ReflectionBasedType(_typeSystem,typeof(string))).ShouldBe(-1);
+          //return valueToAnalyse;
         }
     }
 
@@ -196,7 +198,8 @@ namespace Accessors_Specification
             GivenTypeFor<Customer>();
             var newCustomer = new Customer();
           ThenTheProperty("FirstName").TrySetValue(newCustomer, new[] { "Frodo" }, (str, t) => BindingResult.Success(str)).ShouldBeTrue();
-          newCustomer.FirstName.LegacyShouldBe("Frodo");
+          ShouldBeTestExtensions.ShouldBe(newCustomer.FirstName, "Frodo");
+          //return valueToAnalyse;
         }
 
         [Test]
@@ -212,7 +215,8 @@ namespace Accessors_Specification
         {
             GivenTypeFor<string>();
 
-            ThenTheProperty("length").LegacyShouldBe(ThenTheProperty("Length"));
+          ThenTheProperty("length").ShouldBe(ThenTheProperty("Length"));
+          //return valueToAnalyse;
         }
 
         [Test]
@@ -220,7 +224,8 @@ namespace Accessors_Specification
         {
             GivenTypeFor<string>();
 
-            ThenTheProperty("Length").Name.LegacyShouldBe("Length");
+          ShouldBeTestExtensions.ShouldBe(ThenTheProperty("Length").Name, "Length");
+          //return valueToAnalyse;
         }
 
         IProperty ThenTheProperty(string propertyName)
@@ -235,13 +240,15 @@ namespace Accessors_Specification
         {
             GivenTypeFor<RingOfPower>();
 
-            TheMethods.Count().LegacyShouldBe(typeof(RingOfPower).GetMethods(
-                BindingFlags.Static | BindingFlags.FlattenHierarchy | BindingFlags.Public | BindingFlags.Instance
-                ).Length);
+          TheMethods.Count().ShouldBe(typeof(RingOfPower).GetMethods(
+            BindingFlags.Static | BindingFlags.FlattenHierarchy | BindingFlags.Public | BindingFlags.Instance
+          ).Length);
+          //return valueToAnalyse;
 
           var method = TheMethods.First(x => x.Name == "RuleThemAll");
           method.ShouldNotBeNull();
-          method.InputMembers.Count().LegacyShouldBe(0);
+          method.InputMembers.Count().ShouldBe(0);
+          //return valueToAnalyse;
         }
         [Test]
         public void a_method_has_the_correct_parameter_name()
@@ -251,11 +258,13 @@ namespace Accessors_Specification
             var wornByMethod = Type.GetMethod("WornBy");
             wornByMethod
                 .ShouldNotBeNull();
-          wornByMethod.InputMembers.Count().LegacyShouldBe(1);
+          wornByMethod.InputMembers.Count().ShouldBe(1);
+          //return valueToAnalyse;
 
-            wornByMethod.InputMembers.First().Name.LegacyShouldBe("frodo");
-            wornByMethod.InputMembers.First().TypeName.LegacyShouldBe("Frodo");
-
+          ShouldBeTestExtensions.ShouldBe(wornByMethod.InputMembers.First().Name, "frodo");
+          //return valueToAnalyse;
+          ShouldBeTestExtensions.ShouldBe(wornByMethod.InputMembers.First().TypeName, "Frodo");
+          //return valueToAnalyse;
         }
         [Test]
         public void a_method_name_search_is_case_insensitive()
@@ -269,7 +278,8 @@ namespace Accessors_Specification
         {
             GivenTypeFor<RingOfPower>();
 
-            Type.GetMethod("ToString").Owner.TypeName.LegacyShouldBe("Object");
+          ShouldBeTestExtensions.ShouldBe(Type.GetMethod("ToString").Owner.TypeName, "Object");
+          //return valueToAnalyse;
         }
         protected ICollection<IMethod> TheMethods { get { return Type.GetMethods(); } }
     }

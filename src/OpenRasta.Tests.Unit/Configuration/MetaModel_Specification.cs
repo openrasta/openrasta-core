@@ -58,8 +58,10 @@ namespace Configuration_Specification
         {
             ResourceSpaceHas.ResourcesOfType<Customer>();
 
-            MetaModel.ResourceRegistrations.Count.LegacyShouldBe(1);
-            MetaModel.ResourceRegistrations[0].ResourceKey.LegacyShouldBe(typeof(Customer));
+          MetaModel.ResourceRegistrations.Count.ShouldBe(1);
+          //return valueToAnalyse;
+          MetaModel.ResourceRegistrations[0].ResourceKey.ShouldBe(typeof(Customer));
+          //return valueToAnalyse;
         }
 
         [Test]
@@ -67,7 +69,8 @@ namespace Configuration_Specification
         {
             ResourceSpaceHas.ResourcesNamed("customers");
 
-            MetaModel.ResourceRegistrations[0].ResourceKey.LegacyShouldBe("customers");
+          MetaModel.ResourceRegistrations[0].ResourceKey.ShouldBe("customers");
+          //return valueToAnalyse;
         }
 
         [Test]
@@ -75,7 +78,8 @@ namespace Configuration_Specification
         {
             ResourceSpaceHas.ResourcesOfType(typeof(Customer));
 
-            MetaModel.ResourceRegistrations[0].ResourceKey.LegacyShouldBe(typeof(Customer));
+          MetaModel.ResourceRegistrations[0].ResourceKey.ShouldBe(typeof(Customer));
+          //return valueToAnalyse;
         }
 
         [Test]
@@ -92,7 +96,8 @@ namespace Configuration_Specification
         {
             ResourceSpaceHas.ResourcesOfType(TypeSystems.Default.FromClr(typeof(Customer)));
 
-            MetaModel.ResourceRegistrations[0].ResourceKey.ShouldBeAssignableTo<IType>().Name.LegacyShouldBe("Customer");
+          ShouldBeTestExtensions.ShouldBe(MetaModel.ResourceRegistrations[0].ResourceKey.ShouldBeAssignableTo<IType>().Name, "Customer");
+          //return valueToAnalyse;
         }
 
         [Test]
@@ -126,14 +131,16 @@ namespace Configuration_Specification
         public void a_null_language_defaults_to_the_inviariant_culture()
         {
             ResourceSpaceHas.ResourcesOfType<Customer>().AtUri("/customer").InLanguage(null);
-            TheUris[0].Language.LegacyShouldBe(CultureInfo.InvariantCulture);
+          TheUris[0].Language.ShouldBe(CultureInfo.InvariantCulture);
+          //return valueToAnalyse;
         }
 
         [Test]
         public void a_resource_can_be_registered_with_no_uri()
         {
             ICodecParentDefinition reg = ResourceSpaceHas.ResourcesOfType<Customer>().WithoutUri;
-            TheUris.Count.LegacyShouldBe(0);
+          TheUris.Count.ShouldBe(0);
+          //return valueToAnalyse;
         }
 
         [Test]
@@ -141,15 +148,18 @@ namespace Configuration_Specification
         {
             ResourceSpaceHas.ResourcesOfType<Customer>().AtUri("/customer");
 
-            TheUris.Count.LegacyShouldBe(1);
-            TheUris[0].Uri.LegacyShouldBe("/customer");
+          TheUris.Count.ShouldBe(1);
+          //return valueToAnalyse;
+          ShouldBeTestExtensions.ShouldBe(TheUris[0].Uri, "/customer");
+          //return valueToAnalyse;
         }
 
         [Test]
         public void a_uri_language_is_registered()
         {
             ResourceSpaceHas.ResourcesOfType<Customer>().AtUri("/customer").InLanguage("fr");
-            TheUris[0].Language.Name.LegacyShouldBe("fr");
+          ShouldBeTestExtensions.ShouldBe(TheUris[0].Language.Name, "fr");
+          //return valueToAnalyse;
         }
 
         [Test]
@@ -157,7 +167,8 @@ namespace Configuration_Specification
         {
             ResourceSpaceHas.ResourcesOfType<Customer>().AtUri("/customer").Named("default");
 
-            TheUris[0].Name.LegacyShouldBe("default");
+          ShouldBeTestExtensions.ShouldBe(TheUris[0].Name, "default");
+          //return valueToAnalyse;
         }
 
         [Test]
@@ -168,9 +179,12 @@ namespace Configuration_Specification
                 .And
                 .AtUri("/lothlorien");
 
-            TheUris.Count.LegacyShouldBe(2);
-            TheUris[0].Uri.LegacyShouldBe("/theshire");
-            TheUris[1].Uri.LegacyShouldBe("/lothlorien");
+          TheUris.Count.ShouldBe(2);
+          //return valueToAnalyse;
+          ShouldBeTestExtensions.ShouldBe(TheUris[0].Uri, "/theshire");
+          //return valueToAnalyse;
+          ShouldBeTestExtensions.ShouldBe(TheUris[1].Uri, "/lothlorien");
+          //return valueToAnalyse;
         }
 
 
@@ -189,7 +203,8 @@ namespace Configuration_Specification
             ResourceSpaceHas.ResourcesOfType<Frodo>().AtUri("/theshrine")
                 .HandledBy<CustomerHandler>();
 
-            FirstRegistration.Handlers[0].Type.Name.LegacyShouldBe("CustomerHandler");
+          ShouldBeTestExtensions.ShouldBe(FirstRegistration.Handlers[0].Type.Name, "CustomerHandler");
+          //return valueToAnalyse;
         }
 
         [Test]
@@ -197,7 +212,8 @@ namespace Configuration_Specification
         {
             ResourceSpaceHas.ResourcesOfType(typeof(Frodo)).AtUri("/theshrine")
                 .HandledBy(TypeSystems.Default.FromClr(typeof(CustomerHandler)));
-            FirstRegistration.Handlers[0].Type.Name.LegacyShouldBe("CustomerHandler");
+          ShouldBeTestExtensions.ShouldBe(FirstRegistration.Handlers[0].Type.Name, "CustomerHandler");
+          //return valueToAnalyse;
         }
 
         [Test]
@@ -205,7 +221,8 @@ namespace Configuration_Specification
         {
             ResourceSpaceHas.ResourcesOfType(typeof(Frodo)).AtUri("/theshrine")
                 .HandledBy(typeof(CustomerHandler));
-            FirstRegistration.Handlers[0].Type.Name.LegacyShouldBe("CustomerHandler");
+          ShouldBeTestExtensions.ShouldBe(FirstRegistration.Handlers[0].Type.Name, "CustomerHandler");
+          //return valueToAnalyse;
         }
 
         [Test]
@@ -223,8 +240,10 @@ namespace Configuration_Specification
                 .And
                 .HandledBy<object>();
 
-            FirstRegistration.Handlers[0].Type.Name.LegacyShouldBe("CustomerHandler");
-            FirstRegistration.Handlers[1].Type.Name.LegacyShouldBe("Object");
+          ShouldBeTestExtensions.ShouldBe(FirstRegistration.Handlers[0].Type.Name, "CustomerHandler");
+          //return valueToAnalyse;
+          ShouldBeTestExtensions.ShouldBe(FirstRegistration.Handlers[1].Type.Name, "Object");
+          //return valueToAnalyse;
         }
     }
     public class when_registering_uri_decorators : configuration_context
@@ -234,9 +253,9 @@ namespace Configuration_Specification
         {
             ResourceSpaceUses.UriDecorator<TestUriDecorator>();
 
-          MetaModel.CustomRegistrations.OfType<DependencyRegistrationModel>().FirstOrDefault()
-            .legacyShouldNotBeNull()
-            .ConcreteType.ShouldBe(typeof(TestUriDecorator));
+          var model = MetaModel.CustomRegistrations.OfType<DependencyRegistrationModel>().FirstOrDefault();
+          model.ShouldNotBeNull();
+          model.ConcreteType.ShouldBe(typeof(TestUriDecorator));
         }
         public class TestUriDecorator : IUriDecorator
         {
@@ -283,7 +302,8 @@ namespace Configuration_Specification
                 var configurationObject = new object();
                 parent.TranscodedBy(typeof(CustomerCodec),configurationObject);
 
-                FirstRegistration.Codecs[0].Configuration.LegacyShouldBe(configurationObject);
+              FirstRegistration.Codecs[0].Configuration.ShouldBe(configurationObject);
+              //return valueToAnalyse;
             });
         }
         [Test]
@@ -293,7 +313,8 @@ namespace Configuration_Specification
                 {
                     parent.TranscodedBy<CustomerCodec>().ForMediaType(MediaType.Javascript.ToString());
 
-                    FirstRegistration.Codecs[0].MediaTypes[0].MediaType.LegacyShouldBe(MediaType.Javascript);
+                  FirstRegistration.Codecs[0].MediaTypes[0].MediaType.ShouldBe(MediaType.Javascript);
+                  //return valueToAnalyse;
                 });
         }
 
@@ -304,8 +325,10 @@ namespace Configuration_Specification
                 {
                     parent.TranscodedBy<CustomerCodec>().ForMediaType("application/xhtml+xml").ForMediaType("text/plain");
 
-                    FirstRegistration.Codecs[0].MediaTypes[0].MediaType.ToString().LegacyShouldBe("application/xhtml+xml");
-                    FirstRegistration.Codecs[0].MediaTypes[1].MediaType.ToString().LegacyShouldBe("text/plain");
+                  ShouldBeTestExtensions.ShouldBe(FirstRegistration.Codecs[0].MediaTypes[0].MediaType.ToString(), "application/xhtml+xml");
+                  //return valueToAnalyse;
+                  ShouldBeTestExtensions.ShouldBe(FirstRegistration.Codecs[0].MediaTypes[1].MediaType.ToString(), "text/plain");
+                  //return valueToAnalyse;
                 });
         }
         [Test]
@@ -315,9 +338,10 @@ namespace Configuration_Specification
             {
                 parent.TranscodedBy<CustomerCodec>().ForMediaType("application/xhtml+xml").ForExtension("xml");
 
-                FirstRegistration.Codecs[0].MediaTypes[0]
-                    .Extensions.LegacyShouldContain("xml")
-                    .Count().LegacyShouldBe(1);
+              FirstRegistration.Codecs[0].MediaTypes[0]
+                .Extensions.LegacyShouldContain("xml")
+                .Count().ShouldBe(1);
+              //return valueToAnalyse;
             });
         }
 
@@ -330,15 +354,17 @@ namespace Configuration_Specification
                     .ForMediaType(MediaType.Xhtml).ForExtension("xml").ForExtension("xhtml")
                     .ForMediaType("text/html").ForExtension("html");
 
-                FirstRegistration.Codecs[0].MediaTypes[0]
-                    .Extensions
-                        .LegacyShouldContain("xml")
-                        .LegacyShouldContain("xhtml")
-                        .Count().LegacyShouldBe(2);
-                FirstRegistration.Codecs[0].MediaTypes[1]
-                    .Extensions
-                        .LegacyShouldContain("html")
-                        .Count().LegacyShouldBe(1);
+              FirstRegistration.Codecs[0].MediaTypes[0]
+                .Extensions
+                .LegacyShouldContain("xml")
+                .LegacyShouldContain("xhtml")
+                .Count().ShouldBe(2);
+              //return valueToAnalyse;
+              FirstRegistration.Codecs[0].MediaTypes[1]
+                .Extensions
+                .LegacyShouldContain("html")
+                .Count().ShouldBe(1);
+              //return valueToAnalyse;
             });
         }
         [Test]
@@ -359,15 +385,17 @@ namespace Configuration_Specification
 
               FirstRegistration.Codecs[1].CodecType.ShouldBe(typeof(CustomerCodec));
               FirstRegistration.Codecs[1].MediaTypes[0]
-                    .Extensions
-                        .LegacyShouldContain("xml")
-                        .LegacyShouldContain("xhtml")
-                        .Count().LegacyShouldBe(2);
+                .Extensions
+                .LegacyShouldContain("xml")
+                .LegacyShouldContain("xhtml")
+                .Count().ShouldBe(2);
+              //return valueToAnalyse;
 
               FirstRegistration.Codecs[2].CodecType.ShouldBe(typeof(CustomerWriterCodec));
               FirstRegistration.Codecs[2].MediaTypes[0]
-                    .Extensions
-                        .Count().LegacyShouldBe(0);
+                .Extensions
+                .Count().ShouldBe(0);
+              //return valueToAnalyse;
             });
         }
         [Test]
@@ -392,8 +420,8 @@ namespace Configuration_Specification
             var first = MetaModel.CustomRegistrations.OfType<DependencyRegistrationModel>().LegacyShouldHaveCountOf(1).First();
           first.ConcreteType.ShouldBe(typeof(TemplatedUriResolver));
           first.ServiceType.ShouldBe(typeof(IUriResolver));
-          first.Lifetime.LegacyShouldBe(DependencyLifetime.Singleton);
-
+          first.Lifetime.ShouldBe(DependencyLifetime.Singleton);
+          //return valueToAnalyse;
         }
     }
 }

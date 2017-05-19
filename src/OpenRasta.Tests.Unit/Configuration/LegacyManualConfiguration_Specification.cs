@@ -32,10 +32,13 @@ namespace LegacyManualConfiguration_Specification
     void ThenTheUriHasTheResource<TResource>(string uri, CultureInfo language, string name)
     {
       var match = DependencyManager.Uris.Match(new Uri(new Uri("http://localhost/", UriKind.Absolute), uri));
-      match.legacyShouldNotBeNull();
-      match.UriCulture.LegacyShouldBe(language);
-      match.ResourceKey.LegacyShouldBe(TypeSystems.Default.FromClr(typeof(TResource)));
-      match.UriName.LegacyShouldBe(name);
+      match.ShouldNotBeNull();
+      match.UriCulture.ShouldBe(language);
+      //return valueToAnalyse;
+      match.ResourceKey.ShouldBe(TypeSystems.Default.FromClr(typeof(TResource)));
+      //return valueToAnalyse;
+      ShouldBeTestExtensions.ShouldBe(match.UriName, name);
+      //return valueToAnalyse;
     }
 
     [Test]
@@ -114,8 +117,7 @@ namespace LegacyManualConfiguration_Specification
       WhenTheConfigurationIsFinished();
 
       ThenTheCodecFor<Customer, Codec>("application/vnd.rasta.test").ShouldBeNull();
-      ThenTheCodecFor<Customer, Codec>("application/vnd.rasta.custom")
-        .legacyShouldNotBeNull();
+      ThenTheCodecFor<Customer, Codec>("application/vnd.rasta.custom").ShouldNotBeNull();
     }
 
     [Test]
@@ -127,10 +129,8 @@ namespace LegacyManualConfiguration_Specification
 
       WhenTheConfigurationIsFinished();
 
-      ThenTheCodecFor<Customer, MultiCodec>("application/vnd.rasta.test1")
-        .legacyShouldNotBeNull();
-      ThenTheCodecFor<Customer, MultiCodec>("application/vnd.rasta.test2")
-        .legacyShouldNotBeNull();
+      ThenTheCodecFor<Customer, MultiCodec>("application/vnd.rasta.test1").ShouldNotBeNull();
+      ThenTheCodecFor<Customer, MultiCodec>("application/vnd.rasta.test2").ShouldNotBeNull();
     }
 
     [Test]
@@ -144,10 +144,8 @@ namespace LegacyManualConfiguration_Specification
 
       WhenTheConfigurationIsFinished();
 
-      ThenTheCodecFor<Customer, Codec>("application/vnd.rasta.config1")
-        .legacyShouldNotBeNull();
-      ThenTheCodecFor<Customer, Codec>("application/vnd.rasta.config2")
-        .legacyShouldNotBeNull();
+      ThenTheCodecFor<Customer, Codec>("application/vnd.rasta.config1").ShouldNotBeNull();
+      ThenTheCodecFor<Customer, Codec>("application/vnd.rasta.config2").ShouldNotBeNull();
     }
 
     [Test]
@@ -159,8 +157,7 @@ namespace LegacyManualConfiguration_Specification
 
       WhenTheConfigurationIsFinished();
 
-      ThenTheCodecFor<Customer, Codec>("application/vnd.rasta.test")
-        .legacyShouldNotBeNull();
+      ThenTheCodecFor<Customer, Codec>("application/vnd.rasta.test").ShouldNotBeNull();
     }
 
     [Test]
@@ -180,11 +177,12 @@ namespace LegacyManualConfiguration_Specification
     IType ThenTheUriHasTheHandler<THandler>(string uri)
     {
       var urimatch = DependencyManager.Uris.Match(new Uri(new Uri("http://localhost/", UriKind.Absolute), uri));
-      urimatch.legacyShouldNotBeNull();
+      urimatch.ShouldNotBeNull();
 
       var handlerMatch = DependencyManager.Handlers.GetHandlerTypesFor(urimatch.ResourceKey).FirstOrDefault();
-      handlerMatch.legacyShouldNotBeNull();
-      handlerMatch.LegacyShouldBe(TypeSystems.Default.FromClr(typeof(THandler)));
+      handlerMatch.ShouldNotBeNull();
+      handlerMatch.ShouldBe(TypeSystems.Default.FromClr(typeof(THandler)));
+      //return valueToAnalyse;
       return handlerMatch;
     }
 
