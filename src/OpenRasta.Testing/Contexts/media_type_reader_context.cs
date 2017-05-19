@@ -50,7 +50,7 @@ namespace OpenRasta.Testing.Contexts
     protected T then_decoding_result<T>()
     {
       _theResult.legacyShouldNotBeNull();
-      _theResult.LegacyShouldNotBe(Missing.Value);
+      _theResult.ShouldNotBe(Missing.Value);
       _theResult.ShouldBeAssignableTo<T>();
       return (T) _theResult;
     }

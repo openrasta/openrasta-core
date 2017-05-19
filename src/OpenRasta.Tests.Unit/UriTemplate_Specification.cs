@@ -46,8 +46,7 @@ namespace UriTemplate_Specification
         [Test]
         public void all_valid_variables_are_returned()
         {
-            new OpenRasta.UriTemplate("weather/{state}/{city}").PathSegmentVariableNames
-                .LegacyShouldHaveSameElementsAs(new[] {"STATE", "CITY"});
+          new OpenRasta.UriTemplate("weather/{state}/{city}").PathSegmentVariableNames.ShouldBe((IEnumerable<string>) new[] {"STATE", "CITY"});
         }
     }
 
@@ -135,8 +134,7 @@ namespace UriTemplate_Specification
         public void the_match_has_the_correct_relative_path_segments()
         {
             GivenAMatching("weather/{state}/{city}", "http://localhost/weather/Washington/Seattle");
-            ThenTheMatch.RelativePathSegments
-                .LegacyShouldHaveSameElementsAs(new[] {"weather", "Washington", "Seattle"});
+          ThenTheMatch.RelativePathSegments.ShouldBe((IEnumerable<string>) new[] {"weather", "Washington", "Seattle"});
         }
 
         [Test]

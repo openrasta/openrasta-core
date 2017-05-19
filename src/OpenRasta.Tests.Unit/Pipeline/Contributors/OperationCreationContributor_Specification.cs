@@ -70,8 +70,7 @@ namespace OperationCreationContributor_Specification
             when_sending_notification();
 
             then_contributor_returns(PipelineContinuation.Continue);
-            Context.PipelineData.OperationsAsync.LegacyShouldHaveCountOf(1)
-                .LegacyShouldHaveSameElementsAs(Operations);
+          Context.PipelineData.OperationsAsync.LegacyShouldHaveCountOf(1).ShouldBe(Operations);
         }
     }
 

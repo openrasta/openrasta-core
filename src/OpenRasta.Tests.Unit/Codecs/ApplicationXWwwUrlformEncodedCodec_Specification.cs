@@ -22,6 +22,7 @@ using System.IO;
 using OpenRasta.Codecs;
 using OpenRasta.Pipeline;
 using OpenRasta.IO;
+using Shouldly;
 
 namespace ApplicationXWwwUrlformEncodedCodec_Specification
 {
@@ -64,8 +65,7 @@ namespace ApplicationXWwwUrlformEncodedCodec_Specification
 
             when_decoding<string[]>("thecustomer");
 
-            then_decoding_result<string[]>()
-                .LegacyShouldHaveSameElementsAs(new[] { "John", "Jack" });
+          then_decoding_result<string[]>().ShouldBe((IEnumerable<string>) new[] { "John", "Jack" });
         }
         [Test]
         public void string_arrays_are_assigned()

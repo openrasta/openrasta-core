@@ -62,9 +62,9 @@ namespace OpenRasta.Tests.Unit.OperationModel.Interceptors
 
       when_creating_wrapper();
 
-      WrappedOperation.ExtendedProperties.LegacyShouldBeTheSameInstanceAs(Operation.ExtendedProperties);
-      WrappedOperation.Inputs.LegacyShouldBeTheSameInstanceAs(Operation.Inputs);
-      WrappedOperation.Name.LegacyShouldBeTheSameInstanceAs(Operation.Name);
+      WrappedOperation.ExtendedProperties.ShouldBeSameAs(Operation.ExtendedProperties);
+      WrappedOperation.Inputs.ShouldBeSameAs(Operation.Inputs);
+      WrappedOperation.Name.ShouldBeSameAs(Operation.Name);
     }
 
     [Test]

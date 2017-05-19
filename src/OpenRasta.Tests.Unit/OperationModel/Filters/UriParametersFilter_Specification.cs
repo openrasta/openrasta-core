@@ -1,12 +1,15 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Runtime.InteropServices;
 using NUnit.Framework;
+using OpenRasta.OperationModel;
 using OpenRasta.OperationModel.Filters;
 using OpenRasta.Testing;
 using OpenRasta.Testing.Contexts;
 using OpenRasta.Web;
+using Shouldly;
 
 namespace OpenRasta.Tests.Unit.OperationModel.Filters
 {
@@ -22,8 +25,8 @@ namespace OpenRasta.Tests.Unit.OperationModel.Filters
 
                 when_filtering_operations();
 
-                FilteredOperations.LegacyShouldHaveSameElementsAs(Operations);
-                Errors.Errors.Count.LegacyShouldBe(0);
+              FilteredOperations.ShouldBe(Operations);
+              Errors.Errors.Count.LegacyShouldBe(0);
 
             }
         }
@@ -65,8 +68,7 @@ namespace OpenRasta.Tests.Unit.OperationModel.Filters
                 when_filtering_operations();
 
                 FilteredOperations.LegacyShouldHaveCountOf(0);
-                Errors.Errors.Count.LegacyShouldNotBe(0);
-
+              Errors.Errors.Count.ShouldNotBe(0);
             }
         }
     }

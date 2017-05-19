@@ -9,6 +9,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using NUnit.Framework;
@@ -239,7 +240,7 @@ namespace BoundaryStreamReader_Specification
 
             Reader.ReadLine().LegacyShouldBe("Header: value");
             Reader.ReadLine().LegacyShouldBe("");
-            Reader.ReadNextPart().LegacyShouldHaveSameElementsAs(unicodeText);
+          Reader.ReadNextPart().ShouldBe((IEnumerable<byte>) unicodeText);
           Reader.ReadLine().ShouldBeNull();
         }
 

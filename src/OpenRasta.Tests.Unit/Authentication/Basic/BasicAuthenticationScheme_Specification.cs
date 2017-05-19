@@ -1,6 +1,7 @@
 ﻿#pragma warning disable 618
 
 using System;
+using System.Collections.Generic;
 using System.Text;
 using Moq;
 using NUnit.Framework;
@@ -8,6 +9,7 @@ using OpenRasta.Authentication;
 using OpenRasta.Authentication.Basic;
 using OpenRasta.Hosting.InMemory;
 using OpenRasta.Testing;
+using Shouldly;
 
 namespace BasicAuthenticationScheme_Specification
 {
@@ -57,7 +59,7 @@ namespace BasicAuthenticationScheme_Specification
             var success = result as AuthenticationResult.Success;
 
             success.Username.LegacyShouldBe(username);
-            success.Roles.LegacyShouldHaveSameElementsAs(userRoles);
+          success.Roles.ShouldBe((IEnumerable<string>) userRoles);
         }
 
         [Test]

@@ -84,7 +84,7 @@ namespace Configuration_Specification
             var key = new object();
             ResourceSpaceHas.ResourcesWithKey(key);
 
-            MetaModel.ResourceRegistrations[0].ResourceKey.LegacyShouldBeTheSameInstanceAs(key);
+          MetaModel.ResourceRegistrations[0].ResourceKey.ShouldBeSameAs(key);
         }
 
         [Test]

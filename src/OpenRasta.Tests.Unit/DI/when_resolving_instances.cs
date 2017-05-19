@@ -59,8 +59,8 @@ namespace InternalDependencyResolver_Specification
             Resolver.AddDependencyInstance(typeof (IDependencyResolver), Resolver);
             Resolver.AddDependency<TypeWithDependencyResolverAsProperty>(DependencyLifetime.Transient);
 
-            Resolver.Resolve<TypeWithDependencyResolverAsProperty>()
-                .Resolver.LegacyShouldBeTheSameInstanceAs(Resolver);
+          Resolver.Resolve<TypeWithDependencyResolverAsProperty>()
+            .Resolver.ShouldBeSameAs(Resolver);
         }
         [Test]
         public void a_property_for_which_there_is_a_property_already_assigned_is_replaced_with_value_from_container()
@@ -68,8 +68,8 @@ namespace InternalDependencyResolver_Specification
             Resolver.AddDependencyInstance(typeof(IDependencyResolver),Resolver);
             Resolver.AddDependency<TypeWithPropertyAlreadySet>(DependencyLifetime.Singleton);
 
-            Resolver.Resolve<TypeWithPropertyAlreadySet>()
-                .Resolver.LegacyShouldBeTheSameInstanceAs(Resolver);
+          Resolver.Resolve<TypeWithPropertyAlreadySet>()
+            .Resolver.ShouldBeSameAs(Resolver);
         }
     }
 
@@ -169,7 +169,7 @@ namespace InternalDependencyResolver_Specification
 
                 var dependentClass = Resolver.Resolve<TheDependentClass>();
                 dependentClass.legacyShouldNotBeNull();
-                dependentClass.Dependent.LegacyShouldBeTheSameInstanceAs(objectForScope);
+              dependentClass.Dependent.ShouldBeSameAs(objectForScope);
             }
         }
 
@@ -202,13 +202,13 @@ namespace InternalDependencyResolver_Specification
             var instance = Resolver.Resolve<Customer>();
             var anotherInstanceInSameContext = Resolver.Resolve<Customer>();
 
-            instance.LegacyShouldBeTheSameInstanceAs(anotherInstanceInSameContext);
+          instance.ShouldBeSameAs(anotherInstanceInSameContext);
 
-            WhenClearingStore();
+          WhenClearingStore();
 
             var instance2 = Resolver.Resolve<Customer>();
 
-            instance.LegacyShouldNotBeTheSameInstanceAs(instance2);
+          instance.ShouldNotBeSameAs(instance2);
         }
 
         [Test]
@@ -229,7 +229,7 @@ namespace InternalDependencyResolver_Specification
 
             using (new ContextScope(scope1))
             {
-                Resolver.Resolve<TheClass>().LegacyShouldBeTheSameInstanceAs(objectForScope1);
+              Resolver.Resolve<TheClass>().ShouldBeSameAs(objectForScope1);
             }
         }
 
@@ -287,7 +287,7 @@ namespace InternalDependencyResolver_Specification
             InMemoryStore.Clear();
             var secondInstance = Resolver.Resolve<IUnknown>();
 
-            firstInstance.LegacyShouldNotBeTheSameInstanceAs(secondInstance);
+          firstInstance.ShouldNotBeSameAs(secondInstance);
         }
         interface IUnknown{}
         class JohnDoe : IUnknown {}
@@ -300,9 +300,9 @@ namespace InternalDependencyResolver_Specification
 
             Resolver.AddDependencyInstance<TheClass>(firstInstance, DependencyLifetime.PerRequest);
 
-            Resolver.Resolve<TheClass>().LegacyShouldBeTheSameInstanceAs(firstInstance);
+          Resolver.Resolve<TheClass>().ShouldBeSameAs(firstInstance);
 
-            Resolver.HandleIncomingRequestProcessed();
+          Resolver.HandleIncomingRequestProcessed();
 
             Executing(() => Resolver.Resolve<TheClass>())
           .LegacyShouldThrow<DependencyResolutionException>();

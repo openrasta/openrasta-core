@@ -63,7 +63,7 @@ namespace Instances_Specification
     {
       given_builder_for<string>();
 
-      TypeBuilder.GetProperty("Length").LegacyShouldBeTheSameInstanceAs(TypeBuilder.GetProperty("Length"));
+      TypeBuilder.GetProperty("Length").ShouldBeSameAs(TypeBuilder.GetProperty("Length"));
     }
 
     [Test]
@@ -221,7 +221,7 @@ namespace Instances_Specification
         .TrySetValue("Frodo").ShouldBeTrue();
 
       object newCustomer = TypeBuilder.Create();
-      newCustomer.LegacyShouldNotBeTheSameInstanceAs(customer);
+      newCustomer.ShouldNotBeSameAs(customer);
       customer.FirstName.LegacyShouldBe(null);
     }
   }

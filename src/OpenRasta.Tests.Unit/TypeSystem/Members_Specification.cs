@@ -95,7 +95,7 @@ namespace Accessors_Specification
             var type1 = new ReflectionBasedType(_typeSystem,typeof(string));
             var type2 = new ReflectionBasedType(_typeSystem,typeof(object));
           type1.Equals(type2).ShouldBeFalse();
-          type1.GetHashCode().LegacyShouldNotBe(type2.GetHashCode());
+          type1.GetHashCode().ShouldNotBe(type2.GetHashCode());
         }
     }
 
@@ -262,8 +262,7 @@ namespace Accessors_Specification
         {
             GivenTypeFor<RingOfPower>();
 
-            Type.GetMethod("WornBy")
-                .LegacyShouldBeTheSameInstanceAs(Type.GetMethod("wornby"));
+          Type.GetMethod("WornBy").ShouldBeSameAs(Type.GetMethod("wornby"));
         }
         [Test]
         public void a_method_defined_in_the_base_type_has_the_correct_base_type_owner()

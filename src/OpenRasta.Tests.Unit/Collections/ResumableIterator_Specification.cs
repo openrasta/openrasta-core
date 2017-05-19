@@ -16,7 +16,7 @@ namespace OpenRasta.Tests.Unit.Collections
             var iterator = CreateIterator();
             when_enumerating_values(iterator);
 
-            _resulting.LegacyShouldHaveSameElementsAs(_original);
+          _resulting.ShouldBe((IEnumerable<int>) _original);
         }
 
         [Test]
@@ -25,7 +25,7 @@ namespace OpenRasta.Tests.Unit.Collections
             var iter = CreateIterator();
             iter.SuspendAfter(2);
             when_enumerating_values(iter);
-            _resulting.LegacyShouldHaveSameElementsAs(new[] { 1, 2 });
+          _resulting.ShouldBe((IEnumerable<int>) new[] { 1, 2 });
         }
         [Test]
         public void resuming_after_suspension_should_enumerate_further_items()
@@ -33,9 +33,9 @@ namespace OpenRasta.Tests.Unit.Collections
             var iter = CreateIterator();
             iter.SuspendAfter(2);
             when_enumerating_values(iter);
-            _resulting.LegacyShouldHaveSameElementsAs(new[] { 1, 2 });
-            when_enumerating_values(iter);
-            _resulting.LegacyShouldHaveSameElementsAs(new[] { 3, 4, 5 });
+          _resulting.ShouldBe((IEnumerable<int>) new[] { 1, 2 });
+          when_enumerating_values(iter);
+          _resulting.ShouldBe((IEnumerable<int>) new[] { 3, 4, 5 });
         }
 
         [Test]
@@ -44,7 +44,7 @@ namespace OpenRasta.Tests.Unit.Collections
             var iterator = CreateIterator();
           iterator.ResumeFrom(2).ShouldBeTrue();
           when_enumerating_values(iterator);
-            _resulting.LegacyShouldHaveSameElementsAs(new[] { 2, 3, 4, 5 });
+          _resulting.ShouldBe((IEnumerable<int>) new[] { 2, 3, 4, 5 });
         }
 
         [Test]

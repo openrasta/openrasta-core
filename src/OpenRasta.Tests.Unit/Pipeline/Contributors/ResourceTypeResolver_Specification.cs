@@ -36,7 +36,7 @@ namespace ResourceTypeResolver_Specification
             when_sending_notification<BootstrapperContributor>()
                 .LegacyShouldBe(PipelineContinuation.Continue);
 
-            Context.PipelineData.SelectedResource.LegacyShouldBeTheSameInstanceAs(theOriginalMatch);
+          Context.PipelineData.SelectedResource.ShouldBeSameAs(theOriginalMatch);
         }
     }
 

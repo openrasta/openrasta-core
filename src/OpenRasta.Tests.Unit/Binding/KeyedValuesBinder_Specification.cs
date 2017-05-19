@@ -41,7 +41,7 @@ namespace KeyedValuesBinder_Specification
             var customer = (Customer)binder.BuildObject().Instance;
             var customer2 = (Customer)binder.BuildObject().Instance;
 
-            customer.LegacyShouldBeTheSameInstanceAs(customer2);
+          customer.ShouldBeSameAs(customer2);
         }
         [Test]
         public void a_change_after_a_creation_results_in_a_new_oject_with_the_same_properties()

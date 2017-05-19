@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using NUnit.Framework;
+using OpenRasta.OperationModel;
 using OpenRasta.OperationModel.Filters;
 using OpenRasta.Testing;
 using OpenRasta.Testing.Contexts;
@@ -51,7 +52,7 @@ namespace OpenRasta.Tests.Unit.OperationModel.Filters
 
             when_filtering_operations();
 
-            FilteredOperations.LegacyShouldHaveSameElementsAs(Operations);
+          FilteredOperations.ShouldBe(Operations);
         }
     }
 }

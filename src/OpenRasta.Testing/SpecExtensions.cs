@@ -15,12 +15,6 @@ namespace OpenRasta.Testing
       values.ShouldAllBe(item => Equals(expected, item));
     }
 
-
-    public static void LegacyShouldBeTheSameInstanceAs(this object actual, object expected)
-    {
-      actual.ShouldBeSameAs(expected);
-    }
-
     public static void LegacyShouldCompleteSuccessfully(this Action codeToExecute)
     {
       codeToExecute();
@@ -37,21 +31,6 @@ namespace OpenRasta.Testing
       actual.ToDictionary().ShouldBe(expected.ToDictionary());
     }
 
-    public static void LegacyShouldHaveSameElementsAs<T>(this IEnumerable<T> r1, IEnumerable<T> r2)
-    {
-      r1.ShouldBe(r2);
-    }
-
-    public static void LegacyShouldNotBe<T>(this T valueToAnalyse, T expectedValue)
-    {
-      valueToAnalyse.ShouldNotBe(expectedValue);
-    }
-
-
-    public static void LegacyShouldNotBeTheSameInstanceAs(this object actual, object expected)
-    {
-      actual.ShouldNotBeSameAs(expected);
-    }
 
     public static void LegacyShouldNotContain(this string baseString, string textToFind)
     {

@@ -32,9 +32,8 @@ namespace Extensions_Specification
         [Test]
         public void arrays_of_strings_return_the_provided_values()
         {
-            typeof (string[]).CreateInstanceFrom(new[] {"one", "two", "three"})
-                .LegacyShouldBeOfType<string[]>()
-                .LegacyShouldHaveSameElementsAs(new[] {"one", "two", "three"});
+          typeof (string[]).CreateInstanceFrom(new[] {"one", "two", "three"})
+            .LegacyShouldBeOfType<string[]>().ShouldBe((IEnumerable<string>) new[] {"one", "two", "three"});
         }
 
         [Test]

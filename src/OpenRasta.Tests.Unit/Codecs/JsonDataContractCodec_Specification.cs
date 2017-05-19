@@ -16,6 +16,7 @@ using OpenRasta.Hosting.InMemory;
 using OpenRasta.Testing;
 using NUnit.Framework;
 using OpenRasta.Web;
+using Shouldly;
 
 namespace JsonDataContractCodec_Specification
 {
@@ -28,8 +29,7 @@ namespace JsonDataContractCodec_Specification
             var stub = new InMemoryResponse();
             codec.WriteTo(new Customer { Name = "hello" }, stub.Entity, null);
 
-            stub.Entity.Stream.Position
-                .LegacyShouldNotBe(0);
+          stub.Entity.Stream.Position.ShouldNotBe(0);
         }
         public class Customer { public string Name { get; set; } }
     }
