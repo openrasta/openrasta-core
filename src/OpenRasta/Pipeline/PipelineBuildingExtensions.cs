@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using OpenRasta.Concordia;
 
 namespace OpenRasta.Pipeline
 {
@@ -8,25 +9,27 @@ namespace OpenRasta.Pipeline
   {
     public static IEnumerable<IPipelineMiddlewareFactory> ToMiddleware(
       this IEnumerable<ContributorCall> callGraph,
+      StartupProperties startupProperties = null,
       IDictionary<Func<ContributorCall, bool>, Func<IPipelineMiddlewareFactory>>
         interceptors = null)
     {
-      return ToDetailedMiddleware(callGraph, interceptors).Select(m => m.Item1).ToList();
+      return ToDetailedMiddleware(callGraph, startupProperties, interceptors).Select(m => m.Item1).ToList();
     }
 
     public static IEnumerable<(IPipelineMiddlewareFactory, ContributorCall)> ToDetailedMiddleware(
-      this IEnumerable<ContributorCall> callGraph,
-      IDictionary<Func<ContributorCall, bool>, Func<IPipelineMiddlewareFactory>>
-        interceptors = null)
+      this IEnumerable<ContributorCall> callGraph, StartupProperties startupProperties = null,
+      IDictionary<Func<ContributorCall, bool>, Func<IPipelineMiddlewareFactory>> interceptors = null)
     {
       Func<ContributorCall, IPipelineMiddlewareFactory> converter = CreatePreExecuteMiddleware;
+
 
       foreach (var contributorCall in callGraph)
       {
         if (contributorCall.Target is KnownStages.IOperationResultInvocation)
         {
           converter = CreateResponseMiddleware;
-          yield return (new ResponseRetryMiddleware(), null);
+          if (startupProperties?.OpenRasta.Errors.HandleAllExceptions == true)
+            yield return (new ResponseRetryMiddleware(), null);
         }
         var middleware = converter(contributorCall);
         yield return (middleware, contributorCall);

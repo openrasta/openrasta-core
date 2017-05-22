@@ -17,7 +17,7 @@ namespace Tests.Pipeline.Middleware.Trailers
       {
         new ContributorCall(new DoNothingContributor(), OpenRasta.Pipeline.Middleware.IdentitySingleTap, "doNothing")
       };
-      var middlewareChain = calls.ToMiddleware(new Dictionary<Func<ContributorCall, bool>, Func<IPipelineMiddlewareFactory>>
+      var middlewareChain = calls.ToMiddleware(interceptors: new Dictionary<Func<ContributorCall, bool>, Func<IPipelineMiddlewareFactory>>
       {
         [call=>call.Target is DoNothingContributor] = () => new TrailerMiddleware()
       }).ToArray();

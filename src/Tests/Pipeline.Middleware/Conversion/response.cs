@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using OpenRasta.Concordia;
 using OpenRasta.Pipeline;
 using Shouldly;
 using Tests.Pipeline.Middleware.Examples;
@@ -19,7 +20,7 @@ namespace Tests.Pipeline.Middleware.Conversion
         new ContributorCall(new OperationResultContributor(), OpenRasta.Pipeline.Middleware.IdentitySingleTap, "result"),
         new ContributorCall(new DoNothingContributor(), OpenRasta.Pipeline.Middleware.IdentitySingleTap, "request")
       };
-      var middlewareChain = calls.ToMiddleware().ToArray();
+      var middlewareChain = calls.ToMiddleware(new StartupProperties()).ToArray();
       middlewareChain[0].ShouldBeOfType<PreExecuteMiddleware>();
       middlewareChain[1].ShouldBeOfType<PreExecuteMiddleware>();
       middlewareChain[2].ShouldBeOfType<RequestMiddleware>();

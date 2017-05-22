@@ -101,9 +101,13 @@ namespace OpenRasta.Concordia
 
       public bool HandleCatastrophicExceptions
       {
-        get => Get(Keys.HandleExceptions, true);
-        set => Set(Keys.HandleExceptions, value);
+        get => Get(Keys.HandleCatastrophicExceptions, true);
+        set => Set(Keys.HandleCatastrophicExceptions, value);
       }
+
+      public bool HandleAllExceptions {
+        get => Get(Keys.HandleAllExceptions, true);
+        set => Set(Keys.HandleAllExceptions, value);}
     }
   }
 }

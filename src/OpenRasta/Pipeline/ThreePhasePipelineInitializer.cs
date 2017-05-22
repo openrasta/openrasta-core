@@ -45,6 +45,7 @@ namespace OpenRasta.Pipeline
         IGenerateCallGraphs,
         IEnumerable<IPipelineMiddlewareFactory>,
         IEnumerable<IPipelineContributor>,
+        StartupProperties,
         IEnumerable<(IPipelineMiddlewareFactory middleware, ContributorCall contributor)>
       > builder;
 
@@ -56,7 +57,8 @@ namespace OpenRasta.Pipeline
       var pipeline = builder(
           _callGrapher,
           defaults,
-          _contributors)
+          _contributors,
+          startup)
         .ToList();
 
       return new PipelineAsync(
@@ -66,30 +68,24 @@ namespace OpenRasta.Pipeline
         pipeline.Select(c => c.middleware).ToList());
     }
 
-    static IEnumerable<(IPipelineMiddlewareFactory, ContributorCall)> Build(
-      IGenerateCallGraphs callGraphGenerator,
-      IEnumerable<IPipelineMiddlewareFactory> defaults,
-      IEnumerable<IPipelineContributor> contributors)
+    static IEnumerable<(IPipelineMiddlewareFactory, ContributorCall)> Build(IGenerateCallGraphs callGraphGenerator, IEnumerable<IPipelineMiddlewareFactory> defaults, IEnumerable<IPipelineContributor> contributors, StartupProperties startupProperties)
     {
       foreach (var factory in defaults)
         yield return (factory, null);
 
       foreach (var contributor in callGraphGenerator
         .GenerateCallGraph(contributors)
-        .ToDetailedMiddleware())
+        .ToDetailedMiddleware(startupProperties))
         yield return contributor;
     }
 
-    IEnumerable<(IPipelineMiddlewareFactory middleware, ContributorCall contributor)> LogBuild(
-      IGenerateCallGraphs callGraphGenerator,
-      IEnumerable<IPipelineMiddlewareFactory> defaults,
-      IEnumerable<IPipelineContributor> contributors)
+    IEnumerable<(IPipelineMiddlewareFactory middleware, ContributorCall contributor)> LogBuild(IGenerateCallGraphs callGraphGenerator, IEnumerable<IPipelineMiddlewareFactory> defaults, IEnumerable<IPipelineContributor> contributors, StartupProperties startupProperties)
     {
       var loggingFactory = new LoggingMiddlewareFactory();
 
       using (Log.Operation(this, $"Initializing the pipeline. (using {callGraphGenerator.GetType()})"))
       {
-        foreach (var result in Build(callGraphGenerator, defaults, contributors))
+        foreach (var result in Build(callGraphGenerator, defaults, contributors, startupProperties))
         {
           yield return (loggingFactory, null);
           yield return LogBuildEntry(result);

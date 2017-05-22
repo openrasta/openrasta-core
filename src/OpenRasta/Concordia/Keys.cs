@@ -7,6 +7,7 @@
       public const string PipelineTask = "openrasta.pipeline.completion";
     }
 
-    public const string HandleExceptions = "openrasta.errors.HandleCatastrophicExceptions";
+    public const string HandleCatastrophicExceptions = "openrasta.errors.HandleCatastrophicExceptions";
+    public const string HandleAllExceptions = "openrasta.errors.HandleAllExceptions";
   }
 }
