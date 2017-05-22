@@ -34,7 +34,7 @@ namespace OpenRasta.Hosting.AspNet
       {
         OpenRasta =
         {
-          Errors = { HandleCatastrophicExceptions = false },
+          Errors = {HandleCatastrophicExceptions = false},
           Pipeline =
           {
             ContributorTrailers =
@@ -57,19 +57,19 @@ namespace OpenRasta.Hosting.AspNet
     public HostManager Host { get; set; }
   }
 
-  // A -> B -> Yield -> Resume -> C
-
   public static class Yielding
   {
     public static async Task<bool> DidItYield(Task pipeline, Task yielded)
     {
       if (pipeline.IsCompleted)
       {
-        await pipeline; return false;
+        await pipeline;
+        return false;
       }
       if (yielded.IsCompleted)
       {
-        await yielded; return true;
+        await yielded;
+        return true;
       }
       var completedTask = await Task.WhenAny(yielded, pipeline);
       return completedTask == yielded;
