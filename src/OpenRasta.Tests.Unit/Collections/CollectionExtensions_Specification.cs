@@ -12,8 +12,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using OpenRasta.Collections.Specialized;
-using OpenRasta.Testing;
 using NUnit.Framework;
+using OpenRasta.Tests.Unit.Infrastructure;
 using Shouldly;
 
 namespace CollectionExtensions_Specification

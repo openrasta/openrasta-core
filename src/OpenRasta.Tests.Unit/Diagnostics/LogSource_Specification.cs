@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using NUnit.Framework;
 using OpenRasta.Diagnostics;
-using OpenRasta.Testing;
 using Shouldly;
 
 namespace OpenRasta.Diagnostics

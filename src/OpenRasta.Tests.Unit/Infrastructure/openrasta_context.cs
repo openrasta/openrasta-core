@@ -8,18 +8,17 @@ using System.Threading.Tasks;
 using OpenRasta.Codecs;
 using OpenRasta.Collections;
 using OpenRasta.Concordia;
-using OpenRasta.DI;
 using OpenRasta.Diagnostics;
+using OpenRasta.DI;
 using OpenRasta.Handlers;
 using OpenRasta.Hosting.InMemory;
-using OpenRasta.OperationModel.Filters;
 using OpenRasta.Pipeline;
 using OpenRasta.Security;
 using OpenRasta.TypeSystem;
 using OpenRasta.Web;
 using Shouldly;
 
-namespace OpenRasta.Testing.Contexts
+namespace OpenRasta.Tests.Unit.Infrastructure
 {
   public abstract class openrasta_context : context
   {

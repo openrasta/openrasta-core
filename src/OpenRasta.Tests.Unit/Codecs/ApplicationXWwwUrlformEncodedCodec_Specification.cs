@@ -16,15 +16,14 @@ using System.Linq;
 using System.Text;
 using OpenRasta.Binding;
 using OpenRasta.Data;
-using OpenRasta.Testing;
 using NUnit.Framework;
-using OpenRasta.Testing.Contexts;
 using OpenRasta.Web;
 using Moq;
 using System.IO;
 using OpenRasta.Codecs;
 using OpenRasta.Pipeline;
 using OpenRasta.IO;
+using OpenRasta.Tests.Unit.Infrastructure;
 using Shouldly;
 
 namespace ApplicationXWwwUrlformEncodedCodec_Specification

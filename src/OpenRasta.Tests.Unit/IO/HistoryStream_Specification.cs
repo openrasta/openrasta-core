@@ -12,7 +12,6 @@ using System;
 using System.IO;
 using NUnit.Framework;
 using OpenRasta.IO;
-using OpenRasta.Testing;
 using Shouldly;
 
 namespace HistoryStream_Specification

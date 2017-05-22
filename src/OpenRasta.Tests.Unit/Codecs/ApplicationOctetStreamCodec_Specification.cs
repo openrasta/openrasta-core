@@ -12,13 +12,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using OpenRasta.Codecs;
-using OpenRasta.Testing;
-using OpenRasta.Testing.Contexts;
 using OpenRasta.TypeSystem.ReflectionBased;
 using OpenRasta.Web;
 using NUnit.Framework;
 using OpenRasta.IO;
 using System.IO;
+using OpenRasta.Tests.Unit.Infrastructure;
 using Shouldly;
 
 namespace ApplicationOctetStreamCodec_Specification

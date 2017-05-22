@@ -10,7 +10,7 @@
 
 using System;
 using NUnit.Framework;
-using OpenRasta.Testing;
+using OpenRasta.Tests.Unit.Infrastructure;
 using OpenRasta.Web;
 using Shouldly;
 

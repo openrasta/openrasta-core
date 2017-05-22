@@ -1,7 +1,6 @@
 ﻿using System;
 using NUnit.Framework;
-using OpenRasta.Testing;
-using OpenRasta.Testing.Contexts;
+using OpenRasta.Tests.Unit.Infrastructure;
 using Shouldly;
 
 namespace OpenRasta.Tests.Unit.OperationModel.MethodBased.Operation

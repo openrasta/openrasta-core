@@ -8,8 +8,7 @@ using Moq.Language.Flow;
 using NUnit.Framework;
 using OpenRasta.OperationModel;
 using OpenRasta.OperationModel.Interceptors;
-using OpenRasta.Testing;
-using OpenRasta.Testing.Contexts;
+using OpenRasta.Tests.Unit.Infrastructure;
 using OpenRasta.Tests.Unit.OperationModel.MethodBased;
 using Shouldly;
 

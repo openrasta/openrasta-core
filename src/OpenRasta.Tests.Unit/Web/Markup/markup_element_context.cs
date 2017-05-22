@@ -11,8 +11,8 @@
 using System;
 using OpenRasta.DI;
 using OpenRasta.Hosting.InMemory;
-using OpenRasta.Testing.Contexts;
 using OpenRasta.Tests;
+using OpenRasta.Tests.Unit.Infrastructure;
 using OpenRasta.Web;
 using OpenRasta.Web.Markup;
 

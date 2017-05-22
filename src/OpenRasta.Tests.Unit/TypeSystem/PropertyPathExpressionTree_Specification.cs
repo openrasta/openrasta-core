@@ -13,8 +13,8 @@ using System.Collections.Generic;
 using NUnit.Framework;
 using OpenRasta;
 using OpenRasta.Reflection;
-using OpenRasta.Testing;
 using OpenRasta.Tests.Unit.Fakes;
+using OpenRasta.Tests.Unit.Infrastructure;
 using Shouldly;
 
 namespace PropertyPathExpressionTree_Specification

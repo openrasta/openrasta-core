@@ -8,7 +8,6 @@ using NUnit.Framework;
 using OpenRasta.Authentication;
 using OpenRasta.Authentication.Basic;
 using OpenRasta.Hosting.InMemory;
-using OpenRasta.Testing;
 using OpenRasta.Web;
 using Shouldly;
 

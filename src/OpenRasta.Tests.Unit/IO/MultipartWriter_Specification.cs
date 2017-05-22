@@ -12,7 +12,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using NUnit.Framework;
-using OpenRasta.Testing;
+using OpenRasta.Tests.Unit.Infrastructure;
 using OpenRasta.Web;
 using Shouldly;
 

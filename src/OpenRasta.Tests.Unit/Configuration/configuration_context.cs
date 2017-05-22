@@ -11,9 +11,9 @@ using System;
 using OpenRasta.Configuration.Fluent;
 using OpenRasta.Hosting;
 using OpenRasta.Hosting.InMemory;
-using OpenRasta.Testing;
 using OpenRasta.Configuration;
 using OpenRasta.DI;
+using OpenRasta.Tests.Unit.Infrastructure;
 
 namespace OpenRasta.Tests.Unit.Configuration
 {

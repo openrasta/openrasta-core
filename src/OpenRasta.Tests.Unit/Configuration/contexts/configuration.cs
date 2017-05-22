@@ -5,7 +5,7 @@ using OpenRasta.Configuration.Fluent;
 using OpenRasta.Configuration.MetaModel;
 using OpenRasta.DI;
 using OpenRasta.Hosting.InMemory;
-using OpenRasta.Testing;
+using OpenRasta.Tests.Unit.Infrastructure;
 using OpenRasta.TypeSystem;
 
 namespace Tests.Configuration.contexts

@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Reflection;
 using NUnit.Framework;
-using OpenRasta.Testing;
 using Shouldly;
 
 namespace OpenRasta.Tests.Unit.OperationModel.MethodBased

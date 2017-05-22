@@ -3,7 +3,6 @@ using System.Linq;
 using OpenRasta.Binding;
 using OpenRasta.OperationModel;
 using OpenRasta.OperationModel.MethodBased;
-using OpenRasta.Testing;
 using OpenRasta.TypeSystem;
 using Shouldly;
 

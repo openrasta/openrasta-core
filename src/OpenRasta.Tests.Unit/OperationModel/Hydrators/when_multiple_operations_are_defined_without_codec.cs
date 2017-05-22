@@ -9,8 +9,6 @@ using OpenRasta.Diagnostics;
 using OpenRasta.OperationModel;
 using OpenRasta.OperationModel.Hydrators;
 using OpenRasta.OperationModel.Hydrators.Diagnostics;
-using OpenRasta.Testing;
-using OpenRasta.Testing.Contexts;
 using OpenRasta.Tests.Unit.Fakes;
 using OpenRasta.Tests.Unit.OperationModel.Filters;
 using OpenRasta.TypeSystem;

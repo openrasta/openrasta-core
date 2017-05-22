@@ -11,7 +11,6 @@
 using System;
 using NUnit.Framework;
 using OpenRasta.Codecs;
-using OpenRasta.Testing;
 using OpenRasta.Tests;
 using OpenRasta.Tests.Unit.Fakes;
 using OpenRasta.Pipeline;

@@ -5,8 +5,7 @@ using System.Text;
 using NUnit.Framework;
 using OpenRasta.OperationModel;
 using OpenRasta.OperationModel.Filters;
-using OpenRasta.Testing;
-using OpenRasta.Testing.Contexts;
+using OpenRasta.Tests.Unit.Infrastructure;
 using Shouldly;
 
 namespace OpenRasta.Tests.Unit.OperationModel.Filters
@@ -32,9 +31,9 @@ namespace OpenRasta.Tests.Unit.OperationModel.Filters
 
             when_filtering_operations();
 
-            FilteredOperations.LegacyShouldHaveCountOf(2);
+          FilteredOperations.Count().ShouldBe(2);
 
-            FilteredOperations.SingleOrDefault(x => x.Name == "GetForRouteName")
+          FilteredOperations.SingleOrDefault(x => x.Name == "GetForRouteName")
                 .ShouldNotBeNull();
             FilteredOperations.SingleOrDefault(x => x.Name == "PostForRouteName")
                 .ShouldNotBeNull();

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using NUnit.Framework;
 using OpenRasta.Collections;
-using OpenRasta.Testing;
+using OpenRasta.Tests.Unit.Infrastructure;
 using Shouldly;
 
 namespace OpenRasta.Tests.Unit.Collections

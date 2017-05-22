@@ -11,7 +11,6 @@
 using System;
 using FormElement_Specification;
 using NUnit.Framework;
-using OpenRasta.Testing;
 using OpenRasta.Web.Markup;
 
 namespace TextNode_Specification

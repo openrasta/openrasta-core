@@ -6,8 +6,7 @@ using System.Runtime.InteropServices;
 using NUnit.Framework;
 using OpenRasta.OperationModel;
 using OpenRasta.OperationModel.Filters;
-using OpenRasta.Testing;
-using OpenRasta.Testing.Contexts;
+using OpenRasta.Tests.Unit.Infrastructure;
 using OpenRasta.Web;
 using Shouldly;
 
@@ -42,7 +41,7 @@ namespace OpenRasta.Tests.Unit.OperationModel.Filters
 
                 when_filtering_operations();
 
-              ShouldBeTestExtensions.ShouldBe(FilteredOperations.LegacyShouldHaveCountOf(1).First().Name, "Post");
+              ShouldBeTestExtensions.ShouldBe(FilteredOperations.ShouldHaveSingleItem().Name, "Post");
               //return valueToAnalyse;
               Errors.Errors.Count.ShouldBe(0);
               //return valueToAnalyse;
@@ -57,7 +56,7 @@ namespace OpenRasta.Tests.Unit.OperationModel.Filters
 
                 when_filtering_operations();
 
-                FilteredOperations.LegacyShouldHaveCountOf(0);
+              FilteredOperations.Count().ShouldBe(0);
             }
             [Test]
             public void operations_with_the_wrong_parameter_type_are_not_selected()
@@ -68,7 +67,7 @@ namespace OpenRasta.Tests.Unit.OperationModel.Filters
 
                 when_filtering_operations();
 
-                FilteredOperations.LegacyShouldHaveCountOf(0);
+              FilteredOperations.Count().ShouldBe(0);
               Errors.Errors.Count.ShouldNotBe(0);
             }
         }

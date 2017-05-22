@@ -3,7 +3,6 @@ using System.Linq;
 using NUnit.Framework;
 using OpenRasta.Codecs;
 using OpenRasta.OperationModel;
-using OpenRasta.Testing;
 using OpenRasta.Web;
 using OpenRasta.Web.Codecs;
 using Shouldly;
@@ -42,7 +41,7 @@ namespace OpenRasta.Tests.Unit.OperationModel.Hydrators
       when_filtering_operations();
       ShouldBeTestExtensions.ShouldBe(ResultOperation.Name, "PostName");
       //return valueToAnalyse;
-      Errors.Errors.LegacyShouldHaveCountOf(1);
+      Errors.Errors.Count().ShouldBe(1);
     }
   }
 }

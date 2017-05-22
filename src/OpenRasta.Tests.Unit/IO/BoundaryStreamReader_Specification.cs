@@ -14,7 +14,6 @@ using System.IO;
 using System.Text;
 using NUnit.Framework;
 using OpenRasta.IO;
-using OpenRasta.Testing;
 using Shouldly;
 
 namespace BoundaryStreamReader_Specification

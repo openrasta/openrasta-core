@@ -13,8 +13,8 @@ using System.Linq;
 using System.Text;
 using OpenRasta.Codecs;
 using OpenRasta.Hosting.InMemory;
-using OpenRasta.Testing;
 using NUnit.Framework;
+using OpenRasta.Tests.Unit.Infrastructure;
 using OpenRasta.Web;
 using Shouldly;
 

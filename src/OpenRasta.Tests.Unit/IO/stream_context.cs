@@ -12,7 +12,7 @@ using System;
 using System.IO;
 using System.IO.Pipes;
 using System.Text;
-using OpenRasta.Testing;
+using OpenRasta.Tests.Unit.Infrastructure;
 
 namespace OpenRasta.IO
 {

@@ -1,4 +1,4 @@
-﻿using OpenRasta.Testing.Contexts;
+﻿using OpenRasta.Tests.Unit.Infrastructure;
 using Shouldly;
 #pragma warning disable 618
 using System;
@@ -11,7 +11,6 @@ using OpenRasta.Authentication;
 using OpenRasta.DI;
 using OpenRasta.Pipeline;
 using OpenRasta.Pipeline.Contributors;
-using OpenRasta.Testing;
 using OpenRasta.Tests;
 using OpenRasta.Web;
 

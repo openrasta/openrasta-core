@@ -14,7 +14,7 @@ using System.Text;
 using NUnit.Framework;
 using OpenRasta.Binding;
 using OpenRasta.Tests.Unit.Fakes;
-using OpenRasta.Testing;
+using OpenRasta.Tests.Unit.Infrastructure;
 using OpenRasta.TypeSystem;
 using OpenRasta.TypeSystem.ReflectionBased;
 using Shouldly;

@@ -1,5 +1,4 @@
-﻿using OpenRasta.Testing;
-using Shouldly;
+﻿using Shouldly;
 
 namespace OpenRasta.Tests.Unit.Codecs
 {

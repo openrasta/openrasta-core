@@ -1,6 +1,5 @@
 ﻿using NUnit.Framework;
 using OpenRasta.Concordia;
-using OpenRasta.Testing;
 using Shouldly;
 
 namespace OpenRasta.Tests.Unit.Concordia

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using NUnit.Framework;
 using OpenRasta.CodeDom.Compiler;
-using OpenRasta.Testing;
+using OpenRasta.Tests.Unit.Infrastructure;
 using Shouldly;
 
 namespace ExtensibleCompiler_Specification

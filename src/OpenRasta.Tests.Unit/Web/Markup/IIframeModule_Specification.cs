@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using FormElement_Specification;
 using NUnit.Framework;
-using OpenRasta.Testing;
 using OpenRasta.Web.Markup;
 using OpenRasta.Web.Markup.Modules;
 using Shouldly;
@@ -17,13 +16,13 @@ namespace IIframeModule_Specification
         public void the_border_is_set_to_0_when_the_attribute_value_is_false()
         {
             WhenCreatingElement(()=>Document.CreateElement<IIFrameElement>().FrameBorder(false));
-            ThenTheElementAsString.LegacyShouldContain("frameborder=\"0\"");
+          ThenTheElementAsString.ShouldContain("frameborder=\"0\"", Case.Sensitive);
         }
         [Test]
         public void the_border_is_set_to_1_when_the_attribute_value_is_true()
         {
             WhenCreatingElement(() => Document.CreateElement<IIFrameElement>().FrameBorder(true));
-            ThenTheElementAsString.LegacyShouldContain("frameborder=\"1\"");
+          ThenTheElementAsString.ShouldContain("frameborder=\"1\"", Case.Sensitive);
         }
         [Test]
         public void the_boreder_is_not_set_by_default()
@@ -45,7 +44,7 @@ namespace IIframeModule_Specification
         public void the_scrolling_is_rendered_as_yes_when_the_yes_value_is_used()
         {
             WhenCreatingElement(() => Document.CreateElement<IIFrameElement>().Scrolling(Scrolling.Yes));
-            ThenTheElementAsString.LegacyShouldContain(@"scrolling=""yes""");
+          ThenTheElementAsString.ShouldContain(@"scrolling=""yes""", Case.Sensitive);
         }
     }
 }

@@ -10,7 +10,7 @@
 
 using System;
 using NUnit.Framework;
-using OpenRasta.Testing;
+using OpenRasta.Tests.Unit.Infrastructure;
 using OpenRasta.Web.Markup;
 using OpenRasta.Web.Markup.Elements;
 using Shouldly;
@@ -47,8 +47,7 @@ namespace ElementExtensions_Specification
         {
             var element = Document.CreateElement<IDivElement>().Class("fakeclass");
 
-            element.OuterXml
-                .LegacyShouldContain("class=\"fakeclass\"");
+          element.OuterXml.ShouldContain("class=\"fakeclass\"", Case.Sensitive);
         }
 
         [Test]
@@ -56,17 +55,14 @@ namespace ElementExtensions_Specification
         {
             var element = Document.CreateElement<IDivElement>().Class("fakeclass").Class("fakeclass2");
 
-            element.OuterXml
-                .LegacyShouldContain("class=\"fakeclass fakeclass2\"");
+          element.OuterXml.ShouldContain("class=\"fakeclass fakeclass2\"", Case.Sensitive);
         }
 
         [Test]
         public void the_class_property_contains_independent_values_when_added_as_one_string()
         {
             var element = Document.CreateElement<IDivElement>().Class("fakeclass fakeclass2");
-            element.Class
-                .LegacyShouldContain("fakeclass")
-                .LegacyShouldContain("fakeclass2");
+            element.Class.ShouldBe(new[]{"fakeclass","fakeclass2"}, ignoreOrder: true);
         }
     }
 }

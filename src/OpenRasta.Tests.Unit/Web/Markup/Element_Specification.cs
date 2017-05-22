@@ -11,8 +11,8 @@
 using System;
 using FormElement_Specification;
 using NUnit.Framework;
-using OpenRasta.Testing;
 using OpenRasta.Web.Markup;
+using Shouldly;
 
 namespace Element_Specification
 {
@@ -24,7 +24,7 @@ namespace Element_Specification
         public void the_values_are_encoded_according_to_the_html_specification()
         {
             WhenCreatingElement(() => new GenericElement("tag").Attr("name", "value & value2"));
-            ThenTheElementAsString.LegacyShouldContain("name=\"value &#38; value2\"");
+          ThenTheElementAsString.ShouldContain("name=\"value &#38; value2\"", Case.Sensitive);
         }
     }
 }

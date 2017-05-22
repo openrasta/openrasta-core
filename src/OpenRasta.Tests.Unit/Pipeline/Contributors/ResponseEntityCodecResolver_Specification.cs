@@ -12,12 +12,11 @@ using System;
 using NUnit.Framework;
 using OpenRasta.Codecs;
 using OpenRasta.Pipeline.Contributors;
-using OpenRasta.Testing;
-using OpenRasta.Testing.Contexts;
 using OpenRasta.Tests;
 using OpenRasta.Tests.Unit.Fakes;
 using OpenRasta.Web;
 using OpenRasta.Pipeline;
+using OpenRasta.Tests.Unit.Infrastructure;
 using Shouldly;
 
 namespace ResponseEntityCodecResolver_Specification

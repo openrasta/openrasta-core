@@ -1,6 +1,6 @@
 ﻿using System;
 using NUnit.Framework;
-using OpenRasta.Testing;
+using OpenRasta.Tests.Unit.Infrastructure;
 using OpenRasta.TypeSystem;
 using OpenRasta.TypeSystem.ReflectionBased;
 using OpenRasta.TypeSystem.Surrogated;

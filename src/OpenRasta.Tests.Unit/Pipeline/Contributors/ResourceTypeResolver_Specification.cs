@@ -14,11 +14,10 @@ using System;
 using NUnit.Framework;
 using OpenRasta.Hosting.InMemory;
 using OpenRasta.Pipeline.Contributors;
-using OpenRasta.Testing;
-using OpenRasta.Testing.Contexts;
 using OpenRasta.Tests;
 using OpenRasta.Web;
 using OpenRasta.Pipeline;
+using OpenRasta.Tests.Unit.Infrastructure;
 using OpenRasta.TypeSystem;
 using Shouldly;
 

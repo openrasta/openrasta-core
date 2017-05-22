@@ -18,7 +18,7 @@ using NUnit.Framework;
 using OpenRasta;
 using OpenRasta.Collections;
 using OpenRasta.Collections.Specialized;
-using OpenRasta.Testing;
+using OpenRasta.Tests.Unit.Infrastructure;
 using Shouldly;
 
 namespace UriTemplate_Specification

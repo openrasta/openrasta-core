@@ -17,7 +17,6 @@ using NUnit.Framework;
 using OpenRasta.Codecs;
 using OpenRasta.Configuration;
 using OpenRasta.DI;
-using OpenRasta.Testing;
 using OpenRasta.Tests.Unit.Configuration;
 using OpenRasta.TypeSystem;
 using OpenRasta.Web;

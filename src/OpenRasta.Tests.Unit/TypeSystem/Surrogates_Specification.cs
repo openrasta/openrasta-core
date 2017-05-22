@@ -15,7 +15,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Instances_Specification;
 using NUnit.Framework;
-using OpenRasta.Testing;
 using OpenRasta.Tests.Unit.Fakes;
 using OpenRasta.Tests.Unit.TypeSystem;
 using OpenRasta.TypeSystem;
@@ -210,7 +209,7 @@ namespace Surrogates_Specification
     }
     namespace context
     {
-        public abstract class indexer_context<T,TValue> : OpenRasta.Testing.context
+        public abstract class indexer_context<T,TValue> : OpenRasta.Tests.Unit.Infrastructure.context
             where T:IEnumerable<TValue>
         {
             protected static ITypeSystem TypeSystem = TypeSystems.Default;

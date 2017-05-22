@@ -13,10 +13,8 @@ using System.Text;
 using OpenRasta.Binding;
 using OpenRasta.Diagnostics;
 using OpenRasta.IO.Diagnostics;
-using OpenRasta.Testing;
 using NUnit.Framework;
 using OpenRasta.Codecs;
-using OpenRasta.Testing.Contexts;
 using OpenRasta.TypeSystem;
 using OpenRasta.Web;
 using OpenRasta.IO;
@@ -28,6 +26,7 @@ using Moq;
 using Moq.Language;
 using OpenRasta.DI;
 using OpenRasta.Tests.Unit.Fakes;
+using OpenRasta.Tests.Unit.Infrastructure;
 using Shouldly;
 
 namespace MultipartFormDataCodec_Specification

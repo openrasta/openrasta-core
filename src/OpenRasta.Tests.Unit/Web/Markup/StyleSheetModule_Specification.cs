@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using FormElement_Specification;
 using NUnit.Framework;
-using OpenRasta.Testing;
 using OpenRasta.Web.Markup;
 using OpenRasta.Web.Markup.Modules;
 using Shouldly;
@@ -23,13 +22,13 @@ namespace StyleSheetModule_Specifications
         public void the_media_attribute_is_generated()
         {
             WhenCreatingElement(()=>Document.CreateElement<IStyleElement>().Media("screen"));
-            ThenTheElementAsString.LegacyShouldContain(@"media=""screen""");
+          ThenTheElementAsString.ShouldContain(@"media=""screen""", Case.Sensitive);
         }
         [Test]
         public void two_media_attributes_are_generated()
         {
             WhenCreatingElement(() => Document.CreateElement<IStyleElement>().Media("screen").Media("alternate"));
-            ThenTheElementAsString.LegacyShouldContain(@"media=""screen,alternate""");
+          ThenTheElementAsString.ShouldContain(@"media=""screen,alternate""", Case.Sensitive);
         }
         [Test]
         public void adding_a_media_with_a_comma_results_in_two_media_values()
@@ -37,8 +36,8 @@ namespace StyleSheetModule_Specifications
             WhenCreatingElement(()=>Document.CreateElement<IStyleElement>().Media("screen,alternate"));
           ThenTheElement.Media.Count.ShouldBe(2);
           //return valueToAnalyse;
-          ThenTheElement.Media.LegacyShouldContain("screen");
-            ThenTheElement.Media.LegacyShouldContain("alternate");
+          ThenTheElement.Media.ShouldContain("screen");
+          ThenTheElement.Media.ShouldContain("alternate");
         }
     }
 }

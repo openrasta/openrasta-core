@@ -6,7 +6,6 @@ using OpenRasta.DI;
 using OpenRasta.Hosting;
 using OpenRasta.Hosting.InMemory;
 using OpenRasta.Pipeline;
-using OpenRasta.Testing;
 using OpenRasta.Tests.Unit.DI;
 using OpenRasta.Tests.Unit.Fakes;
 using Shouldly;
@@ -264,9 +263,7 @@ namespace InternalDependencyResolver_Specification
       using (new ContextScope(scope1))
       {
         Resolver.ResolveAll<TheClass>()
-          .LegacyShouldContain(objectForScope1)
-          .Count().ShouldBe(1);
-        //return valueToAnalyse;
+          .ShouldBe(new[]{objectForScope1});
       }
     }
 

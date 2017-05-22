@@ -9,7 +9,6 @@
 #endregion
 
 using NUnit.Framework;
-using OpenRasta.Testing;
 using Shouldly;
 
 namespace OpenRasta.Collections.Specialized

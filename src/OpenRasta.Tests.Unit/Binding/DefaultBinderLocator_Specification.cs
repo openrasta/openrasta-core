@@ -5,7 +5,6 @@ using System.Text;
 using Moq;
 using NUnit.Framework;
 using OpenRasta.Binding;
-using OpenRasta.Testing;
 using OpenRasta.TypeSystem;
 using Shouldly;
 

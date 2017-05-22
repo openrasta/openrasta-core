@@ -5,8 +5,8 @@ using System.Text;
 using NUnit.Framework;
 using OpenRasta.HandlerRepository_Specification;
 using OpenRasta.Handlers;
-using OpenRasta.Testing;
 using OpenRasta.Tests.Unit.Fakes;
+using OpenRasta.Tests.Unit.Infrastructure;
 using OpenRasta.TypeSystem;
 using Shouldly;
 
@@ -25,9 +25,7 @@ namespace HandlerRepository_Specification
       repo.AddResourceHandler("ring of power", handler1);
       repo.AddResourceHandler("ring of power", handler2);
 
-      repo.GetHandlerTypesFor("ring of power")
-        .LegacyShouldContain(handler1)
-        .LegacyShouldContain(handler2);
+      repo.GetHandlerTypesFor("ring of power").ShouldBe(new[]{handler1, handler2});
     }
 
     [Test]
@@ -72,9 +70,7 @@ namespace HandlerRepository_Specification
       repo.AddResourceHandler("Vilya", gilGalad);
 
       repo.GetHandlerTypesFor("Narya").FirstOrDefault().ShouldBe(gilGalad);
-      //return valueToAnalyse;
       repo.GetHandlerTypesFor("Vilya").FirstOrDefault().ShouldBe(gilGalad);
-      //return valueToAnalyse;
     }
 
     [Test]
@@ -87,8 +83,7 @@ namespace HandlerRepository_Specification
       repo.AddResourceHandler("Narya", gilGalad);
       repo.AddResourceHandler("Vilya", gilGalad);
 
-      repo.GetHandlerTypes().LegacyShouldContain(gilGalad).Count().ShouldBe(1);
-      //return valueToAnalyse;
+      repo.GetHandlerTypes().ShouldHaveSingleItem().ShouldBe(gilGalad);
     }
   }
 }

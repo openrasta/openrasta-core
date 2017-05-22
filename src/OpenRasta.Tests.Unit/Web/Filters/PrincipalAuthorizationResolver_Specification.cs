@@ -15,7 +15,7 @@ using NUnit.Framework;
 using OpenRasta.Hosting.InMemory;
 using OpenRasta.OperationModel;
 using OpenRasta.Security;
-using OpenRasta.Testing;
+using OpenRasta.Tests.Unit.Infrastructure;
 using Shouldly;
 
 namespace PrincipalAuthorizationResolver_Specification

@@ -2,7 +2,6 @@
 using NUnit.Framework;
 using OpenRasta.Codecs;
 using OpenRasta.OperationModel;
-using OpenRasta.Testing;
 using OpenRasta.Tests.Unit.Fakes;
 using OpenRasta.Web;
 using Shouldly;

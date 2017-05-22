@@ -15,13 +15,12 @@ using NUnit.Framework;
 using OpenRasta.Codecs;
 using OpenRasta.IO;
 using OpenRasta.Pipeline.Contributors;
-using OpenRasta.Testing;
-using OpenRasta.Testing.Contexts;
 using OpenRasta.Tests;
 using OpenRasta.Tests.Unit.Fakes;
 using OpenRasta.TypeSystem;
 using OpenRasta.Web;
 using OpenRasta.Pipeline;
+using OpenRasta.Tests.Unit.Infrastructure;
 using Shouldly;
 
 namespace ResponseEntityWriter_Specification

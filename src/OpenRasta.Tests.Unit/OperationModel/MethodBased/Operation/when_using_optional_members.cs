@@ -1,8 +1,7 @@
 ﻿using System.Linq;
 using NUnit.Framework;
 using OpenRasta.OperationModel;
-using OpenRasta.Testing;
-using OpenRasta.Testing.Contexts;
+using OpenRasta.Tests.Unit.Infrastructure;
 using OpenRasta.TypeSystem;
 using Shouldly;
 

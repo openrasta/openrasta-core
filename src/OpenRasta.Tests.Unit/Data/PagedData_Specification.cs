@@ -13,7 +13,7 @@ using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
 using OpenRasta.Data;
-using OpenRasta.Testing;
+using OpenRasta.Tests.Unit.Infrastructure;
 using Shouldly;
 
 namespace PagedData_Specification

@@ -13,7 +13,7 @@ using System.IO;
 using System.Text;
 using NUnit.Framework;
 using OpenRasta.IO;
-using OpenRasta.Testing;
+using OpenRasta.Tests.Unit.Infrastructure;
 using Shouldly;
 
 namespace DeterministicStreamWriter_Specification

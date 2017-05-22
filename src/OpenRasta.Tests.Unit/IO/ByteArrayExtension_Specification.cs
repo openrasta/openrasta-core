@@ -11,7 +11,7 @@
 using System;
 using NUnit.Framework;
 using OpenRasta.IO;
-using OpenRasta.Testing;
+using OpenRasta.Tests.Unit.Infrastructure;
 using Shouldly;
 
 namespace ByteArrayExtension_Specification

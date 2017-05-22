@@ -11,9 +11,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using OpenRasta.Testing;
 using NUnit.Framework;
 using OpenRasta.Codecs;
+using OpenRasta.Tests.Unit.Infrastructure;
 using OpenRasta.Web;
 using Shouldly;
 
@@ -37,8 +37,7 @@ namespace MediaTypeDictionary_Specification
 
             WhenMatching("application/xml");
 
-            ThenTheResult
-                .LegacyShouldContain("xml");
+          ThenTheResult.ShouldContain("xml");
           ThenTheResult
             .Count.ShouldBe(1);
           //return valueToAnalyse;
@@ -54,8 +53,8 @@ namespace MediaTypeDictionary_Specification
 
           ThenTheResult.Count.ShouldBe(2);
           //return valueToAnalyse;
-          ThenTheResult.LegacyShouldContain("xhtml");
-            ThenTheResult.LegacyShouldContain("xml");
+          ThenTheResult.ShouldContain("xhtml");
+          ThenTheResult.ShouldContain("xml");
         }
         [Test]
         public void matching_on_wildcard_returns_all_results()
@@ -67,8 +66,8 @@ namespace MediaTypeDictionary_Specification
 
           ThenTheResult.Count.ShouldBe(2);
           //return valueToAnalyse;
-          ThenTheResult.LegacyShouldContain("xhtml");
-            ThenTheResult.LegacyShouldContain("xml");
+          ThenTheResult.ShouldContain("xhtml");
+          ThenTheResult.ShouldContain("xml");
         }
         [Test]
         public void registering_two_media_types_with_different_values_is_supported()
@@ -80,8 +79,8 @@ namespace MediaTypeDictionary_Specification
 
           ThenTheResult.Count.ShouldBe(2);
           //return valueToAnalyse;
-          ThenTheResult.LegacyShouldContain("text1");
-            ThenTheResult.LegacyShouldContain("text2");
+          ThenTheResult.ShouldContain("text1");
+          ThenTheResult.ShouldContain("text2");
         }
         [Test]
         public void registering_the_same_media_type_and_associated_value_adds_it_only_once()
@@ -93,8 +92,7 @@ namespace MediaTypeDictionary_Specification
 
           ThenTheResult.Count.ShouldBe(1);
           //return valueToAnalyse;
-          ThenTheResult.LegacyShouldContain("text1");
-
+          ThenTheResult.ShouldContain("text1");
         }
         [Test]
         public void an_item_with_a_wildcard_media_type_matches_any_media_type()
@@ -103,8 +101,8 @@ namespace MediaTypeDictionary_Specification
 
             WhenMatching("text/plain");
 
-          ThenTheResult.LegacyShouldContain("wildcard")
-            .Count().ShouldBe(1);
+          ThenTheResult.ShouldContain("wildcard");
+          ThenTheResult.Count().ShouldBe(1);
           //return valueToAnalyse;
         }
     }

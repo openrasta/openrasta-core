@@ -13,7 +13,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using NUnit.Framework;
-using OpenRasta.Testing;
+using OpenRasta.Tests.Unit.Infrastructure;
 using OpenRasta.TypeSystem.ReflectionBased;
 using Shouldly;
 
@@ -24,8 +24,7 @@ namespace Extensions_Specification
         [Test]
         public void array_types_are_parsed()
         {
-            typeof (int[]).CreateInstanceFrom(new[] {"1"}).ShouldBeAssignableTo<int[]>()
-                .LegacyShouldContain(1);
+          typeof (int[]).CreateInstanceFrom(new[] {"1"}).ShouldBeAssignableTo<int[]>().ShouldContain(1);
         }
 
         [Test]
@@ -37,9 +36,9 @@ namespace Extensions_Specification
         [Test]
         public void lists_are_parsed()
         {
-            typeof (List<string>).CreateInstanceFrom(new[] {"one", "two"}).ShouldBeAssignableTo<List<string>>()
-                .LegacyShouldContain("one")
-                .LegacyShouldContain("two");
+            typeof (List<string>).CreateInstanceFrom(new[] {"one", "two"})
+              .ShouldBeAssignableTo<List<string>>()
+              .ShouldBe(new[]{"one", "two"});
         }
 
         [Test]
@@ -58,9 +57,9 @@ namespace Extensions_Specification
         [Test]
         public void types_implementing_ICollection_of_T_are_parsed()
         {
-            typeof (LinkedList<string>).CreateInstanceFrom(new[] {"one", "two"}).ShouldBeAssignableTo<LinkedList<string>>()
-                .LegacyShouldContain("one")
-                .LegacyShouldContain("two");
+          typeof(LinkedList<string>).CreateInstanceFrom(new[] {"one", "two"})
+            .ShouldBeAssignableTo<LinkedList<string>>()
+            .ShouldBe(new[] {"one", "two"});
         }
     }
 

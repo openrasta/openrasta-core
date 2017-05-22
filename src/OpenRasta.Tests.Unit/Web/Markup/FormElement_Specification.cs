@@ -12,7 +12,6 @@ using System;
 using NUnit.Framework;
 using OpenRasta;
 using OpenRasta.DI;
-using OpenRasta.Testing;
 using OpenRasta.Web.Markup;
 using OpenRasta.Web.Markup.Modules;
 using OpenRasta.Web.UriDecorators;
@@ -38,8 +37,8 @@ namespace FormElement_Specification
 
             WhenCreatingElement(() =>new FormElement(true).Action("http://localhost/test").Method("PUT"));
 
-            ThenTheElementAsString.LegacyShouldContain("method=\"POST\"");
-            ThenTheElementAsString.LegacyShouldContain("action=\"http://localhost/test!PUT");
+          ThenTheElementAsString.ShouldContain("method=\"POST\"", Case.Sensitive);
+          ThenTheElementAsString.ShouldContain("action=\"http://localhost/test!PUT", Case.Sensitive);
         }
 
         [Test]
@@ -55,7 +54,7 @@ namespace FormElement_Specification
         {
             WhenCreatingElement(() => new FormElement(false).Accept("text/html").Accept("application/xhtml+xml"));
 
-            ThenTheElementAsString.LegacyShouldContain("accept=\"text/html,application/xhtml+xml\"");
+          ThenTheElementAsString.ShouldContain("accept=\"text/html,application/xhtml+xml\"", Case.Sensitive);
         }
     }
 }

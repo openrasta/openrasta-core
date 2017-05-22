@@ -1,7 +1,6 @@
 ﻿using System.Linq;
 using NUnit.Framework;
 using OpenRasta.Configuration;
-using OpenRasta.Testing;
 using OpenRasta.TypeSystem;
 using OpenRasta.Configuration.Fluent;
 using Shouldly;
@@ -19,7 +18,7 @@ namespace Tests.Configuration.fluent_extensions
     [Test]
     public void resource_is_registered()
     {
-      Config.ResourceRegistrations.LegacyShouldHaveCountOf(1);
+      Config.ResourceRegistrations.Count().ShouldBe(1);
     }
 
     [Test]
@@ -41,7 +40,7 @@ namespace Tests.Configuration.fluent_extensions
     [Test]
     public void resource_is_registered()
     {
-      Config.ResourceRegistrations.LegacyShouldHaveCountOf(1);
+      Config.ResourceRegistrations.Count().ShouldBe(1);
     }
 
     [Test]
@@ -76,7 +75,7 @@ namespace Tests.Configuration.fluent_extensions
     [Test]
     public void resource_is_registered()
     {
-      Config.ResourceRegistrations.LegacyShouldHaveCountOf(1);
+      Config.ResourceRegistrations.Count().ShouldBe(1);
     }
 
     [Test]

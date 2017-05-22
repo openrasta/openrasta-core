@@ -10,7 +10,7 @@
 
 using System;
 using OpenRasta.DI;
-using OpenRasta.Testing;
+using OpenRasta.Tests.Unit.Infrastructure;
 
 namespace InternalDependencyResolver_Specification
 {

@@ -16,7 +16,6 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using NUnit.Framework;
 using OpenRasta;
-using OpenRasta.Testing;
 using Shouldly;
 
 namespace UriTemplateTable_Specification
@@ -136,9 +135,8 @@ namespace UriTemplateTable_Specification
                                              });
             var match = table.Match("http://localhost/resource1/new".ToUri());
 
-          ShouldBeTestExtensions.ShouldBe(match.LegacyShouldHaveCountOf(2)
-              .First().Template.ToString(), "/resource1/new");
-          //return valueToAnalyse;
+          match.Count().ShouldBe(2);
+          match.First().Template.ToString().ShouldBe("/resource1/new");
         }
     }
 }

@@ -1,8 +1,7 @@
 ﻿using System.Linq;
 using NUnit.Framework;
 using OpenRasta.OperationModel.Filters;
-using OpenRasta.Testing;
-using OpenRasta.Testing.Contexts;
+using OpenRasta.Tests.Unit.Infrastructure;
 using OpenRasta.Web;
 using Shouldly;
 
@@ -36,7 +35,7 @@ namespace OpenRasta.Tests.Unit.OperationModel.Filters
 
             when_filtering_operations();
 
-            FilteredOperations.LegacyShouldHaveCountOf(2);
+          FilteredOperations.Count().ShouldBe(2);
 
           FilteredOperations.Count(x => x.Name == "Post").ShouldBe(1);
           //return valueToAnalyse;

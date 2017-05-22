@@ -1,7 +1,6 @@
 ﻿using System.Linq;
 using NUnit.Framework;
-using OpenRasta.Testing;
-using OpenRasta.Testing.Contexts;
+using OpenRasta.Tests.Unit.Infrastructure;
 using Shouldly;
 using DescriptionAttribute = System.ComponentModel.DescriptionAttribute;
 

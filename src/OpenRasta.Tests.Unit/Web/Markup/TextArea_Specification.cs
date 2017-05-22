@@ -13,7 +13,6 @@ using System.Linq;
 using System.Text;
 using FormElement_Specification;
 using NUnit.Framework;
-using OpenRasta.Testing;
 using OpenRasta.Web.Markup;
 using OpenRasta.Web.Markup.Modules;
 using Shouldly;

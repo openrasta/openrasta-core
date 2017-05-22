@@ -8,8 +8,8 @@ using OpenRasta.Configuration.MetaModel;
 using OpenRasta.Configuration.MetaModel.Handlers;
 using OpenRasta.DI;
 using OpenRasta.Handlers;
-using OpenRasta.Testing;
 using OpenRasta.Tests.Unit.Fakes;
+using OpenRasta.Tests.Unit.Infrastructure;
 using OpenRasta.TypeSystem;
 using OpenRasta.Web;
 using Shouldly;
@@ -216,7 +216,7 @@ namespace MetaModelHandler_Specification
           first.CodecType.ShouldBe(typeof(CustomerCodec));
           first.MediaType.ShouldBe(MediaType.Json);
           //return valueToAnalyse;
-          first.Extensions.LegacyShouldContain("json");
+          first.Extensions.ShouldContain("json");
           first.Extensions.Count.ShouldBe(1);
           //return valueToAnalyse;
 
@@ -224,7 +224,7 @@ namespace MetaModelHandler_Specification
           second.CodecType.ShouldBe(typeof(CustomerCodec));
           second.MediaType.ShouldBe(MediaType.Xml);
           //return valueToAnalyse;
-          second.Extensions.LegacyShouldContain("xml");
+          second.Extensions.ShouldContain("xml");
           second.Extensions.Count.ShouldBe(1);
           //return valueToAnalyse;
         }

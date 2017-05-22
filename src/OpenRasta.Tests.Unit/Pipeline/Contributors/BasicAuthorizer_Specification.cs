@@ -5,8 +5,7 @@ using NUnit.Framework;
 using OpenRasta.Pipeline;
 using OpenRasta.Pipeline.Contributors;
 using OpenRasta.Security;
-using OpenRasta.Testing;
-using OpenRasta.Testing.Contexts;
+using OpenRasta.Tests.Unit.Infrastructure;
 using OpenRasta.Web;
 using Shouldly;
 

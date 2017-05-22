@@ -99,6 +99,16 @@
     <Compile Include="Fakes\GilGalad.cs" />
     <Compile Include="Fakes\House.cs" />
     <Compile Include="Fakes\Sauron.cs" />
+    <Compile Include="Infrastructure\codec_context.cs" />
+    <Compile Include="Infrastructure\context.cs" />
+    <Compile Include="Infrastructure\contributor_context.cs" />
+    <Compile Include="Infrastructure\media_type_reader_context.cs" />
+    <Compile Include="Infrastructure\media_type_writer_context.cs" />
+    <Compile Include="Infrastructure\openrasta_context.cs" />
+    <Compile Include="Infrastructure\operation_context.cs" />
+    <Compile Include="Infrastructure\operation_filter_context.cs" />
+    <Compile Include="Infrastructure\sync_operation_context.cs" />
+    <Compile Include="Infrastructure\TestErrorCollector.cs" />
     <Compile Include="IO\BoundaryStreamReader_Specification.cs" />
     <Compile Include="IO\ByteArrayExtension_Specification.cs" />
     <Compile Include="IO\DeterministicStreamWriter_Specification.cs" />

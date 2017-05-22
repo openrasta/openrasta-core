@@ -4,10 +4,9 @@ using Moq;
 using NUnit.Framework;
 using OpenRasta.OperationModel;
 using OpenRasta.Pipeline.Contributors;
-using OpenRasta.Testing;
-using OpenRasta.Testing.Contexts;
 using OpenRasta.Web;
 using OpenRasta.Pipeline;
+using OpenRasta.Tests.Unit.Infrastructure;
 using OperationCreationContributor_Specification;
 using Shouldly;
 

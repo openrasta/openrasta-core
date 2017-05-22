@@ -1,7 +1,6 @@
 ﻿using System.Linq;
 using NUnit.Framework;
-using OpenRasta.Testing;
-using OpenRasta.Testing.Contexts;
+using OpenRasta.Tests.Unit.Infrastructure;
 using Shouldly;
 
 namespace OpenRasta.Tests.Unit.OperationModel.MethodBased.Operation
@@ -12,8 +11,7 @@ namespace OpenRasta.Tests.Unit.OperationModel.MethodBased.Operation
     public void operation_is_invoked()
     {
       given_operation("GetText");
-      Operation.InvokeAsync().Result.LegacyShouldHaveCountOf(1)
-        .First().Value.ShouldBe("Hello, is it me you're looking for?");
+      Operation.InvokeAsync().Result.ShouldHaveSingleItem().Value.ShouldBe("Hello, is it me you're looking for?");
       //return valueToAnalyse;
     }
   }

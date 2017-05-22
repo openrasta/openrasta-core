@@ -1,5 +1,4 @@
 ﻿using NUnit.Framework;
-using OpenRasta.Testing;
 using Shouldly;
 
 namespace OpenRasta.Tests.Unit.OperationModel.Hydrators

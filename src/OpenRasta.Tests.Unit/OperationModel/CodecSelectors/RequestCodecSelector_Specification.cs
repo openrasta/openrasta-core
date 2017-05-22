@@ -8,9 +8,8 @@ using OpenRasta.Codecs;
 using OpenRasta.OperationModel;
 using OpenRasta.OperationModel.CodecSelectors;
 using OpenRasta.OperationModel.Hydrators;
-using OpenRasta.Testing;
-using OpenRasta.Testing.Contexts;
 using OpenRasta.Tests.Unit.Fakes;
+using OpenRasta.Tests.Unit.Infrastructure;
 using OpenRasta.Tests.Unit.OperationModel.Filters;
 using OpenRasta.Web;
 using Shouldly;
@@ -28,9 +27,9 @@ namespace OpenRasta.Tests.Unit.OperationModel.CodecSelectors
 
             when_filtering_operations();
 
-            FilteredOperations.LegacyShouldHaveCountOf(2);
-            
-            then_operation_should_be_selected("Get");
+          FilteredOperations.Count().ShouldBe(2);
+
+          then_operation_should_be_selected("Get");
             then_operation_should_be_selected("GetWithOptionalValue");
 
         }

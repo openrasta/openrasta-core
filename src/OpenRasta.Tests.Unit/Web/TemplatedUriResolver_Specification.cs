@@ -15,7 +15,6 @@ using System.Globalization;
 using HandlerRepository_Specification;
 using NUnit.Framework;
 using OpenRasta;
-using OpenRasta.Testing;
 using OpenRasta.Tests.Unit.Fakes;
 using OpenRasta.TypeSystem;
 using OpenRasta.Web;
@@ -151,7 +150,7 @@ namespace TemplatedUriResolver_Specification
     }
     namespace context
     {
-        public class templated_uri_resolver_context : OpenRasta.Testing.context
+        public class templated_uri_resolver_context : OpenRasta.Tests.Unit.Infrastructure.context
         {
 
             protected TemplatedUriResolver Resolver;

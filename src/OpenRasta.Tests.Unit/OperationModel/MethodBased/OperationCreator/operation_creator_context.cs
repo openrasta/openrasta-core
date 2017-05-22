@@ -1,5 +1,5 @@
 ﻿using OpenRasta.OperationModel;
-using OpenRasta.Testing.Contexts;
+using OpenRasta.Tests.Unit.Infrastructure;
 
 namespace OpenRasta.Tests.Unit.OperationModel.MethodBased
 {

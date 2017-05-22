@@ -11,9 +11,9 @@
 using OpenRasta.Pipeline;
 using NUnit.Framework;
 using OpenRasta.Codecs;
-using OpenRasta.Testing.Contexts;
 using OpenRasta.Tests;
 using OpenRasta.Tests.Unit.Fakes;
+using OpenRasta.Tests.Unit.Infrastructure;
 
 namespace HandlerMethodRequestEntityResolver_Specification
 {

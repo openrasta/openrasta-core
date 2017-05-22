@@ -14,8 +14,8 @@ using System.Globalization;
 using Moq;
 using NUnit.Framework;
 using OpenRasta.DI;
-using OpenRasta.Testing;
 using OpenRasta.Tests.Unit.Fakes;
+using OpenRasta.Tests.Unit.Infrastructure;
 using OpenRasta.Web;
 using Shouldly;
 
