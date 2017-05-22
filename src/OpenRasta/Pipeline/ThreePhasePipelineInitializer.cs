@@ -33,7 +33,10 @@ namespace OpenRasta.Pipeline
       if (startup.OpenRasta.Pipeline.Validate)
         _contributors.VerifyKnownStagesRegistered();
 
-      var defaults = new List<IPipelineMiddlewareFactory>();
+      var defaults = new List<IPipelineMiddlewareFactory>()
+      {
+        new CleanupMiddleware()
+      };
       if (startup.OpenRasta.Errors.HandleCatastrophicExceptions)
       {
         defaults.Add(new CatastrophicFailureMiddleware());
@@ -69,17 +72,12 @@ namespace OpenRasta.Pipeline
       IEnumerable<IPipelineContributor> contributors)
     {
       foreach (var factory in defaults)
-      {
         yield return (factory, null);
-      }
 
-      foreach (var contributor in
-        callGraphGenerator
-          .GenerateCallGraph(contributors)
-          .ToDetailedMiddleware())
-      {
+      foreach (var contributor in callGraphGenerator
+        .GenerateCallGraph(contributors)
+        .ToDetailedMiddleware())
         yield return contributor;
-      }
     }
 
     IEnumerable<(IPipelineMiddlewareFactory middleware, ContributorCall contributor)> LogBuild(
