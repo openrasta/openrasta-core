@@ -1,15 +1,3 @@
-#region License
-
-/* Authors:
- *      Sebastien Lambla (seb@serialseb.com)
- * Copyright:
- *      (C) 2007-2009 Caffeine IT & naughtyProd Ltd (http://www.caffeine-it.com)
- * License:
- *      This file is distributed under the terms of the MIT License found at the end of this file.
- */
-
-#endregion
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,7 +16,7 @@ namespace OpenRasta.Pipeline.Contributors
     readonly IDependencyResolver _resolver;
     static readonly byte[] PADDING = Enumerable.Repeat((byte) ' ', 512).ToArray();
 
-    ILogger Log { get; } = NullLogger.Instance;
+    public ILogger Log { get; } = TraceSourceLogger.Instance;
 
     public ResponseEntityWriterContributor(IDependencyResolver resolver)
     {
@@ -52,14 +40,16 @@ namespace OpenRasta.Pipeline.Contributors
       var writer = CreateWriter(codecInstance);
       using (Log.Operation(this, "Generating response entity."))
       {
+        if (context.Response.Entity.Stream.CanSeek)
+          context.Response.Entity.ContentLength = context.Response.Entity.Stream.Length;
+        
         await writer(
           context.Response.Entity.Instance,
           context.Response.Entity,
           context.Request.CodecParameters.ToArray());
         await PadErrorMessageForIE(context);
 
-        if (context.Response.Entity.Stream.CanSeek)
-          context.Response.Entity.ContentLength = context.Response.Entity.Stream.Length;
+        context.Response.WriteHeaders();
       }
 
       return PipelineContinuation.Continue;
@@ -128,32 +118,7 @@ namespace OpenRasta.Pipeline.Contributors
       {
         return context.Response.Entity.Stream.WriteAsync(PADDING, 0, (int) (512 - context.Response.Entity.Stream.Length));
       }
-      return Task.FromResult(0);
+      return Task.CompletedTask;
     }
   }
 }
-
-#region Full license
-
-//
-// Permission is hereby granted, free of charge, to any person obtaining
-// a copy of this software and associated documentation files (the
-// "Software"), to deal in the Software without restriction, including
-// without limitation the rights to use, copy, modify, merge, publish,
-// distribute, sublicense, and/or sell copies of the Software, and to
-// permit persons to whom the Software is furnished to do so, subject to
-// the following conditions:
-//
-// The above copyright notice and this permission notice shall be
-// included in all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
-// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
-// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-//
-
-#endregion

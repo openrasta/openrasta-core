@@ -9,7 +9,7 @@ namespace OpenRasta.Pipeline
   public class ResponseRetryMiddleware : IPipelineMiddlewareFactory, IPipelineMiddleware
   {
     IPipelineMiddleware _responsePipeline;
-    ILogger log = NullLogger.Instance;
+    ILogger log = TraceSourceLogger.Instance;
 
     public IPipelineMiddleware Compose(IPipelineMiddleware next)
     {
@@ -50,6 +50,7 @@ namespace OpenRasta.Pipeline
         env.ServerErrors.Add(new Error {Exception = e});
         exceptionHappened = true;
       }
+      log.WriteInfo($"Exception: {exceptionHappened}, Errors: {env.ServerErrors.Count()}, State: {env.PipelineData.PipelineStage.CurrentState}");
       if (exceptionHappened)
       {
         env.OperationResult = OperationResultForExceptions(env);
@@ -61,8 +62,12 @@ namespace OpenRasta.Pipeline
         env.PipelineData.ResponseCodec = null;
 
         try
-        {
+        {     
+          log.WriteInfo($"Trying to re-render");
+
           await _responsePipeline.Invoke(env);
+          log.WriteInfo($"Errors: {env.ServerErrors.Count()}, State: {env.PipelineData.PipelineStage.CurrentState}");
+
           if (env.PipelineData.PipelineStage.CurrentState == PipelineContinuation.RenderNow)
             throw new PipelineAbortedException(env.ServerErrors);
         }
