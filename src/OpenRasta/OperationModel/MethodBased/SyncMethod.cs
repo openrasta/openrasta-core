@@ -27,7 +27,7 @@ namespace OpenRasta.OperationModel.MethodBased
         new OutputMember
         {
           Member = Method.OutputMembers.Single(),
-          Value = Method.Invoke(instance, parameters)
+          Value = Method.Invoke(instance, parameters).First()
         }
       };
     }
