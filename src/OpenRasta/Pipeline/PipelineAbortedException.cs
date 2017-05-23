@@ -4,15 +4,14 @@ using System.Linq;
 
 namespace OpenRasta.Pipeline
 {
-  public class PipelineAbortedException : AggregateException //: AggregateException
+  public class PipelineAbortedException : Exception
   {
+    public IEnumerable<Error> Errors { get; }
+
     public PipelineAbortedException(IEnumerable<Error> errors)
-      // : base(errors.Select(error => error.Exception).ToList())
     {
       Errors = errors.ToList();
     }
-
-    public IEnumerable<Error> Errors { get; }
 
     public PipelineAbortedException()
     {
