@@ -3,8 +3,6 @@ using System.Diagnostics;
 using System.Runtime.Remoting.Messaging;
 using System.Threading;
 using System.Web;
-using System.Web.Configuration;
-using System.Web.Hosting;
 using OpenRasta.Concordia;
 using OpenRasta.Diagnostics;
 using OpenRasta.Pipeline;
@@ -18,7 +16,7 @@ namespace OpenRasta.Hosting.AspNet
     {
     }
 
-    public static AspNetPipeline Pipeline => _pipeline.Value;
+    static AspNetPipeline Pipeline => _pipeline.Value;
     public static ILogger Log = new TraceSourceLogger(new TraceSource("openrasta"));
 
     static readonly Lazy<AspNetPipeline> _pipeline = new Lazy<AspNetPipeline>(() =>
@@ -26,7 +24,7 @@ namespace OpenRasta.Hosting.AspNet
         ? (AspNetPipeline) new IntegratedPipeline()
         : new ClassicPipeline(), LazyThreadSafetyMode.PublicationOnly);
 
-    PipelineStageAsync _postResolveStep;
+    PipelineStageAsync<KnownStages.IUriMatching> _postResolveStep;
     AspNetHost _host;
 
     public void Init(HttpApplication context)
@@ -46,13 +44,13 @@ namespace OpenRasta.Hosting.AspNet
         }
       };
       _host = new AspNetHost(startupProperties);
-      _hostManager = HostManager.RegisterHost(_host);
+      HostManager.RegisterHost(_host);
       _host.RaiseStart();
 
-      _postResolveStep = new PipelineStageAsync(nameof(KnownStages.IUriMatching), _host, Pipeline);
+      _postResolveStep = new PipelineStageAsync<KnownStages.IUriMatching>(_host, Pipeline);
 
       context.AddOnPostResolveRequestCacheAsync(_postResolveStep.Begin, _postResolveStep.End);
-      
+
       context.EndRequest += HandleHttpApplicationEndRequestEvent;
     }
 
@@ -66,7 +64,5 @@ namespace OpenRasta.Hosting.AspNet
       if (commContext.PipelineData.ContainsKey("openrasta.hosting.aspnet.handled"))
         _host.RaiseIncomingRequestProcessed(commContext);
     }
-
-    HostManager _hostManager;
   }
 }

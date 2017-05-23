@@ -1,24 +1,22 @@
 ﻿using System;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Configuration;
 using System.Web.Hosting;
-using OpenRasta.DI;
 using OpenRasta.Web;
 
 namespace OpenRasta.Hosting.AspNet
 {
-  class PipelineStageAsync
+  class PipelineStageAsync<T>
   {
     readonly string _yielderName;
     readonly AspNetHost _host;
     readonly AspNetPipeline _pipeline;
     readonly EventHandlerTaskAsyncHelper _eventHandler;
 
-    public PipelineStageAsync(string yielderName, AspNetHost host, AspNetPipeline pipeline)
+    public PipelineStageAsync(AspNetHost host, AspNetPipeline pipeline)
     {
-      _yielderName = yielderName;
+      _yielderName = typeof(T).Name;
       _host = host;
       _pipeline = pipeline;
       _eventHandler = new EventHandlerTaskAsyncHelper(Invoke);
@@ -33,7 +31,7 @@ namespace OpenRasta.Hosting.AspNet
       var resumer = new TaskCompletionSource<bool>();
       env.Yielder(_yielderName, yielder);
       env.Resumer(_yielderName, resumer);
-      
+
       try
       {
         var runTask = _host.RaiseIncomingRequestReceived(env);
