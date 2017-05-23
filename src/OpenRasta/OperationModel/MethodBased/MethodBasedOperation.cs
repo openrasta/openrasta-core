@@ -9,31 +9,28 @@ namespace OpenRasta.OperationModel.MethodBased
 {
   public class AsyncMethod<T> : AbstractMethodOperation, IOperationAsync
   {
-    public IDictionary<string,object> ExtendedProperties { get; } = new Dictionary<string, object>();
+    public IDictionary<string, object> ExtendedProperties { get; } = new Dictionary<string, object>();
+
     public AsyncMethod(IMethod method, IObjectBinderLocator binderLocator = null)
       : base(method, binderLocator)
     {
     }
 
-    public Task<IEnumerable<OutputMember>> InvokeAsync()
+    public async Task<IEnumerable<OutputMember>> InvokeAsync()
     {
       var instance = CreateInstance(OwnerType, Resolver);
       var parameters = GetParameters();
 
-      return ((Task<T>) Method.Invoke(instance, parameters).Single())
-        .ContinueWith(task => (IEnumerable<OutputMember>) new[]
+      var task = (Task<T>) Method.Invoke(instance, parameters).Single();
+      var result = await task;
+      return new[]
+      {
+        new OutputMember
         {
-          new OutputMember
-          {
-            Member = Method.OutputMembers.Single(),
-            Value = task.Result
-          }
-        });
-    }
-
-    public IEnumerable<OutputMember> Invoke()
-    {
-      throw new NotImplementedException();
+          Member = Method.OutputMembers.Single(),
+          Value = result
+        }
+      };
     }
   }
 }

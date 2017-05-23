@@ -213,13 +213,13 @@ namespace OpenRasta.Hosting
     protected virtual void HandleHostIncomingRequestReceived(object sender, IncomingRequestEventArgs e)
     {
       Log.WriteDebug("Incoming host request for " + e.Context.Request.Uri);
-      var task = CallWithDependencyResolver(() =>
+      var task = CallWithDependencyResolver(async () =>
       {
         // register the required dependency in the web context
         var context = e.Context;
         SetupCommunicationContext(context);
 
-        return _pipeline.RunAsync(context);
+        await _pipeline.RunAsync(context);
       });
       e.Context.PipelineData[Keys.Request.PipelineTask] = e.RunTask = task;
     }
