@@ -17,6 +17,7 @@ namespace OpenRasta.Diagnostics
   {
     readonly TraceSource _source;
     static readonly TraceSource DefaultTraceSource = new TraceSource("openrasta");
+
     public static readonly ILogger Instance =
       DependencyManager.Current?.Resolve<ILogger>() ?? new TraceSourceLogger();
 
@@ -48,10 +49,11 @@ namespace OpenRasta.Diagnostics
 
     public IDisposable Operation(object source, string name)
     {
-      _source.TraceData(TraceEventType.Start, 1, $"Entering {source.GetType().Name}: {name}");
+      var msg = $"{source.GetType().Name} ({name})";
+      _source.TraceData(TraceEventType.Start, 1, msg);
       Trace.CorrelationManager.StartLogicalOperation(source.GetType().Name);
 
-      return new OperationCookie {Initiator = source, Source = _source};
+      return new OperationCookie {Initiator = source, Source = _source, Message = msg};
     }
 
     public void WriteDebug(string message, params object[] format)
@@ -87,11 +89,12 @@ namespace OpenRasta.Diagnostics
     {
       public object Initiator { get; set; }
       public TraceSource Source { get; set; }
+      public string Message { get; set; }
 
       public void Dispose()
       {
         Trace.CorrelationManager.StopLogicalOperation();
-        Source.TraceData(TraceEventType.Stop, 1, $"Exiting {Initiator.GetType().Name}");
+        Source.TraceData(TraceEventType.Stop, 1, $"Exiting {Initiator.GetType().Name}: {Message}");
       }
     }
   }
