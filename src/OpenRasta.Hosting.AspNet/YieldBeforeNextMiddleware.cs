@@ -1,4 +1,9 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Diagnostics;
+using System.Runtime.Remoting.Messaging;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Web;
 using OpenRasta.Pipeline;
 using OpenRasta.Web;
 
@@ -15,13 +20,36 @@ namespace OpenRasta.Hosting.AspNet
 
     public async Task Invoke(ICommunicationContext env)
     {
-      var yielder = env.Yielder(_yieldName);
-      var resumer = env.Resumer(_yieldName);
+      var mtid = Thread.CurrentThread.ManagedThreadId;
+      var cc = Thread.CurrentContext;
+      var stuff = Thread.CurrentThread.ExecutionContext;
+      env.Yielder(_yieldName).SetResult(true);
+      
+      var cc2 = Thread.CurrentContext;
+      var stuff2 = Thread.CurrentThread.ExecutionContext;
 
-      yielder.SetResult(true);
-      var shoulContinue = await resumer.Task;
-      if (shoulContinue)
-        await Next.Invoke(env);
+      var currentContext = HttpContext.Current;
+      var shouldContinue = await env.Resumer(_yieldName).Task;
+      
+      var cc3 = Thread.CurrentContext;
+      var stuff3 = Thread.CurrentThread.ExecutionContext;
+      
+      var clearContext = false; 
+      try
+      {
+        if (HttpContext.Current == null)
+        {
+          HttpContext.Current = currentContext;
+          clearContext = true;
+        }
+        if (shouldContinue)
+          await Next.Invoke(env);
+      }
+      finally
+      {
+//        if (clearContext)
+//          HttpContext.Current = null;
+      }
     }
 
     public IPipelineMiddleware Compose(IPipelineMiddleware next)

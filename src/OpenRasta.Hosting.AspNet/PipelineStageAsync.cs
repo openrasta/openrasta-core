@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Configuration;
@@ -12,10 +13,10 @@ namespace OpenRasta.Hosting.AspNet
   {
     readonly string _yielderName;
     readonly AspNetHost _host;
-    readonly Lazy<AspNetPipeline> _pipeline;
+    readonly AspNetPipeline _pipeline;
     readonly EventHandlerTaskAsyncHelper _eventHandler;
 
-    public PipelineStageAsync(string yielderName, AspNetHost host, Lazy<AspNetPipeline> pipeline)
+    public PipelineStageAsync(string yielderName, AspNetHost host, AspNetPipeline pipeline)
     {
       _yielderName = yielderName;
       _host = host;
@@ -28,7 +29,11 @@ namespace OpenRasta.Hosting.AspNet
       if (ShouldIgnoreRequestEarly()) return;
 
       var env = AspNetCommunicationContext.Current;
-      var yielder = env.Yielder(_yielderName);
+      var yielder = new TaskCompletionSource<bool>();
+      var resumer = new TaskCompletionSource<bool>();
+      env.Yielder(_yielderName, yielder);
+      env.Resumer(_yielderName, resumer);
+      
       try
       {
         var runTask = _host.RaiseIncomingRequestReceived(env);
@@ -36,15 +41,16 @@ namespace OpenRasta.Hosting.AspNet
 
         if (!yielded)
           return;
+
         var notFound = env.OperationResult as OperationResult.NotFound;
         if (notFound?.Reason != NotFoundReason.NotMapped)
-          OpenRastaModuleAsync.Pipeline.HandoverToPipeline(_yielderName, runTask, env);
+          _pipeline.HandoverToPipeline(_yielderName, runTask, env);
         else
-          env.Resumer(_yielderName).SetResult(false);
+          resumer.SetResult(false);
       }
       catch (Exception ex)
       {
-        throw ex;
+        resumer.SetException(ex);
       }
     }
 
@@ -53,7 +59,7 @@ namespace OpenRasta.Hosting.AspNet
 
     bool HandlerAlreadyMapped(string method, Uri path)
     {
-      return _pipeline.Value.IsHandlerAlreadyRegisteredForRequest(method, path);
+      return _pipeline.IsHandlerAlreadyRegisteredForRequest(method, path);
     }
 
     bool ShouldIgnoreRequestEarly()

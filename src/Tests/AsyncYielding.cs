@@ -70,7 +70,6 @@ namespace OpenRasta.Hosting.AspNet.Tests.Integration
         new CodeMiddleware(()=>Resumed = true)
       );
 
-
       didItYield.ShouldBeFalse();
       Resumed.ShouldBeFalse();
 
@@ -106,9 +105,13 @@ namespace OpenRasta.Hosting.AspNet.Tests.Integration
     {
 
       Env = new InMemoryCommunicationContext();
+      
+      Env.Yielder(nameof(YieldBeforeNextMiddleware), new TaskCompletionSource<bool>());
+      Env.Resumer(nameof(YieldBeforeNextMiddleware), new TaskCompletionSource<bool>());
       Resumed = false;
     }
     bool Resumed { get; set; }
+    
     async Task Resume()
     {
       Env.Resumer(nameof(YieldBeforeNextMiddleware)).SetResult(true);
@@ -117,6 +120,7 @@ namespace OpenRasta.Hosting.AspNet.Tests.Integration
 
     async Task<bool> InvokeTillYield(params IPipelineMiddlewareFactory[] factories)
     {
+      Env.Yielder(nameof(YieldBeforeNextMiddleware), new TaskCompletionSource<bool>());
       Operation = factories.Compose().Invoke(Env);
 
       return await Yielding.DidItYield(

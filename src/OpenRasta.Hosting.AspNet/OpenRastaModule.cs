@@ -38,7 +38,7 @@ namespace OpenRasta.Hosting.AspNet
         var orContext = new AspNetCommunicationContext(Log,
           context,
           new AspNetRequest(context),
-          new AspNetResponse(context) {Log = Log});
+          new AspNetResponse(context));
         context.Items[COMM_CONTEXT_KEY] = orContext;
 
         return orContext;

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Runtime.Remoting.Messaging;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Web;
 using System.Web.Configuration;
 using System.Web.Hosting;
@@ -27,6 +27,7 @@ namespace OpenRasta.Hosting.AspNet
         : new ClassicPipeline(), LazyThreadSafetyMode.PublicationOnly);
 
     PipelineStageAsync _postResolveStep;
+    AspNetHost _host;
 
     public void Init(HttpApplication context)
     {
@@ -34,7 +35,6 @@ namespace OpenRasta.Hosting.AspNet
       {
         OpenRasta =
         {
-          Errors = {HandleCatastrophicExceptions = false},
           Pipeline =
           {
             ContributorTrailers =
@@ -45,55 +45,28 @@ namespace OpenRasta.Hosting.AspNet
           }
         }
       };
-      var aspNetHost = new AspNetHost(startupProperties);
-      Host = HostManager.RegisterHost(aspNetHost);
-      aspNetHost.RaiseStart();
+      _host = new AspNetHost(startupProperties);
+      _hostManager = HostManager.RegisterHost(_host);
+      _host.RaiseStart();
 
-      _postResolveStep = new PipelineStageAsync(nameof(KnownStages.IUriMatching), aspNetHost, _pipeline);
+      _postResolveStep = new PipelineStageAsync(nameof(KnownStages.IUriMatching), _host, Pipeline);
 
       context.AddOnPostResolveRequestCacheAsync(_postResolveStep.Begin, _postResolveStep.End);
+      
+      context.EndRequest += HandleHttpApplicationEndRequestEvent;
     }
 
-    public HostManager Host { get; set; }
-  }
+    const string COMM_CONTEXT_KEY = "__OR_COMM_CONTEXT";
 
-  public static class Yielding
-  {
-    public static async Task<bool> DidItYield(Task pipeline, Task yielded)
+    void HandleHttpApplicationEndRequestEvent(object sender, EventArgs e)
     {
-      if (pipeline.IsCompleted)
-      {
-        await pipeline;
-        return false;
-      }
-      if (yielded.IsCompleted)
-      {
-        await yielded;
-        return true;
-      }
-      var completedTask = await Task.WhenAny(yielded, pipeline);
-      return completedTask == yielded;
-    }
-  }
-
-
-  public static class CommContextExtensions
-  {
-    public static TaskCompletionSource<bool> Yielder(this ICommunicationContext env, string name)
-    {
-      var key = $"openrasta.hosting.aspnet.yielders.{name}";
-      if (env.PipelineData.ContainsKey(key) == false)
-        env.PipelineData[key] = new TaskCompletionSource<bool>();
-      return (TaskCompletionSource<bool>) env.PipelineData[key];
+      var httpContext = ((HttpApplication) sender).Context;
+      CallContext.LogicalSetData("__OR_CONTEXT", httpContext);
+      var commContext = (ICommunicationContext) httpContext.Items[COMM_CONTEXT_KEY];
+      if (commContext.PipelineData.ContainsKey("openrasta.hosting.aspnet.handled"))
+        _host.RaiseIncomingRequestProcessed(commContext);
     }
 
-    public static TaskCompletionSource<bool> Resumer(this ICommunicationContext env, string name)
-    {
-      var key = $"openrasta.hosting.aspnet.resumers.{name}";
-
-      if (env.PipelineData.ContainsKey(key) == false)
-        env.PipelineData[key] = new TaskCompletionSource<bool>();
-      return (TaskCompletionSource<bool>) env.PipelineData[key];
-    }
+    HostManager _hostManager;
   }
 }

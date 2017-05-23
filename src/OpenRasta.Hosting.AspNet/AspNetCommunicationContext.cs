@@ -23,11 +23,7 @@ namespace OpenRasta.Hosting.AspNet
           TraceSourceLogger.Instance,
           context,
           new AspNetRequest(context),
-          new AspNetResponse(context)
-          {
-            Log = TraceSourceLogger.Instance
-
-          });
+          new AspNetResponse(context));
         context.Items[COMM_CONTEXT_KEY] = orContext;
 
         return orContext;

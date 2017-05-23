@@ -27,7 +27,7 @@ namespace OpenRasta.Hosting.AspNet
 
         public override void HandoverToPipeline(string yielderName, Task runTask, ICommunicationContext env)
         {
-            HttpContext.Current.RemapHandler(new OpenRastaHandlerAsync(this, yielderName, runTask, env));
+            HttpContext.Current.RemapHandler(new OpenRastaHandlerAsync(yielderName, env, runTask));
         }
 
         IEnumerable<HttpHandlerRegistration> GetNativeHandlers()
