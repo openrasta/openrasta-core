@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using OpenRasta.Concordia;
 using OpenRasta.Pipeline;
 using Shouldly;
 using Tests.Pipeline.Middleware.Examples;
@@ -17,10 +18,22 @@ namespace Tests.Pipeline.Middleware.Trailers
       {
         new ContributorCall(new DoNothingContributor(), OpenRasta.Pipeline.Middleware.IdentitySingleTap, "doNothing")
       };
-      var middlewareChain = calls.ToMiddleware(interceptors: new Dictionary<Func<ContributorCall, bool>, Func<IPipelineMiddlewareFactory>>
-      {
-        [call=>call.Target is DoNothingContributor] = () => new TrailerMiddleware()
-      }).ToArray();
+      var middlewareChain = calls.ToMiddleware(
+          new StartupProperties
+          {
+            OpenRasta =
+            {
+              Pipeline =
+              {
+                ContributorTrailers =
+                {
+                  [call => call.Target is DoNothingContributor] = () => new TrailerMiddleware()
+                }
+              }
+            }
+          })
+        .ToArray();
+
       middlewareChain[0].ShouldBeOfType<PreExecuteMiddleware>();
       middlewareChain[1].ShouldBeOfType<TrailerMiddleware>();
     }

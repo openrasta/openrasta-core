@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using OpenRasta.Diagnostics;
 using OpenRasta.Web;
 
@@ -33,7 +34,15 @@ namespace OpenRasta.Pipeline
     {
       using (Log.Operation(this, _log))
       {
-        await _next.Invoke(env);
+        try
+        {
+          await _next.Invoke(env);
+        }
+        catch (Exception e)
+        {
+          Log.WriteError($"Exception has happened: {Environment.NewLine}{e}");
+          throw;
+        }
       }
     }
   }

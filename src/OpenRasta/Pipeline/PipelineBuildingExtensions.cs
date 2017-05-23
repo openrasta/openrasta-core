@@ -9,16 +9,14 @@ namespace OpenRasta.Pipeline
   {
     public static IEnumerable<IPipelineMiddlewareFactory> ToMiddleware(
       this IEnumerable<ContributorCall> callGraph,
-      StartupProperties startupProperties = null,
-      IDictionary<Func<ContributorCall, bool>, Func<IPipelineMiddlewareFactory>>
-        interceptors = null)
+      StartupProperties startupProperties = null)
     {
-      return ToDetailedMiddleware(callGraph, startupProperties, interceptors).Select(m => m.Item1).ToList();
+      return ToDetailedMiddleware(callGraph, startupProperties).Select(m => m.Item1).ToList();
     }
 
     public static IEnumerable<(IPipelineMiddlewareFactory, ContributorCall)> ToDetailedMiddleware(
-      this IEnumerable<ContributorCall> callGraph, StartupProperties startupProperties = null,
-      IDictionary<Func<ContributorCall, bool>, Func<IPipelineMiddlewareFactory>> interceptors = null)
+      this IEnumerable<ContributorCall> callGraph,
+      StartupProperties startupProperties = null)
     {
       Func<ContributorCall, IPipelineMiddlewareFactory> converter = CreatePreExecuteMiddleware;
 
@@ -33,8 +31,8 @@ namespace OpenRasta.Pipeline
         }
         var middleware = converter(contributorCall);
         yield return (middleware, contributorCall);
-        if (interceptors != null)
-          foreach (var followups in interceptors
+        if (startupProperties?.OpenRasta.Pipeline.ContributorTrailers != null)
+          foreach (var followups in startupProperties.OpenRasta.Pipeline.ContributorTrailers
             .Where(pair => pair.Key(contributorCall))
             .Select(pair => pair.Value))
             yield return (followups(), null);
