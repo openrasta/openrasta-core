@@ -5,11 +5,11 @@ using System.Threading.Tasks;
 
 namespace OpenRasta.OperationModel.Interceptors
 {
-  public class SyncToAsycOperation : IOperationAsync, IOperation
+  public class SyncToAsyncOperation : IOperationAsync, IOperation
   {
     readonly IOperation _inner;
 
-    public SyncToAsycOperation(IOperation inner)
+    public SyncToAsyncOperation(IOperation inner)
     {
       _inner = inner;
       ExtendedProperties = new DictionaryWrapper(inner.ExtendedProperties)

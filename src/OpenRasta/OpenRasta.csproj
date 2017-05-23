@@ -267,7 +267,7 @@
     <Compile Include="OperationModel\Interceptors\IOperationInterceptorProvider.cs" />
     <Compile Include="OperationModel\Interceptors\OperationInterceptor.cs" />
     <Compile Include="OperationModel\Interceptors\SyncOperationWithInterceptors.cs" />
-    <Compile Include="OperationModel\Interceptors\SyncToAsycOperation.cs" />
+    <Compile Include="OperationModel\Interceptors\SyncToAsyncOperation.cs" />
     <Compile Include="OperationModel\Interceptors\SystemAndAttributesOperationInterceptorProvider.cs" />
     <Compile Include="OperationModel\IOperation.cs" />
     <Compile Include="OperationModel\IOperationAsync.cs" />

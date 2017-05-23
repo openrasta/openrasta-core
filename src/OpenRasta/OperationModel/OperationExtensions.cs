@@ -52,7 +52,7 @@ namespace OpenRasta.OperationModel
 
     public static IOperationAsync AsAsync(this IOperation operation)
     {
-      return new SyncToAsycOperation(operation);
+      return new SyncToAsyncOperation(operation);
     }
 
     public static IOperation SyncOperation(this IOperationAsync operation)
