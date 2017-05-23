@@ -40,13 +40,13 @@ namespace OpenRasta.Pipeline.Contributors
       var writer = CreateWriter(codecInstance);
       using (Log.Operation(this, "Generating response entity."))
       {
-        if (context.Response.Entity.Stream.CanSeek)
-          context.Response.Entity.ContentLength = context.Response.Entity.Stream.Length;
-        
         await writer(
           context.Response.Entity.Instance,
           context.Response.Entity,
           context.Request.CodecParameters.ToArray());
+        
+        if (context.Response.Entity.Stream.CanSeek)
+          context.Response.Entity.ContentLength = context.Response.Entity.Stream.Length;
         await PadErrorMessageForIE(context);
 
         context.Response.WriteHeaders();

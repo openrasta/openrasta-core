@@ -7,6 +7,7 @@
  * License:
  *      This file is distributed under the terms of the MIT License found at the end of this file.
  */
+
 #endregion
 
 using System;
@@ -25,119 +26,119 @@ using Shouldly;
 
 namespace ResponseEntityWriter_Specification
 {
-    public class when_there_is_no_response_entity : openrasta_context
+  public class when_there_is_no_response_entity : openrasta_context
+  {
+    [Test]
+    public void no_entity_body_should_be_written()
     {
-        [Test]
-        public void no_entity_body_should_be_written()
-        {
-            given_pipeline_contributor<ResponseEntityWriterContributor>();
-            given_response_entity(null);
+      given_pipeline_contributor<ResponseEntityWriterContributor>();
+      given_response_entity(null);
 
-          when_sending_notification<KnownStages.ICodecResponseSelection>().ShouldBe(PipelineContinuation.Continue);
-          //return valueToAnalyse;
+      when_sending_notification<KnownStages.ICodecResponseSelection>().ShouldBe(PipelineContinuation.Continue);
+      //return valueToAnalyse;
 
-          Context.Response.Entity.Stream.Length.ShouldBe(0);
-          //return valueToAnalyse;
-        }
-
-        [Test]
-        public void the_entity_headers_are_written()
-        {
-            given_pipeline_contributor<ResponseEntityWriterContributor>();
-            given_response_entity(null);
-
-          when_sending_notification<KnownStages.ICodecResponseSelection>().ShouldBe(PipelineContinuation.Continue);
-          //return valueToAnalyse;
-
-          Context.Response.HeadersSent.ShouldBeTrue();
-        }
+      Context.Response.Entity.Stream.Length.ShouldBe(0);
+      //return valueToAnalyse;
     }
 
-    public class when_there_is_a_codec : openrasta_context
+    [Test]
+    public void the_entity_headers_are_written()
     {
-        [Test]
-        public void the_codec_configuration_is_assigned()
-        {
-            given_pipeline_contributor<ResponseEntityWriterContributor>();
+      given_pipeline_contributor<ResponseEntityWriterContributor>();
+      given_response_entity(null);
 
-            given_response_entity(new Fake());
-            given_response_codec<CustomerCodec>(new object());
+      when_sending_notification<KnownStages.ICodecResponseSelection>().ShouldBe(PipelineContinuation.Continue);
+      //return valueToAnalyse;
 
-          when_sending_notification<KnownStages.ICodecResponseSelection>().ShouldBe(PipelineContinuation.Continue);
-          //return valueToAnalyse;
+      Context.Response.HeadersSent.ShouldBeTrue();
+    }
+  }
 
-          ShouldBeTestExtensions.ShouldBe(Context.Response.Entity.Headers["ENTITY_TYPE"], "Fake");
-          //return valueToAnalyse;
-          Context.Response.Entity.Codec.Configuration.ShouldNotBeNull();
-        }
+  public class when_there_is_a_codec : openrasta_context
+  {
+    [Test]
+    public void the_codec_configuration_is_assigned()
+    {
+      given_pipeline_contributor<ResponseEntityWriterContributor>();
 
-        [Test]
-        public void the_correct_content_is_returned()
-        {
-            given_pipeline_contributor<ResponseEntityWriterContributor>();
-            given_response_entity(new Fake());
-            given_response_codec<CustomerCodec>();
+      given_response_entity(new Fake());
+      given_response_codec<CustomerCodec>(new object());
 
-          when_sending_notification<KnownStages.ICodecResponseSelection>().ShouldBe(PipelineContinuation.Continue);
-          //return valueToAnalyse;
+      when_sending_notification<KnownStages.ICodecResponseSelection>().ShouldBe(PipelineContinuation.Continue);
+      //return valueToAnalyse;
 
-          ShouldBeTestExtensions.ShouldBe(Context.Response.Entity.Headers["ENTITY_TYPE"], "Fake");
-          //return valueToAnalyse;
-        }
-
-        void given_response_codec<TCodec>()
-        {
-            given_response_codec<TCodec>(null);
-        }
-
-        void given_response_codec<TCodec>(object config)
-        {
-            if (Context.PipelineData.ResponseCodec != null)
-                Context.PipelineData.ResponseCodec = null;
-
-            Context.PipelineData.ResponseCodec = CodecRegistration.FromResourceType(typeof(object),
-                                                                       typeof(TCodec),
-                                                                       TypeSystems.Default,
-                                                                       new MediaType("application/unknown"),
-                                                                       null,
-                                                                       config, false);
-        }
+      ShouldBeTestExtensions.ShouldBe(Context.Response.Entity.Headers["ENTITY_TYPE"], "Fake");
+      //return valueToAnalyse;
+      Context.Response.Entity.Codec.Configuration.ShouldNotBeNull();
     }
 
-    public class when_writing_the_entity : openrasta_context
+    [Test]
+    public void the_correct_content_is_returned()
     {
-        [Test]
-        public void the_content_length_is_defined_properly()
-        {
-            given_pipeline_contributor<ResponseEntityWriterContributor>();
-            given_response_entity(new Fake());
+      given_pipeline_contributor<ResponseEntityWriterContributor>();
+      given_response_entity(new Fake());
+      given_response_codec<CustomerCodec>();
 
-            GivenAContentTypeWriter((instance, entity, codecParams) => entity.Stream.Write(new byte[50]));
+      when_sending_notification<KnownStages.ICodecResponseSelection>().ShouldBe(PipelineContinuation.Continue);
+      //return valueToAnalyse;
 
-          when_sending_notification<KnownStages.ICodecResponseSelection>().ShouldBe(PipelineContinuation.Continue);
-          //return valueToAnalyse;
-
-          Context.Response.Headers.ContentLength.ShouldBe(50);
-          //return valueToAnalyse;
-        }
-
-        IMediaTypeWriter GivenAContentTypeWriter(Action<object, IHttpEntity, string[]> code)
-        {
-            var mock = new Mock<IMediaTypeWriter>();
-            mock.Setup(writer => writer.WriteTo(It.IsAny<object>(), It.IsAny<IHttpEntity>(), It.IsAny<string[]>()))
-                .Callback(code);
-            return (Context.Response.Entity.Codec = mock.Object) as IMediaTypeWriter;
-        }
-
-        void GivenAResponseCodec(IMediaTypeWriter mock)
-        {
-            Context.Response.Entity.Codec = mock;
-        }
+      ShouldBeTestExtensions.ShouldBe(Context.Response.Entity.Headers["ENTITY_TYPE"], "Fake");
+      //return valueToAnalyse;
     }
 
-    public class Fake
+    void given_response_codec<TCodec>()
     {
+      given_response_codec<TCodec>(null);
     }
+
+    void given_response_codec<TCodec>(object config)
+    {
+      if (Context.PipelineData.ResponseCodec != null)
+        Context.PipelineData.ResponseCodec = null;
+
+      Context.PipelineData.ResponseCodec = CodecRegistration.FromResourceType(typeof(object),
+        typeof(TCodec),
+        TypeSystems.Default,
+        new MediaType("application/unknown"),
+        null,
+        config, false);
+    }
+  }
+
+  public class when_writing_the_entity : openrasta_context
+  {
+    [Test]
+    public void the_content_length_is_defined_properly()
+    {
+      given_pipeline_contributor<ResponseEntityWriterContributor>();
+      given_response_entity(new Fake());
+
+      GivenAContentTypeWriter((instance, entity, codecParams) => entity.Stream.Write(new byte[50]));
+
+      when_sending_notification<KnownStages.ICodecResponseSelection>().ShouldBe(PipelineContinuation.Continue);
+      //return valueToAnalyse;
+
+      Context.Response.Headers.ContentLength.ShouldBe(50);
+      //return valueToAnalyse;
+    }
+
+    IMediaTypeWriter GivenAContentTypeWriter(Action<object, IHttpEntity, string[]> code)
+    {
+      var mock = new Mock<IMediaTypeWriter>();
+      mock.Setup(writer => writer.WriteTo(It.IsAny<object>(), It.IsAny<IHttpEntity>(), It.IsAny<string[]>()))
+        .Callback(code);
+      return (Context.Response.Entity.Codec = mock.Object) as IMediaTypeWriter;
+    }
+
+    void GivenAResponseCodec(IMediaTypeWriter mock)
+    {
+      Context.Response.Entity.Codec = mock;
+    }
+  }
+
+  public class Fake
+  {
+  }
 }
 
 #region Full license
