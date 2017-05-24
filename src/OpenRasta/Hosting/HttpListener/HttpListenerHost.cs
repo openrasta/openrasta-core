@@ -48,6 +48,7 @@ namespace OpenRasta.Hosting.HttpListener
     public void Initialize(IEnumerable<string> prefixes, string appPathVDir, Type dependencyResolverFactory)
     {
       CheckNotDisposed();
+      
       ApplicationVirtualPath = appPathVDir;
 
       _resolverFactory = dependencyResolverFactory;
@@ -135,7 +136,8 @@ namespace OpenRasta.Hosting.HttpListener
 
     protected virtual void Dispose(bool fromDisposeMethod)
     {
-      if (_isDisposed) return;
+      if (_isDisposed || _listener == null) return;
+      
       if (fromDisposeMethod)
       {
         if (_listener.IsListening)
