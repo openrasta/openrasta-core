@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<package xmlns="http://schemas.microsoft.com/packaging/2011/10/nuspec.xsd">
+<package>
     <metadata>
         <id>openrasta-hosting-aspnet</id>
         <version>$version$</version>
@@ -14,9 +14,6 @@
         <releaseNotes />
         <copyright>Copyright 2007-2017</copyright>
         <tags>OpenRasta AspNet Hosting</tags>
-        <dependencies>
-            <dependency id="openrasta-core" version="2.5.0" />
-        </dependencies>
         <frameworkAssemblies>
             <frameworkAssembly assemblyName="System.Web" targetFramework="" />
         </frameworkAssemblies>
