@@ -64,6 +64,7 @@
     <Compile Include="Hosting.InMemory\custom_resolver.cs" />
     <Compile Include="Infrastructure\context.cs" />
     <Compile Include="Infrastructure\TestExtensions.cs" />
+    <Compile Include="MemoryHostExtensions.cs" />
     <Compile Include="OperationModel.Interceptors\no_rewriting.cs" />
     <Compile Include="OperationModel.Interceptors\rewrites.cs" />
     <Compile Include="OperationModel.Interceptors\throws.cs" />
