@@ -43,8 +43,22 @@ namespace OpenRasta.Web
     public void Execute(ICommunicationContext context)
     {
       context.Response.StatusCode = StatusCode;
-      if (RedirectLocation != null)
+      if (RedirectLocation?.IsAbsoluteUri == true)
+      {
         context.Response.Headers["Location"] = RedirectLocation.AbsoluteUri;
+      }
+      else if (RedirectLocation?.IsAbsoluteUri == false && RedirectLocation.ToString().StartsWith("/"))
+      {
+        var locationWithoutPrecedingSlash = RedirectLocation.ToString().Substring(1);
+        context.Response.Headers["Location"] = new Uri(
+          context.ApplicationBaseUri,
+          new Uri(locationWithoutPrecedingSlash,UriKind.Relative)).AbsoluteUri;
+      }
+      else if (RedirectLocation?.IsAbsoluteUri == false && RedirectLocation.ToString().StartsWith("/") == false)
+      {
+        context.Response.Headers["Location"] = new Uri(context.Request.Uri, RedirectLocation).AbsoluteUri;
+      }
+
 
       OnExecute(context);
     }

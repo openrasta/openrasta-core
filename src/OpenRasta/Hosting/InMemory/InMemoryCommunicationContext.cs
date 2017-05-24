@@ -20,7 +20,7 @@ namespace OpenRasta.Hosting.InMemory
     {
         public InMemoryCommunicationContext()
         {
-            ApplicationBaseUri = new Uri("http://local");
+            ApplicationBaseUri = new Uri("http://localhost/");
             Request = new InMemoryRequest();
             Response = new InMemoryResponse();
             ServerErrors = new List<Error>();

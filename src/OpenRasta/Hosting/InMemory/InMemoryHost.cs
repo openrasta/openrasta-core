@@ -12,6 +12,7 @@ namespace OpenRasta.Hosting.InMemory
   {
     readonly IConfigurationSource _configuration;
     bool _isDisposed;
+    string _applicationVirtualPath;
 
     public InMemoryHost() :
       this((IConfigurationSource)null)
@@ -36,7 +37,13 @@ namespace OpenRasta.Hosting.InMemory
     public event EventHandler<IncomingRequestReceivedEventArgs> IncomingRequestReceived;
 
     public event EventHandler Stop;
-    public string ApplicationVirtualPath { get; }
+
+    public string ApplicationVirtualPath
+    {
+      get => _applicationVirtualPath;
+      set => _applicationVirtualPath = value.EndsWith("/") ? value : value + "/";
+    }
+
     public HostManager HostManager { get; }
     public IDependencyResolver Resolver { get; }
 
@@ -61,7 +68,9 @@ namespace OpenRasta.Hosting.InMemory
       var ambientContext = new AmbientContext();
       var context = new InMemoryCommunicationContext
       {
-        ApplicationBaseUri = new Uri("http://localhost"),
+        ApplicationBaseUri = new Uri(
+          new Uri("http://localhost/", UriKind.Absolute),
+          new Uri(ApplicationVirtualPath, UriKind.Relative)),
         Request = request,
         Response = new InMemoryResponse()
       };

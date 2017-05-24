@@ -30,6 +30,8 @@ OpenRasta adheres to [Semantic Versioning](http://semver.org/).
    but a bit less for your tests. You can now chose if you want that functionality
    or if you'd rather let exceptions bubble up, so your server can show their default
    error page or whatever.
+ - ⌚️ is relative, apparently. But `RedirectLocation` wasn't. So we allowed relative
+   URIs. 
 
 
 ### Deprecated
