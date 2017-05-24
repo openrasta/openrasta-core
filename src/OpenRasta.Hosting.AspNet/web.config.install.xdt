@@ -8,4 +8,12 @@
       <add xdt:Transform="Remove" xdt:Locator="Condition(contains(@type,'OpenRasta.Hosting.AspNet.OpenRastaHandler'))" />
     </handlers>
   </system.webServer>
+  <system.web>
+    <httpHandlers>
+        <add xdt:Transform="Remove" xdt:Locator="Condition(contains(@type,'OpenRasta.Hosting.AspNet.OpenRastaHandler'))" />
+    </httpHandlers>
+    <httpModules>
+        <add xdt:Transform="Remove" xdt:Locator="Condition(contains(@type,'OpenRasta.Hosting.AspNet.OpenRastaModule'))" />
+    </httpModules>
+  </system.web>
 </configuration>
