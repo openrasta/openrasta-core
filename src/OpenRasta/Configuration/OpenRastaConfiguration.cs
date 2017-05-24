@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using System.Threading;
 using OpenRasta.Configuration.MetaModel;
 using OpenRasta.DI;
 
@@ -8,6 +9,7 @@ namespace OpenRasta.Configuration
   public static class OpenRastaConfiguration
   {
     static bool _isBeingConfigured;
+    static readonly object LockConfigBecauseBadDesignDecision = new object();
 
     /// <summary>
     /// Creates a manual configuration of the resources supported by the application.
@@ -16,49 +18,29 @@ namespace OpenRasta.Configuration
     {
       get
       {
-        if (_isBeingConfigured)
-          throw new InvalidOperationException("Configuration is already happening on another thread.");
-
-        _isBeingConfigured = true;
-
-        return new FluentConfigurator();
+        Monitor.Enter(LockConfigBecauseBadDesignDecision);
+        return new FluentConfigurator(LockConfigBecauseBadDesignDecision);
       }
     }
-
-    static void FinishConfiguration()
-    {
-      if (!_isBeingConfigured)
-        throw new InvalidOperationException(
-          "Something went horribly wrong and the Configuration is deemed finish when it didn't even start!");
-
-#pragma warning disable 618
-      //DependencyManager.Pipeline.Initialize();
-#pragma warning restore 618
-      _isBeingConfigured = false;
-    }
-
     class FluentConfigurator : IDisposable
     {
-      bool _disposed;
+      readonly object _lockConfigBecauseBadDesignDecision;
 
-      ~FluentConfigurator()
+      public FluentConfigurator(object lockConfigBecauseBadDesignDecision)
       {
-        Debug.Assert(_disposed, "The FluentConfigurator wasn't disposed properly.");
+        _lockConfigBecauseBadDesignDecision = lockConfigBecauseBadDesignDecision;
       }
 
       public void Dispose()
       {
-        GC.SuppressFinalize(this);
         try
         {
           var metaModelRepository = DependencyManager.GetService<IMetaModelRepository>();
-
           metaModelRepository.Process();
         }
         finally
         {
-          FinishConfiguration();
-          _disposed = true;
+          Monitor.Exit(_lockConfigBecauseBadDesignDecision);
         }
       }
     }
