@@ -1,29 +1,23 @@
-﻿using System.Web;
-using OpenRasta.Diagnostics;
+﻿using System;
+using System.Web;
 
 namespace OpenRasta.Hosting.AspNet
 {
-    public class OpenRastaHandler : IHttpHandler
+  [Obsolete("Not supported, please remove <httpHandler> and <handler> from your web.config.")]
+  public class OpenRastaHandler : IHttpHandler
+  {
+    public OpenRastaHandler()
     {
-        readonly AspNetPipeline _pipeline;
-
-        public OpenRastaHandler(AspNetPipeline pipeline)
-        {
-            _pipeline = pipeline;
-            Log = NullLogger.Instance;
-        }
-
-        public bool IsReusable => true;
-
-        public ILogger Log { get; set; }
-
-        public void ProcessRequest(HttpContext context)
-        {
-            _pipeline.HandoverFromPipeline();
-            using (Log.Operation(this, "Request for {0}".With(context.Request.Url)))
-        {
-                OpenRastaModule.Host.RaiseIncomingRequestReceived(OpenRastaModule.CommunicationContext);
-            }
-        }
+      throw new NotSupportedException(
+        "Not supported, please remove <httpHandler> and <handler> from your web.config.");
     }
+
+    public bool IsReusable => true;
+
+    public void ProcessRequest(HttpContext context)
+    {
+      throw new NotSupportedException(
+        "Not supported, please remove <httpHandler> and <handler> from your web.config.");
+    }
+  }
 }

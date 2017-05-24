@@ -2,10 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
-using System.Web;
 using System.Web.Configuration;
-using OpenRasta.Web;
 
 namespace OpenRasta.Hosting.AspNet
 {
@@ -16,16 +13,6 @@ namespace OpenRasta.Hosting.AspNet
 
     protected override IEnumerable<HttpHandlerRegistration> Handlers => _handlers.Value;
 
-    public override void HandoverFromPipeline()
-    {
-      HttpContext.Current.RewritePath((string) HttpContext.Current.Items[OpenRastaModule.ORIGINAL_PATH_KEY],
-        false);
-    }
-
-    public override void HandoverToPipeline(string yielderName, Task runTask, ICommunicationContext env)
-    {
-      HttpContext.Current.RemapHandler(new OpenRastaHandlerAsync(yielderName, env, runTask));
-    }
 
     static IEnumerable<HttpHandlerRegistration> ReadHandlers()
     {
