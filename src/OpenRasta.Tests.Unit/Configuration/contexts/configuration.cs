@@ -31,7 +31,7 @@ namespace Tests.Configuration.contexts
         }
         protected virtual void when_configured()
         {
-            Host = new InMemoryHost(null);
+            Host = new InMemoryHost();
 
             DependencyManager.SetResolver(Host.Resolver);
             using (OpenRastaConfiguration.Manual) 

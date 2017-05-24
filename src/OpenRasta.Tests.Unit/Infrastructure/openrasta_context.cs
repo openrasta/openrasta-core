@@ -240,7 +240,7 @@ namespace OpenRasta.Tests.Unit.Infrastructure
     protected override void SetUp()
     {
       base.SetUp();
-      Host = new InMemoryHost(null);
+      Host = new InMemoryHost();
       Pipeline = null;
       _actions = new Dictionary<Type, Func<ICommunicationContext, Task<PipelineContinuation>>>();
       var manager = Host.HostManager;

@@ -24,7 +24,7 @@ namespace OpenRasta.Tests.Unit.Configuration
         protected override void SetUp()
         {
             base.SetUp();
-            Host = new InMemoryHost(null);
+            Host = new InMemoryHost();
             
             DependencyManager.SetResolver(Host.Resolver);
             configCookie = OpenRastaConfiguration.Manual;

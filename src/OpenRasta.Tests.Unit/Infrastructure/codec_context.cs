@@ -15,7 +15,7 @@ namespace OpenRasta.Tests.Unit.Infrastructure
 
         protected void given_context()
         {
-            Host = new InMemoryHost(null);
+            Host = new InMemoryHost();
             HostManager = Host.HostManager;
             HostManager.SetupCommunicationContext(Context = new InMemoryCommunicationContext());
             DependencyManager.SetResolver(Host.Resolver);

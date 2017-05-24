@@ -13,7 +13,7 @@ namespace Tests.Hosting.InMemory
     public custom_resolver()
     {
       _customResolver = new CustomResolver();
-      _host = new InMemoryHost(null, _customResolver);
+      _host = new InMemoryHost(()=>{}, _customResolver);
     }
 
     [Fact]

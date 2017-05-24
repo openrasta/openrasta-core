@@ -11,7 +11,7 @@ namespace Tests.Hosting.InMemory
 
     public no_resolver()
     {
-      _host = new InMemoryHost(null);
+      _host = new InMemoryHost();
     }
 
     [Fact]

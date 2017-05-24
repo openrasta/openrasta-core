@@ -13,6 +13,16 @@ namespace OpenRasta.Hosting.InMemory
     readonly IConfigurationSource _configuration;
     bool _isDisposed;
 
+    public InMemoryHost() :
+      this((IConfigurationSource)null)
+    {
+      
+    }
+    public InMemoryHost(Action configuration, IDependencyResolver dependencyResolver = null)
+      : this(new DelegateConfigurationSource(configuration), dependencyResolver)
+    {
+    }
+
     public InMemoryHost(IConfigurationSource configuration, IDependencyResolver dependencyResolver = null)
     {
       Resolver = dependencyResolver ?? new InternalDependencyResolver();
@@ -20,8 +30,6 @@ namespace OpenRasta.Hosting.InMemory
       ApplicationVirtualPath = "/";
       HostManager = HostManager.RegisterHost(this);
       RaiseStart(new StartupProperties());
-
-
     }
 
     public event EventHandler<IncomingRequestProcessedEventArgs> IncomingRequestProcessed;
@@ -71,9 +79,11 @@ namespace OpenRasta.Hosting.InMemory
           RaiseIncomingRequestProcessed(context);
         }
       }
+      if (context.Response.Entity?.Stream.CanSeek == true)
+        context.Response.Entity.Stream.Position = 0;
       return context.Response;
-
     }
+
     void IDisposable.Dispose()
     {
       Close();
@@ -108,11 +118,13 @@ namespace OpenRasta.Hosting.InMemory
 
     event EventHandler _legacyStart;
     event EventHandler<StartupProperties> _start;
+
     event EventHandler IHost.Start
     {
       add => _legacyStart += value;
       remove => _legacyStart -= value;
     }
+
     event EventHandler<StartupProperties> IHostStartWithStartupProperties.Start
     {
       add => _start += value;
@@ -135,6 +147,24 @@ namespace OpenRasta.Hosting.InMemory
     {
       if (_isDisposed)
         throw new ObjectDisposedException("HttpListenerHost");
+    }
+
+    class DelegateConfigurationSource : IConfigurationSource
+    {
+      readonly Action _configuration;
+
+      public DelegateConfigurationSource(Action configuration)
+      {
+        _configuration = configuration;
+      }
+
+      public void Configure()
+      {
+        using (OpenRastaConfiguration.Manual)
+        {
+          _configuration();
+        }
+      }
     }
   }
 }
