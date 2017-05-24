@@ -9,7 +9,7 @@ namespace OpenRasta
         public Exception Exception { get; set; }
         public override string ToString()
         {
-            return $"{Title}\r\nMessage:\r\n{Message}\r\n" + Exception != null ? $"Exception:\r\n{Exception}" : string.Empty;
+            return $"{Title}\r\nMessage:\r\n{Message}\r\n" + (Exception != null ? $"Exception:\r\n{Exception}" : string.Empty);
         }
     }
 }

@@ -7,6 +7,7 @@
  * License:
  *      This file is distributed under the terms of the MIT License found at the end of this file.
  */
+
 #endregion
 
 using System;
@@ -16,56 +17,60 @@ using System.Text;
 
 namespace OpenRasta
 {
-    public static class StringExtensions
+  public static class StringExtensions
+  {
+    public static bool EqualsOrdinalIgnoreCase(this string target, string compare)
     {
-        public static bool EqualsOrdinalIgnoreCase(this string target, string compare)
-        {
-            return string.Compare(target, compare, StringComparison.OrdinalIgnoreCase) == 0;
-        }
-        public static bool IsEmpty(this string target)
-        {
-            return target == string.Empty;
-        }
-        public static string JoinString(this IEnumerable<string> strings, string separator){
-            return string.Join(separator, strings.ToArray());
-        }
-        public static bool IsNullOrEmpty(this string target)
-        {
-            return string.IsNullOrEmpty(target);
-        }
-
-        public static bool IsNullOrWhiteSpace(this string target)
-        {
-            return string.IsNullOrEmpty(target) || target.IsWhiteSpace() ;
-        }
-
-        public static bool IsWhiteSpace(this string target)
-        {
-            return target.Trim() == string.Empty;
-        }
-
-        public static string FromBase64String(this string value)
-        {
-            return Encoding.UTF8.GetString(Convert.FromBase64String(value));
-        }
-
-        public static Uri ToUri(this string target)
-        {
-            return ToUri(target, UriKind.RelativeOrAbsolute);
-        }
-
-        public static Uri ToUri(this string target, UriKind uriKind)
-        {
-            if (target == null)
-                return null;
-            return new Uri(target, uriKind);
-        }
-
-      public static string With(this string target, params object[] parameters)
-        {
-            return string.Format(target,(object[])parameters);
-        }
+      return string.Compare(target, compare, StringComparison.OrdinalIgnoreCase) == 0;
     }
+
+    public static bool IsEmpty(this string target)
+    {
+      return target == string.Empty;
+    }
+
+    public static string JoinString(this IEnumerable<string> strings, string separator)
+    {
+      return string.Join(separator, strings.ToArray());
+    }
+
+    public static bool IsNullOrEmpty(this string target)
+    {
+      return string.IsNullOrEmpty(target);
+    }
+
+    public static bool IsNullOrWhiteSpace(this string target)
+    {
+      return string.IsNullOrEmpty(target) || target.IsWhiteSpace();
+    }
+
+    public static bool IsWhiteSpace(this string target)
+    {
+      return target.Trim() == string.Empty;
+    }
+
+    public static string FromBase64String(this string value)
+    {
+      return Encoding.UTF8.GetString(Convert.FromBase64String(value));
+    }
+
+    public static Uri ToUri(this string target)
+    {
+      return ToUri(target, UriKind.RelativeOrAbsolute);
+    }
+
+    public static Uri ToUri(this string target, UriKind uriKind)
+    {
+      if (target == null)
+        return null;
+      return new Uri(target, uriKind);
+    }
+
+    public static string With(this string target, params object[] parameters)
+    {
+      return parameters.Length == 0 ? target : string.Format(target, parameters);
+    }
+  }
 }
 
 #region Full license

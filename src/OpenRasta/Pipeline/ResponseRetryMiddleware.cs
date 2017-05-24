@@ -17,6 +17,11 @@ namespace OpenRasta.Pipeline
       return this;
     }
 
+    public Task Invoke(ICommunicationContext env)
+    {
+      return LoggingInvoke(env);
+    }
+    
     async Task LoggingInvoke(ICommunicationContext env)
     {
       try
@@ -27,15 +32,11 @@ namespace OpenRasta.Pipeline
       {
         foreach (var error in env.ServerErrors)
         {
-          log.WriteInfo(error.Exception.ToString());
+          log.WriteError(error.ToString());
         }
       }
     }
 
-    public Task Invoke(ICommunicationContext env)
-    {
-      return LoggingInvoke(env);
-    }
 
     async Task InvokeWithErrorConneg(ICommunicationContext env)
     {
