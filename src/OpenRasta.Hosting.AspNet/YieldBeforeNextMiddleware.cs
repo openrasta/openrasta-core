@@ -5,14 +5,6 @@ using OpenRasta.Web;
 
 namespace OpenRasta.Hosting.AspNet
 {
-  public class YieldBefore<T> : IPipelineMiddlewareFactory
-  {
-    public IPipelineMiddleware Compose(IPipelineMiddleware next)
-    {
-      return new YieldBeforeNextMiddleware(typeof(T).Name).Compose(next);
-    }
-  }
-
   public class YieldBeforeNextMiddleware : IPipelineMiddleware, IPipelineMiddlewareFactory
   {
     readonly string _yieldName;

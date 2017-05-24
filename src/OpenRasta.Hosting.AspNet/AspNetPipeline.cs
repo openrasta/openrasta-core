@@ -1,9 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Web;
-using OpenRasta.Web;
 
 namespace OpenRasta.Hosting.AspNet
 {
@@ -20,16 +18,6 @@ namespace OpenRasta.Hosting.AspNet
         {
             return !string.IsNullOrEmpty(registration.Path) && registration.Path != "*" &&
                    !registration.Type.Contains(typeof(DefaultHttpHandler).FullName);
-        }
-
-        public virtual void HandoverFromPipeline()
-        {
-        }
-
-
-        public virtual void HandoverToPipeline(string yielderName, Task runTask, ICommunicationContext env)
-        {
-            HttpContext.Current.RemapHandler(new OpenRastaHandlerAsync(runTask, env.Resumer(yielderName)));
         }
     }
 }

@@ -74,6 +74,7 @@
     <Compile Include="OpenRastaModuleLoader.cs" />
     <Compile Include="PipelineStageAsync.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="YieldBefore.cs" />
     <Compile Include="YieldBeforeNextMiddleware.cs" />
     <Compile Include="Yielding.cs" />
   </ItemGroup>

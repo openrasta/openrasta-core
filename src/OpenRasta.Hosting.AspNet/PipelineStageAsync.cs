@@ -42,7 +42,7 @@ namespace OpenRasta.Hosting.AspNet
         if (notFound?.Reason != NotFoundReason.NotMapped)
         {
           env.PipelineData["openrasta.hosting.aspnet.handled"] = true;
-          _pipeline.HandoverToPipeline(_yielderName, runTask, env);
+          HttpContext.Current.RemapHandler(new OpenRastaHandlerAsync(runTask, env.Resumer(_yielderName)));
         }
         else
           resumer.SetResult(false);
