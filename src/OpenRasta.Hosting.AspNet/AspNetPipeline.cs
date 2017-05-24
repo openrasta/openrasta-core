@@ -29,7 +29,7 @@ namespace OpenRasta.Hosting.AspNet
 
         public virtual void HandoverToPipeline(string yielderName, Task runTask, ICommunicationContext env)
         {
-            HttpContext.Current.RemapHandler(new OpenRastaHandlerAsync(yielderName, env, runTask));
+            HttpContext.Current.RemapHandler(new OpenRastaHandlerAsync(runTask, env.Resumer(yielderName)));
         }
     }
 }

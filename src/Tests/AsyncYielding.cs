@@ -14,14 +14,14 @@ namespace Tests
     [Fact]
     public async Task middleware_yielding_same_thread()
     {
-      var didItYield = await InvokeTillYield(
+      var didItYield = await InvokeUntil<CodeMiddleware>(
         new YieldBefore<CodeMiddleware>(),
         new CodeMiddleware(() => Resumed = true));
 
       didItYield.ShouldBeTrue();
       Resumed.ShouldBeFalse();
 
-      await Resume();
+      await Resume<CodeMiddleware>();
 
       Resumed.ShouldBeTrue();
     }
@@ -29,7 +29,7 @@ namespace Tests
     [Fact]
     public async Task middleware_yielding_other_thread()
     {
-      var didItYield = await InvokeTillYield(
+      var didItYield = await InvokeUntil<CodeMiddleware>(
         new OtherThreadMiddleware(),
         new YieldBefore<CodeMiddleware>(),
         new CodeMiddleware(() => Resumed = true)
@@ -39,7 +39,7 @@ namespace Tests
       didItYield.ShouldBeTrue();
       Resumed.ShouldBeFalse();
 
-      await Resume();
+      await Resume<CodeMiddleware>();
 
       Resumed.ShouldBeTrue();
     }
@@ -47,7 +47,7 @@ namespace Tests
     [Fact]
     public async Task middleware_yielding_before_code_on_other_thread()
     {
-      var didItYield = await InvokeTillYield(
+      var didItYield = await InvokeUntil<OtherThreadMiddleware>(
         new YieldBefore<OtherThreadMiddleware>(),
         new OtherThreadMiddleware(),
         new CodeMiddleware(() => Resumed = true)
@@ -57,7 +57,7 @@ namespace Tests
       didItYield.ShouldBeTrue();
       Resumed.ShouldBeFalse();
 
-      await Resume();
+      await Resume<OtherThreadMiddleware>();
 
       Resumed.ShouldBeTrue();
     }
@@ -65,7 +65,7 @@ namespace Tests
     [Fact]
     public async Task middleware_not_yielding_same_thread()
     {
-      var didItYield = await InvokeTillYield(
+      var didItYield = await InvokeUntil<CodeMiddleware>(
         new BypassingCodeMiddleware(),
         new YieldBefore<CodeMiddleware>(),
         new CodeMiddleware(() => Resumed = true)
@@ -74,7 +74,7 @@ namespace Tests
       didItYield.ShouldBeFalse();
       Resumed.ShouldBeFalse();
 
-      await Resume();
+      await Resume<CodeMiddleware>();
 
       Resumed.ShouldBeFalse();
     }
@@ -82,7 +82,7 @@ namespace Tests
     [Fact]
     public async Task not_yielding_different_thread()
     {
-      var didItYield = await InvokeTillYield(
+      var didItYield = await InvokeUntil<CodeMiddleware>(
         new OtherThreadMiddleware(),
         new BypassingCodeMiddleware(),
         new YieldBefore<CodeMiddleware>(),
@@ -93,7 +93,7 @@ namespace Tests
       didItYield.ShouldBeFalse();
       Resumed.ShouldBeFalse();
 
-      await Resume();
+      await Resume<CodeMiddleware>();
 
       Resumed.ShouldBeFalse();
     }
@@ -109,19 +109,19 @@ namespace Tests
 
     bool Resumed { get; set; }
 
-    async Task Resume()
+    async Task Resume<T>()
     {
-      Env.Resumer(nameof(YieldBeforeNextMiddleware)).SetResult(true);
+      Env.Resumer(typeof(T).Name).SetResult(true);
       await Operation;
     }
 
-    async Task<bool> InvokeTillYield(params IPipelineMiddlewareFactory[] factories)
+    async Task<bool> InvokeUntil<T>(params IPipelineMiddlewareFactory[] factories)
     {
       Operation = factories.Compose().Invoke(Env);
 
       return await Yielding.DidItYield(
         Operation,
-        Env.Yielder(nameof(YieldBeforeNextMiddleware)).Task);
+        Env.Yielder(typeof(T).Name).Task);
     }
 
     Task Operation { get; set; }

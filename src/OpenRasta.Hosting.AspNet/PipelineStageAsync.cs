@@ -40,7 +40,10 @@ namespace OpenRasta.Hosting.AspNet
 
         var notFound = env.OperationResult as OperationResult.NotFound;
         if (notFound?.Reason != NotFoundReason.NotMapped)
+        {
+          env.PipelineData["openrasta.hosting.aspnet.handled"] = true;
           _pipeline.HandoverToPipeline(_yielderName, runTask, env);
+        }
         else
           resumer.SetResult(false);
       }
