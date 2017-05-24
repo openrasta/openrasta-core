@@ -38,7 +38,7 @@ namespace OpenRasta.Hosting.AspNet
             ContributorTrailers =
             {
               [call => call.Target is KnownStages.IUriMatching] =
-              () => new YieldBeforeNextMiddleware(nameof(KnownStages.IUriMatching))
+              () => new YieldBefore<KnownStages.IUriMatching>()
             }
           }
         }

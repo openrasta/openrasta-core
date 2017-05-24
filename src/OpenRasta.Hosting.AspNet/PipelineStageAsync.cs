@@ -27,10 +27,8 @@ namespace OpenRasta.Hosting.AspNet
       if (ShouldIgnoreRequestEarly()) return;
 
       var env = AspNetCommunicationContext.Current;
-      var yielder = new TaskCompletionSource<bool>();
-      var resumer = new TaskCompletionSource<bool>();
-      env.Yielder(_yielderName, yielder);
-      env.Resumer(_yielderName, resumer);
+      var yielder = env.Yielder(_yielderName);
+      var resumer = env.Resumer(_yielderName);
 
       try
       {

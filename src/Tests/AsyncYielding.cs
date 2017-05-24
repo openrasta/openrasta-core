@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Threading.Tasks;
+using OpenRasta.Hosting.AspNet;
 using OpenRasta.Hosting.InMemory;
 using OpenRasta.Pipeline;
 using OpenRasta.Web;
 using Shouldly;
 using Xunit;
 
-namespace OpenRasta.Hosting.AspNet.Tests.Integration
+namespace Tests
 {
   public class AsyncYielding
   {
@@ -14,7 +15,7 @@ namespace OpenRasta.Hosting.AspNet.Tests.Integration
     public async Task middleware_yielding_same_thread()
     {
       var didItYield = await InvokeTillYield(
-        new YieldBeforeNextMiddleware(nameof(YieldBeforeNextMiddleware)),
+        new YieldBefore<CodeMiddleware>(),
         new CodeMiddleware(() => Resumed = true));
 
       didItYield.ShouldBeTrue();
@@ -30,9 +31,9 @@ namespace OpenRasta.Hosting.AspNet.Tests.Integration
     {
       var didItYield = await InvokeTillYield(
         new OtherThreadMiddleware(),
-        new YieldBeforeNextMiddleware(nameof(YieldBeforeNextMiddleware)),
-        new CodeMiddleware(()=>Resumed = true)
-        );
+        new YieldBefore<CodeMiddleware>(),
+        new CodeMiddleware(() => Resumed = true)
+      );
 
 
       didItYield.ShouldBeTrue();
@@ -47,9 +48,9 @@ namespace OpenRasta.Hosting.AspNet.Tests.Integration
     public async Task middleware_yielding_before_code_on_other_thread()
     {
       var didItYield = await InvokeTillYield(
-        new YieldBeforeNextMiddleware(nameof(YieldBeforeNextMiddleware)),
+        new YieldBefore<OtherThreadMiddleware>(),
         new OtherThreadMiddleware(),
-        new CodeMiddleware(()=>Resumed = true)
+        new CodeMiddleware(() => Resumed = true)
       );
 
 
@@ -66,8 +67,8 @@ namespace OpenRasta.Hosting.AspNet.Tests.Integration
     {
       var didItYield = await InvokeTillYield(
         new BypassingCodeMiddleware(),
-        new YieldBeforeNextMiddleware(nameof(YieldBeforeNextMiddleware)),
-        new CodeMiddleware(()=>Resumed = true)
+        new YieldBefore<CodeMiddleware>(),
+        new CodeMiddleware(() => Resumed = true)
       );
 
       didItYield.ShouldBeFalse();
@@ -81,12 +82,11 @@ namespace OpenRasta.Hosting.AspNet.Tests.Integration
     [Fact]
     public async Task not_yielding_different_thread()
     {
-
       var didItYield = await InvokeTillYield(
         new OtherThreadMiddleware(),
         new BypassingCodeMiddleware(),
-        new YieldBeforeNextMiddleware(nameof(YieldBeforeNextMiddleware)),
-        new CodeMiddleware(()=>Resumed = true)
+        new YieldBefore<CodeMiddleware>(),
+        new CodeMiddleware(() => Resumed = true)
       );
 
 
@@ -99,19 +99,16 @@ namespace OpenRasta.Hosting.AspNet.Tests.Integration
     }
 
 
-    ICommunicationContext Env;
+    readonly ICommunicationContext Env;
 
     public AsyncYielding()
     {
-
       Env = new InMemoryCommunicationContext();
-      
-      Env.Yielder(nameof(YieldBeforeNextMiddleware), new TaskCompletionSource<bool>());
-      Env.Resumer(nameof(YieldBeforeNextMiddleware), new TaskCompletionSource<bool>());
       Resumed = false;
     }
+
     bool Resumed { get; set; }
-    
+
     async Task Resume()
     {
       Env.Resumer(nameof(YieldBeforeNextMiddleware)).SetResult(true);
@@ -120,7 +117,6 @@ namespace OpenRasta.Hosting.AspNet.Tests.Integration
 
     async Task<bool> InvokeTillYield(params IPipelineMiddlewareFactory[] factories)
     {
-      Env.Yielder(nameof(YieldBeforeNextMiddleware), new TaskCompletionSource<bool>());
       Operation = factories.Compose().Invoke(Env);
 
       return await Yielding.DidItYield(
@@ -148,7 +144,7 @@ namespace OpenRasta.Hosting.AspNet.Tests.Integration
   {
     public Task Invoke(ICommunicationContext env)
     {
-      return Task.Run(()=> Next.Invoke(env));
+      return Task.Run(() => Next.Invoke(env));
     }
 
     public IPipelineMiddleware Compose(IPipelineMiddleware next)
@@ -159,6 +155,7 @@ namespace OpenRasta.Hosting.AspNet.Tests.Integration
 
     IPipelineMiddleware Next { get; set; }
   }
+
   class CodeMiddleware : IPipelineMiddleware, IPipelineMiddlewareFactory
   {
     readonly Action _action;
