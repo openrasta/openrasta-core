@@ -9,13 +9,14 @@ namespace Tests.Scenarios.HandlerSelection
 {
   public static class MemoryHostExtensions
   {
-    public static Task<IResponse> Post(this InMemoryHost host, string uri, string content)
+    public static Task<IResponse> Post(this InMemoryHost host, string uri, string content, string contentType = null)
     {
       return host.ProcessRequestAsync(new InMemoryRequest
       {
         HttpMethod = "POST",
         Uri = new Uri($"http://localhost{uri}", UriKind.RelativeOrAbsolute)
-      }.WriteString(content));
+        
+      }.WriteString(content, contentType));
     }
 
     public static Task<IResponse> Get(this InMemoryHost host, string uri)
@@ -30,9 +31,9 @@ namespace Tests.Scenarios.HandlerSelection
     {
       return Encoding.UTF8.GetString(response.Entity.Stream.ReadToEnd());
     }
-    static InMemoryRequest WriteString(this InMemoryRequest request, string text)
+    static InMemoryRequest WriteString(this InMemoryRequest request, string text, string contentType = null)
     {
-      request.Entity.ContentType = new MediaType("text/plain;charset=utf-8");
+      request.Entity.ContentType = new MediaType(contentType ?? "text/plain;charset=utf-8");
 
       var buffer = Encoding.UTF8.GetBytes(text);
       request.Entity.ContentLength = buffer.Length;

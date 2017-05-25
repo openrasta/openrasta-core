@@ -12,7 +12,7 @@ namespace OpenRasta.Pipeline.Contributors
 
     public static PipelineContinuation Respond<T>(this ICommunicationContext env) where T:OperationResult,new()
     {
-      env.Response.Entity.Instance = new T();
+      env.OperationResult = new T();
       return PipelineContinuation.RenderNow;
     }
   }
