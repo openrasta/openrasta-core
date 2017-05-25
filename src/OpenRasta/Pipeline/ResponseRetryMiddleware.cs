@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using OpenRasta.Diagnostics;
 using OpenRasta.Web;
+using OpenRasta.Web.Internal;
 
 namespace OpenRasta.Pipeline
 {
@@ -54,7 +55,7 @@ namespace OpenRasta.Pipeline
       log.WriteInfo($"Exception: {exceptionHappened}, Errors: {env.ServerErrors.Count()}, State: {env.PipelineData.PipelineStage.CurrentState}");
       if (exceptionHappened)
       {
-        env.OperationResult = OperationResultForExceptions(env);
+        env.SetOperationResultToServerErrors();
       }
       if (exceptionHappened
           || env.PipelineData.PipelineStage.CurrentState == PipelineContinuation.RenderNow)
@@ -91,9 +92,7 @@ namespace OpenRasta.Pipeline
         Title = "Errors happened while executing the request",
         ResponseResource = env.ServerErrors.ToList(),
         Description = $"Errors happened while executing the request: {Environment.NewLine}" +
-                      string.Concat(
-                        env.ServerErrors.Select(
-                          error => error.ToString() + Environment.NewLine))
+                      string.Concat(env.ServerErrors.Select(error => $"{error}{Environment.NewLine}"))
       };
     }
   }

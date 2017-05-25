@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using OpenRasta.Pipeline;
 
 namespace OpenRasta.Web.Internal
@@ -20,16 +21,25 @@ namespace OpenRasta.Web.Internal
 #pragma warning restore 618
       if (e != null)
         context.ServerErrors.Add(new Error {Exception = e});
-      context.OperationResult = new OperationResult.InternalServerError
-      {
-        Title = "The request could not be processed because of a fatal error. See log below.",
-        ResponseResource = context.ServerErrors
-      };
+
+      context.SetOperationResultToServerErrors();
       context.PipelineData.ResponseCodec = null;
       context.Response.StatusCode = 500;
-      context.Response.Entity.Instance = context.ServerErrors;
+      context.Response.Entity.Instance = context.ServerErrors.ToList();
       context.Response.Entity.Codec = null;
       context.Response.Entity.ContentLength = null;
+    }
+
+    public static void SetOperationResultToServerErrors(this ICommunicationContext env)
+    {
+      env.OperationResult =
+        new OperationResult.InternalServerError()
+        {
+          Title = "Errors happened while executing the request",
+          ResponseResource = env.ServerErrors.ToList(),
+          Description = $"Errors happened while executing the request: {Environment.NewLine}" +
+                        string.Concat(env.ServerErrors.Select(error => $"{error}{Environment.NewLine}"))
+        };
     }
   }
 }
