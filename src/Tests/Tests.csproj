@@ -121,6 +121,7 @@
     <Compile Include="Pipeline.Middleware\ResponseContributor\pipeline_in_continue_contrib_aborts.cs" />
     <Compile Include="Pipeline.Middleware\ResponseContributor\pipeline_in_render_now.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Scenarios.Codecs\codec_used_after_optional_parameter.cs" />
     <Compile Include="Scenarios.Codecs\content_extension_with_throwing_handler.cs" />
     <Compile Include="Scenarios.Codecs\media_type_reader_throws.cs" />
     <Compile Include="Scenarios.Codecs\multipart_as_enumerable_with_uri_params.cs" />

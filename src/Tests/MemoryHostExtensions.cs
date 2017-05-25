@@ -11,11 +11,19 @@ namespace Tests.Scenarios.HandlerSelection
   {
     public static Task<IResponse> Post(this InMemoryHost host, string uri, string content, string contentType = null)
     {
+      return ExecuteMethod(host, "POST", uri, content, contentType);
+    }
+    public static Task<IResponse> Put(this InMemoryHost host, string uri, string content, string contentType = null)
+    {
+      return ExecuteMethod(host, "PUT", uri, content, contentType);
+    }
+
+    static Task<IResponse> ExecuteMethod(InMemoryHost host, string method, string uri, string content, string contentType)
+    {
       return host.ProcessRequestAsync(new InMemoryRequest
       {
-        HttpMethod = "POST",
+        HttpMethod = method,
         Uri = new Uri($"http://localhost{uri}", UriKind.RelativeOrAbsolute)
-        
       }.WriteString(content, contentType));
     }
 
