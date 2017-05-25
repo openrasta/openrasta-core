@@ -1,6 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using OpenRasta.DI;
 using OpenRasta.Pipeline;
+using OpenRasta.Pipeline.CallGraph;
+
 // ReSharper disable MemberCanBePrivate.Global
 
 namespace OpenRasta.Concordia
@@ -17,11 +21,20 @@ namespace OpenRasta.Concordia
 
     protected T Get<T>(string key, T defaultValue = default(T))
     {
-
       if (Properties.ContainsKey(key) == false) return (T)(Properties[key] = defaultValue);
       return (T) Properties[key];
     }
 
+    protected T GetOrAdd<T>(string key, Func<T> add)
+    {
+      if (Properties.ContainsKey(key) == false) return (T)(Properties[key] = add());
+      return (T) Properties[key];
+    }
+    protected Func<T> Get<T>(string key, Func<T> defaultValue)
+    {
+      if (Properties.ContainsKey(key) == false) return (Func<T>)(Properties[key] = defaultValue);
+      return (Func<T>) Properties[key];
+    }
     protected void Set<T>(string key, T value)
     {
       Properties[key] = value;
@@ -48,10 +61,13 @@ namespace OpenRasta.Concordia
       public OpenRastaProperties(IDictionary<string, object> startupProperties)
         : base(startupProperties)
       {
-        Pipeline = new PipelineProperties(startupProperties);
         Errors = new ErrorProperties(startupProperties);
         Diagnostics = new DiagnosticsProperties(startupProperties);
+        Factories = new FactoriesProperties(startupProperties);
+        Pipeline = new PipelineProperties(startupProperties);
       }
+
+      public FactoriesProperties Factories { get; }
 
       public DiagnosticsProperties Diagnostics { get; }
 
@@ -59,6 +75,31 @@ namespace OpenRasta.Concordia
       public ErrorProperties Errors { get; }
     }
 
+    public class FactoriesProperties : AbstractProperties
+    {
+      public FactoriesProperties(IDictionary<string, object> properties) : base(properties)
+      {
+      }
+      
+      public IDependencyResolver Resolver
+      {
+        get => GetOrAdd("openrasta.factories.DependencyResolver", ()=> new InternalDependencyResolver());
+        set => Set("openrasta.factories.DependencyResolver", value);
+      }
+
+      public Func<IEnumerable<IPipelineContributor>> Contributors
+      {
+        get => Get("openrasta.factories.Contributors", ()=> Resolver.ResolveAll<IPipelineContributor>());
+        set => Set("openrasta.factories.Contributors", value);
+      }
+      
+      public Func<IGenerateCallGraphs> CallGraphGenerator
+      {
+        get => Get("openrasta.factories.CallGraphGenerator", () =>
+          new CallGraphGeneratorFactory(Resolver).GetCallGraphGenerator());
+        set => Set("openrasta.factories.CallGraphGenerator", value);
+      }
+    }
     public class DiagnosticsProperties : AbstractProperties
     {
       public DiagnosticsProperties(IDictionary<string, object> properties) : base(properties)
@@ -73,8 +114,7 @@ namespace OpenRasta.Concordia
     }
     public class PipelineProperties : AbstractProperties
     {
-      public PipelineProperties(IDictionary<string, object> startupProperties)
-        : base(startupProperties)
+      public PipelineProperties(IDictionary<string, object> properties) : base(properties)
       {
       }
 
