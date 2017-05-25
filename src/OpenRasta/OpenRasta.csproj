@@ -308,7 +308,6 @@
     <Compile Include="Pipeline\PreExecuteMiddleware.cs" />
     <Compile Include="Pipeline\PipelineAsync.cs" />
     <Compile Include="Pipeline\IPipelineBuilder.cs" />
-    <Compile Include="Pipeline\IPipelineContributorAsync.cs" />
     <Compile Include="Pipeline\PipelineAbortedException.cs" />
     <Compile Include="Pipeline\PipelineExtensions.cs" />
     <Compile Include="Pipeline\RequestMiddleware.cs" />
