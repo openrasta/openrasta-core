@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Web;
 
@@ -18,14 +17,12 @@ namespace OpenRasta.Hosting.AspNet.AspNetHttpListener
     public HttpListenerWorkerRequest(
       HttpListenerContext context, string vdir, string pdir)
     {
-      if (null == context)
-        throw new ArgumentNullException(nameof(context));
       if (null == vdir || vdir.Equals(string.Empty))
         throw new ArgumentException("vdir");
       if (null == pdir || pdir.Equals(string.Empty))
         throw new ArgumentException("pdir");
 
-      _context = context;
+      _context = context ?? throw new ArgumentNullException(nameof(context));
       _virtualDir = vdir;
       _physicalDir = pdir;
       _context.Response.SendChunked = false;
@@ -33,7 +30,6 @@ namespace OpenRasta.Hosting.AspNet.AspNetHttpListener
 
     public override void CloseConnection()
     {
-      // _context.Close();
     }
 
     public override void EndOfRequest()
@@ -58,19 +54,12 @@ namespace OpenRasta.Hosting.AspNet.AspNetHttpListener
 
     public override string GetFilePath()
     {
-      // TODO: this is a hack
-      string s = _context.Request.Url.LocalPath;
-      if (s.IndexOf(".aspx") != -1)
-        s = s.Substring(0, s.IndexOf(".aspx") + 5);
-      else if (s.IndexOf(".asmx") != -1)
-        s = s.Substring(0, s.IndexOf(".asmx") + 5);
-
-      return s;
+      return _context.Request.Url.LocalPath;
     }
 
     public override string GetFilePathTranslated()
     {
-      string s = GetFilePath();
+      var s = GetFilePath();
       s = s.Substring(_virtualDir.Length);
       s = s.Replace('/', Path.DirectorySeparatorChar);
       return Path.Combine(_physicalDir, s);
@@ -83,9 +72,7 @@ namespace OpenRasta.Hosting.AspNet.AspNetHttpListener
 
     public override string GetHttpVersion()
     {
-      return string.Format("HTTP/{0}.{1}",
-        _context.Request.ProtocolVersion.Major,
-        _context.Request.ProtocolVersion.Minor);
+      return $"HTTP/{_context.Request.ProtocolVersion.Major}.{_context.Request.ProtocolVersion.Minor}";
     }
 
     public override string MapPath(string virtualPath)
@@ -111,18 +98,20 @@ namespace OpenRasta.Hosting.AspNet.AspNetHttpListener
 
     public override string GetLocalAddress()
     {
-      return _context.Request.LocalEndPoint.Address.ToString();
+      // ReSharper disable once PossibleNullReferenceException
+      return _context.Request.LocalEndPoint?.Address.ToString();
     }
 
     public override int GetLocalPort()
     {
+      // ReSharper disable once PossibleNullReferenceException
       return _context.Request.LocalEndPoint.Port;
     }
 
     public override string GetPathInfo()
     {
-      string s1 = GetFilePath();
-      string s2 = _context.Request.Url.LocalPath;
+      var s1 = GetFilePath();
+      var s2 = _context.Request.Url.LocalPath;
       if (s1.Length == s2.Length)
         return string.Empty;
       return s2.Substring(s1.Length);
@@ -130,9 +119,9 @@ namespace OpenRasta.Hosting.AspNet.AspNetHttpListener
 
     public override string GetQueryString()
     {
-      string queryString = string.Empty;
-      string rawUrl = _context.Request.RawUrl;
-      int index = rawUrl.IndexOf('?');
+      var queryString = string.Empty;
+      var rawUrl = _context.Request.RawUrl;
+      var index = rawUrl.IndexOf('?');
       if (index != -1)
         queryString = rawUrl.Substring(index + 1);
       return queryString;
@@ -176,21 +165,17 @@ namespace OpenRasta.Hosting.AspNet.AspNetHttpListener
 
     public override string[][] GetUnknownRequestHeaders()
     {
-      string[][] unknownRequestHeaders;
       var headers = _context.Request.Headers;
-      int count = headers.Count;
+      var count = headers.Count;
       var headerPairs = new List<string[]>(count);
-      for (int i = 0; i < count; i++)
+      for (var i = 0; i < count; i++)
       {
-        string headerName = headers.GetKey(i);
-        if (GetKnownRequestHeaderIndex(headerName) == -1)
-        {
-          string headerValue = headers.Get(i);
-          headerPairs.Add(new[] {headerName, headerValue});
-        }
+        var headerName = headers.GetKey(i);
+        if (GetKnownRequestHeaderIndex(headerName) != -1) continue;
+        var headerValue = headers.Get(i);
+        headerPairs.Add(new[] {headerName, headerValue});
       }
-      unknownRequestHeaders = headerPairs.ToArray();
-      return unknownRequestHeaders;
+      return headerPairs.ToArray();
     }
 
     public override string GetUriPath()

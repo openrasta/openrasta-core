@@ -16,22 +16,10 @@ namespace OpenRasta.Hosting.AspNet
       Entity = new HttpEntity(Headers, NativeContext.Response.OutputStream);
     }
 
-    public long? ContentLength
-    {
-      get => Headers.ContentLength;
-      set => Headers.ContentLength = value;
-    }
-
-    public string ContentType
-    {
-      get => Headers.ContentType.ToString();
-      set => Headers.ContentType = new MediaType(value);
-    }
-
-    public IHttpEntity Entity { get; set; }
-    public HttpHeaderDictionary Headers { get; private set; }
+    public IHttpEntity Entity { get; }
+    public HttpHeaderDictionary Headers { get; }
     public bool HeadersSent { get; private set; }
-    ILogger log = TraceSourceLogger.Instance;
+    readonly ILogger log = TraceSourceLogger.Instance;
 
     public int StatusCode
     {
@@ -60,8 +48,7 @@ namespace OpenRasta.Hosting.AspNet
         catch (Exception ex)
         {
           var commcontext = DependencyManager.GetService<ICommunicationContext>();
-          if (commcontext != null)
-            commcontext.ServerErrors.Add(new Error {Message = ex.ToString()});
+          commcontext?.ServerErrors.Add(new Error {Message = ex.ToString()});
         }
       }
       HeadersSent = true;

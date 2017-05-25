@@ -1,4 +1,6 @@
-﻿using System;
+﻿// ReSharper disable UnusedMember.Global -- here for compat
+
+using System;
 using System.Web;
 
 namespace OpenRasta.Hosting.AspNet

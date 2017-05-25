@@ -59,7 +59,6 @@
     <Compile Include="AspNetHttpListener\HttpListenerController.cs" />
     <Compile Include="AspNetHttpListener\HttpListenerWorkerRequest.cs" />
     <Compile Include="AspNetLogSource.cs" />
-    <Compile Include="AspNetLogSourceExtensions.cs" />
     <Compile Include="AspNetRequest.cs" />
     <Compile Include="AspNetResponse.cs" />
     <Compile Include="CommContextExtensions.cs" />

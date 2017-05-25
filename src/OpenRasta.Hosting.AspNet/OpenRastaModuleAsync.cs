@@ -17,7 +17,6 @@ namespace OpenRasta.Hosting.AspNet
     }
 
     static AspNetPipeline Pipeline => _pipeline.Value;
-    public static ILogger Log = new TraceSourceLogger(new TraceSource("openrasta"));
 
     static readonly Lazy<AspNetPipeline> _pipeline = new Lazy<AspNetPipeline>(() =>
       HttpRuntime.UsingIntegratedPipeline

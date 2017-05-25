@@ -1,10 +1,8 @@
 using System;
 using System.Diagnostics;
-using System.IO;
 using System.Net;
 using System.Text;
 using NUnit.Framework;
-using OpenRasta.Configuration;
 using OpenRasta.Hosting.AspNet.AspNetHttpListener;
 using OpenRasta.Web;
 

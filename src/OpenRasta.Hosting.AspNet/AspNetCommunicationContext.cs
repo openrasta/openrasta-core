@@ -30,7 +30,7 @@ namespace OpenRasta.Hosting.AspNet
       }
     }
 
-    public AspNetCommunicationContext(ILogger logger, HttpContext context, AspNetRequest request,
+    AspNetCommunicationContext(ILogger logger, HttpContext context, AspNetRequest request,
       AspNetResponse response)
     {
       NativeContext = context;
@@ -47,29 +47,29 @@ namespace OpenRasta.Hosting.AspNet
         if (NativeContext == null)
           return null;
 
-        string baseUri = "{0}://{1}/".With(NativeContext.Request.Url.Scheme,
+        var baseUri = "{0}://{1}/".With(NativeContext.Request.Url.Scheme,
           NativeContext.Request.ServerVariables["HTTP_HOST"]);
 
+        // ReSharper disable once AssignNullToNotNullAttribute
         var appBaseUri = new Uri(new Uri(baseUri), new Uri(NativeContext.Request.ApplicationPath, UriKind.Relative));
         return appBaseUri;
       }
     }
 
 
-
     public OperationResult OperationResult { get; set; }
-    public PipelineData PipelineData { get; set; }
-    public IRequest Request { get; private set; }
-    public IResponse Response { get; private set; }
+    public PipelineData PipelineData { get; }
+    public IRequest Request { get; }
+    public IResponse Response { get; }
 
-    public IList<Error> ServerErrors { get; private set; }
+    public IList<Error> ServerErrors { get; }
 
     public IPrincipal User
     {
-      get { return NativeContext.User; }
-      set { NativeContext.User = value; }
+      get => NativeContext.User;
+      set => NativeContext.User = value;
     }
 
-    HttpContext NativeContext { get; set; }
+    HttpContext NativeContext { get; }
   }
 }

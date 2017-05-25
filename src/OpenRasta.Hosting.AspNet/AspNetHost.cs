@@ -1,13 +1,11 @@
 using System;
 using System.Linq;
 using System.Reflection;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Compilation;
 using OpenRasta.Concordia;
 using OpenRasta.Configuration;
-using OpenRasta.Configuration.MetaModel;
 using OpenRasta.DI;
 using OpenRasta.Diagnostics;
 using OpenRasta.Pipeline;
@@ -23,18 +21,20 @@ namespace OpenRasta.Hosting.AspNet
 
     event EventHandler _legacyStart;
     event EventHandler<StartupProperties> _start;
+
     event EventHandler IHost.Start
     {
       add => _legacyStart += value;
       remove => _legacyStart -= value;
     }
+
     event EventHandler<StartupProperties> IHostStartWithStartupProperties.Start
     {
       add => _start += value;
       remove => _start -= value;
     }
 
-    protected internal virtual void RaiseStart()
+    protected internal void RaiseStart()
     {
       _legacyStart.Raise(this);
       var start = _start;
@@ -45,9 +45,7 @@ namespace OpenRasta.Hosting.AspNet
 
     public string ApplicationVirtualPath => HttpRuntime.AppDomainAppVirtualPath;
 
-    IConfigurationSource _configurationSource;
-
-    Lazy<IConfigurationSource> _configSourceFactory;
+    readonly Lazy<IConfigurationSource> _configSourceFactory;
     readonly Lazy<IDependencyResolverAccessor> _resolverAccessor;
 
 
@@ -58,24 +56,23 @@ namespace OpenRasta.Hosting.AspNet
       _configSourceFactory = new Lazy<IConfigurationSource>(ConfigurationSourceLocator);
     }
 
-    public IConfigurationSource ConfigurationSource
-    {
-      get { return _configurationSource ?? _configSourceFactory.Value; }
-      set { _configurationSource = value; }
-    }
+    IConfigurationSource ConfigurationSource => _configSourceFactory.Value;
 
     public IDependencyResolverAccessor ResolverAccessor => _resolverAccessor.Value;
 
     IDependencyResolverAccessor CreateResolverAccessor()
     {
+      // ReSharper disable once SuspiciousTypeConversion.Global - Declared API without test
       return (ConfigurationSource as IDependencyResolverAccessor)
              ?? DependencyResolverAccessorLocator();
     }
 
     public static Func<IConfigurationSource> ConfigurationSourceLocator = FindTypeInProject<IConfigurationSource>;
-    public static Func<IDependencyResolverAccessor> DependencyResolverAccessorLocator = FindTypeInProject<IDependencyResolverAccessor>;
 
-    public static T FindTypeInProject<T>() where T : class
+    static readonly Func<IDependencyResolverAccessor> DependencyResolverAccessorLocator =
+      FindTypeInProject<IDependencyResolverAccessor>;
+
+    static T FindTypeInProject<T>() where T : class
     {
       // forces global.asax to be compiled.
       BuildManager.GetReferencedAssemblies();
@@ -95,6 +92,7 @@ namespace OpenRasta.Hosting.AspNet
         }
         catch
         {
+          // ignored - if none found, returns null on purpose
         }
       }
       return null;
@@ -130,7 +128,7 @@ namespace OpenRasta.Hosting.AspNet
       return AppDomain.CurrentDomain.GetAssemblies().FirstOrDefault(_ => _.FullName == args.Name);
     }
 
-    public static bool NotFrameworkAssembly(Assembly assembly)
+    static bool NotFrameworkAssembly(Assembly assembly)
     {
       switch (assembly.GetName().Name)
       {
@@ -153,8 +151,6 @@ namespace OpenRasta.Hosting.AspNet
     {
       if (ConfigurationSource != null)
         resolver.AddDependencyInstance<IConfigurationSource>(ConfigurationSource);
-      var uris = resolver.Resolve<IUriResolver>();
-      var config = resolver.Resolve<IMetaModelRepository>();
       return true;
     }
 
@@ -171,18 +167,16 @@ namespace OpenRasta.Hosting.AspNet
       IncomingRequestProcessed.Raise(this, new IncomingRequestProcessedEventArgs(context));
     }
 
-    protected internal virtual Task RaiseIncomingRequestReceived(ICommunicationContext context)
+    protected internal Task RaiseIncomingRequestReceived(ICommunicationContext context)
     {
       var incomingRequestReceivedEventArgs = new IncomingRequestReceivedEventArgs(context);
       IncomingRequestReceived.Raise(this, incomingRequestReceivedEventArgs);
       return incomingRequestReceivedEventArgs.RunTask;
     }
 
-
-    protected internal virtual void RaiseStop()
+    protected internal void RaiseStop()
     {
       Stop.Raise(this);
     }
-
   }
 }
