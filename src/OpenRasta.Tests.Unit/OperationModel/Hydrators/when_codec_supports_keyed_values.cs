@@ -23,7 +23,6 @@ namespace OpenRasta.Tests.Unit.OperationModel.Hydrators
       ShouldBeTestExtensions.ShouldBe(ResultOperation.Inputs.Required().First().Binder.BuildObject()
           .Instance.ShouldBeAssignableTo<Frodo>()
           .LastName, "Baggins");
-      //return valueToAnalyse;
     }
   }
 }

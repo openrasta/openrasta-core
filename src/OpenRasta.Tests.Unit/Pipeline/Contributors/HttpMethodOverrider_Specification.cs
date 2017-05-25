@@ -30,7 +30,6 @@ namespace HttpMethodOverrider_Specification
             var result = when_sending_notification<KnownStages.IHandlerSelection>();
 
           result.ShouldBe(PipelineContinuation.Abort);
-          //return valueToAnalyse;
           Context.ServerErrors[0].ShouldBeAssignableTo<HttpMethodOverriderContributor.MethodIsNotPostError>();
         }
 
@@ -44,7 +43,6 @@ namespace HttpMethodOverrider_Specification
             when_sending_notification<KnownStages.IHandlerSelection>();
 
           ShouldBeTestExtensions.ShouldBe(Context.Request.HttpMethod, "PUT");
-          //return valueToAnalyse;
         }
     }
 
@@ -59,9 +57,7 @@ namespace HttpMethodOverrider_Specification
             when_sending_notification<KnownStages.IHandlerSelection>();
 
           ShouldBeTestExtensions.ShouldBe(Context.Request.HttpMethod, "POST");
-          //return valueToAnalyse;
           Context.ServerErrors.Count.ShouldBe(0);
-          //return valueToAnalyse;
         }
     }
 }

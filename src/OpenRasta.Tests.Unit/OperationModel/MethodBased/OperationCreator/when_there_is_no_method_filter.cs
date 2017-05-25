@@ -24,7 +24,6 @@ namespace OpenRasta.Tests.Unit.OperationModel.MethodBased
                                                          BindingFlags.Static |
                                                          BindingFlags.Public |
                                                          BindingFlags.FlattenHierarchy).Length);
-      //return valueToAnalyse;
     }
   }
 }

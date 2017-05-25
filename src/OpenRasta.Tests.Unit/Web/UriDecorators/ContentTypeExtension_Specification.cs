@@ -29,7 +29,6 @@ namespace OpenRasta.Tests.Unit.Web.UriDecorators
           when_applying();
           Context.PipelineData.ResponseCodec.CodecType.ShouldBe(typeof(XmlCodec));
           Context.Response.Entity.ContentType.ShouldBe(MediaType.Xml);
-          //return valueToAnalyse;
         }
 
     }

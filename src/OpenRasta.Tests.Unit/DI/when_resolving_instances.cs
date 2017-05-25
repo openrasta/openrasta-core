@@ -429,7 +429,6 @@ namespace InternalDependencyResolver_Specification
       Resolver.AddDependencyInstance(typeof(object), objectInstance);
 
       Resolver.Resolve<object>().ShouldBe(objectInstance);
-      //return valueToAnalyse;
     }
   }
 }

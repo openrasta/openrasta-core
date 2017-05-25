@@ -58,7 +58,6 @@ namespace OpenRasta.Tests.Unit.Infrastructure
     protected void then_decoding_result_is_missing()
     {
       _theResult.ShouldBe(Missing.Value);
-      //return valueToAnalyse;
     }
 
     protected void when_decoding<T>()

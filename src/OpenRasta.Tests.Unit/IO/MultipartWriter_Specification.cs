@@ -70,7 +70,6 @@ Content-Disposition: form-data; name=""user""
 username
 --boundary--
 ");
-          //return valueToAnalyse;
         }
     }
 }

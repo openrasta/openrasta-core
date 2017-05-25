@@ -26,12 +26,10 @@ namespace BoundaryStreamReader_Specification
 
         void ThenTheNextPartShouldBeEmpty() {
           Reader.ReadNextPart().ShouldBe(new byte[0]);
-          //return valueToAnalyse;
         }
 
         void ThenTheNextPartShouldBe(byte[] p) {
           Reader.ReadNextPart().ShouldBe(p);
-          //return valueToAnalyse;
         }
 
         [Test]
@@ -43,7 +41,6 @@ namespace BoundaryStreamReader_Specification
             ThenTheNextPartShouldBeEmpty();
 
           ShouldBeTestExtensions.ShouldBe(Encoding.ASCII.GetString(Reader.ReadNextPart()), "text");
-          //return valueToAnalyse;
         }
 
         [Test]
@@ -55,7 +52,6 @@ namespace BoundaryStreamReader_Specification
             ThenTheNextPartShouldBeEmpty();
 
           ShouldBeTestExtensions.ShouldBe(Encoding.ASCII.GetString(Reader.ReadNextPart()), "text");
-          //return valueToAnalyse;
         }
 
         [Test]
@@ -65,7 +61,6 @@ namespace BoundaryStreamReader_Specification
             GivenABoundaryStreamReader("bla");
 
           Reader.Encoding.ShouldBe(Encoding.ASCII);
-          //return valueToAnalyse;
         }
 
         [Test]
@@ -76,7 +71,6 @@ namespace BoundaryStreamReader_Specification
 
             ThenTheNextPartShouldBe(TextInASCII("a"));
           ShouldBeTestExtensions.ShouldBe(Reader.ReadLine(), "text");
-          //return valueToAnalyse;
         }
 
         [Test]
@@ -87,9 +81,7 @@ namespace BoundaryStreamReader_Specification
             GivenABoundaryStreamReader("b");
 
           ShouldBeTestExtensions.ShouldBe(Reader.ReadLine(), "sentence");
-          //return valueToAnalyse;
           Stream.Position.ShouldBe(10);
-          //return valueToAnalyse;
         }
 
         [Test]
@@ -99,7 +91,6 @@ namespace BoundaryStreamReader_Specification
             GivenABoundaryStreamReader("boundary");
 
           Reader.ReadNextPart().ShouldBe(TextInASCII("once upon a time,\r\na BoundaryStreamReader...\r\n"));
-          //return valueToAnalyse;
         }
 
         [Test]
@@ -109,7 +100,6 @@ namespace BoundaryStreamReader_Specification
             GivenABoundaryStreamReader("boundary");
 
           Reader.ReadNextPart().ShouldBe(TextInASCII("once upon a time, a BoundaryStreamReader..."));
-          //return valueToAnalyse;
         }
 
         [Test]
@@ -159,16 +149,12 @@ namespace BoundaryStreamReader_Specification
             Reader.SeekToNextPart(); //ensures we get to our first part
 
           ShouldBeTestExtensions.ShouldBe(Reader.ReadLine(), "line1");
-          //return valueToAnalyse;
 
           Reader.GetNextPart().ReadToEnd().ShouldBe(TextInASCII("line2"));
-          //return valueToAnalyse;
 
           ShouldBeTestExtensions.ShouldBe(Reader.ReadLine(), "line3");
-          //return valueToAnalyse;
 
           Reader.GetNextPart().ReadToEnd().ShouldBe(TextInASCII("line4"));
-          //return valueToAnalyse;
         }
 
         [Test]
@@ -178,7 +164,6 @@ namespace BoundaryStreamReader_Specification
             GivenABoundaryStreamReader("boundary");
 
           Reader.GetNextPart().ReadToEnd().ShouldBe(TextInASCII("content"));
-          //return valueToAnalyse;
           Reader.SeekToNextPart();
           Reader.GetNextPart().ShouldBeNull();
         }
@@ -190,9 +175,7 @@ namespace BoundaryStreamReader_Specification
             GivenABoundaryStreamReader("boundary");
 
           Reader.GetNextPart().ReadByte().ShouldBe('c');
-          //return valueToAnalyse;
           Reader.ReadNextPart().ShouldBe(TextInASCII("content2"));
-          //return valueToAnalyse;
         }
 
         [Test]
@@ -203,7 +186,6 @@ namespace BoundaryStreamReader_Specification
 
             Reader.SeekToNextPart();
           Reader.GetNextPart().ReadToEnd().ShouldBe(TextInASCII("content"));
-          //return valueToAnalyse;
         }
 
         [Test]
@@ -218,7 +200,6 @@ namespace BoundaryStreamReader_Specification
 
             Reader.SeekToNextPart();
           Reader.GetNextPart().ReadToEnd().ShouldBe(TextInASCII("content3"));
-          //return valueToAnalyse;
         }
         [Test]
         public void reading_over_truncated_values_doesnt_corrupt_the_stream()
@@ -236,7 +217,6 @@ namespace BoundaryStreamReader_Specification
             Reader.SeekToNextPart();
 
           Reader.GetNextPart().ReadToEnd().ShouldBe(content);
-          //return valueToAnalyse;
         }
         [Test]
         public void the_buffer_of_the_reader_must_be_big_enough_to_seek_for_a_boundary()
@@ -259,9 +239,7 @@ namespace BoundaryStreamReader_Specification
             GivenABoundaryStreamReader("boundary");
 
           ShouldBeTestExtensions.ShouldBe(Reader.ReadLine(), "Header: value");
-          //return valueToAnalyse;
           ShouldBeTestExtensions.ShouldBe(Reader.ReadLine(), "");
-          //return valueToAnalyse;
           Reader.ReadNextPart().ShouldBe((IEnumerable<byte>) unicodeText);
           Reader.ReadLine().ShouldBeNull();
         }
@@ -276,16 +254,12 @@ namespace BoundaryStreamReader_Specification
             Reader.SeekToNextPart(); //ensures we get to our first part
 
           ShouldBeTestExtensions.ShouldBe(Reader.ReadLine(), "line1");
-          //return valueToAnalyse;
 
           Reader.GetNextPart().ReadByte().ShouldBe('l');
-          //return valueToAnalyse;
 
           ShouldBeTestExtensions.ShouldBe(Reader.ReadLine(), "line3");
-          //return valueToAnalyse;
 
           Reader.GetNextPart().ReadToEnd().ShouldBe(TextInASCII("line4"));
-          //return valueToAnalyse;
         }
     }
 }

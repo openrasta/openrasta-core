@@ -34,14 +34,10 @@ namespace PropertyPathManager_Specification
             var parseResult2 = components.Count > 1 ? components[1] : new PathComponent();
 
           ShouldBeTestExtensions.ShouldBe(parseResult1.ParsedValue, parsedPart);
-          //return valueToAnalyse;
           parseResult1.Type.ShouldBe(type);
-          //return valueToAnalyse;
 
           ShouldBeTestExtensions.ShouldBe(parseResult2.ParsedValue, parsedPartTwo);
-          //return valueToAnalyse;
           parseResult2.Type.ShouldBe(result2);
-          //return valueToAnalyse;
         }
         [TestCase(":0", ":0", PathComponentType.Member, new[]{""})]
         [TestCase("", "", PathComponentType.Constructor, new[] { "" })]
@@ -59,9 +55,7 @@ namespace PropertyPathManager_Specification
             var pathType = new PathManager().GetPathType(prefixes, path);
 
           pathType.Type.ShouldBe(componentType);
-          //return valueToAnalyse;
           ShouldBeTestExtensions.ShouldBe(pathType.ParsedValue, parsedPart);
-          //return valueToAnalyse;
         }
     }
 }

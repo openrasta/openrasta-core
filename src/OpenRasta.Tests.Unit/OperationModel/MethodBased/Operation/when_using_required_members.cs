@@ -20,7 +20,6 @@ namespace OpenRasta.Tests.Unit.OperationModel.MethodBased.Operation
       given_operation("Post", typeof(int), typeof(string));
 
       Operation.Inputs.CountReady().ShouldBe(0);
-      //return valueToAnalyse;
     }
   }
 }

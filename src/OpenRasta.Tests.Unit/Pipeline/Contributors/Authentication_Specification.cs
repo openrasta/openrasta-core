@@ -56,7 +56,6 @@ namespace Authentication_Specification
 
             // then
           result.ShouldBe(PipelineContinuation.Continue);
-          //return valueToAnalyse;
         }
 
         [Test]
@@ -72,9 +71,7 @@ namespace Authentication_Specification
 
             // then
           ShouldBeTestExtensions.ShouldBe(Context.Response.Headers["Warning"], "199 Unsupported Authentication Scheme");
-          //return valueToAnalyse;
           result.ShouldBe(PipelineContinuation.Continue);
-          //return valueToAnalyse;
         }
 
         [Test]
@@ -100,10 +97,8 @@ namespace Authentication_Specification
 
             // then
           ShouldBeTestExtensions.ShouldBe(Context.Response.Headers["Warning"], "199 Malformed credentials");
-          //return valueToAnalyse;
           Context.OperationResult.ShouldBeAssignableTo<OperationResult.BadRequest>();
           result.ShouldBe(PipelineContinuation.RenderNow);
-          //return valueToAnalyse;
         }
 
         [Test]
@@ -130,7 +125,6 @@ namespace Authentication_Specification
             // then
             Context.OperationResult.ShouldBeAssignableTo<OperationResult.Unauthorized>();
           result.ShouldBe(PipelineContinuation.Continue);
-          //return valueToAnalyse;
         }
 
         [Test]
@@ -159,10 +153,8 @@ namespace Authentication_Specification
 
             // then
           result.ShouldBe(PipelineContinuation.Continue);
-          //return valueToAnalyse;
 
           ShouldBeTestExtensions.ShouldBe(Context.User.Identity.Name, username);
-          //return valueToAnalyse;
           Context.User.IsInRole(roles[0]);
             Context.User.IsInRole(roles[1]);
         }

@@ -15,7 +15,6 @@ namespace ExtensibleCompiler_Specification
         public void there_are_no_snippet_modifiers()
         {
           ExtensibleCSharpCodeProvider.SnippetModifiers.Count().ShouldBe(0);
-          //return valueToAnalyse;
         }
     }
 }

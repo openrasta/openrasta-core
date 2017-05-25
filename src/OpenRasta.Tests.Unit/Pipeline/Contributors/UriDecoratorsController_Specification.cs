@@ -43,7 +43,6 @@ namespace UriDecoratorsController_Specification
 
           RemoveLastHello.ApplyWasCalled.ShouldBeTrue();
           Context.Request.Uri.ShouldBe(new Uri("http://localhost/segment"));
-          //return valueToAnalyse;
         }
 
     }

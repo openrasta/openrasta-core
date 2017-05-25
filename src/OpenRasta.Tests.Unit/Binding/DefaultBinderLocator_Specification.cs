@@ -20,7 +20,6 @@ namespace DefaultBinderLocator_Specification
             var binderLocator = new DefaultObjectBinderLocator();
 
           binderLocator.GetBinder(type).ShouldBe(ClassWithStaticBinder.StaticBinder);
-          //return valueToAnalyse;
         }
         private class ClassWithStaticBinder
         {

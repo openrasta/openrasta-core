@@ -14,7 +14,6 @@ namespace OpenRasta.Tests.Unit.Infrastructure
         protected void then_contributor_returns(PipelineContinuation continuation)
         {
           Result.ShouldBe(continuation);
-          //return valueToAnalyse;
         }
     }
 }

@@ -30,7 +30,6 @@ namespace Accessors_Specification
         public void a_reference_type_can_be_assigned_a_null_value()
         {
           new ReflectionBasedType(_typeSystem,typeof(string)).CanSetValue(null).ShouldBe(true);
-          //return valueToAnalyse;
         }
 
         [Test]
@@ -45,7 +44,6 @@ namespace Accessors_Specification
             object result;
           new ReflectionBasedType(_typeSystem,typeof(string)).TryCreateInstance(new[] { "value" }, (str, type) => BindingResult.Success(str), out result).ShouldBeTrue();
           result.ShouldBe("value");
-          //return valueToAnalyse;
         }
 
         [Test]
@@ -78,7 +76,6 @@ namespace Accessors_Specification
         public void the_name_is_the_type_name()
         {
           ShouldBeTestExtensions.ShouldBe(new ReflectionBasedType(_typeSystem,typeof(string)).Name, "String");
-          //return valueToAnalyse;
         }
 
         [Test]
@@ -88,7 +85,6 @@ namespace Accessors_Specification
             var type2 = new ReflectionBasedType(_typeSystem,typeof(string));
           type1.Equals(type2).ShouldBeTrue();
           type1.GetHashCode().ShouldBe(type2.GetHashCode());
-          //return valueToAnalyse;
         }
 
         [Test]
@@ -107,14 +103,12 @@ namespace Accessors_Specification
         public void a_type_compared_to_a_null_results_in_minus_one()
         {
           new ReflectionBasedType(_typeSystem,typeof(int)).CompareTo(null).ShouldBe(-1);
-          //return valueToAnalyse;
         }
 
         [Test]
         public void two_types_not_in_an_inheritance_hierarchy_compare_to_minus_one()
         {
           new ReflectionBasedType(_typeSystem,typeof(int)).CompareTo(new ReflectionBasedType(_typeSystem,typeof(string))).ShouldBe(-1);
-          //return valueToAnalyse;
         }
     }
 
@@ -199,7 +193,6 @@ namespace Accessors_Specification
             var newCustomer = new Customer();
           ThenTheProperty("FirstName").TrySetValue(newCustomer, new[] { "Frodo" }, (str, t) => BindingResult.Success(str)).ShouldBeTrue();
           ShouldBeTestExtensions.ShouldBe(newCustomer.FirstName, "Frodo");
-          //return valueToAnalyse;
         }
 
         [Test]
@@ -216,7 +209,6 @@ namespace Accessors_Specification
             GivenTypeFor<string>();
 
           ThenTheProperty("length").ShouldBe(ThenTheProperty("Length"));
-          //return valueToAnalyse;
         }
 
         [Test]
@@ -225,7 +217,6 @@ namespace Accessors_Specification
             GivenTypeFor<string>();
 
           ShouldBeTestExtensions.ShouldBe(ThenTheProperty("Length").Name, "Length");
-          //return valueToAnalyse;
         }
 
         IProperty ThenTheProperty(string propertyName)
@@ -243,12 +234,10 @@ namespace Accessors_Specification
           TheMethods.Count().ShouldBe(typeof(RingOfPower).GetMethods(
             BindingFlags.Static | BindingFlags.FlattenHierarchy | BindingFlags.Public | BindingFlags.Instance
           ).Length);
-          //return valueToAnalyse;
 
           var method = TheMethods.First(x => x.Name == "RuleThemAll");
           method.ShouldNotBeNull();
           method.InputMembers.Count().ShouldBe(0);
-          //return valueToAnalyse;
         }
         [Test]
         public void a_method_has_the_correct_parameter_name()
@@ -259,12 +248,9 @@ namespace Accessors_Specification
             wornByMethod
                 .ShouldNotBeNull();
           wornByMethod.InputMembers.Count().ShouldBe(1);
-          //return valueToAnalyse;
 
           ShouldBeTestExtensions.ShouldBe(wornByMethod.InputMembers.First().Name, "frodo");
-          //return valueToAnalyse;
           ShouldBeTestExtensions.ShouldBe(wornByMethod.InputMembers.First().TypeName, "Frodo");
-          //return valueToAnalyse;
         }
         [Test]
         public void a_method_name_search_is_case_insensitive()
@@ -279,7 +265,6 @@ namespace Accessors_Specification
             GivenTypeFor<RingOfPower>();
 
           ShouldBeTestExtensions.ShouldBe(Type.GetMethod("ToString").Owner.TypeName, "Object");
-          //return valueToAnalyse;
         }
         protected ICollection<IMethod> TheMethods { get { return Type.GetMethods(); } }
     }

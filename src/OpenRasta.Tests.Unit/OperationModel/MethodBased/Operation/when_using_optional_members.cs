@@ -22,7 +22,6 @@ namespace OpenRasta.Tests.Unit.OperationModel.MethodBased
             given_operation("Get", typeof(int));
 
           Operation.Inputs.CountReady().ShouldBe(1);
-          //return valueToAnalyse;
         }
         [Test]
         public void a_default_parameter_value_is_supported()
@@ -31,7 +30,6 @@ namespace OpenRasta.Tests.Unit.OperationModel.MethodBased
 
           Operation.Inputs.Optional().First().IsOptional.ShouldBeTrue();
           Operation.Inputs.Optional().First().Member.ShouldBeAssignableTo<IParameter>().DefaultValue.ShouldBe("*");
-          //return valueToAnalyse;
         }
     }
 
@@ -52,7 +50,6 @@ namespace OpenRasta.Tests.Unit.OperationModel.MethodBased
       given_operation("SearchNative", typeof(string));
 
       Operation.Inputs.CountReady().ShouldBe(1);
-      //return valueToAnalyse;
     }
 
     [Test]
@@ -62,7 +59,6 @@ namespace OpenRasta.Tests.Unit.OperationModel.MethodBased
 
       Operation.Inputs.Optional().First().IsOptional.ShouldBeTrue();
       Operation.Inputs.Optional().First().Member.ShouldBeAssignableTo<IParameter>().DefaultValue.ShouldBe("*");
-      //return valueToAnalyse;
     }
   }
 }

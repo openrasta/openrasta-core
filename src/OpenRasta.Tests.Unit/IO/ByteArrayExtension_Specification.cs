@@ -25,9 +25,7 @@ namespace ByteArrayExtension_Specification
         {
             var match = Base10.Match(new byte[] {3, 4});
           match.State.ShouldBe(MatchState.Found);
-          //return valueToAnalyse;
           match.Index.ShouldBe(3);
-          //return valueToAnalyse;
         }
 
         [Test]
@@ -35,9 +33,7 @@ namespace ByteArrayExtension_Specification
         {
             var match = Base10.Match(new byte[] {0, 1, 2, 3, 4});
           match.State.ShouldBe(MatchState.Found);
-          //return valueToAnalyse;
           match.Index.ShouldBe(0);
-          //return valueToAnalyse;
         }
 
         [Test]
@@ -45,9 +41,7 @@ namespace ByteArrayExtension_Specification
         {
             var match = Base10.Match(new byte[] {8, 9, 10});
           match.Index.ShouldBe(8);
-          //return valueToAnalyse;
           match.State.ShouldBe(MatchState.Truncated);
-          //return valueToAnalyse;
         }
     }
 }

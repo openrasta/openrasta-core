@@ -13,7 +13,6 @@ namespace OpenRasta.Tests.Unit.OperationModel.MethodBased.Operation
       given_operation("Get", typeof(int));
 
       ShouldBeTestExtensions.ShouldBe(Operation.Name, "Get");
-      //return valueToAnalyse;
     }
     [Test]
     public void the_operation_string_representation_is_the_method_signature()
@@ -21,7 +20,6 @@ namespace OpenRasta.Tests.Unit.OperationModel.MethodBased.Operation
       given_operation("Get", typeof(int));
 
       ShouldBeTestExtensions.ShouldBe(Operation.ToString(), "MockOperationHandler::Get(Int32 index)");
-      //return valueToAnalyse;
     }
     [Test]
     public void property_getters_are_not_selected()

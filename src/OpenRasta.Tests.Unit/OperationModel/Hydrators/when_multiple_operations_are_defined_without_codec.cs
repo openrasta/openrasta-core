@@ -48,7 +48,6 @@ namespace OpenRasta.Tests.Unit.OperationModel.Hydrators
       when_entity_is_read();
 
       ShouldBeTestExtensions.ShouldBe(ResultOperation.Name, "PostAddress");
-      //return valueToAnalyse;
     }
   }
 }

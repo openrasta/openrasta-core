@@ -25,7 +25,6 @@ namespace Tests.Configuration.fluent_extensions
     public void property_is_persisted()
     {
       Config.ResourceRegistrations.Single().Properties["test"].ShouldBe("test");
-      //return valueToAnalyse;
     }
   }
 
@@ -47,7 +46,6 @@ namespace Tests.Configuration.fluent_extensions
     public void property_is_persisted()
     {
       Config.ResourceRegistrations.Single().Properties["test"].ShouldBe("test");
-      //return valueToAnalyse;
     }
   }
 
@@ -82,7 +80,6 @@ namespace Tests.Configuration.fluent_extensions
     public void property_is_persisted()
     {
       Config.ResourceRegistrations.Single().Properties["test"].ShouldBe("test<Resource>");
-      //return valueToAnalyse;
     }
   }
 

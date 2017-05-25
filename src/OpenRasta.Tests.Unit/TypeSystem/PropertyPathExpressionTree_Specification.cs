@@ -28,12 +28,9 @@ namespace PropertyPathExpressionTree_Specification
             var pp = new PropertyPathForInstance<int>(() => customer.DateOfBirth.Day);
 
           ShouldBeTestExtensions.ShouldBe(pp.Path.TypePrefix, "Customer");
-          //return valueToAnalyse;
           ShouldBeTestExtensions.ShouldBe(pp.Path.TypeSuffix, "DateOfBirth.Day");
-          //return valueToAnalyse;
           pp.PropertyType.ShouldBe(typeof(int));
           pp.Value.ShouldBe(14);
-          //return valueToAnalyse;
         }
 
         [Test]
@@ -44,12 +41,9 @@ namespace PropertyPathExpressionTree_Specification
                 () => customer.Username);
 
           ShouldBeTestExtensions.ShouldBe(pp.Path.TypePrefix, "Customer");
-          //return valueToAnalyse;
           ShouldBeTestExtensions.ShouldBe(pp.Path.TypeSuffix, "Username");
-          //return valueToAnalyse;
           pp.PropertyType.ShouldBe(typeof(string));
           pp.Value.ShouldBe("johndoe");
-          //return valueToAnalyse;
         }
 
         [Test]
@@ -76,9 +70,7 @@ namespace PropertyPathExpressionTree_Specification
 
                 var pp = new PropertyPathForInstance<object>(() => Customer.FirstName);
               ShouldBeTestExtensions.ShouldBe(pp.Path.TypePrefix, "Customer");
-              //return valueToAnalyse;
               ShouldBeTestExtensions.ShouldBe(pp.Path.TypeSuffix, "TheFirst.FirstName");
-              //return valueToAnalyse;
             }
             finally
             {
@@ -93,11 +85,8 @@ namespace PropertyPathExpressionTree_Specification
                 () => Customer.FirstName);
 
           ShouldBeTestExtensions.ShouldBe(pp.Path.TypePrefix, "Customer");
-          //return valueToAnalyse;
           ShouldBeTestExtensions.ShouldBe(pp.Path.TypeSuffix, "FirstName");
-          //return valueToAnalyse;
           pp.Value.ShouldBe("John");
-          //return valueToAnalyse;
         }
     }
 }

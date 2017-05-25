@@ -40,7 +40,6 @@ namespace MediaTypeDictionary_Specification
           ThenTheResult.ShouldContain("xml");
           ThenTheResult
             .Count.ShouldBe(1);
-          //return valueToAnalyse;
         }
         [Test]
         public void registering_a_specific_media_type_and_matching_on_sub_type_wildcard_returns_two_results()
@@ -52,7 +51,6 @@ namespace MediaTypeDictionary_Specification
             WhenMatching("application/*");
 
           ThenTheResult.Count.ShouldBe(2);
-          //return valueToAnalyse;
           ThenTheResult.ShouldContain("xhtml");
           ThenTheResult.ShouldContain("xml");
         }
@@ -65,7 +63,6 @@ namespace MediaTypeDictionary_Specification
             WhenMatching("*/*");
 
           ThenTheResult.Count.ShouldBe(2);
-          //return valueToAnalyse;
           ThenTheResult.ShouldContain("xhtml");
           ThenTheResult.ShouldContain("xml");
         }
@@ -78,7 +75,6 @@ namespace MediaTypeDictionary_Specification
             WhenMatching("text/plain");
 
           ThenTheResult.Count.ShouldBe(2);
-          //return valueToAnalyse;
           ThenTheResult.ShouldContain("text1");
           ThenTheResult.ShouldContain("text2");
         }
@@ -91,7 +87,6 @@ namespace MediaTypeDictionary_Specification
             WhenMatching("text/plain");
 
           ThenTheResult.Count.ShouldBe(1);
-          //return valueToAnalyse;
           ThenTheResult.ShouldContain("text1");
         }
         [Test]
@@ -103,7 +98,6 @@ namespace MediaTypeDictionary_Specification
 
           ThenTheResult.ShouldContain("wildcard");
           ThenTheResult.Count().ShouldBe(1);
-          //return valueToAnalyse;
         }
     }
     public class media_type_context : context

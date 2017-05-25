@@ -16,7 +16,6 @@ namespace OpenRasta.Tests.Unit.OperationModel.MethodBased.Operation
       var attrib = Operation.FindAttribute<DescriptionAttribute>();
       attrib.ShouldNotBeNull();
       ShouldBeTestExtensions.ShouldBe(attrib.Description, "Description");
-      //return valueToAnalyse;
     }
     [Test]
     public void multile_attributes_are_found()
@@ -44,7 +43,6 @@ namespace OpenRasta.Tests.Unit.OperationModel.MethodBased.Operation
       given_operation("GetHasTwoAttributes", typeof(int));
       Operation.FindAttributes<IUseless>()
         .Count().ShouldBe(3);
-      //return valueToAnalyse;
     }
   }
 }

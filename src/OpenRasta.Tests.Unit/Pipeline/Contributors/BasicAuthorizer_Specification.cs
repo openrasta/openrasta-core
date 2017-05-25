@@ -34,9 +34,7 @@ namespace OpenRasta.Tests.Unit.Pipeline.Contributors
 
             var result = when_sending_notification<KnownStages.IHandlerSelection>();
           result.ShouldBe(PipelineContinuation.Continue);
-          //return valueToAnalyse;
           ShouldBeTestExtensions.ShouldBe(Context.User.Identity.Name, username);
-          //return valueToAnalyse;
         }
     }
 }

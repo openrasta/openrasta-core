@@ -31,7 +31,6 @@ namespace DigestCredentialsReader_Specification
             when_sending_notification<KnownStages.IBegin>();
 
           Result.ShouldBe(PipelineContinuation.Continue);
-          //return valueToAnalyse;
         }
     }
 
@@ -73,9 +72,7 @@ namespace DigestCredentialsReader_Specification
             var credentials = DigestHeader.Parse(authenticationHeader);
 
           ShouldBeTestExtensions.ShouldBe(credentials.Username, "Mufasa");
-          //return valueToAnalyse;
           ShouldBeTestExtensions.ShouldBe(credentials.Uri, "/dir/index.html");
-          //return valueToAnalyse;
         }
 
         [Test]
@@ -97,7 +94,6 @@ namespace DigestCredentialsReader_Specification
             var authorizer = DependencyManager.GetService<DigestAuthorizerContributor>();
 
           authorizer.ReadCredentials(Context).ShouldBe(PipelineContinuation.Continue);
-          //return valueToAnalyse;
           Context.OperationResult.ShouldBeNull();
         }
 
@@ -112,7 +108,6 @@ namespace DigestCredentialsReader_Specification
             var authorizer = DependencyManager.GetService<DigestAuthorizerContributor>();
 
           authorizer.ReadCredentials(Context).ShouldBe(PipelineContinuation.Continue);
-          //return valueToAnalyse;
           Context.OperationResult.ShouldBeNull();
         }
 
@@ -126,7 +121,6 @@ namespace DigestCredentialsReader_Specification
             var authorizer = DependencyManager.GetService<DigestAuthorizerContributor>();
 
           authorizer.ReadCredentials(Context).ShouldBe(PipelineContinuation.Continue);
-          //return valueToAnalyse;
           Context.OperationResult.ShouldBeNull();
         }
         [Test,Ignore("no idea")]
@@ -147,7 +141,6 @@ namespace DigestCredentialsReader_Specification
             var authorizer = DependencyManager.GetService<DigestAuthorizerContributor>();
 
           authorizer.ReadCredentials(Context).ShouldBe(PipelineContinuation.RenderNow);
-          //return valueToAnalyse;
           Context.OperationResult.ShouldBeAssignableTo<OperationResult.BadRequest>();
         }
 
@@ -161,7 +154,6 @@ namespace DigestCredentialsReader_Specification
             var authorizer = DependencyManager.GetService<DigestAuthorizerContributor>();
 
           authorizer.ReadCredentials(Context).ShouldBe(PipelineContinuation.RenderNow);
-          //return valueToAnalyse;
           Context.OperationResult.ShouldBeAssignableTo<OperationResult.Unauthorized>();
         }
 
@@ -175,7 +167,6 @@ namespace DigestCredentialsReader_Specification
             var authorizer = DependencyManager.GetService<DigestAuthorizerContributor>();
 
           authorizer.ReadCredentials(Context).ShouldBe(PipelineContinuation.RenderNow);
-          //return valueToAnalyse;
           Context.OperationResult.ShouldBeAssignableTo<OperationResult.Unauthorized>();
         }
     }

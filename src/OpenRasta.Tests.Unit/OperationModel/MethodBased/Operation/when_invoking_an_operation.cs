@@ -22,7 +22,6 @@ namespace OpenRasta.Tests.Unit.OperationModel.MethodBased.Operation
       given_operation("Get", typeof(int));
 
       Operation.InvokeAsync().Result.Count().ShouldBe(1);
-      //return valueToAnalyse;
     }
   }
 

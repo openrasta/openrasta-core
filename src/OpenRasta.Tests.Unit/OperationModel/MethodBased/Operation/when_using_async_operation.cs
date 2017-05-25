@@ -12,7 +12,6 @@ namespace OpenRasta.Tests.Unit.OperationModel.MethodBased.Operation
     {
       given_operation("GetText");
       Operation.InvokeAsync().Result.ShouldHaveSingleItem().Value.ShouldBe("Hello, is it me you're looking for?");
-      //return valueToAnalyse;
     }
   }
 

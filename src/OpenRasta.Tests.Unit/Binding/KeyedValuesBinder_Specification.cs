@@ -31,7 +31,6 @@ namespace KeyedValuesBinder_Specification
             binder.SetProperty("username", new[] { "johndoe" }, (str, type) => BindingResult.Success(str));
             var customer = (Customer)binder.BuildObject().Instance;
           ShouldBeTestExtensions.ShouldBe(customer.Username, "johndoe");
-          //return valueToAnalyse;
         }
         [Test]
         public void the_same_object_is_returned_when_building_twice_without_changes()
@@ -55,9 +54,7 @@ namespace KeyedValuesBinder_Specification
             var customer = (Customer)binder.BuildObject().Instance;
 
           ShouldBeTestExtensions.ShouldBe(customer.Username, "johndoe");
-          //return valueToAnalyse;
           ShouldBeTestExtensions.ShouldBe(customer.FirstName, "john");
-          //return valueToAnalyse;
         }
         [Test]
         public void enumerables_are_initialized_as_empty_by_default()
@@ -82,11 +79,8 @@ namespace KeyedValuesBinder_Specification
 
           var customers = (IEnumerable<Customer>)binder.BuildObject().Instance;
           customers.Count().ShouldBe(2);
-          //return valueToAnalyse;
           ShouldBeTestExtensions.ShouldBe(customers.First().FirstName, "Frodo");
-          //return valueToAnalyse;
           ShouldBeTestExtensions.ShouldBe(customers.Skip(1).First().FirstName, "Sam");
-          //return valueToAnalyse;
         }
         [Test]
         public void the_property_is_assigned_even_when_the_prefix_has_the_same_name()
@@ -98,7 +92,6 @@ namespace KeyedValuesBinder_Specification
 
           ShouldBeTestExtensions.ShouldBe(binder.BuildObject().Instance.ShouldBeAssignableTo<Customer>()
               .FirstName, "Smeagol");
-          //return valueToAnalyse;
         }
         [Test]
         public void multiple_properties_on_child_objects_are_assigned_correctly()
@@ -116,7 +109,6 @@ namespace KeyedValuesBinder_Specification
 
           var customer = (Customer)binder.BuildObject().Instance;
           customer.Orders.Count.ShouldBe(3);
-          //return valueToAnalyse;
           customer.Orders[0].IsSelected.ShouldBeFalse();
           customer.Orders[1].IsSelected.ShouldBeTrue();
           customer.Orders[2].IsSelected.ShouldBeFalse();
@@ -131,11 +123,8 @@ namespace KeyedValuesBinder_Specification
 
           var customer = binder.BuildObject().Instance as Customer;
           customer.Attributes.Count().ShouldBe(2);
-          //return valueToAnalyse;
           ShouldBeTestExtensions.ShouldBe(customer.Attributes.First(), "blue eyes");
-          //return valueToAnalyse;
           ShouldBeTestExtensions.ShouldBe(customer.Attributes.Skip(1).First(), "green eyes");
-          //return valueToAnalyse;
         }
         protected IType TypeOf<T>()
         {

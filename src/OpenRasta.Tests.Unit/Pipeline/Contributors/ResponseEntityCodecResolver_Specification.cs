@@ -32,7 +32,6 @@ namespace ResponseEntityCodecResolver_Specification
             given_request_header_accept("text/plain");
 
           when_sending_notification<KnownStages.IOperationResultInvocation>().ShouldBe(PipelineContinuation.Continue);
-          //return valueToAnalyse;
 
           Context.PipelineData.ResponseCodec.CodecType.ShouldBe(typeof(Codec));
         }
@@ -45,7 +44,6 @@ namespace ResponseEntityCodecResolver_Specification
             given_request_header_accept("text/plain");
 
           when_sending_notification<KnownStages.IOperationResultInvocation>().ShouldBe(PipelineContinuation.Continue);
-          //return valueToAnalyse;
 
           Context.Response.Entity.Headers["Vary"].ShouldBeNull();
         }
@@ -66,7 +64,6 @@ namespace ResponseEntityCodecResolver_Specification
 
           Context.PipelineData.ResponseCodec.CodecType.ShouldBe(typeof(CustomerCodec));
           ShouldBeTestExtensions.ShouldBe(Context.Response.Entity.ContentType.MediaType, "text/plain");
-          //return valueToAnalyse;
         }
 
         [Test]
@@ -78,11 +75,9 @@ namespace ResponseEntityCodecResolver_Specification
             given_request_header_accept("q=");
 
           when_sending_notification<KnownStages.IOperationResultInvocation>().ShouldBe(PipelineContinuation.RenderNow);
-          //return valueToAnalyse;
 
           Context.OperationResult.ShouldBeAssignableTo<OperationResult.BadRequest>();
           ShouldBeTestExtensions.ShouldBe(Context.Response.Headers["Warning"], "199 Malformed accept header");
-          //return valueToAnalyse;
         }
 
         [Test]
@@ -97,7 +92,6 @@ namespace ResponseEntityCodecResolver_Specification
 
           Context.PipelineData.ResponseCodec.CodecType.ShouldBe(typeof(CustomerCodec));
           ShouldBeTestExtensions.ShouldBe(Context.Response.Entity.ContentType.MediaType, "text/plain");
-          //return valueToAnalyse;
         }
 
         [Test]
@@ -109,7 +103,6 @@ namespace ResponseEntityCodecResolver_Specification
             given_request_header_accept("application/xml");
 
           when_sending_notification<KnownStages.IOperationResultInvocation>().ShouldBe(PipelineContinuation.RenderNow);
-          //return valueToAnalyse;
 
 
           Context.OperationResult.ShouldBeAssignableTo<OperationResult.ResponseMediaTypeUnsupported>();
@@ -142,7 +135,6 @@ namespace ResponseEntityCodecResolver_Specification
 
           Context.PipelineData.ResponseCodec.CodecType.ShouldBe(typeof(CustomerCodec));
           ShouldBeTestExtensions.ShouldBe(Context.Response.Entity.ContentType.MediaType, "text/plain");
-          //return valueToAnalyse;
         }
 
         [Test]
@@ -158,7 +150,6 @@ namespace ResponseEntityCodecResolver_Specification
 
           Context.PipelineData.ResponseCodec.CodecType.ShouldBe(typeof(AnotherCustomerCodec));
           ShouldBeTestExtensions.ShouldBe(Context.Response.Entity.ContentType.MediaType, "application/xml");
-          //return valueToAnalyse;
         }
         [Test]
         public void the_client_quality_parameter_is_respected()
@@ -173,13 +164,11 @@ namespace ResponseEntityCodecResolver_Specification
 
           Context.PipelineData.ResponseCodec.CodecType.ShouldBe(typeof(CustomerCodec));
           ShouldBeTestExtensions.ShouldBe(Context.Response.Entity.ContentType.MediaType, "text/plain");
-          //return valueToAnalyse;
         }
 
         void when_running_pipeline()
         {
           when_sending_notification<KnownStages.IOperationResultInvocation>().ShouldBe(PipelineContinuation.Continue);
-          //return valueToAnalyse;
         }
 
         [Test,Category("Regression")]
@@ -192,11 +181,9 @@ namespace ResponseEntityCodecResolver_Specification
             given_request_header_accept("text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
 
           when_sending_notification<KnownStages.IOperationResultInvocation>().ShouldBe(PipelineContinuation.Continue);
-          //return valueToAnalyse;
 
           Context.PipelineData.ResponseCodec.CodecType.ShouldBe(typeof(CustomerCodec));
           ShouldBeTestExtensions.ShouldBe(Context.Response.Entity.ContentType.MediaType, "text/html");
-          //return valueToAnalyse;
         }
     }
 }

@@ -22,11 +22,9 @@ namespace OpenRasta.Tests.Unit.OperationModel.Hydrators
       when_entity_is_read();
 
       ShouldBeTestExtensions.ShouldBe(ResultOperation.Name, "PostStream");
-      //return valueToAnalyse;
       ResultOperation.Inputs.Required().First().Binder.BuildObject()
         .Instance.ShouldBeAssignableTo<Stream>()
         .ReadByte().ShouldBe(0);
-      //return valueToAnalyse;
     }
     [Test]
     public void an_error_is_collected_if_codec_raises_an_error()
@@ -40,7 +38,6 @@ namespace OpenRasta.Tests.Unit.OperationModel.Hydrators
 
       when_filtering_operations();
       ShouldBeTestExtensions.ShouldBe(ResultOperation.Name, "PostName");
-      //return valueToAnalyse;
       Errors.Errors.Count().ShouldBe(1);
     }
   }

@@ -28,7 +28,6 @@ namespace XhtmlDOM_Specification
         {
             var attribs = new XhtmlAttributeCollection();
           attribs.Count.ShouldBe(0);
-          //return valueToAnalyse;
 
           attribs.SetAttribute("name", "value");
 
@@ -41,7 +40,6 @@ namespace XhtmlDOM_Specification
             attribs.GetAttribute<IList<MediaType>>("types").Add(MediaType.Xml);
 
           ShouldBeTestExtensions.ShouldBe(attribs["types"].SerializedValue, "application/xml");
-          //return valueToAnalyse;
         }
         [Test]
         public void attributes_not_in_initial_list_are_added_as_generic_strings()
@@ -59,14 +57,11 @@ namespace XhtmlDOM_Specification
             attribs.SetAttribute<int?>("value", 3);
 
           ShouldBeTestExtensions.ShouldBe(attribs["name"].SerializedValue, "a name");
-          //return valueToAnalyse;
           ShouldBeTestExtensions.ShouldBe(attribs["value"].SerializedValue, "3");
-          //return valueToAnalyse;
 
           attribs.SetAttribute("unknownValue", "25");
 
           ShouldBeTestExtensions.ShouldBe(attribs["unknownValue"].SerializedValue, "25");
-          //return valueToAnalyse;
         }
 
     }
@@ -80,21 +75,18 @@ namespace XhtmlDOM_Specification
             element.Defer = true;
 
           ShouldBeTestExtensions.ShouldBe(element.OuterXml, "<script type=\"text/javascript\" defer=\"defer\"></script>");
-          //return valueToAnalyse;
         }
         [Test]
         public void elements_without_content_model_are_rendered_without_a_closing_tag()
         {
             var element = Document.CreateElement<IEmptyElement>("br") as IEmptyElement;
           ShouldBeTestExtensions.ShouldBe(element.OuterXml, "<br />");
-          //return valueToAnalyse;
         }
         [Test]
         public void elements_with_uri_attributes_are_generated_properly()
         {
             var el = Document.CreateElement<IImgElement>("img");
           ShouldBeTestExtensions.ShouldBe(el.Src("image.jpg").OuterXml, "<img src=\"image.jpg\" />");
-          //return valueToAnalyse;
         }
     }
 }

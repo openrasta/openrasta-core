@@ -16,11 +16,8 @@ namespace MediaType_Specification
     {
       MediaType content = new MediaType("application/xml");
       ShouldBeTestExtensions.ShouldBe(content.TopLevelMediaType, "application");
-      //return valueToAnalyse;
       ShouldBeTestExtensions.ShouldBe(content.Subtype, "xml");
-      //return valueToAnalyse;
       content.Quality.ShouldBe(1.0f);
-      //return valueToAnalyse;
     }
 
     [Test]
@@ -49,7 +46,6 @@ namespace MediaType_Specification
     {
       var mediaType = new MediaType("application/xml;q=0.3");
       mediaType.Quality.ShouldBe(0.3f);
-      //return valueToAnalyse;
     }
   }
 
@@ -61,9 +57,7 @@ namespace MediaType_Specification
     {
       var ct = MediaType.Parse("*/xml,text/xml").ToList();
       ShouldBeTestExtensions.ShouldBe(ct[0].MediaType, "text/xml");
-      //return valueToAnalyse;
       ShouldBeTestExtensions.ShouldBe(ct[1].MediaType, "*/xml");
-      //return valueToAnalyse;
     }
 
     [Test]
@@ -71,11 +65,8 @@ namespace MediaType_Specification
     {
       var ct = MediaType.Parse("application/*, */*, application/xhtml+xml").ToList();
       ShouldBeTestExtensions.ShouldBe(ct[0].MediaType, "application/xhtml+xml");
-      //return valueToAnalyse;
       ShouldBeTestExtensions.ShouldBe(ct[1].MediaType, "application/*");
-      //return valueToAnalyse;
       ShouldBeTestExtensions.ShouldBe(ct[2].MediaType, "*/*");
-      //return valueToAnalyse;
     }
 
     [Test]
@@ -83,9 +74,7 @@ namespace MediaType_Specification
     {
       var ct = MediaType.Parse("*/*,text/plain;q=0.1").ToList();
       ShouldBeTestExtensions.ShouldBe(ct[0].MediaType, "text/plain");
-      //return valueToAnalyse;
       ShouldBeTestExtensions.ShouldBe(ct[1].MediaType, "*/*");
-      //return valueToAnalyse;
     }
 
     [Test]
@@ -93,7 +82,6 @@ namespace MediaType_Specification
     {
       var ct = MediaType.Parse("application/*, application/xhtml+xml").ToList();
       ShouldBeTestExtensions.ShouldBe(ct[0].MediaType, "application/xhtml+xml");
-      //return valueToAnalyse;
     }
 
     [Test]
@@ -101,11 +89,8 @@ namespace MediaType_Specification
     {
       var ct = MediaType.Parse("application/xml,text/plain,image/jpeg;q=0.7").ToList();
       ShouldBeTestExtensions.ShouldBe(ct[0].MediaType, "text/plain");
-      //return valueToAnalyse;
       ShouldBeTestExtensions.ShouldBe(ct[1].MediaType, "application/xml");
-      //return valueToAnalyse;
       ShouldBeTestExtensions.ShouldBe(ct[2].MediaType, "image/jpeg");
-      //return valueToAnalyse;
     }
 
     [Test]
@@ -113,7 +98,6 @@ namespace MediaType_Specification
     {
       var ct = MediaType.Parse("application/xml, application/xhtml+xml").ToList();
       ShouldBeTestExtensions.ShouldBe(ct[0].MediaType, "application/xhtml+xml");
-      //return valueToAnalyse;
     }
 
     [Test]
@@ -122,13 +106,9 @@ namespace MediaType_Specification
       var contentTypes = MediaType.Parse("text/plain; q=0.5, text/html, text/x-dvi; q=0.8, text/x-c").ToList();
 
       ShouldBeTestExtensions.ShouldBe(contentTypes[0].MediaType, "text/x-c");
-      //return valueToAnalyse;
       ShouldBeTestExtensions.ShouldBe(contentTypes[1].MediaType, "text/html");
-      //return valueToAnalyse;
       ShouldBeTestExtensions.ShouldBe(contentTypes[2].MediaType, "text/x-dvi");
-      //return valueToAnalyse;
       ShouldBeTestExtensions.ShouldBe(contentTypes[3].MediaType, "text/plain");
-      //return valueToAnalyse;
     }
   }
 }

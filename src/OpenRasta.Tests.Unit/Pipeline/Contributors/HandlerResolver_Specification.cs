@@ -49,10 +49,8 @@ namespace HandlerResolver_Specification
             given_registration_handler<Fake, FakeHandler>();
 
           when_sending_notification<KnownStages.IUriMatching>().ShouldBe(PipelineContinuation.Continue);
-          //return valueToAnalyse;
 
           Context.PipelineData.SelectedHandlers.Count().ShouldBe(1);
-          //return valueToAnalyse;
           Context.PipelineData.SelectedHandlers.First().Equals<Fake>();
             
         }

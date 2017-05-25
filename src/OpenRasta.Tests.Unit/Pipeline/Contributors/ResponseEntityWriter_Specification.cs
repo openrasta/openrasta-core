@@ -35,10 +35,8 @@ namespace ResponseEntityWriter_Specification
       given_response_entity(null);
 
       when_sending_notification<KnownStages.ICodecResponseSelection>().ShouldBe(PipelineContinuation.Continue);
-      //return valueToAnalyse;
 
       Context.Response.Entity.Stream.Length.ShouldBe(0);
-      //return valueToAnalyse;
     }
 
     [Test]
@@ -48,7 +46,6 @@ namespace ResponseEntityWriter_Specification
       given_response_entity(null);
 
       when_sending_notification<KnownStages.ICodecResponseSelection>().ShouldBe(PipelineContinuation.Continue);
-      //return valueToAnalyse;
 
       Context.Response.HeadersSent.ShouldBeTrue();
     }
@@ -65,10 +62,8 @@ namespace ResponseEntityWriter_Specification
       given_response_codec<CustomerCodec>(new object());
 
       when_sending_notification<KnownStages.ICodecResponseSelection>().ShouldBe(PipelineContinuation.Continue);
-      //return valueToAnalyse;
 
       ShouldBeTestExtensions.ShouldBe(Context.Response.Entity.Headers["ENTITY_TYPE"], "Fake");
-      //return valueToAnalyse;
       Context.Response.Entity.Codec.Configuration.ShouldNotBeNull();
     }
 
@@ -80,10 +75,8 @@ namespace ResponseEntityWriter_Specification
       given_response_codec<CustomerCodec>();
 
       when_sending_notification<KnownStages.ICodecResponseSelection>().ShouldBe(PipelineContinuation.Continue);
-      //return valueToAnalyse;
 
       ShouldBeTestExtensions.ShouldBe(Context.Response.Entity.Headers["ENTITY_TYPE"], "Fake");
-      //return valueToAnalyse;
     }
 
     void given_response_codec<TCodec>()
@@ -116,10 +109,8 @@ namespace ResponseEntityWriter_Specification
       GivenAContentTypeWriter((instance, entity, codecParams) => entity.Stream.Write(new byte[50]));
 
       when_sending_notification<KnownStages.ICodecResponseSelection>().ShouldBe(PipelineContinuation.Continue);
-      //return valueToAnalyse;
 
       Context.Response.Headers.ContentLength.ShouldBe(50);
-      //return valueToAnalyse;
     }
 
     IMediaTypeWriter GivenAContentTypeWriter(Action<object, IHttpEntity, string[]> code)

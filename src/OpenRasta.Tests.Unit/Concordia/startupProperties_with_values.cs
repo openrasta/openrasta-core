@@ -12,7 +12,6 @@ namespace OpenRasta.Tests.Unit.Concordia
       var props = new StartupProperties {OpenRasta = {Pipeline = {Validate = false}}};
 
       props.Properties["openrasta.pipeline.validate"].ShouldBe(false);
-      //return valueToAnalyse;
     }
   }
 }

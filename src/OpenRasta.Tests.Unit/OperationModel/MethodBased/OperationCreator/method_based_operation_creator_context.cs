@@ -16,7 +16,6 @@ namespace OpenRasta.Tests.Unit.OperationModel.MethodBased
     protected void then_operation_count_should_be(int count)
     {
       Operations.Count().ShouldBe(count);
-      //return valueToAnalyse;
     }
 
     protected void given_operation_creator(IMethodFilter[] filters)

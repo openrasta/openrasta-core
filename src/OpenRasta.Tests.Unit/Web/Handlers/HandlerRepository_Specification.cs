@@ -40,7 +40,6 @@ namespace HandlerRepository_Specification
       repo.AddResourceHandler("ring of power", handler2);
 
       repo.GetHandlerTypesFor("ring of power").FirstOrDefault().ShouldBe(handler1);
-      //return valueToAnalyse;
     }
 
     [Test]

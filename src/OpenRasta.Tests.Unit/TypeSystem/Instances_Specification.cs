@@ -44,20 +44,15 @@ namespace Instances_Specification
       TypeBuilder.Update(newCustomer);
 
       ShouldBeTestExtensions.ShouldBe(newCustomer.Username, "johndoe");
-      //return valueToAnalyse;
       ShouldBeTestExtensions.ShouldBe(newCustomer.FirstName, "John");
-      //return valueToAnalyse;
 
       given_property("lastname", "doe");
       newCustomer = new Customer {FirstName = "John"};
       TypeBuilder.Update(newCustomer);
 
       ShouldBeTestExtensions.ShouldBe(newCustomer.Username, "johndoe");
-      //return valueToAnalyse;
       ShouldBeTestExtensions.ShouldBe(newCustomer.FirstName, "John");
-      //return valueToAnalyse;
       ShouldBeTestExtensions.ShouldBe(newCustomer.LastName, "doe");
-      //return valueToAnalyse;
     }
   }
 
@@ -99,7 +94,6 @@ namespace Instances_Specification
         .TrySetValue(2).ShouldBeFalse();
 
       TypeBuilder.Changes.Count.ShouldBe(0);
-      //return valueToAnalyse;
     }
 
     [Test]
@@ -110,7 +104,6 @@ namespace Instances_Specification
       TypeBuilder.GetProperty("FirstName").TrySetValue("Frodo");
 
       TypeBuilder.Changes.Count.ShouldBe(1);
-      //return valueToAnalyse;
       TypeBuilder.Changes.ContainsKey("FirstName").ShouldBeTrue();
     }
 
@@ -148,7 +141,6 @@ namespace Instances_Specification
       TypeBuilder.GetProperty("FirstName")
         .TrySetValue("Frodo");
       TypeBuilder.Changes["firstname"].Value.ShouldBe("Frodo");
-      //return valueToAnalyse;
     }
   }
 
@@ -172,7 +164,6 @@ namespace Instances_Specification
 
       TypeBuilder.GetProperty("Username")
         .Value.ShouldBe("hello");
-      //return valueToAnalyse;
     }
   }
 
@@ -199,7 +190,6 @@ namespace Instances_Specification
       customer = TypeBuilder.Create() as Customer;
 
       ShouldBeTestExtensions.ShouldBe(customer.FirstName, "Frodo");
-      //return valueToAnalyse;
       customer.LastName.ShouldBeNull();
     }
 
@@ -218,7 +208,6 @@ namespace Instances_Specification
 
       TypeBuilder.Update(customerInstance);
       ShouldBeTestExtensions.ShouldBe(customerInstance.FirstName, "Smeagol");
-      //return valueToAnalyse;
     }
 
     [Test]
@@ -234,7 +223,6 @@ namespace Instances_Specification
       object newCustomer = TypeBuilder.Create();
       newCustomer.ShouldNotBeSameAs(customer);
       ShouldBeTestExtensions.ShouldBe(customer.FirstName, null);
-      //return valueToAnalyse;
     }
   }
 
@@ -264,9 +252,7 @@ namespace Instances_Specification
       WhenCreatingTheObject();
 
       ShouldBeTestExtensions.ShouldBe(ThenTheObject<Customer>().FirstName, "John");
-      //return valueToAnalyse;
       ShouldBeTestExtensions.ShouldBe(ThenTheObject<Customer>().Username, "johndoe");
-      //return valueToAnalyse;
     }
 
     [Test]
@@ -277,7 +263,6 @@ namespace Instances_Specification
       TypeBuilder.TrySetValue(3).ShouldBeTrue();
       TypeBuilder.HasValue.ShouldBeTrue();
       TypeBuilder.Value.ShouldBe(3);
-      //return valueToAnalyse;
     }
 
     [Test]
@@ -300,9 +285,7 @@ namespace Instances_Specification
       WhenCreatingTheObject();
 
       ShouldBeTestExtensions.ShouldBe(ThenTheObject<Customer>().Address.Line1, "Cadbury Street");
-      //return valueToAnalyse;
       ShouldBeTestExtensions.ShouldBe(ThenTheObject<Customer>().Address.City, "London");
-      //return valueToAnalyse;
     }
 
     [Test]
@@ -314,9 +297,7 @@ namespace Instances_Specification
       given_property("CustomersByName:john.LastName", "Doe");
       WhenCreatingTheObject();
       ShouldBeTestExtensions.ShouldBe(ThenTheObject<House>().CustomersByName["john"].FirstName, "John");
-      //return valueToAnalyse;
       ShouldBeTestExtensions.ShouldBe(ThenTheObject<House>().CustomersByName["john"].LastName, "Doe");
-      //return valueToAnalyse;
     }
 
     [Test]
@@ -328,9 +309,7 @@ namespace Instances_Specification
 
       WhenCreatingTheObject();
       ShouldBeTestExtensions.ShouldBe(ThenTheObject<Customer>().Username, "johndoe");
-      //return valueToAnalyse;
       ShouldBeTestExtensions.ShouldBe(ThenTheObject<Customer>().FirstName, "john");
-      //return valueToAnalyse;
     }
   }
 

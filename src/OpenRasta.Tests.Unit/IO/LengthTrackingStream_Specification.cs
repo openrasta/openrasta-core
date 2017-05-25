@@ -32,7 +32,6 @@ namespace LengthTrackingStream_Specification
       tracker.Write(new byte[50]);
 
       tracker.Length.ShouldBe(50);
-      //return valueToAnalyse;
     }
   }
 
@@ -47,9 +46,7 @@ namespace LengthTrackingStream_Specification
       stream.Write(new byte[2 << 4]);
 
       tracker.Length.ShouldBe(stream.Length);
-      //return valueToAnalyse;
       tracker.Length.ShouldBe(32);
-      //return valueToAnalyse;
     }
   }
 }

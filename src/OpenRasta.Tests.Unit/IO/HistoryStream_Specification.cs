@@ -47,21 +47,16 @@ namespace HistoryStream_Specification
             // if buffer is 2048 we need another 2048 to trigger a response
 
           ReadBytes(5000).Length.ShouldBe(4096);
-          //return valueToAnalyse;
           Stream.Position.ShouldBe(4096);
-          //return valueToAnalyse;
           // now the buffer should be full, we seek back by half
 
           Should.NotThrow(Executing(() => SeekBy(-2048)));
 
           Stream.Position.ShouldBe(4096);
-          //return valueToAnalyse;
           // issueing a new read request should trigger a new read on the stream for the leftover text
 
           ReadBytes(5000).Length.ShouldBe(4096 - 2048 + 12);
-          //return valueToAnalyse;
           Stream.Position.ShouldBe(Stream.Length);
-          //return valueToAnalyse;
         }
 
         [Test]
@@ -71,23 +66,16 @@ namespace HistoryStream_Specification
             GivenAHistoryStreamWithBufferSize(2048);
 
           ReadBytes(2048).Length.ShouldBe(2048);
-          //return valueToAnalyse;
           Stream.Position.ShouldBe(2048);
-          //return valueToAnalyse;
 
           Should.NotThrow(Executing(() => SeekBy(-1024)));
           Stream.Position.ShouldBe(2048);
-          //return valueToAnalyse;
 
           ReadBytes(1000).Length.ShouldBe(1000);
-          //return valueToAnalyse;
           Stream.Position.ShouldBe(2048);
-          //return valueToAnalyse;
 
           ReadBytes(2048).Length.ShouldBe(2048);
-          //return valueToAnalyse;
           Stream.Position.ShouldBe(4072);
-          //return valueToAnalyse;
         }
 
         [Test]
@@ -131,7 +119,6 @@ namespace HistoryStream_Specification
             GivenAHistoryStream();
 
           HistoryStream.BufferSize.ShouldBe(4096);
-          //return valueToAnalyse;
         }
 
         [Test]

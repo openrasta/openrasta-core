@@ -26,7 +26,6 @@ namespace OpenRasta.Tests.Unit.OperationModel.Filters
 
               FilteredOperations.ShouldBe(Operations);
               Errors.Errors.Count.ShouldBe(0);
-              //return valueToAnalyse;
             }
         }
         
@@ -42,9 +41,7 @@ namespace OpenRasta.Tests.Unit.OperationModel.Filters
                 when_filtering_operations();
 
               ShouldBeTestExtensions.ShouldBe(FilteredOperations.ShouldHaveSingleItem().Name, "Post");
-              //return valueToAnalyse;
               Errors.Errors.Count.ShouldBe(0);
-              //return valueToAnalyse;
             }
 
             [Test]

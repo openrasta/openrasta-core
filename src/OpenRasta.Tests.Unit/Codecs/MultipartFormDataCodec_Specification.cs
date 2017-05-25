@@ -67,7 +67,6 @@ namespace MultipartFormDataCodec_Specification
             when_decoding<string>("username");
 
           ShouldBeTestExtensions.ShouldBe(then_decoding_result<string>(), "johndoe");
-          //return valueToAnalyse;
         }
         [Test]
         public void a_datetime_is_assigned()
@@ -78,7 +77,6 @@ namespace MultipartFormDataCodec_Specification
             when_decoding<DateTime>("dateofbirth");
 
           then_decoding_result<DateTime>().ShouldBe(DateTime.Parse("10 Dec 2001"));
-          //return valueToAnalyse;
         }
         [Test]
         public void a_large_field_value_is_stored_on_disk()
@@ -90,7 +88,6 @@ namespace MultipartFormDataCodec_Specification
 
           then_decoding_result<IDictionary<string, IList<IMultipartHttpEntity>>>()["field"].First().Stream.ShouldBeAssignableTo<FileStream>()
             .Length.ShouldBe(85003);
-          //return valueToAnalyse;
         }
     }
     public class when_parsing_parts_with_unicode_names : multipart_codec
@@ -103,7 +100,6 @@ namespace MultipartFormDataCodec_Specification
 
             when_decoding<string>("Téléphone");
           ShouldBeTestExtensions.ShouldBe(then_decoding_result<string>(), "077 777 7777");
-          //return valueToAnalyse;
         }
         [Test]
         public void a_field_name_encoded_in_base64_for_utf_8_is_recognized()
@@ -113,7 +109,6 @@ namespace MultipartFormDataCodec_Specification
 
             when_decoding<string>("Téléphone");
           ShouldBeTestExtensions.ShouldBe(then_decoding_result<string>(), "077 777 7777");
-          //return valueToAnalyse;
         }
         [Test]
         public void a_field_name_encoded_in_base64_for_iso_is_recognized()
@@ -123,7 +118,6 @@ namespace MultipartFormDataCodec_Specification
 
             when_decoding<string>("Téléphone");
           ShouldBeTestExtensions.ShouldBe(then_decoding_result<string>(), "077 777 7777");
-          //return valueToAnalyse;
         }
         [Test]
         public void a_sub_codec_is_used_to_resolve_a_parameter_name()
@@ -134,9 +128,7 @@ namespace MultipartFormDataCodec_Specification
 
             when_decoding<IFile>("file");
           ShouldBeTestExtensions.ShouldBe(then_decoding_result<IFile>().FileName, "temp.txt");
-          //return valueToAnalyse;
           then_decoding_result<IFile>().Length.ShouldBe(85000);
-          //return valueToAnalyse;
         }
     }
     public class when_parsing_parts_with_names_representing_types : multipart_codec
@@ -151,7 +143,6 @@ namespace MultipartFormDataCodec_Specification
             when_decoding<Customer>("customer");
 
           ShouldBeTestExtensions.ShouldBe(then_decoding_result<Customer>().Username, "johndoe");
-          //return valueToAnalyse;
         }
         [Test]
         public void a_datetime_property_is_assigned()
@@ -162,7 +153,6 @@ namespace MultipartFormDataCodec_Specification
             when_decoding<Customer>("customer");
 
           then_decoding_result<Customer>().DateOfBirth.Year.ShouldBe(2001);
-          //return valueToAnalyse;
         }
         [Test]
         public void another_mime_type_for_key_values_is_used_to_parse_the_result_correctly()
@@ -173,9 +163,7 @@ namespace MultipartFormDataCodec_Specification
             when_decoding<IDictionary<string,string[]>>("additions");
 
           ShouldBeTestExtensions.ShouldBe(then_decoding_result<IDictionary<string, string[]>>()["oneplusone"][0], "two");
-          //return valueToAnalyse;
           ShouldBeTestExtensions.ShouldBe(then_decoding_result<IDictionary<string, string[]>>()["oneplustwo"][0], "three");
-          //return valueToAnalyse;
         }
         [Test]
         public void construction_of_objects_from_other_media_types_returns_the_correct_values()
@@ -186,11 +174,8 @@ namespace MultipartFormDataCodec_Specification
             when_decoding<Customer>("customer");
 
           then_decoding_result<Customer>().DateOfBirth.Year.ShouldBe(2001);
-          //return valueToAnalyse;
           then_decoding_result<Customer>().DateOfBirth.Month.ShouldBe(12);
-          //return valueToAnalyse;
           then_decoding_result<Customer>().DateOfBirth.Day.ShouldBe(10);
-          //return valueToAnalyse;
         }
     }
     public class when_writing_multipart_formdata : context

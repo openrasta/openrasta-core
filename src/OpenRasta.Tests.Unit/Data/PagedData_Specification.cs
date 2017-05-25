@@ -48,7 +48,6 @@ namespace PagedData_Specification
         {
             var page = new List<int>().AsQueryable().SelectPagedData(1, 10);
           page.CurrentPage.ShouldBe(1);
-          //return valueToAnalyse;
         }
 
         [Test]
@@ -56,22 +55,16 @@ namespace PagedData_Specification
         {
             var page = rangeOfValues.SelectPagedData(2, 5, null);
           page.Items.Count.ShouldBe(5);
-          //return valueToAnalyse;
           page.CurrentPage.ShouldBe(2);
-          //return valueToAnalyse;
           page.OtherPages.Count.ShouldBe(3);
-          //return valueToAnalyse;
         }
         [Test]
         public void there_are_two_pages_when_the_page_count_is_19()
         {
             var page = rangeOfValues.SelectPagedData(1, 19);
           page.Items.Count.ShouldBe(19);
-          //return valueToAnalyse;
           page.CurrentPage.ShouldBe(1);
-          //return valueToAnalyse;
           page.OtherPages.Count.ShouldBe(1);
-          //return valueToAnalyse;
         }
     }
 }

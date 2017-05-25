@@ -135,7 +135,6 @@ namespace Extensions_Specification
     {
       ShouldBeTestExtensions.ShouldBe(typeof(SimpleType.NestedGenericType<string>).GetTypeString(),
         "SimpleType.NestedGenericType(String)");
-      //return valueToAnalyse;
     }
 
     [Test, Ignore("Need to understand how the generics reflection api works first.")]
@@ -144,7 +143,6 @@ namespace Extensions_Specification
       ShouldBeTestExtensions.ShouldBe(
         typeof(GenericType<GenericType<string>>.NestedGenericType<string>).GetTypeString(),
         "GenericType(GenericType(string)).NestedGenericType(String)");
-      //return valueToAnalyse;
     }
   }
 
@@ -154,56 +152,48 @@ namespace Extensions_Specification
     public void a_type_implementing_an_interface_has_a_distance_of_0_to_that_interface()
     {
       typeof(IList<string>).GetInheritanceDistance(typeof(IEnumerable)).ShouldBe(0);
-      //return valueToAnalyse;
     }
 
     [Test]
     public void an_interface_has_a_distance_of_minus_one_to_a_concrete_type()
     {
       typeof(IList).GetInheritanceDistance(typeof(string)).ShouldBe(-1);
-      //return valueToAnalyse;
     }
 
     [Test]
     public void an_interface_has_a_distance_of_minus_one_to_an_interface_it_doesnt_implement()
     {
       typeof(IList<string>).GetInheritanceDistance(typeof(IList)).ShouldBe(-1);
-      //return valueToAnalyse;
     }
 
     [Test]
     public void an_interface_has_a_distance_of_one_to_object()
     {
       typeof(IList).GetInheritanceDistance(typeof(object)).ShouldBe(1);
-      //return valueToAnalyse;
     }
 
     [Test]
     public void any_type_has_a_distance_of_zero_to_itself()
     {
       typeof(int).GetInheritanceDistance(typeof(int)).ShouldBe(0);
-      //return valueToAnalyse;
     }
 
     [Test]
     public void comparing_to_a_type_not_in_the_inheritance_tree_returns_minus_one()
     {
       typeof(int).GetInheritanceDistance(typeof(string)).ShouldBe(-1);
-      //return valueToAnalyse;
     }
 
     [Test]
     public void primitive_types_return_one()
     {
       typeof(int).GetInheritanceDistance(typeof(ValueType)).ShouldBe(1);
-      //return valueToAnalyse;
     }
 
     [Test]
     public void a_parent_type_has_an_inheritance_distance_of_minus_one_to_a_child_type()
     {
       typeof(ValueType).GetInheritanceDistance(typeof(int)).ShouldBe(-1);
-      //return valueToAnalyse;
     }
   }
 
@@ -219,7 +209,6 @@ namespace Extensions_Specification
     public void value_types_return_a_default_instance()
     {
       typeof(int).GetDefaultValue().ShouldBe(0);
-      //return valueToAnalyse;
     }
   }
 
@@ -246,21 +235,18 @@ namespace Extensions_Specification
     {
       var simpleType = new SimpleType();
       ShouldBeTestExtensions.ShouldBe(simpleType.ConvertToString(), simpleType.ToString());
-      //return valueToAnalyse;
     }
 
     [Test]
     public void primitive_types_return_the_converted_value()
     {
       ShouldBeTestExtensions.ShouldBe(3.ConvertToString(), "3");
-      //return valueToAnalyse;
     }
 
     [Test]
     public void types_with_converters_return_the_coverter_value()
     {
       ShouldBeTestExtensions.ShouldBe(new TypeWithConverter().ConvertToString(), "ValueFromConverter");
-      //return valueToAnalyse;
     }
   }
 

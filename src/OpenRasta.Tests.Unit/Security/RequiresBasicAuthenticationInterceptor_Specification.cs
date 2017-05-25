@@ -24,7 +24,6 @@ namespace RequiresBasicAuthenticationInterceptor_Specification
           context.OperationResult.ShouldBeAssignableTo<OperationResult.Unauthorized>();
             var expectedHeader = String.Format("Basic realm=\"{0}\"", REALM);
           ShouldBeTestExtensions.ShouldBe(context.Response.Headers["WWW-Authenticate"], expectedHeader);
-          //return valueToAnalyse;
         }
     }
 }

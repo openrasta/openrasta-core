@@ -133,7 +133,6 @@ namespace UriTemplate_Specification
     {
       GivenAMatching("/weather/{state}/{city}", "http://localhost/weather/Washington/Seattle");
       ThenTheMatch.BaseUri.ShouldBe(BaseUris.First());
-      //return valueToAnalyse;
     }
 
     [Test]
@@ -158,7 +157,6 @@ namespace UriTemplate_Specification
     {
       GivenAMatching("/users/{username}", "http://localhost/users/sebastien.lambla");
       ThenTheMatch.PathSegmentVariables.ShouldBe(new NameValueCollection().With("username", "sebastien.lambla"));
-      //return valueToAnalyse;
     }
 
     [Test]
@@ -204,7 +202,6 @@ namespace UriTemplate_Specification
 
       new UriTemplate("weather/{state}/{city}/*").BindByName(baseUri, variableValues)
         .ShouldBe("http://localhost/weather/washington/seattle/".ToUri());
-      //return valueToAnalyse;
     }
 
     [Test]
@@ -216,7 +213,6 @@ namespace UriTemplate_Specification
 
       new UriTemplate("weather/{state}/{city}/").BindByName(baseUri, variableValues)
         .ShouldBe("http://localhost/weather/washington/seattle/".ToUri());
-      //return valueToAnalyse;
     }
 
     [Test]
@@ -237,7 +233,6 @@ namespace UriTemplate_Specification
     {
       var template = new UriTemplate("/test?query=3");
       template.QueryStringVariableNames.Count.ShouldBe(0);
-      //return valueToAnalyse;
     }
 
     [Test]
@@ -250,7 +245,6 @@ namespace UriTemplate_Specification
       match.ShouldNotBeNull();
 
       ShouldBeTestExtensions.ShouldBe(match.QueryStringVariables["queryValue"], "search");
-      //return valueToAnalyse;
     }
 
     [Test]
@@ -287,11 +281,8 @@ namespace UriTemplate_Specification
         new Uri("http://localhost/test?query1=test1&query3=test2"));
       match.ShouldNotBeNull();
       match.PathSegmentVariables.Count.ShouldBe(0);
-      //return valueToAnalyse;
       match.QueryStringVariables.Count.ShouldBe(1);
-      //return valueToAnalyse;
       match.QueryParameters.Count.ShouldBe(2);
-      //return valueToAnalyse;
     }
 
     [Test]
@@ -311,11 +302,8 @@ namespace UriTemplate_Specification
         table.Match(new Uri("http://localhost"), new Uri("http://localhost/test?q=&p=1&s=10"));
       match.ShouldNotBeNull();
       ShouldBeTestExtensions.ShouldBe(match.QueryStringVariables["searchTerm"], string.Empty);
-      //return valueToAnalyse;
       ShouldBeTestExtensions.ShouldBe(match.QueryStringVariables["pageNumber"], "1");
-      //return valueToAnalyse;
       ShouldBeTestExtensions.ShouldBe(match.QueryStringVariables["pageSize"], "10");
-      //return valueToAnalyse;
     }
 
     [Test]
@@ -344,9 +332,7 @@ namespace UriTemplate_Specification
 
       match.ShouldNotBeNull();
       match.QueryStringVariables.Count.ShouldBe(1);
-      //return valueToAnalyse;
       ShouldBeTestExtensions.ShouldBe(match.QueryStringVariables["PAGE"], "2");
-      //return valueToAnalyse;
     }
 
     [Test]
@@ -357,9 +343,7 @@ namespace UriTemplate_Specification
 
       match.ShouldNotBeNull();
       match.PathSegmentVariables.Count.ShouldBe(0);
-      //return valueToAnalyse;
       match.QueryParameters.Count.ShouldBe(1);
-      //return valueToAnalyse;
     }
 
     [Test]
@@ -370,9 +354,7 @@ namespace UriTemplate_Specification
 
       match.ShouldNotBeNull();
       match.PathSegmentVariables.Count.ShouldBe(0);
-      //return valueToAnalyse;
       match.QueryParameters.Count.ShouldBe(1);
-      //return valueToAnalyse;
     }
   }
 

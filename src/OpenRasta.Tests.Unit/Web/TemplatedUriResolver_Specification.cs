@@ -67,7 +67,6 @@ namespace TemplatedUriResolver_Specification
             when_creating_uri<object>(new NameValueCollection { { "variable1", "injected1" } });
 
           ShouldBeTestExtensions.ShouldBe(Result.ToString(), "http://localhost/test/injected1");
-          //return valueToAnalyse;
         }
 
         [Test]
@@ -78,7 +77,6 @@ namespace TemplatedUriResolver_Specification
             when_creating_uri<IList<object>>(new NameValueCollection { { "variable1", "injected1" } });
 
           ShouldBeTestExtensions.ShouldBe(Result.ToString(), "http://localhost/test/injected1");
-          //return valueToAnalyse;
         }
 
         [Test]
@@ -92,7 +90,6 @@ namespace TemplatedUriResolver_Specification
             when_creating_uri<IList<object>>(new NameValueCollection { { "variable1", "injected1" } });
 
           ShouldBeTestExtensions.ShouldBe(Result.ToString(), "http://localhost/test?query=injected1");
-          //return valueToAnalyse;
         }
 
         [Test]

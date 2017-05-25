@@ -21,7 +21,6 @@ namespace OpenRasta.Tests.Unit.OperationModel.Filters
             when_filtering_operations();
 
           ShouldBeTestExtensions.ShouldBe(FilteredOperations.Single().Name, "ChangeData");
-          //return valueToAnalyse;
         }
 
         [Test]
@@ -38,9 +37,7 @@ namespace OpenRasta.Tests.Unit.OperationModel.Filters
           FilteredOperations.Count().ShouldBe(2);
 
           FilteredOperations.Count(x => x.Name == "Post").ShouldBe(1);
-          //return valueToAnalyse;
           FilteredOperations.Count(x => x.Name == "PostForRouteName").ShouldBe(1);
-          //return valueToAnalyse;
         }
     }
 

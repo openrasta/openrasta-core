@@ -28,32 +28,27 @@ namespace Rfc2047Encoding_Specification
         [Test]
         public void encoded_characters_are_decoded() {
           ShouldBeTestExtensions.ShouldBe(Rfc2047Encoding.DecodeTextToken(ISO), "Keld Jørn Simonsen");
-          //return valueToAnalyse;
         }
 
         [Test]
         public void mutliple_encodings_are_supported() {
           ShouldBeTestExtensions.ShouldBe(Rfc2047Encoding.DecodeTextToken(ISO_SUBJECT), "If you can read this you understand the example.");
-          //return valueToAnalyse;
         }
 
         [Test]
         public void the_decoding_is_done_including_spaces()
         {
           ShouldBeTestExtensions.ShouldBe(Rfc2047Encoding.DecodeTextToken(US_ASCII), "Keith Moore <moore@cs.utk.edu>");
-          //return valueToAnalyse;
         }
 
         [Test]
         public void the_text_is_not_decoded_if_the_charset_is_unknown() {
           ShouldBeTestExtensions.ShouldBe(Rfc2047Encoding.DecodeTextToken(KLINGON), KLINGON);
-          //return valueToAnalyse;
         }
 
         [Test]
         public void the_text_is_not_decoded_if_the_encoding_is_unknown() {
           ShouldBeTestExtensions.ShouldBe(Rfc2047Encoding.DecodeTextToken(UNKNOWN_ENCODING), UNKNOWN_ENCODING);
-          //return valueToAnalyse;
         }
     }
 }

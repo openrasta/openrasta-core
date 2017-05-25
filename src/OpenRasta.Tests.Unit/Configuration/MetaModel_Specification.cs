@@ -59,9 +59,7 @@ namespace Configuration_Specification
       ResourceSpaceHas.ResourcesOfType<Customer>();
 
       MetaModel.ResourceRegistrations.Count.ShouldBe(1);
-      //return valueToAnalyse;
       MetaModel.ResourceRegistrations[0].ResourceKey.ShouldBe(typeof(Customer));
-      //return valueToAnalyse;
     }
 
     [Test]
@@ -70,7 +68,6 @@ namespace Configuration_Specification
       ResourceSpaceHas.ResourcesNamed("customers");
 
       MetaModel.ResourceRegistrations[0].ResourceKey.ShouldBe("customers");
-      //return valueToAnalyse;
     }
 
     [Test]
@@ -79,7 +76,6 @@ namespace Configuration_Specification
       ResourceSpaceHas.ResourcesOfType(typeof(Customer));
 
       MetaModel.ResourceRegistrations[0].ResourceKey.ShouldBe(typeof(Customer));
-      //return valueToAnalyse;
     }
 
     [Test]
@@ -98,7 +94,6 @@ namespace Configuration_Specification
 
       ShouldBeTestExtensions.ShouldBe(MetaModel.ResourceRegistrations[0].ResourceKey.ShouldBeAssignableTo<IType>().Name,
         "Customer");
-      //return valueToAnalyse;
     }
 
     [Test]
@@ -135,7 +130,6 @@ namespace Configuration_Specification
     {
       ResourceSpaceHas.ResourcesOfType<Customer>().AtUri("/customer").InLanguage(null);
       TheUris[0].Language.ShouldBe(CultureInfo.InvariantCulture);
-      //return valueToAnalyse;
     }
 
     [Test]
@@ -143,7 +137,6 @@ namespace Configuration_Specification
     {
       ICodecParentDefinition reg = ResourceSpaceHas.ResourcesOfType<Customer>().WithoutUri;
       TheUris.Count.ShouldBe(0);
-      //return valueToAnalyse;
     }
 
     [Test]
@@ -152,9 +145,7 @@ namespace Configuration_Specification
       ResourceSpaceHas.ResourcesOfType<Customer>().AtUri("/customer");
 
       TheUris.Count.ShouldBe(1);
-      //return valueToAnalyse;
       ShouldBeTestExtensions.ShouldBe(TheUris[0].Uri, "/customer");
-      //return valueToAnalyse;
     }
 
     [Test]
@@ -162,7 +153,6 @@ namespace Configuration_Specification
     {
       ResourceSpaceHas.ResourcesOfType<Customer>().AtUri("/customer").InLanguage("fr");
       ShouldBeTestExtensions.ShouldBe(TheUris[0].Language.Name, "fr");
-      //return valueToAnalyse;
     }
 
     [Test]
@@ -171,7 +161,6 @@ namespace Configuration_Specification
       ResourceSpaceHas.ResourcesOfType<Customer>().AtUri("/customer").Named("default");
 
       ShouldBeTestExtensions.ShouldBe(TheUris[0].Name, "default");
-      //return valueToAnalyse;
     }
 
     [Test]
@@ -183,11 +172,8 @@ namespace Configuration_Specification
         .AtUri("/lothlorien");
 
       TheUris.Count.ShouldBe(2);
-      //return valueToAnalyse;
       ShouldBeTestExtensions.ShouldBe(TheUris[0].Uri, "/theshire");
-      //return valueToAnalyse;
       ShouldBeTestExtensions.ShouldBe(TheUris[1].Uri, "/lothlorien");
-      //return valueToAnalyse;
     }
 
 
@@ -208,7 +194,6 @@ namespace Configuration_Specification
         .HandledBy<CustomerHandler>();
 
       ShouldBeTestExtensions.ShouldBe(FirstRegistration.Handlers[0].Type.Name, "CustomerHandler");
-      //return valueToAnalyse;
     }
 
     [Test]
@@ -218,7 +203,6 @@ namespace Configuration_Specification
         .AtUri("/theshrine")
         .HandledBy(TypeSystems.Default.FromClr(typeof(CustomerHandler)));
       ShouldBeTestExtensions.ShouldBe(FirstRegistration.Handlers[0].Type.Name, "CustomerHandler");
-      //return valueToAnalyse;
     }
 
     [Test]
@@ -228,7 +212,6 @@ namespace Configuration_Specification
         .AtUri("/theshrine")
         .HandledBy(typeof(CustomerHandler));
       ShouldBeTestExtensions.ShouldBe(FirstRegistration.Handlers[0].Type.Name, "CustomerHandler");
-      //return valueToAnalyse;
     }
 
     [Test]
@@ -250,9 +233,7 @@ namespace Configuration_Specification
         .HandledBy<object>();
 
       ShouldBeTestExtensions.ShouldBe(FirstRegistration.Handlers[0].Type.Name, "CustomerHandler");
-      //return valueToAnalyse;
       ShouldBeTestExtensions.ShouldBe(FirstRegistration.Handlers[1].Type.Name, "Object");
-      //return valueToAnalyse;
     }
   }
 
@@ -316,7 +297,6 @@ namespace Configuration_Specification
         parent.TranscodedBy(typeof(CustomerCodec), configurationObject);
 
         FirstRegistration.Codecs[0].Configuration.ShouldBe(configurationObject);
-        //return valueToAnalyse;
       });
     }
 
@@ -328,7 +308,6 @@ namespace Configuration_Specification
         parent.TranscodedBy<CustomerCodec>().ForMediaType(MediaType.Javascript.ToString());
 
         FirstRegistration.Codecs[0].MediaTypes[0].MediaType.ShouldBe(MediaType.Javascript);
-        //return valueToAnalyse;
       });
     }
 
@@ -341,9 +320,7 @@ namespace Configuration_Specification
 
         ShouldBeTestExtensions.ShouldBe(FirstRegistration.Codecs[0].MediaTypes[0].MediaType.ToString(),
           "application/xhtml+xml");
-        //return valueToAnalyse;
         ShouldBeTestExtensions.ShouldBe(FirstRegistration.Codecs[0].MediaTypes[1].MediaType.ToString(), "text/plain");
-        //return valueToAnalyse;
       });
     }
 

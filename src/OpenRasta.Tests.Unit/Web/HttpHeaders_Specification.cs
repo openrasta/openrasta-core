@@ -38,7 +38,6 @@ namespace HttpHeaders_Specification
         {
             var header = new ContentDispositionHeader("form-data;filename=\"test\"");
           ShouldBeTestExtensions.ShouldBe(header.FileName, "test");
-          //return valueToAnalyse;
         }
 
         [Test]
@@ -46,7 +45,6 @@ namespace HttpHeaders_Specification
         {
             var header = new ContentDispositionHeader("form-data;filename=\"test;name\"");
           ShouldBeTestExtensions.ShouldBe(header.FileName, "test;name");
-          //return valueToAnalyse;
         }
 
         [Test]
@@ -54,7 +52,6 @@ namespace HttpHeaders_Specification
         {
             var header = new ContentDispositionHeader("form-data");
           ShouldBeTestExtensions.ShouldBe(header.Disposition, "form-data");
-          //return valueToAnalyse;
         }
 
         [Test]
@@ -62,7 +59,6 @@ namespace HttpHeaders_Specification
         {
             var header = new ContentDispositionHeader("form-data;name=\"hi\"");
           ShouldBeTestExtensions.ShouldBe(header.Name, "hi");
-          //return valueToAnalyse;
         }
 
         [Test]
@@ -70,7 +66,6 @@ namespace HttpHeaders_Specification
         {
             var header = new ContentDispositionHeader("form-data ; name= \"hi\";");
           ShouldBeTestExtensions.ShouldBe(header.ToString(), "form-data; name=\"hi\"");
-          //return valueToAnalyse;
         }
 
         [Test]
@@ -78,7 +73,6 @@ namespace HttpHeaders_Specification
         {
             var header = new ContentDispositionHeader("form-data ; name = \"hi \";");
           ShouldBeTestExtensions.ShouldBe(header.Name, "hi ");
-          //return valueToAnalyse;
         }
     }
 }

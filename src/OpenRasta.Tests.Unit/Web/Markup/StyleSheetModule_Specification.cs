@@ -35,7 +35,6 @@ namespace StyleSheetModule_Specifications
         {
             WhenCreatingElement(()=>Document.CreateElement<IStyleElement>().Media("screen,alternate"));
           ThenTheElement.Media.Count.ShouldBe(2);
-          //return valueToAnalyse;
           ThenTheElement.Media.ShouldContain("screen");
           ThenTheElement.Media.ShouldContain("alternate");
         }

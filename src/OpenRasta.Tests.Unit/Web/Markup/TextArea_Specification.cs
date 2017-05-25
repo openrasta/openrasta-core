@@ -26,7 +26,6 @@ namespace TextArea_Specification
         {
             WhenCreatingElement(() => Document.CreateElement<ITextAreaElement>()["hello"]);
           ShouldBeTestExtensions.ShouldBe(ThenTheElementAsString, "<textarea>hello</textarea>");
-          //return valueToAnalyse;
         }
     }
 }

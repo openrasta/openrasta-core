@@ -33,11 +33,8 @@ namespace LegacyManualConfiguration_Specification
       var match = DependencyManager.Uris.Match(new Uri(new Uri("http://localhost/", UriKind.Absolute), uri));
       match.ShouldNotBeNull();
       match.UriCulture.ShouldBe(language);
-      //return valueToAnalyse;
       match.ResourceKey.ShouldBe(TypeSystems.Default.FromClr(typeof(TResource)));
-      //return valueToAnalyse;
       ShouldBeTestExtensions.ShouldBe(match.UriName, name);
-      //return valueToAnalyse;
     }
 
     [Test]
@@ -181,7 +178,6 @@ namespace LegacyManualConfiguration_Specification
       var handlerMatch = DependencyManager.Handlers.GetHandlerTypesFor(urimatch.ResourceKey).FirstOrDefault();
       handlerMatch.ShouldNotBeNull();
       handlerMatch.ShouldBe(TypeSystems.Default.FromClr(typeof(THandler)));
-      //return valueToAnalyse;
       return handlerMatch;
     }
 
