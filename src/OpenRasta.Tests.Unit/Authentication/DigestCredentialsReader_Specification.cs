@@ -71,8 +71,8 @@ namespace DigestCredentialsReader_Specification
                  opaque=""5ccc069c403ebaf9f0171e9517f40e41""";
             var credentials = DigestHeader.Parse(authenticationHeader);
 
-          ShouldBeTestExtensions.ShouldBe(credentials.Username, "Mufasa");
-          ShouldBeTestExtensions.ShouldBe(credentials.Uri, "/dir/index.html");
+          credentials.Username.ShouldBe( "Mufasa");
+          credentials.Uri.ShouldBe( "/dir/index.html");
         }
 
         [Test]

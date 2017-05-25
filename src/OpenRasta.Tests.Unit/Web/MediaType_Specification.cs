@@ -15,8 +15,8 @@ namespace MediaType_Specification
     public void TheBaseTypeIsProcessedCorrectly()
     {
       MediaType content = new MediaType("application/xml");
-      ShouldBeTestExtensions.ShouldBe(content.TopLevelMediaType, "application");
-      ShouldBeTestExtensions.ShouldBe(content.Subtype, "xml");
+      content.TopLevelMediaType.ShouldBe( "application");
+      content.Subtype.ShouldBe( "xml");
       content.Quality.ShouldBe(1.0f);
     }
 
@@ -56,48 +56,48 @@ namespace MediaType_Specification
     public void AWildcardForBaseTypeIsLessSpecificThanANonWildcard()
     {
       var ct = MediaType.Parse("*/xml,text/xml").ToList();
-      ShouldBeTestExtensions.ShouldBe(ct[0].MediaType, "text/xml");
-      ShouldBeTestExtensions.ShouldBe(ct[1].MediaType, "*/xml");
+      ct[0].MediaType.ShouldBe( "text/xml");
+      ct[1].MediaType.ShouldBe( "*/xml");
     }
 
     [Test]
     public void AWildcardHasLowerPriorityThanAny()
     {
       var ct = MediaType.Parse("application/*, */*, application/xhtml+xml").ToList();
-      ShouldBeTestExtensions.ShouldBe(ct[0].MediaType, "application/xhtml+xml");
-      ShouldBeTestExtensions.ShouldBe(ct[1].MediaType, "application/*");
-      ShouldBeTestExtensions.ShouldBe(ct[2].MediaType, "*/*");
+      ct[0].MediaType.ShouldBe( "application/xhtml+xml");
+      ct[1].MediaType.ShouldBe( "application/*");
+      ct[2].MediaType.ShouldBe( "*/*");
     }
 
     [Test]
     public void AWildcardIsConsideredAsHavingTheLowestPriority()
     {
       var ct = MediaType.Parse("*/*,text/plain;q=0.1").ToList();
-      ShouldBeTestExtensions.ShouldBe(ct[0].MediaType, "text/plain");
-      ShouldBeTestExtensions.ShouldBe(ct[1].MediaType, "*/*");
+      ct[0].MediaType.ShouldBe( "text/plain");
+      ct[1].MediaType.ShouldBe( "*/*");
     }
 
     [Test]
     public void AWildcardSubTypeHasLowerPriorityThanASpecificSubType()
     {
       var ct = MediaType.Parse("application/*, application/xhtml+xml").ToList();
-      ShouldBeTestExtensions.ShouldBe(ct[0].MediaType, "application/xhtml+xml");
+      ct[0].MediaType.ShouldBe( "application/xhtml+xml");
     }
 
     [Test]
     public void TheApplicationXmlContentTypeIsOrderedAfterAnyOtherContentTypeOfSamePriority()
     {
       var ct = MediaType.Parse("application/xml,text/plain,image/jpeg;q=0.7").ToList();
-      ShouldBeTestExtensions.ShouldBe(ct[0].MediaType, "text/plain");
-      ShouldBeTestExtensions.ShouldBe(ct[1].MediaType, "application/xml");
-      ShouldBeTestExtensions.ShouldBe(ct[2].MediaType, "image/jpeg");
+      ct[0].MediaType.ShouldBe( "text/plain");
+      ct[1].MediaType.ShouldBe( "application/xml");
+      ct[2].MediaType.ShouldBe( "image/jpeg");
     }
 
     [Test]
     public void TheApplicationXmlContentTypeIsOrderedAfterMoreSpecificTypes()
     {
       var ct = MediaType.Parse("application/xml, application/xhtml+xml").ToList();
-      ShouldBeTestExtensions.ShouldBe(ct[0].MediaType, "application/xhtml+xml");
+      ct[0].MediaType.ShouldBe( "application/xhtml+xml");
     }
 
     [Test]
@@ -105,10 +105,10 @@ namespace MediaType_Specification
     {
       var contentTypes = MediaType.Parse("text/plain; q=0.5, text/html, text/x-dvi; q=0.8, text/x-c").ToList();
 
-      ShouldBeTestExtensions.ShouldBe(contentTypes[0].MediaType, "text/x-c");
-      ShouldBeTestExtensions.ShouldBe(contentTypes[1].MediaType, "text/html");
-      ShouldBeTestExtensions.ShouldBe(contentTypes[2].MediaType, "text/x-dvi");
-      ShouldBeTestExtensions.ShouldBe(contentTypes[3].MediaType, "text/plain");
+      contentTypes[0].MediaType.ShouldBe( "text/x-c");
+      contentTypes[1].MediaType.ShouldBe( "text/html");
+      contentTypes[2].MediaType.ShouldBe( "text/x-dvi");
+      contentTypes[3].MediaType.ShouldBe( "text/plain");
     }
   }
 }

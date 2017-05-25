@@ -27,8 +27,8 @@ namespace PropertyPathExpressionTree_Specification
             var customer = new Customer { DateOfBirth = DateTime.Parse("14 Nov 2000") };
             var pp = new PropertyPathForInstance<int>(() => customer.DateOfBirth.Day);
 
-          ShouldBeTestExtensions.ShouldBe(pp.Path.TypePrefix, "Customer");
-          ShouldBeTestExtensions.ShouldBe(pp.Path.TypeSuffix, "DateOfBirth.Day");
+          pp.Path.TypePrefix.ShouldBe( "Customer");
+          pp.Path.TypeSuffix.ShouldBe( "DateOfBirth.Day");
           pp.PropertyType.ShouldBe(typeof(int));
           pp.Value.ShouldBe(14);
         }
@@ -40,8 +40,8 @@ namespace PropertyPathExpressionTree_Specification
             var pp = new PropertyPathForInstance<object>(
                 () => customer.Username);
 
-          ShouldBeTestExtensions.ShouldBe(pp.Path.TypePrefix, "Customer");
-          ShouldBeTestExtensions.ShouldBe(pp.Path.TypeSuffix, "Username");
+          pp.Path.TypePrefix.ShouldBe( "Customer");
+          pp.Path.TypeSuffix.ShouldBe( "Username");
           pp.PropertyType.ShouldBe(typeof(string));
           pp.Value.ShouldBe("johndoe");
         }
@@ -69,8 +69,8 @@ namespace PropertyPathExpressionTree_Specification
                 ObjectPaths.Add(Customer, new PropertyPath { TypePrefix = "Customer", TypeSuffix = "TheFirst" });
 
                 var pp = new PropertyPathForInstance<object>(() => Customer.FirstName);
-              ShouldBeTestExtensions.ShouldBe(pp.Path.TypePrefix, "Customer");
-              ShouldBeTestExtensions.ShouldBe(pp.Path.TypeSuffix, "TheFirst.FirstName");
+              pp.Path.TypePrefix.ShouldBe( "Customer");
+              pp.Path.TypeSuffix.ShouldBe( "TheFirst.FirstName");
             }
             finally
             {
@@ -84,8 +84,8 @@ namespace PropertyPathExpressionTree_Specification
             var pp = new PropertyPathForInstance<object>(
                 () => Customer.FirstName);
 
-          ShouldBeTestExtensions.ShouldBe(pp.Path.TypePrefix, "Customer");
-          ShouldBeTestExtensions.ShouldBe(pp.Path.TypeSuffix, "FirstName");
+          pp.Path.TypePrefix.ShouldBe( "Customer");
+          pp.Path.TypeSuffix.ShouldBe( "FirstName");
           pp.Value.ShouldBe("John");
         }
     }

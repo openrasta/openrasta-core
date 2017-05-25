@@ -75,7 +75,7 @@ namespace Accessors_Specification
         [Test]
         public void the_name_is_the_type_name()
         {
-          ShouldBeTestExtensions.ShouldBe(new ReflectionBasedType(_typeSystem,typeof(string)).Name, "String");
+          new ReflectionBasedType(_typeSystem,typeof(string)).Name.ShouldBe( "String");
         }
 
         [Test]
@@ -192,7 +192,7 @@ namespace Accessors_Specification
             GivenTypeFor<Customer>();
             var newCustomer = new Customer();
           ThenTheProperty("FirstName").TrySetValue(newCustomer, new[] { "Frodo" }, (str, t) => BindingResult.Success(str)).ShouldBeTrue();
-          ShouldBeTestExtensions.ShouldBe(newCustomer.FirstName, "Frodo");
+          newCustomer.FirstName.ShouldBe( "Frodo");
         }
 
         [Test]
@@ -216,7 +216,7 @@ namespace Accessors_Specification
         {
             GivenTypeFor<string>();
 
-          ShouldBeTestExtensions.ShouldBe(ThenTheProperty("Length").Name, "Length");
+          ThenTheProperty("Length").Name.ShouldBe( "Length");
         }
 
         IProperty ThenTheProperty(string propertyName)
@@ -249,8 +249,8 @@ namespace Accessors_Specification
                 .ShouldNotBeNull();
           wornByMethod.InputMembers.Count().ShouldBe(1);
 
-          ShouldBeTestExtensions.ShouldBe(wornByMethod.InputMembers.First().Name, "frodo");
-          ShouldBeTestExtensions.ShouldBe(wornByMethod.InputMembers.First().TypeName, "Frodo");
+          wornByMethod.InputMembers.First().Name.ShouldBe( "frodo");
+          wornByMethod.InputMembers.First().TypeName.ShouldBe( "Frodo");
         }
         [Test]
         public void a_method_name_search_is_case_insensitive()
@@ -264,7 +264,7 @@ namespace Accessors_Specification
         {
             GivenTypeFor<RingOfPower>();
 
-          ShouldBeTestExtensions.ShouldBe(Type.GetMethod("ToString").Owner.TypeName, "Object");
+          Type.GetMethod("ToString").Owner.TypeName.ShouldBe( "Object");
         }
         protected ICollection<IMethod> TheMethods { get { return Type.GetMethods(); } }
     }

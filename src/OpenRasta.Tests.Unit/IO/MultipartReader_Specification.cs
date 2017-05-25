@@ -25,7 +25,7 @@ namespace MultipartReader_Specification
           entity.ContentType
             .Matches(httpContentType).ShouldBeTrue();
           string actualContent = new StreamReader(entity.Stream).ReadToEnd();
-          ShouldBeTestExtensions.ShouldBe(actualContent, expectedContent);
+          actualContent.ShouldBe( expectedContent);
         }
 
         string TheTextIn(Stream stream) { return new StreamReader(stream).ReadToEnd(); }
@@ -70,7 +70,7 @@ text
           enumerator.MoveNext().ShouldBeTrue();
 
           enumerator.Current.Headers.Count.ShouldBe(0);
-          ShouldBeTestExtensions.ShouldBe(TheTextIn(enumerator.Current.Stream), "text");
+          TheTextIn(enumerator.Current.Stream).ShouldBe( "text");
         }
 
         [Test]

@@ -20,7 +20,7 @@ namespace OpenRasta.Tests.Unit.OperationModel.Filters
 
             when_filtering_operations();
 
-          ShouldBeTestExtensions.ShouldBe(FilteredOperations.Single().Name, "ChangeData");
+          FilteredOperations.Single().Name.ShouldBe( "ChangeData");
         }
 
         [Test]

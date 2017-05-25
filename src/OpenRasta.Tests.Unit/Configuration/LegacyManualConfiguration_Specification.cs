@@ -34,7 +34,7 @@ namespace LegacyManualConfiguration_Specification
       match.ShouldNotBeNull();
       match.UriCulture.ShouldBe(language);
       match.ResourceKey.ShouldBe(TypeSystems.Default.FromClr(typeof(TResource)));
-      ShouldBeTestExtensions.ShouldBe(match.UriName, name);
+      match.UriName.ShouldBe( name);
     }
 
     [Test]

@@ -39,7 +39,7 @@ namespace XhtmlDOM_Specification
             var attribs = new XhtmlAttributeCollection();
             attribs.GetAttribute<IList<MediaType>>("types").Add(MediaType.Xml);
 
-          ShouldBeTestExtensions.ShouldBe(attribs["types"].SerializedValue, "application/xml");
+          attribs["types"].SerializedValue.ShouldBe( "application/xml");
         }
         [Test]
         public void attributes_not_in_initial_list_are_added_as_generic_strings()
@@ -56,12 +56,12 @@ namespace XhtmlDOM_Specification
             attribs.SetAttribute("name", "a name");
             attribs.SetAttribute<int?>("value", 3);
 
-          ShouldBeTestExtensions.ShouldBe(attribs["name"].SerializedValue, "a name");
-          ShouldBeTestExtensions.ShouldBe(attribs["value"].SerializedValue, "3");
+          attribs["name"].SerializedValue.ShouldBe( "a name");
+          attribs["value"].SerializedValue.ShouldBe( "3");
 
           attribs.SetAttribute("unknownValue", "25");
 
-          ShouldBeTestExtensions.ShouldBe(attribs["unknownValue"].SerializedValue, "25");
+          attribs["unknownValue"].SerializedValue.ShouldBe( "25");
         }
 
     }
@@ -74,19 +74,19 @@ namespace XhtmlDOM_Specification
             var element = Document.CreateElement<IScriptElement>("script").Type(MediaType.Javascript);
             element.Defer = true;
 
-          ShouldBeTestExtensions.ShouldBe(element.OuterXml, "<script type=\"text/javascript\" defer=\"defer\"></script>");
+          element.OuterXml.ShouldBe( "<script type=\"text/javascript\" defer=\"defer\"></script>");
         }
         [Test]
         public void elements_without_content_model_are_rendered_without_a_closing_tag()
         {
             var element = Document.CreateElement<IEmptyElement>("br") as IEmptyElement;
-          ShouldBeTestExtensions.ShouldBe(element.OuterXml, "<br />");
+          element.OuterXml.ShouldBe( "<br />");
         }
         [Test]
         public void elements_with_uri_attributes_are_generated_properly()
         {
             var el = Document.CreateElement<IImgElement>("img");
-          ShouldBeTestExtensions.ShouldBe(el.Src("image.jpg").OuterXml, "<img src=\"image.jpg\" />");
+          el.Src("image.jpg").OuterXml.ShouldBe( "<img src=\"image.jpg\" />");
         }
     }
 }

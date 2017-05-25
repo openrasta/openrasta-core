@@ -40,7 +40,7 @@ namespace OpenRasta.Tests.Unit.OperationModel.Filters
 
                 when_filtering_operations();
 
-              ShouldBeTestExtensions.ShouldBe(FilteredOperations.ShouldHaveSingleItem().Name, "Post");
+              FilteredOperations.ShouldHaveSingleItem().Name.ShouldBe( "Post");
               Errors.Errors.Count.ShouldBe(0);
             }
 

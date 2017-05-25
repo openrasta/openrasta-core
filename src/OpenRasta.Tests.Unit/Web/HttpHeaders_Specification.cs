@@ -37,42 +37,42 @@ namespace HttpHeaders_Specification
         public void the_filename_parameter_is_parsed()
         {
             var header = new ContentDispositionHeader("form-data;filename=\"test\"");
-          ShouldBeTestExtensions.ShouldBe(header.FileName, "test");
+          header.FileName.ShouldBe( "test");
         }
 
         [Test]
         public void fields_can_contain_semi_colons()
         {
             var header = new ContentDispositionHeader("form-data;filename=\"test;name\"");
-          ShouldBeTestExtensions.ShouldBe(header.FileName, "test;name");
+          header.FileName.ShouldBe( "test;name");
         }
 
         [Test]
         public void the_first_value_is_the_disposition()
         {
             var header = new ContentDispositionHeader("form-data");
-          ShouldBeTestExtensions.ShouldBe(header.Disposition, "form-data");
+          header.Disposition.ShouldBe( "form-data");
         }
 
         [Test]
         public void the_name_parameter_is_parsed()
         {
             var header = new ContentDispositionHeader("form-data;name=\"hi\"");
-          ShouldBeTestExtensions.ShouldBe(header.Name, "hi");
+          header.Name.ShouldBe( "hi");
         }
 
         [Test]
         public void the_toString_method_normalize_the_header()
         {
             var header = new ContentDispositionHeader("form-data ; name= \"hi\";");
-          ShouldBeTestExtensions.ShouldBe(header.ToString(), "form-data; name=\"hi\"");
+          header.ToString().ShouldBe( "form-data; name=\"hi\"");
         }
 
         [Test]
         public void whitespace_in_parameters_is_ignored()
         {
             var header = new ContentDispositionHeader("form-data ; name = \"hi \";");
-          ShouldBeTestExtensions.ShouldBe(header.Name, "hi ");
+          header.Name.ShouldBe( "hi ");
         }
     }
 }

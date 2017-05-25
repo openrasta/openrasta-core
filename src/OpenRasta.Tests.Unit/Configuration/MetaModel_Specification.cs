@@ -92,7 +92,7 @@ namespace Configuration_Specification
     {
       ResourceSpaceHas.ResourcesOfType(TypeSystems.Default.FromClr(typeof(Customer)));
 
-      ShouldBeTestExtensions.ShouldBe(MetaModel.ResourceRegistrations[0].ResourceKey.ShouldBeAssignableTo<IType>().Name,
+      MetaModel.ResourceRegistrations[0].ResourceKey.ShouldBeAssignableTo<IType>().Name.ShouldBe(
         "Customer");
     }
 
@@ -145,14 +145,14 @@ namespace Configuration_Specification
       ResourceSpaceHas.ResourcesOfType<Customer>().AtUri("/customer");
 
       TheUris.Count.ShouldBe(1);
-      ShouldBeTestExtensions.ShouldBe(TheUris[0].Uri, "/customer");
+      TheUris[0].Uri.ShouldBe( "/customer");
     }
 
     [Test]
     public void a_uri_language_is_registered()
     {
       ResourceSpaceHas.ResourcesOfType<Customer>().AtUri("/customer").InLanguage("fr");
-      ShouldBeTestExtensions.ShouldBe(TheUris[0].Language.Name, "fr");
+      TheUris[0].Language.Name.ShouldBe( "fr");
     }
 
     [Test]
@@ -160,7 +160,7 @@ namespace Configuration_Specification
     {
       ResourceSpaceHas.ResourcesOfType<Customer>().AtUri("/customer").Named("default");
 
-      ShouldBeTestExtensions.ShouldBe(TheUris[0].Name, "default");
+      TheUris[0].Name.ShouldBe( "default");
     }
 
     [Test]
@@ -172,8 +172,8 @@ namespace Configuration_Specification
         .AtUri("/lothlorien");
 
       TheUris.Count.ShouldBe(2);
-      ShouldBeTestExtensions.ShouldBe(TheUris[0].Uri, "/theshire");
-      ShouldBeTestExtensions.ShouldBe(TheUris[1].Uri, "/lothlorien");
+      TheUris[0].Uri.ShouldBe( "/theshire");
+      TheUris[1].Uri.ShouldBe( "/lothlorien");
     }
 
 
@@ -193,7 +193,7 @@ namespace Configuration_Specification
         .AtUri("/theshrine")
         .HandledBy<CustomerHandler>();
 
-      ShouldBeTestExtensions.ShouldBe(FirstRegistration.Handlers[0].Type.Name, "CustomerHandler");
+      FirstRegistration.Handlers[0].Type.Name.ShouldBe( "CustomerHandler");
     }
 
     [Test]
@@ -202,7 +202,7 @@ namespace Configuration_Specification
       ResourceSpaceHas.ResourcesOfType(typeof(Frodo))
         .AtUri("/theshrine")
         .HandledBy(TypeSystems.Default.FromClr(typeof(CustomerHandler)));
-      ShouldBeTestExtensions.ShouldBe(FirstRegistration.Handlers[0].Type.Name, "CustomerHandler");
+      FirstRegistration.Handlers[0].Type.Name.ShouldBe( "CustomerHandler");
     }
 
     [Test]
@@ -211,7 +211,7 @@ namespace Configuration_Specification
       ResourceSpaceHas.ResourcesOfType(typeof(Frodo))
         .AtUri("/theshrine")
         .HandledBy(typeof(CustomerHandler));
-      ShouldBeTestExtensions.ShouldBe(FirstRegistration.Handlers[0].Type.Name, "CustomerHandler");
+      FirstRegistration.Handlers[0].Type.Name.ShouldBe( "CustomerHandler");
     }
 
     [Test]
@@ -232,8 +232,8 @@ namespace Configuration_Specification
         .And
         .HandledBy<object>();
 
-      ShouldBeTestExtensions.ShouldBe(FirstRegistration.Handlers[0].Type.Name, "CustomerHandler");
-      ShouldBeTestExtensions.ShouldBe(FirstRegistration.Handlers[1].Type.Name, "Object");
+      FirstRegistration.Handlers[0].Type.Name.ShouldBe( "CustomerHandler");
+      FirstRegistration.Handlers[1].Type.Name.ShouldBe( "Object");
     }
   }
 
@@ -318,9 +318,9 @@ namespace Configuration_Specification
       {
         parent.TranscodedBy<CustomerCodec>().ForMediaType("application/xhtml+xml").ForMediaType("text/plain");
 
-        ShouldBeTestExtensions.ShouldBe(FirstRegistration.Codecs[0].MediaTypes[0].MediaType.ToString(),
+        FirstRegistration.Codecs[0].MediaTypes[0].MediaType.ToString().ShouldBe(
           "application/xhtml+xml");
-        ShouldBeTestExtensions.ShouldBe(FirstRegistration.Codecs[0].MediaTypes[1].MediaType.ToString(), "text/plain");
+        FirstRegistration.Codecs[0].MediaTypes[1].MediaType.ToString().ShouldBe( "text/plain");
       });
     }
 

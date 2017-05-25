@@ -70,7 +70,7 @@ namespace Authentication_Specification
             var result = when_sending_notification<KnownStages.IHandlerSelection>();
 
             // then
-          ShouldBeTestExtensions.ShouldBe(Context.Response.Headers["Warning"], "199 Unsupported Authentication Scheme");
+          Context.Response.Headers["Warning"].ShouldBe( "199 Unsupported Authentication Scheme");
           result.ShouldBe(PipelineContinuation.Continue);
         }
 
@@ -96,7 +96,7 @@ namespace Authentication_Specification
             var result = when_sending_notification<KnownStages.IHandlerSelection>();
 
             // then
-          ShouldBeTestExtensions.ShouldBe(Context.Response.Headers["Warning"], "199 Malformed credentials");
+          Context.Response.Headers["Warning"].ShouldBe( "199 Malformed credentials");
           Context.OperationResult.ShouldBeAssignableTo<OperationResult.BadRequest>();
           result.ShouldBe(PipelineContinuation.RenderNow);
         }
@@ -154,7 +154,7 @@ namespace Authentication_Specification
             // then
           result.ShouldBe(PipelineContinuation.Continue);
 
-          ShouldBeTestExtensions.ShouldBe(Context.User.Identity.Name, username);
+          Context.User.Identity.Name.ShouldBe( username);
           Context.User.IsInRole(roles[0]);
             Context.User.IsInRole(roles[1]);
         }

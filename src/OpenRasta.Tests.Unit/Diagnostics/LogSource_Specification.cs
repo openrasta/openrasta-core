@@ -13,12 +13,12 @@ namespace OpenRasta.Diagnostics
         [Test]
         public void the_category_is_read_from_an_attribute()
         {
-          ShouldBeTestExtensions.ShouldBe(LogSource<MockLogSource>.Category, MockLogSource.CATEGORY_NAME);
+          LogSource<MockLogSource>.Category.ShouldBe( MockLogSource.CATEGORY_NAME);
         }
         [Test]
         public void a_log_source_without_category_is_named_after_the_type()
         {
-          ShouldBeTestExtensions.ShouldBe(LogSource<LogSourceNoCategory>.Category, "LogSourceNoCategory");
+          LogSource<LogSourceNoCategory>.Category.ShouldBe( "LogSourceNoCategory");
         }
 
         public class LogSourceNoCategory : ILogSource

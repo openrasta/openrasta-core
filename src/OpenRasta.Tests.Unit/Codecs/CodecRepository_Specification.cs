@@ -237,7 +237,7 @@ namespace CodecRepository_Specification
       WhenFindingCodecsFor<object>("text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
 
       ThenTheResult.Count.ShouldBeGreaterThan(0);
-      ShouldBeTestExtensions.ShouldBe(ThenTheResult[0].MediaType.ToString(), "text/html");
+      ThenTheResult[0].MediaType.ToString().ShouldBe( "text/html");
     }
 
     protected void WhenFindingCodecsFor<TResourceType>(params string[] contentTypes)

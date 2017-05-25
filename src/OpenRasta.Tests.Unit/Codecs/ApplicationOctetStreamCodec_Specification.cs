@@ -78,7 +78,7 @@ namespace ApplicationOctetStreamCodec_Specification
 
             when_decoding();
 
-          ShouldBeTestExtensions.ShouldBe(ThenTheResult.FileName, "test.txt");
+          ThenTheResult.FileName.ShouldBe( "test.txt");
         }
 
         public void when_decoding()
@@ -111,8 +111,8 @@ namespace ApplicationOctetStreamCodec_Specification
             when_coding();
             Response.Headers.ContentDisposition.ShouldNotBeNull();
 
-          ShouldBeTestExtensions.ShouldBe(Response.Headers.ContentDisposition.Disposition, "inline");
-          ShouldBeTestExtensions.ShouldBe(Response.Headers.ContentDisposition.FileName, "test.txt");
+          Response.Headers.ContentDisposition.Disposition.ShouldBe( "inline");
+          Response.Headers.ContentDisposition.FileName.ShouldBe( "test.txt");
         }
         [Test]
         public void a_file_without_a_content_type_generates_an_app_octet_stream_content_type()
@@ -161,8 +161,8 @@ namespace ApplicationOctetStreamCodec_Specification
             when_coding();
             Response.Headers.ContentDisposition.ShouldNotBeNull();
 
-          ShouldBeTestExtensions.ShouldBe(Response.Headers.ContentDisposition.Disposition, "attachment");
-          ShouldBeTestExtensions.ShouldBe(Response.Headers.ContentDisposition.FileName, "test.txt");
+          Response.Headers.ContentDisposition.Disposition.ShouldBe( "attachment");
+          Response.Headers.ContentDisposition.FileName.ShouldBe( "test.txt");
         }
         [Test]
         public void a_downloadable_file_without_name_generates_a_content_disposition()
@@ -173,7 +173,7 @@ namespace ApplicationOctetStreamCodec_Specification
             when_coding();
             Response.Headers.ContentDisposition.ShouldNotBeNull();
 
-          ShouldBeTestExtensions.ShouldBe(Response.Headers.ContentDisposition.Disposition, "attachment");
+          Response.Headers.ContentDisposition.Disposition.ShouldBe( "attachment");
           Response.Headers.ContentDisposition.FileName.ShouldBeNull();
         }
         void when_coding()

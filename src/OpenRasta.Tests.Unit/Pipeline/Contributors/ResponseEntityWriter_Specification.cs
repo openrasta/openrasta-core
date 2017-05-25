@@ -63,7 +63,7 @@ namespace ResponseEntityWriter_Specification
 
       when_sending_notification<KnownStages.ICodecResponseSelection>().ShouldBe(PipelineContinuation.Continue);
 
-      ShouldBeTestExtensions.ShouldBe(Context.Response.Entity.Headers["ENTITY_TYPE"], "Fake");
+      Context.Response.Entity.Headers["ENTITY_TYPE"].ShouldBe( "Fake");
       Context.Response.Entity.Codec.Configuration.ShouldNotBeNull();
     }
 
@@ -76,7 +76,7 @@ namespace ResponseEntityWriter_Specification
 
       when_sending_notification<KnownStages.ICodecResponseSelection>().ShouldBe(PipelineContinuation.Continue);
 
-      ShouldBeTestExtensions.ShouldBe(Context.Response.Entity.Headers["ENTITY_TYPE"], "Fake");
+      Context.Response.Entity.Headers["ENTITY_TYPE"].ShouldBe( "Fake");
     }
 
     void given_response_codec<TCodec>()

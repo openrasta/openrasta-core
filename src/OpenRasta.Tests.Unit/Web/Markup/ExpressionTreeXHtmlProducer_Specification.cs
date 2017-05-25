@@ -37,22 +37,22 @@ namespace ExpressionTreeXHtmlProducer_Specification
     [Test]
     public void a_reference_type_property_is_identified_correctly()
     {
-      ShouldBeTestExtensions.ShouldBe(XHtml.TextBox<Customer>(c => c.FirstName)
-        .Name, "Customer.FirstName");
+      XHtml.TextBox<Customer>(c => c.FirstName)
+        .Name.ShouldBe( "Customer.FirstName");
     }
 
     [Test]
     public void a_reference_type_property_is_identified_correctly_on_password()
     {
-      ShouldBeTestExtensions.ShouldBe(XHtml.Password<Customer>(c => c.FirstName)
-        .Name, "Customer.FirstName");
+      XHtml.Password<Customer>(c => c.FirstName)
+        .Name.ShouldBe( "Customer.FirstName");
     }
 
     [Test]
     public void a_value_type_property_is_identified_correctly()
     {
-      ShouldBeTestExtensions.ShouldBe(XHtml.TextBox<Customer>(c => c.DateOfBirth.Day)
-        .Name, "Customer.DateOfBirth.Day");
+      XHtml.TextBox<Customer>(c => c.DateOfBirth.Day)
+        .Name.ShouldBe( "Customer.DateOfBirth.Day");
     }
   }
 
@@ -86,7 +86,7 @@ namespace ExpressionTreeXHtmlProducer_Specification
       var customer = new Customer {FirstName = "John"};
       var textbox = XHtml.TextBox(() => customer.FirstName);
 
-      ShouldBeTestExtensions.ShouldBe(textbox.Name, "Customer.FirstName");
+      textbox.Name.ShouldBe( "Customer.FirstName");
     }
 
     [Test]
@@ -103,7 +103,7 @@ namespace ExpressionTreeXHtmlProducer_Specification
       var customer = new Customer {FirstName = "John"};
       var textbox = XHtml.TextBox(() => customer.FirstName);
 
-      ShouldBeTestExtensions.ShouldBe(textbox.Value, "John");
+      textbox.Value.ShouldBe( "John");
     }
   }
 
@@ -116,12 +116,12 @@ namespace ExpressionTreeXHtmlProducer_Specification
       var select = XHtml.Select(() => t.Enum,
         new Dictionary<string, string> {{"key1", "value1"}, {"key2", "value2"}});
       var first = @select.ChildNodes[0].ShouldBeAssignableTo<IOptionElement>();
-      ShouldBeTestExtensions.ShouldBe(first.InnerText, "value1");
-      ShouldBeTestExtensions.ShouldBe(first.Value, "key1");
+      first.InnerText.ShouldBe( "value1");
+      first.Value.ShouldBe( "key1");
 
       var second = @select.ChildNodes[1].ShouldBeAssignableTo<IOptionElement>();
-      ShouldBeTestExtensions.ShouldBe(second.InnerText, "value2");
-      ShouldBeTestExtensions.ShouldBe(second.Value, "key2");
+      second.InnerText.ShouldBe( "value2");
+      second.Value.ShouldBe( "key2");
     }
 
     [Test]
@@ -129,7 +129,7 @@ namespace ExpressionTreeXHtmlProducer_Specification
     {
       var target = new Test {Enum = AttributeTargets.All};
       var select = XHtml.Select(() => target.Enum);
-      ShouldBeTestExtensions.ShouldBe(@select.Name, "Test.Enum");
+      @select.Name.ShouldBe( "Test.Enum");
       var node = @select.ChildNodes.Cast<IOptionElement>().SingleOrDefault(x => x.InnerText == "All");
       node.ShouldNotBeNull();
       node.Selected.ShouldBeTrue();
@@ -141,7 +141,7 @@ namespace ExpressionTreeXHtmlProducer_Specification
     {
       var target = new Test();
       var select = XHtml.Select(() => target.NullableEnum);
-      ShouldBeTestExtensions.ShouldBe(@select.Name, "Test.NullableEnum");
+      @select.Name.ShouldBe( "Test.NullableEnum");
       var node = @select.ChildNodes.Cast<IOptionElement>().SingleOrDefault(x => x.InnerText == "");
       node.ShouldNotBeNull();
       node.Selected.ShouldBeTrue();
@@ -159,7 +159,7 @@ namespace ExpressionTreeXHtmlProducer_Specification
 
       checkbox.Type.ShouldBe(InputType.CheckBox);
       checkbox.Checked.ShouldBeTrue();
-      ShouldBeTestExtensions.ShouldBe(checkbox.Name, "Test.IsSelected");
+      checkbox.Name.ShouldBe( "Test.IsSelected");
       checkbox.ToString().ShouldContain("<input type=\"checkbox\"", Case.Sensitive);
     }
   }

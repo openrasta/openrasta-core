@@ -84,11 +84,11 @@ namespace MetaModelHandler_Specification
             Handler.Process(MetaModel);
 
             var uri1 = UriResolver.Match("http://localhost/customer".ToUri());
-          ShouldBeTestExtensions.ShouldBe(uri1.ResourceKey.ShouldBeAssignableTo<IType>().Name, "Customer");
-          ShouldBeTestExtensions.ShouldBe(uri1.UriName, "model");
+          uri1.ResourceKey.ShouldBeAssignableTo<IType>().Name.ShouldBe( "Customer");
+          uri1.UriName.ShouldBe( "model");
 
           var uri2 = UriResolver.Match("http://localhost/preferedCustomer".ToUri());
-          ShouldBeTestExtensions.ShouldBe(uri2.ResourceKey.ShouldBeAssignableTo<IType>().Name, "Customer");
+          uri2.ResourceKey.ShouldBeAssignableTo<IType>().Name.ShouldBe( "Customer");
           uri2.UriCulture.ShouldBe(CultureInfo.GetCultureInfo("fr-FR"));
         }
 

@@ -60,7 +60,7 @@ namespace ApplicationXWwwUrlformEncodedCodec_Specification
 
       when_decoding<string>("thecustomer");
 
-      ShouldBeTestExtensions.ShouldBe(then_decoding_result<string>(), "John Doe");
+      then_decoding_result<string>().ShouldBe( "John Doe");
     }
 
     [Test]
@@ -82,7 +82,7 @@ namespace ApplicationXWwwUrlformEncodedCodec_Specification
 
       when_decoding<string>("thecustomer");
 
-      ShouldBeTestExtensions.ShouldBe(then_decoding_result<string>(), "John");
+      then_decoding_result<string>().ShouldBe( "John");
     }
 
     [Test]
@@ -140,8 +140,8 @@ namespace ApplicationXWwwUrlformEncodedCodec_Specification
 
       when_decoding<Customer>("thecustomer");
 
-      ShouldBeTestExtensions.ShouldBe(then_decoding_result<Customer>()
-          .FirstName, "John");
+      then_decoding_result<Customer>()
+          .FirstName.ShouldBe( "John");
     }
 
     [Test]
@@ -152,8 +152,8 @@ namespace ApplicationXWwwUrlformEncodedCodec_Specification
 
       when_decoding<Customer>();
 
-      ShouldBeTestExtensions.ShouldBe(then_decoding_result<Customer>()
-          .FirstName, "John");
+      then_decoding_result<Customer>()
+          .FirstName.ShouldBe( "John");
     }
 
     [Test]
@@ -163,8 +163,8 @@ namespace ApplicationXWwwUrlformEncodedCodec_Specification
       given_request_stream("Customer.FirstName=John&Customer.FirstName=Jack&Customer.LastName=Doe");
 
       when_decoding<Customer>();
-      ShouldBeTestExtensions.ShouldBe(then_decoding_result<Customer>().FirstName, null);
-      ShouldBeTestExtensions.ShouldBe(then_decoding_result<Customer>().LastName, "Doe");
+      then_decoding_result<Customer>().FirstName.ShouldBe( null);
+      then_decoding_result<Customer>().LastName.ShouldBe( "Doe");
     }
 
     [Test]
@@ -177,10 +177,10 @@ namespace ApplicationXWwwUrlformEncodedCodec_Specification
 
       then_decoding_result<Customer>().ShouldBeAssignableTo<Customer>();
 
-      ShouldBeTestExtensions.ShouldBe(then_decoding_result<Customer>()
-          .FirstName, "John");
-      ShouldBeTestExtensions.ShouldBe(then_decoding_result<Customer>()
-          .LastName, "Doe");
+      then_decoding_result<Customer>()
+          .FirstName.ShouldBe( "John");
+      then_decoding_result<Customer>()
+          .LastName.ShouldBe( "Doe");
 
       then_decoding_result<Customer>()
         .DateOfBirth.Day.ShouldBe(10);
@@ -198,8 +198,8 @@ namespace ApplicationXWwwUrlformEncodedCodec_Specification
       then_decoding_result<ChangeSet<Customer>>()
         .Apply(customer);
 
-      ShouldBeTestExtensions.ShouldBe(customer.FirstName, "John");
-      ShouldBeTestExtensions.ShouldBe(customer.LastName, "Doe");
+      customer.FirstName.ShouldBe( "John");
+      customer.LastName.ShouldBe( "Doe");
 
       customer.DateOfBirth.Day.ShouldBe(10);
     }

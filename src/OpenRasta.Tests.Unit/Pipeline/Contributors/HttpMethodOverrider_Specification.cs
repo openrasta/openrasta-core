@@ -42,7 +42,7 @@ namespace HttpMethodOverrider_Specification
             given_pipeline_contributor<HttpMethodOverriderContributor>();
             when_sending_notification<KnownStages.IHandlerSelection>();
 
-          ShouldBeTestExtensions.ShouldBe(Context.Request.HttpMethod, "PUT");
+          Context.Request.HttpMethod.ShouldBe( "PUT");
         }
     }
 
@@ -56,7 +56,7 @@ namespace HttpMethodOverrider_Specification
             given_pipeline_contributor<HttpMethodOverriderContributor>();
             when_sending_notification<KnownStages.IHandlerSelection>();
 
-          ShouldBeTestExtensions.ShouldBe(Context.Request.HttpMethod, "POST");
+          Context.Request.HttpMethod.ShouldBe( "POST");
           Context.ServerErrors.Count.ShouldBe(0);
         }
     }

@@ -20,9 +20,9 @@ namespace OpenRasta.Tests.Unit.OperationModel.Hydrators
 
       when_entity_is_read();
 
-      ShouldBeTestExtensions.ShouldBe(ResultOperation.Inputs.Required().First().Binder.BuildObject()
+      ResultOperation.Inputs.Required().First().Binder.BuildObject()
           .Instance.ShouldBeAssignableTo<Frodo>()
-          .LastName, "Baggins");
+          .LastName.ShouldBe( "Baggins");
     }
   }
 }

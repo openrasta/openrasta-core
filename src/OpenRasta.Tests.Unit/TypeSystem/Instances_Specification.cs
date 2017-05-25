@@ -43,16 +43,16 @@ namespace Instances_Specification
 
       TypeBuilder.Update(newCustomer);
 
-      ShouldBeTestExtensions.ShouldBe(newCustomer.Username, "johndoe");
-      ShouldBeTestExtensions.ShouldBe(newCustomer.FirstName, "John");
+      newCustomer.Username.ShouldBe( "johndoe");
+      newCustomer.FirstName.ShouldBe( "John");
 
       given_property("lastname", "doe");
       newCustomer = new Customer {FirstName = "John"};
       TypeBuilder.Update(newCustomer);
 
-      ShouldBeTestExtensions.ShouldBe(newCustomer.Username, "johndoe");
-      ShouldBeTestExtensions.ShouldBe(newCustomer.FirstName, "John");
-      ShouldBeTestExtensions.ShouldBe(newCustomer.LastName, "doe");
+      newCustomer.Username.ShouldBe( "johndoe");
+      newCustomer.FirstName.ShouldBe( "John");
+      newCustomer.LastName.ShouldBe( "doe");
     }
   }
 
@@ -189,7 +189,7 @@ namespace Instances_Specification
       customer.LastName = "Baggins";
       customer = TypeBuilder.Create() as Customer;
 
-      ShouldBeTestExtensions.ShouldBe(customer.FirstName, "Frodo");
+      customer.FirstName.ShouldBe( "Frodo");
       customer.LastName.ShouldBeNull();
     }
 
@@ -207,7 +207,7 @@ namespace Instances_Specification
       firstName.TrySetValue(new[] {"Smeagol"}, IdentityConverter);
 
       TypeBuilder.Update(customerInstance);
-      ShouldBeTestExtensions.ShouldBe(customerInstance.FirstName, "Smeagol");
+      customerInstance.FirstName.ShouldBe( "Smeagol");
     }
 
     [Test]
@@ -222,7 +222,7 @@ namespace Instances_Specification
 
       object newCustomer = TypeBuilder.Create();
       newCustomer.ShouldNotBeSameAs(customer);
-      ShouldBeTestExtensions.ShouldBe(customer.FirstName, null);
+      customer.FirstName.ShouldBe( null);
     }
   }
 
@@ -251,8 +251,8 @@ namespace Instances_Specification
       given_property("FirstName", "John");
       WhenCreatingTheObject();
 
-      ShouldBeTestExtensions.ShouldBe(ThenTheObject<Customer>().FirstName, "John");
-      ShouldBeTestExtensions.ShouldBe(ThenTheObject<Customer>().Username, "johndoe");
+      ThenTheObject<Customer>().FirstName.ShouldBe( "John");
+      ThenTheObject<Customer>().Username.ShouldBe( "johndoe");
     }
 
     [Test]
@@ -284,8 +284,8 @@ namespace Instances_Specification
 
       WhenCreatingTheObject();
 
-      ShouldBeTestExtensions.ShouldBe(ThenTheObject<Customer>().Address.Line1, "Cadbury Street");
-      ShouldBeTestExtensions.ShouldBe(ThenTheObject<Customer>().Address.City, "London");
+      ThenTheObject<Customer>().Address.Line1.ShouldBe( "Cadbury Street");
+      ThenTheObject<Customer>().Address.City.ShouldBe( "London");
     }
 
     [Test]
@@ -296,8 +296,8 @@ namespace Instances_Specification
       given_property("CustomersByName:john.FirstName", "John");
       given_property("CustomersByName:john.LastName", "Doe");
       WhenCreatingTheObject();
-      ShouldBeTestExtensions.ShouldBe(ThenTheObject<House>().CustomersByName["john"].FirstName, "John");
-      ShouldBeTestExtensions.ShouldBe(ThenTheObject<House>().CustomersByName["john"].LastName, "Doe");
+      ThenTheObject<House>().CustomersByName["john"].FirstName.ShouldBe( "John");
+      ThenTheObject<House>().CustomersByName["john"].LastName.ShouldBe( "Doe");
     }
 
     [Test]
@@ -308,8 +308,8 @@ namespace Instances_Specification
       given_property("FirstName", "john");
 
       WhenCreatingTheObject();
-      ShouldBeTestExtensions.ShouldBe(ThenTheObject<Customer>().Username, "johndoe");
-      ShouldBeTestExtensions.ShouldBe(ThenTheObject<Customer>().FirstName, "john");
+      ThenTheObject<Customer>().Username.ShouldBe( "johndoe");
+      ThenTheObject<Customer>().FirstName.ShouldBe( "john");
     }
   }
 

@@ -244,7 +244,7 @@ namespace UriTemplate_Specification
 
       match.ShouldNotBeNull();
 
-      ShouldBeTestExtensions.ShouldBe(match.QueryStringVariables["queryValue"], "search");
+      match.QueryStringVariables["queryValue"].ShouldBe( "search");
     }
 
     [Test]
@@ -301,9 +301,9 @@ namespace UriTemplate_Specification
       UriTemplateMatch match =
         table.Match(new Uri("http://localhost"), new Uri("http://localhost/test?q=&p=1&s=10"));
       match.ShouldNotBeNull();
-      ShouldBeTestExtensions.ShouldBe(match.QueryStringVariables["searchTerm"], string.Empty);
-      ShouldBeTestExtensions.ShouldBe(match.QueryStringVariables["pageNumber"], "1");
-      ShouldBeTestExtensions.ShouldBe(match.QueryStringVariables["pageSize"], "10");
+      match.QueryStringVariables["searchTerm"].ShouldBe( string.Empty);
+      match.QueryStringVariables["pageNumber"].ShouldBe( "1");
+      match.QueryStringVariables["pageSize"].ShouldBe( "10");
     }
 
     [Test]
@@ -332,7 +332,7 @@ namespace UriTemplate_Specification
 
       match.ShouldNotBeNull();
       match.QueryStringVariables.Count.ShouldBe(1);
-      ShouldBeTestExtensions.ShouldBe(match.QueryStringVariables["PAGE"], "2");
+      match.QueryStringVariables["PAGE"].ShouldBe( "2");
     }
 
     [Test]

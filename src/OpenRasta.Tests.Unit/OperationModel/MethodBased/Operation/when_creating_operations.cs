@@ -12,14 +12,14 @@ namespace OpenRasta.Tests.Unit.OperationModel.MethodBased.Operation
     {
       given_operation("Get", typeof(int));
 
-      ShouldBeTestExtensions.ShouldBe(Operation.Name, "Get");
+      Operation.Name.ShouldBe( "Get");
     }
     [Test]
     public void the_operation_string_representation_is_the_method_signature()
     {
       given_operation("Get", typeof(int));
 
-      ShouldBeTestExtensions.ShouldBe(Operation.ToString(), "MockOperationHandler::Get(Int32 index)");
+      Operation.ToString().ShouldBe( "MockOperationHandler::Get(Int32 index)");
     }
     [Test]
     public void property_getters_are_not_selected()

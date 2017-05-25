@@ -21,7 +21,7 @@ namespace OpenRasta.Tests.Unit.OperationModel.Hydrators
 
       when_entity_is_read();
 
-      ShouldBeTestExtensions.ShouldBe(ResultOperation.Name, "PostStream");
+      ResultOperation.Name.ShouldBe( "PostStream");
       ResultOperation.Inputs.Required().First().Binder.BuildObject()
         .Instance.ShouldBeAssignableTo<Stream>()
         .ReadByte().ShouldBe(0);
@@ -37,7 +37,7 @@ namespace OpenRasta.Tests.Unit.OperationModel.Hydrators
       given_request_entity_body(new byte[] { 0 });
 
       when_filtering_operations();
-      ShouldBeTestExtensions.ShouldBe(ResultOperation.Name, "PostName");
+      ResultOperation.Name.ShouldBe( "PostName");
       Errors.Errors.Count().ShouldBe(1);
     }
   }

@@ -30,7 +30,7 @@ namespace KeyedValuesBinder_Specification
             var binder = new KeyedValuesBinder(TypeOf<Customer>(), "customer");
             binder.SetProperty("username", new[] { "johndoe" }, (str, type) => BindingResult.Success(str));
             var customer = (Customer)binder.BuildObject().Instance;
-          ShouldBeTestExtensions.ShouldBe(customer.Username, "johndoe");
+          customer.Username.ShouldBe( "johndoe");
         }
         [Test]
         public void the_same_object_is_returned_when_building_twice_without_changes()
@@ -53,8 +53,8 @@ namespace KeyedValuesBinder_Specification
             binder.SetProperty("firstname", new[] { "john" }, (str, type) => BindingResult.Success(str));
             var customer = (Customer)binder.BuildObject().Instance;
 
-          ShouldBeTestExtensions.ShouldBe(customer.Username, "johndoe");
-          ShouldBeTestExtensions.ShouldBe(customer.FirstName, "john");
+          customer.Username.ShouldBe( "johndoe");
+          customer.FirstName.ShouldBe( "john");
         }
         [Test]
         public void enumerables_are_initialized_as_empty_by_default()
@@ -79,8 +79,8 @@ namespace KeyedValuesBinder_Specification
 
           var customers = (IEnumerable<Customer>)binder.BuildObject().Instance;
           customers.Count().ShouldBe(2);
-          ShouldBeTestExtensions.ShouldBe(customers.First().FirstName, "Frodo");
-          ShouldBeTestExtensions.ShouldBe(customers.Skip(1).First().FirstName, "Sam");
+          customers.First().FirstName.ShouldBe( "Frodo");
+          customers.Skip(1).First().FirstName.ShouldBe( "Sam");
         }
         [Test]
         public void the_property_is_assigned_even_when_the_prefix_has_the_same_name()
@@ -90,8 +90,8 @@ namespace KeyedValuesBinder_Specification
 
           binder.SetProperty("firstName", new[] { "Smeagol" }, valueConverter).ShouldBeTrue();
 
-          ShouldBeTestExtensions.ShouldBe(binder.BuildObject().Instance.ShouldBeAssignableTo<Customer>()
-              .FirstName, "Smeagol");
+          binder.BuildObject().Instance.ShouldBeAssignableTo<Customer>()
+              .FirstName.ShouldBe( "Smeagol");
         }
         [Test]
         public void multiple_properties_on_child_objects_are_assigned_correctly()
@@ -123,8 +123,8 @@ namespace KeyedValuesBinder_Specification
 
           var customer = binder.BuildObject().Instance as Customer;
           customer.Attributes.Count().ShouldBe(2);
-          ShouldBeTestExtensions.ShouldBe(customer.Attributes.First(), "blue eyes");
-          ShouldBeTestExtensions.ShouldBe(customer.Attributes.Skip(1).First(), "green eyes");
+          customer.Attributes.First().ShouldBe( "blue eyes");
+          customer.Attributes.Skip(1).First().ShouldBe( "green eyes");
         }
         protected IType TypeOf<T>()
         {

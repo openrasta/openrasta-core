@@ -58,7 +58,7 @@ namespace BasicAuthenticationScheme_Specification
             result.ShouldBeAssignableTo<AuthenticationResult.Success>();
             var success = result as AuthenticationResult.Success;
 
-          ShouldBeTestExtensions.ShouldBe(success.Username, username);
+          success.Username.ShouldBe( username);
           success.Roles.ShouldBe((IEnumerable<string>) userRoles);
         }
 

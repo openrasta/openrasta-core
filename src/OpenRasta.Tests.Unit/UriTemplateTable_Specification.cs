@@ -35,7 +35,7 @@ namespace UriTemplateTable_Specification
           match.Count.ShouldBe(2);
           match[0].QueryStringVariables.Count.ShouldBe(1);
           match[1].QueryStringVariables.Count.ShouldBe(0);
-          ShouldBeTestExtensions.ShouldBe(match[0].QueryStringVariables["queryText"], "testing a query");
+          match[0].QueryStringVariables["queryText"].ShouldBe( "testing a query");
         }
 
         [Test]
@@ -68,7 +68,7 @@ namespace UriTemplateTable_Specification
           match.Count.ShouldBe(3);
           match[0].QueryStringVariables.Count.ShouldBe(1);
           match[0].QueryParameters.Count.ShouldBe(1);
-          ShouldBeTestExtensions.ShouldBe(match[0].QueryStringVariables["quasiText"], "ceci_nest_pas_un_value");
+          match[0].QueryStringVariables["quasiText"].ShouldBe( "ceci_nest_pas_un_value");
         }
 
         [Test]
@@ -86,7 +86,7 @@ namespace UriTemplateTable_Specification
           match.Count.ShouldBe(4);
           match[0].QueryStringVariables.Count.ShouldBe(1);
           match[0].QueryParameters.Count.ShouldBe(1);
-          ShouldBeTestExtensions.ShouldBe(match[0].QueryStringVariables["quasiText"], "ceci_nest_pas_un_value");
+          match[0].QueryStringVariables["quasiText"].ShouldBe( "ceci_nest_pas_un_value");
         }
 
         [Test]

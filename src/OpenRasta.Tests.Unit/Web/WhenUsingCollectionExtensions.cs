@@ -22,8 +22,8 @@ namespace OpenRasta.Collections.Specialized
             var testObject = new {Key1 = "value1", Key2 = "value2"};
 
             var testResult = testObject.ToCaseInvariantDictionary();
-          ShouldBeTestExtensions.ShouldBe(testResult["Key1"], "value1");
-          ShouldBeTestExtensions.ShouldBe(testResult["Key2"], "value2");
+          testResult["Key1"].ShouldBe( "value1");
+          testResult["Key2"].ShouldBe( "value2");
           testResult.Count.ShouldBe(2);
         }
 
@@ -32,8 +32,8 @@ namespace OpenRasta.Collections.Specialized
         {
             var testObject = new {Key1 = "value1", Key2 = "value2"}.ToCaseInvariantDictionary();
 
-          ShouldBeTestExtensions.ShouldBe(testObject["key1"], "value1");
-          ShouldBeTestExtensions.ShouldBe(testObject["Key1"], "value1");
+          testObject["key1"].ShouldBe( "value1");
+          testObject["Key1"].ShouldBe( "value1");
         }
     }
 }

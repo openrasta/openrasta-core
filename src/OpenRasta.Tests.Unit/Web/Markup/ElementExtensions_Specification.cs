@@ -24,7 +24,7 @@ namespace ElementExtensions_Specification
         {
             var element = new GenericElement("fake").ID(null);
 
-          ShouldBeTestExtensions.ShouldBe(element.ID, null);
+          element.ID.ShouldBe( null);
 
           element.ToString().ShouldNotContain("id=\"");
         }
@@ -34,7 +34,7 @@ namespace ElementExtensions_Specification
         {
             var element = new GenericElement("fake").ID("fakeid");
 
-          ShouldBeTestExtensions.ShouldBe(element.ID, "fakeid");
+          element.ID.ShouldBe( "fakeid");
         }
     }
 

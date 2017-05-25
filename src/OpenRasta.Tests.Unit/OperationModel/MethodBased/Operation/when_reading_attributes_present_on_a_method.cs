@@ -15,7 +15,7 @@ namespace OpenRasta.Tests.Unit.OperationModel.MethodBased.Operation
 
       var attrib = Operation.FindAttribute<DescriptionAttribute>();
       attrib.ShouldNotBeNull();
-      ShouldBeTestExtensions.ShouldBe(attrib.Description, "Description");
+      attrib.Description.ShouldBe( "Description");
     }
     [Test]
     public void multile_attributes_are_found()

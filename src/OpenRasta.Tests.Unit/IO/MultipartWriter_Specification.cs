@@ -63,7 +63,7 @@ namespace MultipartWriter_Specification
 
             WhenWritingTheMultipartMessage();
 
-          ShouldBeTestExtensions.ShouldBe(ThenTheResult, @"
+          ThenTheResult.ShouldBe( @"
 --boundary
 Content-Disposition: form-data; name=""user""
 

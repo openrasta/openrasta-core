@@ -37,8 +37,8 @@ namespace Surrogates_Specification
           _theBuilder.GetProperty(":0").TrySetValue("hello2").ShouldBeTrue();
 
           var theList = (List<string>)_theBuilder.Create();
-          ShouldBeTestExtensions.ShouldBe(theList[0], "hello");
-          ShouldBeTestExtensions.ShouldBe(theList[1], "hello2");
+          theList[0].ShouldBe( "hello");
+          theList[1].ShouldBe( "hello2");
         }
         [Test]
         public void the_indexer_is_surrogated()
@@ -48,7 +48,7 @@ namespace Surrogates_Specification
           _theBuilder.GetProperty(":0").TrySetValue("hello").ShouldBeTrue();
 
           var theList = (List<string>)_theBuilder.Create();
-          ShouldBeTestExtensions.ShouldBe(theList[0], "hello");
+          theList[0].ShouldBe( "hello");
         }
 
         void given_builder()
@@ -69,7 +69,7 @@ namespace Surrogates_Specification
           _theBuilder.GetProperty("ListOfStrings:0").TrySetValue("hello").ShouldBeTrue();
 
           var theList = (ListContainer)_theBuilder.Create();
-          ShouldBeTestExtensions.ShouldBe(theList.ListOfStrings[0], "hello");
+          theList.ListOfStrings[0].ShouldBe( "hello");
         }
         [Test]
         public void indexer_value_is_ignored_when_surrogate_is_an_intermediary()
@@ -80,7 +80,7 @@ namespace Surrogates_Specification
             instance.GetProperty("Customers:0.FirstName").TrySetValue("Skywalker");
 
             var result = (House)instance.Create();
-          ShouldBeTestExtensions.ShouldBe(result.Customers[0].FirstName, "Anakin");
+          result.Customers[0].FirstName.ShouldBe( "Anakin");
         }
         void GivenTypeInstance()
         {
@@ -193,8 +193,8 @@ namespace Surrogates_Specification
 
             when_object_built();
 
-          ShouldBeTestExtensions.ShouldBe(result.First().FirstName, "Frodo");
-          ShouldBeTestExtensions.ShouldBe(result.First().LastName, "Baggins");
+          result.First().FirstName.ShouldBe( "Frodo");
+          result.First().LastName.ShouldBe( "Baggins");
         }
     }
     namespace context

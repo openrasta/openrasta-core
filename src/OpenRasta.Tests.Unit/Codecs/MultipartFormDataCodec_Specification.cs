@@ -66,7 +66,7 @@ namespace MultipartFormDataCodec_Specification
 
             when_decoding<string>("username");
 
-          ShouldBeTestExtensions.ShouldBe(then_decoding_result<string>(), "johndoe");
+          then_decoding_result<string>().ShouldBe( "johndoe");
         }
         [Test]
         public void a_datetime_is_assigned()
@@ -99,7 +99,7 @@ namespace MultipartFormDataCodec_Specification
             GivenAMultipartRequestStream(Scenarios.TELEPHONE_FIELD_UTF8_QUOTED);
 
             when_decoding<string>("Téléphone");
-          ShouldBeTestExtensions.ShouldBe(then_decoding_result<string>(), "077 777 7777");
+          then_decoding_result<string>().ShouldBe( "077 777 7777");
         }
         [Test]
         public void a_field_name_encoded_in_base64_for_utf_8_is_recognized()
@@ -108,7 +108,7 @@ namespace MultipartFormDataCodec_Specification
             GivenAMultipartRequestStream(Scenarios.TELEPHONE_FIELD_UTF8_BASE64);
 
             when_decoding<string>("Téléphone");
-          ShouldBeTestExtensions.ShouldBe(then_decoding_result<string>(), "077 777 7777");
+          then_decoding_result<string>().ShouldBe( "077 777 7777");
         }
         [Test]
         public void a_field_name_encoded_in_base64_for_iso_is_recognized()
@@ -117,7 +117,7 @@ namespace MultipartFormDataCodec_Specification
             GivenAMultipartRequestStream(Scenarios.TELEPHONE_FIELD_ISO88591_QUOTED);
 
             when_decoding<string>("Téléphone");
-          ShouldBeTestExtensions.ShouldBe(then_decoding_result<string>(), "077 777 7777");
+          then_decoding_result<string>().ShouldBe( "077 777 7777");
         }
         [Test]
         public void a_sub_codec_is_used_to_resolve_a_parameter_name()
@@ -127,7 +127,7 @@ namespace MultipartFormDataCodec_Specification
             GivenAMultipartRequestStream(Scenarios.FILE_FIELD);
 
             when_decoding<IFile>("file");
-          ShouldBeTestExtensions.ShouldBe(then_decoding_result<IFile>().FileName, "temp.txt");
+          then_decoding_result<IFile>().FileName.ShouldBe( "temp.txt");
           then_decoding_result<IFile>().Length.ShouldBe(85000);
         }
     }
@@ -142,7 +142,7 @@ namespace MultipartFormDataCodec_Specification
 
             when_decoding<Customer>("customer");
 
-          ShouldBeTestExtensions.ShouldBe(then_decoding_result<Customer>().Username, "johndoe");
+          then_decoding_result<Customer>().Username.ShouldBe( "johndoe");
         }
         [Test]
         public void a_datetime_property_is_assigned()
@@ -162,8 +162,8 @@ namespace MultipartFormDataCodec_Specification
 
             when_decoding<IDictionary<string,string[]>>("additions");
 
-          ShouldBeTestExtensions.ShouldBe(then_decoding_result<IDictionary<string, string[]>>()["oneplusone"][0], "two");
-          ShouldBeTestExtensions.ShouldBe(then_decoding_result<IDictionary<string, string[]>>()["oneplustwo"][0], "three");
+          then_decoding_result<IDictionary<string, string[]>>()["oneplusone"][0].ShouldBe( "two");
+          then_decoding_result<IDictionary<string, string[]>>()["oneplustwo"][0].ShouldBe( "three");
         }
         [Test]
         public void construction_of_objects_from_other_media_types_returns_the_correct_values()

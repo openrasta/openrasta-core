@@ -13,6 +13,7 @@ namespace Extensions_Specification
   {
     int value;
   }
+
   public class when_creating_instances_from_strings : context
   {
     [Test]
@@ -20,12 +21,14 @@ namespace Extensions_Specification
     {
       typeof(DoNothing).CreateInstanceFrom("").ShouldBe(default(DoNothing));
     }
+
     [Test]
     public void empty_strings_nullables_are_defaulted()
     {
       typeof(int?).CreateInstanceFrom("")
         .ShouldBeNull();
     }
+
     [Test]
     public void empty_string_ints_are_defaultedd()
     {
@@ -94,13 +97,13 @@ namespace Extensions_Specification
     [Test]
     public void instance_results_in_typestring_for_the_instance_type()
     {
-      ShouldBeTestExtensions.ShouldBe(new SimpleType().GetTypeString(), "SimpleType");
+      new SimpleType().GetTypeString().ShouldBe("SimpleType");
     }
 
     [Test]
     public void nested_types_use_the_dot_syntax()
     {
-      ShouldBeTestExtensions.ShouldBe(typeof(SimpleType.NestedType).GetTypeString(), "SimpleType.NestedType");
+      typeof(SimpleType.NestedType).GetTypeString().ShouldBe("SimpleType.NestedType");
     }
 
     [Test]
@@ -112,7 +115,7 @@ namespace Extensions_Specification
     [Test]
     public void the_name_without_the_namespace_is_returned()
     {
-      ShouldBeTestExtensions.ShouldBe(typeof(SimpleType).GetTypeString(), "SimpleType");
+      typeof(SimpleType).GetTypeString().ShouldBe("SimpleType");
     }
   }
 
@@ -121,7 +124,7 @@ namespace Extensions_Specification
     [Test]
     public void generic_type_strings_are_defined_with_parenthesis()
     {
-      ShouldBeTestExtensions.ShouldBe(typeof(GenericType<string>).GetTypeString(), "GenericType(String)");
+      typeof(GenericType<string>).GetTypeString().ShouldBe("GenericType(String)");
     }
 
     [Test]
@@ -133,15 +136,14 @@ namespace Extensions_Specification
     [Test]
     public void nested_generic_type_uses_the_generics_syntax()
     {
-      ShouldBeTestExtensions.ShouldBe(typeof(SimpleType.NestedGenericType<string>).GetTypeString(),
+      typeof(SimpleType.NestedGenericType<string>).GetTypeString().ShouldBe(
         "SimpleType.NestedGenericType(String)");
     }
 
     [Test, Ignore("Need to understand how the generics reflection api works first.")]
     public void recursive_generic_types_use_the_generic_syntax()
     {
-      ShouldBeTestExtensions.ShouldBe(
-        typeof(GenericType<GenericType<string>>.NestedGenericType<string>).GetTypeString(),
+      typeof(GenericType<GenericType<string>>.NestedGenericType<string>).GetTypeString().ShouldBe(
         "GenericType(GenericType(string)).NestedGenericType(String)");
     }
   }
@@ -234,19 +236,19 @@ namespace Extensions_Specification
     public void non_primitive_types_without_converters_return_the_result_of_ToString()
     {
       var simpleType = new SimpleType();
-      ShouldBeTestExtensions.ShouldBe(simpleType.ConvertToString(), simpleType.ToString());
+      simpleType.ConvertToString().ShouldBe(simpleType.ToString());
     }
 
     [Test]
     public void primitive_types_return_the_converted_value()
     {
-      ShouldBeTestExtensions.ShouldBe(3.ConvertToString(), "3");
+      3.ConvertToString().ShouldBe("3");
     }
 
     [Test]
     public void types_with_converters_return_the_coverter_value()
     {
-      ShouldBeTestExtensions.ShouldBe(new TypeWithConverter().ConvertToString(), "ValueFromConverter");
+      new TypeWithConverter().ConvertToString().ShouldBe("ValueFromConverter");
     }
   }
 
