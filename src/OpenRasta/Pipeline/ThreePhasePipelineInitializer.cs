@@ -10,17 +10,16 @@ namespace OpenRasta.Pipeline
 {
   public class ThreePhasePipelineInitializer : IPipelineInitializer
   {
-    IEnumerable<IPipelineContributor> _contributors;
-    IGenerateCallGraphs _callGrapher;
     static ILogger Log { get; } = TraceSourceLogger.Instance;
 
     public IPipelineAsync Initialize(StartupProperties startup)
     {
-      var resolver = startup.OpenRasta.Factories.Resolver;
-      _callGrapher = new CallGraphGeneratorFactory(resolver).GetCallGraphGenerator();
-      _contributors = resolver.ResolveAll<IPipelineContributor>();
+      var factories = startup.OpenRasta.Factories;
+
+      var contributors = factories.Contributors().ToList();
+      
       if (startup.OpenRasta.Pipeline.Validate)
-        _contributors.VerifyKnownStagesRegistered();
+        contributors.VerifyKnownStagesRegistered();
 
       var defaults = new List<IPipelineMiddlewareFactory>()
       {
@@ -44,9 +43,9 @@ namespace OpenRasta.Pipeline
         builder = Build;
 
       var pipeline = builder(
-          _callGrapher,
+          factories.CallGraphGenerator(),
           defaults,
-          _contributors,
+          contributors,
           startup)
         .ToList();
 
@@ -59,13 +58,18 @@ namespace OpenRasta.Pipeline
 
     static IEnumerable<(IPipelineMiddlewareFactory, ContributorCall)> Build(IGenerateCallGraphs callGraphGenerator, IEnumerable<IPipelineMiddlewareFactory> defaults, IEnumerable<IPipelineContributor> contributors, StartupProperties startupProperties)
     {
-      foreach (var factory in defaults)
-        yield return (factory, null);
+      return Defaults(defaults).Concat(Contributors(callGraphGenerator, contributors, startupProperties));
+    }
 
-      foreach (var contributor in callGraphGenerator
-        .GenerateCallGraph(contributors)
-        .ToDetailedMiddleware(startupProperties))
-        yield return contributor;
+    static IEnumerable<ValueTuple<IPipelineMiddlewareFactory, ContributorCall>> Contributors(IGenerateCallGraphs callGraphGenerator, IEnumerable<IPipelineContributor> contributors,
+      StartupProperties startupProperties)
+    {
+      return callGraphGenerator.GenerateCallGraph(contributors).ToDetailedMiddleware(startupProperties);
+    }
+
+    static IEnumerable<ValueTuple<IPipelineMiddlewareFactory, ContributorCall>> Defaults(IEnumerable<IPipelineMiddlewareFactory> defaults)
+    {
+      foreach (var factory in defaults) yield return (factory, null);
     }
 
     IEnumerable<(IPipelineMiddlewareFactory middleware, ContributorCall contributor)> LogBuild(IGenerateCallGraphs callGraphGenerator, IEnumerable<IPipelineMiddlewareFactory> defaults, IEnumerable<IPipelineContributor> contributors, StartupProperties startupProperties)
