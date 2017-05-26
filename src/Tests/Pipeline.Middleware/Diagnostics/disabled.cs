@@ -17,14 +17,15 @@ namespace Tests.Pipeline.Middleware.Diagnostics
       resolver.AddDependency<IGenerateCallGraphs, TopologicalSortCallGraphGenerator>();
       resolver.AddDependency<IPipelineContributor, BootstrapperContributor>();
       resolver.AddDependency<IPipelineContributor, First>();
-      var initialiser = new ThreePhasePipelineInitializer(resolver);
+      var initialiser = new ThreePhasePipelineInitializer();
 
       var props = new StartupProperties
       {
         OpenRasta =
         {
           Diagnostics = {TracePipelineExecution = false},
-          Pipeline = {Validate = false}
+          Pipeline = {Validate = false},
+          Factories = { Resolver = resolver }
         }
       };
 

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using OpenRasta.DI;
 using OpenRasta.Pipeline;
 using OpenRasta.Pipeline.CallGraph;
@@ -80,7 +79,7 @@ namespace OpenRasta.Concordia
       public FactoriesProperties(IDictionary<string, object> properties) : base(properties)
       {
       }
-      
+
       public IDependencyResolver Resolver
       {
         get => GetOrAdd("openrasta.factories.DependencyResolver", ()=> new InternalDependencyResolver());

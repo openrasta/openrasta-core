@@ -10,26 +10,15 @@ namespace OpenRasta.Pipeline
 {
   public class ThreePhasePipelineInitializer : IPipelineInitializer
   {
-    readonly IEnumerable<IPipelineContributor> _contributors;
-    readonly IGenerateCallGraphs _callGrapher;
+    IEnumerable<IPipelineContributor> _contributors;
+    IGenerateCallGraphs _callGrapher;
     static ILogger Log { get; } = TraceSourceLogger.Instance;
-
-    public ThreePhasePipelineInitializer(IDependencyResolver resolver)
-      : this(resolver.ResolveAll<IPipelineContributor>(),
-        new CallGraphGeneratorFactory(resolver).GetCallGraphGenerator())
-    {
-    }
-
-    ThreePhasePipelineInitializer(
-      IEnumerable<IPipelineContributor> contributors,
-      IGenerateCallGraphs callGrapher)
-    {
-      _contributors = contributors;
-      _callGrapher = callGrapher;
-    }
 
     public IPipelineAsync Initialize(StartupProperties startup)
     {
+      var resolver = startup.OpenRasta.Factories.Resolver;
+      _callGrapher = new CallGraphGeneratorFactory(resolver).GetCallGraphGenerator();
+      _contributors = resolver.ResolveAll<IPipelineContributor>();
       if (startup.OpenRasta.Pipeline.Validate)
         _contributors.VerifyKnownStagesRegistered();
 

@@ -30,7 +30,10 @@ namespace OpenRasta.Hosting.InMemory
       _configuration = configuration;
       ApplicationVirtualPath = "/";
       HostManager = HostManager.RegisterHost(this);
-      RaiseStart(new StartupProperties());
+      RaiseStart(new StartupProperties
+      {
+        OpenRasta = { Factories = { Resolver = Resolver } }
+      });
     }
 
     public event EventHandler<IncomingRequestProcessedEventArgs> IncomingRequestProcessed;

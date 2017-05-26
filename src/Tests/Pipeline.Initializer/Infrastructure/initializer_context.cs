@@ -31,8 +31,14 @@ namespace Tests.Pipeline.Initializer.Infrastructure
 
       var runner = resolver.Resolve<IPipelineInitializer>();
 
-
-      return runner.Initialize(new StartupProperties {OpenRasta = {Pipeline = {Validate = validate}}});
+      return runner.Initialize(new StartupProperties
+      {
+        OpenRasta =
+        {
+          Pipeline = {Validate = validate},
+          Factories = {Resolver = resolver}
+        }
+      });
     }
   }
 }

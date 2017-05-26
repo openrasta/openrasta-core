@@ -1,4 +1,5 @@
 #region License
+
 /* Authors:
  *      Sebastien Lambla (seb@serialseb.com)
  * Copyright:
@@ -6,7 +7,9 @@
  * License:
  *      This file is distributed under the terms of the MIT License found at the end of this file.
  */
+
 #endregion
+
 using System;
 using OpenRasta.Configuration.Fluent;
 using OpenRasta.Hosting;
@@ -17,51 +20,58 @@ using OpenRasta.Tests.Unit.Infrastructure;
 
 namespace OpenRasta.Tests.Unit.Configuration
 {
-    public class configuration_context : context
+  public class configuration_context : context
+  {
+    IDisposable configCookie;
+    InMemoryHost Host;
+
+    protected override void SetUp()
     {
-        IDisposable configCookie;
-        InMemoryHost Host;
-        protected override void SetUp()
-        {
-            base.SetUp();
-            Host = new InMemoryHost();
-            
-            DependencyManager.SetResolver(Host.Resolver);
-            configCookie = OpenRastaConfiguration.Manual;
-        }
-        protected override void TearDown()
-        {
-            base.TearDown();
-            if (configCookie != null)
-                configCookie.Dispose();
-            Host.Close();
-            DependencyManager.UnsetResolver();
-        }
-        public virtual void WhenTheConfigurationIsFinished()
-        {
-            try
-            {
-                configCookie.Dispose();
-            }
-            finally
-            {
-                configCookie = null;
-            }
-        }
+      base.SetUp();
+      Host = new InMemoryHost();
 
-        public IUriDefinition GivenAResourceRegistrationFor<TResource>(string uri)
-        {
-
-            var resourcetype = ResourceSpace.Has.ResourcesOfType<TResource>();
-            return resourcetype.AtUri(uri);
-        }
-
-        protected class Customer { }
-        protected class CustomerHandler { }
+      DependencyManager.SetResolver(Host.Resolver);
+      configCookie = OpenRastaConfiguration.Manual;
     }
+
+    protected override void TearDown()
+    {
+      base.TearDown();
+      configCookie?.Dispose();
+      Host.Close();
+      DependencyManager.UnsetResolver();
+    }
+
+    public virtual void WhenTheConfigurationIsFinished()
+    {
+      try
+      {
+        configCookie.Dispose();
+      }
+      finally
+      {
+        configCookie = null;
+      }
+    }
+
+    public IUriDefinition GivenAResourceRegistrationFor<TResource>(string uri)
+    {
+      var resourcetype = ResourceSpace.Has.ResourcesOfType<TResource>();
+      return resourcetype.AtUri(uri);
+    }
+
+    protected class Customer
+    {
+    }
+
+    protected class CustomerHandler
+    {
+    }
+  }
 }
 
 #region Full license
+
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -82,4 +92,5 @@ namespace OpenRasta.Tests.Unit.Configuration
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+
 #endregion
