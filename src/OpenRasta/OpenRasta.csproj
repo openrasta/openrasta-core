@@ -311,7 +311,6 @@
     <Compile Include="Pipeline\PipelineAbortedException.cs" />
     <Compile Include="Pipeline\PipelineExtensions.cs" />
     <Compile Include="Pipeline\RequestMiddleware.cs" />
-    <Compile Include="Pipeline\CallGraph\CallGraphGeneratorFactory.cs" />
     <Compile Include="Pipeline\CallGraph\ContributorNotification.cs" />
     <Compile Include="Pipeline\CallGraph\CompatibilityContributorInitializer.cs" />
     <Compile Include="Pipeline\CallGraph\WeightedCallGraphGenerator.cs" />

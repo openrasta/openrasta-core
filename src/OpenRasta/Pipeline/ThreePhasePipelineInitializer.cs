@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using OpenRasta.Concordia;
 using OpenRasta.Diagnostics;
-using OpenRasta.DI;
 using OpenRasta.Pipeline.CallGraph;
 
 namespace OpenRasta.Pipeline

@@ -31,8 +31,9 @@ namespace OpenRasta.Concordia
     }
     protected Func<T> Get<T>(string key, Func<T> defaultValue)
     {
-      if (Properties.ContainsKey(key) == false) return (Func<T>)(Properties[key] = defaultValue);
-      return (Func<T>) Properties[key];
+      if (Properties.TryGetValue(key, out var value) == false)
+        value = Properties[key] = defaultValue;
+      return (Func<T>) value;
     }
     protected void Set<T>(string key, T value)
     {
@@ -95,7 +96,9 @@ namespace OpenRasta.Concordia
       public Func<IGenerateCallGraphs> CallGraphGenerator
       {
         get => Get("openrasta.factories.CallGraphGenerator", () =>
-          new CallGraphGeneratorFactory(Resolver).GetCallGraphGenerator());
+          Resolver.HasDependency<IGenerateCallGraphs>()
+            ? Resolver.Resolve<IGenerateCallGraphs>()
+            : new WeightedCallGraphGenerator());
         set => Set("openrasta.factories.CallGraphGenerator", value);
       }
     }
