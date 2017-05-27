@@ -9,68 +9,16 @@
 #endregion
 
 using System;
+using NUnit.Framework;
+using OpenRasta.DI;
 
-namespace OpenRasta.Tests.Unit.DI
+namespace InternalDependencyResolver_Specification
 {
-    public abstract class SimpleAbstract : ISimple
+    [TestFixture]
+    public class when_resolving_instances_with_internal_dependency_resolver :
+        when_resolving_instances
     {
-    }
-
-   public class AnotherSimple : SimpleAbstract{}
-    public interface ISimple
-    {
-    }
-
-    public interface IAnotherSimple : ISimple
-    {
-    }
-
-    public interface ISimpleChild
-    {
-    }
-
-    public interface IAnother
-    {
-    }
-
-    public class Simple : ISimple
-    {
-        public ISimpleChild Property { get; set; }
-    }
-
-    public class SimpleChild : ISimpleChild
-    {
-    }
-
-    public class Another : IAnother
-    {
-        public Another(ISimple simple) { Dependent = simple; }
-        public ISimple Dependent { get; set; }
-    }
-
-    public class RecursiveConstructor
-    {
-        public RecursiveConstructor(RecursiveConstructor constructor) { }
-    }
-
-    public class RecursiveProperty
-    {
-        public RecursiveProperty Property { get; set; }
-    }
-
-    public class TypeWithTwoConstructors
-    {
-        public ISimple _argOne;
-        public IAnother _argTwo;
-        public TypeWithTwoConstructors() { }
-
-        public TypeWithTwoConstructors(ISimple argOne, IAnother argTwo)
-        {
-            _argOne = argOne;
-            _argTwo = argTwo;
-        }
-
-        public TypeWithTwoConstructors(ISimple argOne, IAnother argTwo, string somethingElse) { }
+        public override IDependencyResolver CreateResolver() { return new InternalDependencyResolver(); }
     }
 }
 
