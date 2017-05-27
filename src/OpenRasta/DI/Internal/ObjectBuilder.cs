@@ -8,15 +8,14 @@ namespace OpenRasta.DI.Internal
 {
     public class ObjectBuilder
     {
-        public ObjectBuilder(ResolveContext context, ILogger log)
+        public ObjectBuilder(ResolveContext context)
         {
             ResolveContext = context;
-            Log = log;
         }
 
-        protected ILogger Log { get; set; }
+      protected ILogger Log { get; } = TraceSourceLogger.Instance;
 
-        protected ResolveContext ResolveContext { get; set; }
+      protected ResolveContext ResolveContext { get; set; }
 
         public object CreateObject(DependencyRegistration registration)
         {

@@ -55,6 +55,15 @@ namespace InternalDependencyResolver_Specification
     }
 
     [Test]
+    public void resolves_enumerables()
+    {
+      Resolver.AddDependency<ISimple, Simple>();
+      Resolver.AddDependency<ISimple, AnotherSimple>();
+      var result = Resolver.Resolve<IEnumerable<ISimple>>();
+      result.ShouldContain(o=>o is Simple);
+      result.ShouldContain(o=>o is AnotherSimple);
+    }
+    [Test]
     public void a_type_can_get_a_dependency_resolver_dependency_assigned()
     {
       Resolver.AddDependencyInstance(typeof(IDependencyResolver), Resolver);
