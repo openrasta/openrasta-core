@@ -193,6 +193,7 @@
     <Compile Include="Diagnostics\OperationContextErrorCollector.cs" />
     <Compile Include="Diagnostics\TraceSourceLogger.cs" />
     <Compile Include="DI\DependencyLifetime.cs" />
+    <Compile Include="DI\DependencyLifetimeManager.cs" />
     <Compile Include="DI\DependencyManager.cs" />
     <Compile Include="DI\DependencyResolutionException.cs" />
     <Compile Include="DI\DependencyResolverCore.cs" />
