@@ -10,7 +10,7 @@ namespace OpenRasta.OperationModel
     public async Task<OperationResult> Execute(IEnumerable<IOperationAsync> operations)
     {
       var operation = operations.First();
-      var result = (await operation.InvokeAsync()).Select(_=>_.Value).FirstOrDefault();
+      var result = (await operation.InvokeAsync()).Select(_ => _.Value).FirstOrDefault();
 
       return ToOperationResult(result);
     }
