@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using NUnit.Framework;
 using OpenRasta.DI;
 using OpenRasta.Tests.Unit.DI;
@@ -48,6 +50,23 @@ namespace InternalDependencyResolver_Specification
       simpleList.ShouldBeEmpty();
     }
 
+    [Test]
+    public void resolves_funcs()
+    {
+      Resolver.AddDependency<ISimple, Simple>();
+      var func = Resolver.Resolve<Func<ISimple>>();
+      func().ShouldBeOfType<Simple>();
+    }
+    
+
+    [Test]
+    public void resolves_func_of_enum()
+    {
+      Resolver.AddDependency<ISimple, Simple>();
+      var func = Resolver.Resolve<Func<IEnumerable<ISimple>>>();
+      func().ShouldHaveSingleItem().ShouldBeSameAs(Resolver.Resolve<ISimple>());
+    }
+    
     [Test]
     public void resolves_enumerables()
     {
