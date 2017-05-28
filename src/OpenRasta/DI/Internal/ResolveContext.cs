@@ -23,7 +23,25 @@ namespace OpenRasta.DI.Internal
 
     public object Resolve(Type serviceType)
     {
-      return Resolve(Registrations.GetRegistrationForService(serviceType));
+      return (FindProfile(serviceType)
+              ?? throw new DependencyResolutionException($"Could not find a profile for {serviceType}")
+      ).Resolve();
+    }
+
+    public object TryResolve(Type serviceType)
+    {
+      return FindProfile(serviceType)?.Resolve();
+    }
+
+    ResolveProfile FindProfile(Type serviceType)
+    {
+      return ResolveProfile.Simple(this, serviceType)
+             ?? ResolveProfile.Enumerable(this, serviceType);
+    }
+
+    public T Resolve<T>(DependencyRegistration registration)
+    {
+      return (T) Resolve(registration);
     }
 
     public object Resolve(DependencyRegistration registration)
@@ -33,7 +51,6 @@ namespace OpenRasta.DI.Internal
       try
       {
         _recursionDefender.Push(registration);
-
         return registration.LifetimeManager.Resolve(this, registration);
       }
       finally
