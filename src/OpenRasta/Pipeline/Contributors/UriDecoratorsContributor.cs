@@ -1,14 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using OpenRasta.DI;
 using OpenRasta.Web;
-using OpenRasta.Pipeline;
 using OpenRasta.Web.UriDecorators;
 
 namespace OpenRasta.Pipeline.Contributors
 {
-  // TODO Func injection
   public class UriDecoratorsContributor : IPipelineContributor
   {
     readonly Func<IEnumerable<IUriDecorator>> _decorators;

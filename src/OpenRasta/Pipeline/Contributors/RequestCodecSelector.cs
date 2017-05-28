@@ -1,28 +1,51 @@
+using System;
 using System.Collections.Generic;
-using OpenRasta.DI;
+using System.Linq;
 using OpenRasta.OperationModel;
-using OpenRasta.OperationModel.Filters;
 using OpenRasta.Web;
-using OpenRasta.Pipeline;
 
 namespace OpenRasta.Pipeline.Contributors
 {
-    public class RequestCodecSelector
-        : AbstractOperationProcessing<IOperationCodecSelector, KnownStages.ICodecRequestSelection>,
-          KnownStages.ICodecRequestSelection
-    {
-        public RequestCodecSelector(IDependencyResolver resolver) : base(resolver)
-        {
-        }
+  public class RequestCodecSelector : KnownStages.ICodecRequestSelection
+  {
+    readonly Func<IEnumerable<IOperationCodecSelector>> _requestCodecs;
 
-        protected override void InitializeWhen(IPipelineExecutionOrder pipeline)
-        {
-            pipeline.After<KnownStages.IOperationFiltering>();
-        }
-        protected override PipelineContinuation OnOperationsEmpty(ICommunicationContext context)
-        {
-            context.OperationResult = new OperationResult.RequestMediaTypeUnsupported();
-            return PipelineContinuation.RenderNow;
-        }
+    public RequestCodecSelector(Func<IEnumerable<IOperationCodecSelector>> requestCodecs)
+    {
+      _requestCodecs = requestCodecs;
     }
+
+    PipelineContinuation OnOperationsEmpty(ICommunicationContext context)
+    {
+      context.OperationResult = new OperationResult.RequestMediaTypeUnsupported();
+      return PipelineContinuation.RenderNow;
+    }
+
+    PipelineContinuation ProcessOperations(ICommunicationContext context)
+    {
+      context.PipelineData.OperationsAsync =
+        ProcessOperations(context.PipelineData.OperationsAsync).ToList();
+
+      return !context.PipelineData.OperationsAsync.Any()
+        ? OnOperationsEmpty(context)
+        : PipelineContinuation.Continue;
+    }
+
+    IEnumerable<IOperationAsync> ProcessOperations(IEnumerable<IOperationAsync> operations)
+    {
+      var chain = GetMethods().Chain();
+      return chain == null ? new IOperationAsync[0] : chain(operations);
+    }
+
+    public void Initialize(IPipeline pipelineRunner)
+    {
+      pipelineRunner.Notify(ProcessOperations).After<KnownStages.IOperationFiltering>();
+    }
+
+    IEnumerable<Func<IEnumerable<IOperationAsync>, IEnumerable<IOperationAsync>>> GetMethods()
+    {
+      foreach (var filter in _requestCodecs())
+        yield return filter.Process;
+    }
+  }
 }
