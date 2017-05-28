@@ -11,11 +11,6 @@ namespace OpenRasta.Configuration.MetaModel
     {
         readonly Func<IEnumerable<IMetaModelHandler>> _handlers;
 
-        // TODO: Remove when impelemntation of array injection in containers is complete
-        public MetaModelRepository(IDependencyResolver resolver) : this(resolver.ResolveAll<IMetaModelHandler>)
-        {
-        }
-
         public MetaModelRepository(Func<IEnumerable<IMetaModelHandler>> handlers)
         {
             _handlers = handlers;

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using NUnit.Framework;
@@ -26,7 +27,7 @@ namespace MetaModelHandler_Specification
         {
             base.SetUp();
             Resolver = new InternalDependencyResolver();
-            MetaModel = new MetaModelRepository(Resolver);
+            MetaModel = new MetaModelRepository(Resolver.Resolve<IEnumerable<IMetaModelHandler>>);
             DependencyManager.SetResolver(Resolver);
         }
 

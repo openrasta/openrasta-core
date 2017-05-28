@@ -1,44 +1,37 @@
 ﻿using System;
+using System.Collections.Generic;
 using OpenRasta.Authentication;
-using OpenRasta.DI;
-using OpenRasta.Diagnostics;
 using OpenRasta.Web;
 
 namespace OpenRasta.Pipeline.Contributors
 {
-    [Obsolete]
-    public class AuthenticationChallengerContributor : IPipelineContributor
+  [Obsolete]
+  public class AuthenticationChallengerContributor : IPipelineContributor
+  {
+    readonly Func<IEnumerable<IAuthenticationScheme>> _schemes;
+
+    public AuthenticationChallengerContributor(Func<IEnumerable<IAuthenticationScheme>> schemes)
     {
-        readonly IDependencyResolver _resolver;
-        public ILogger Log { get; set; }
-
-        public AuthenticationChallengerContributor(IDependencyResolver resolver)
-        {
-            _resolver = resolver;
-        }
-
-        public void Initialize(IPipeline pipelineRunner)
-        {
-            pipelineRunner.Notify(ChallengeIfUnauthorized)
-                .After<KnownStages.IOperationExecution>()
-                .And
-                .Before<KnownStages.IResponseCoding>();
-        }
-
-        private PipelineContinuation ChallengeIfUnauthorized(ICommunicationContext context)
-        {
-          // todo func injectiom
-            if (context.OperationResult is OperationResult.Unauthorized)
-            {
-                var supportedSchemes = _resolver.ResolveAll<IAuthenticationScheme>();
-
-                foreach (var scheme in supportedSchemes)
-                {
-                    scheme.Challenge(context.Response);
-                }
-            }
-
-            return PipelineContinuation.Continue;
-        }
+      _schemes = schemes;
     }
+
+    public void Initialize(IPipeline pipelineRunner)
+    {
+      pipelineRunner.Notify(ChallengeIfUnauthorized)
+        .After<KnownStages.IOperationExecution>()
+        .And
+        .Before<KnownStages.IResponseCoding>();
+    }
+
+    private PipelineContinuation ChallengeIfUnauthorized(ICommunicationContext context)
+    {
+      if (!(context.OperationResult is OperationResult.Unauthorized))
+        return PipelineContinuation.Continue;
+
+      foreach (var scheme in _schemes())
+        scheme.Challenge(context.Response);
+
+      return PipelineContinuation.Continue;
+    }
+  }
 }

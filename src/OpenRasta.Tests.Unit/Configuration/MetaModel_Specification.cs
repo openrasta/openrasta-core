@@ -8,6 +8,7 @@ using OpenRasta.Configuration;
 using OpenRasta.Configuration.Fluent;
 using OpenRasta.Configuration.Fluent.Implementation;
 using OpenRasta.Configuration.MetaModel;
+using OpenRasta.Configuration.MetaModel.Handlers;
 using OpenRasta.DI;
 using OpenRasta.Tests.Unit.Fakes;
 using OpenRasta.Tests.Unit.Infrastructure;
@@ -37,7 +38,7 @@ namespace Configuration_Specification
       base.SetUp();
       Resolver = new InternalDependencyResolver();
       Resolver.AddDependency<ITypeSystem, ReflectionBasedTypeSystem>();
-      MetaModel = new MetaModelRepository(Resolver);
+      MetaModel = new MetaModelRepository(Resolver.Resolve<IEnumerable<IMetaModelHandler>>);
       ResourceSpaceHas = new FluentTarget(Resolver, MetaModel);
       ResourceSpaceUses = new FluentTarget(Resolver, MetaModel);
 
