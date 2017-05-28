@@ -54,9 +54,21 @@ namespace InternalDependencyResolver_Specification
       Resolver.AddDependency<ISimple, Simple>();
       Resolver.AddDependency<ISimple, AnotherSimple>();
       var result = Resolver.Resolve<IEnumerable<ISimple>>();
-      result.ShouldContain(o=>o is Simple);
-      result.ShouldContain(o=>o is AnotherSimple);
+      result.ShouldContain(o => o is Simple);
+      result.ShouldContain(o => o is AnotherSimple);
     }
+
+    [Test]
+    public void resolves_dependent_enumerables()
+    {
+      Resolver.AddDependency<IDependent<IEnumerable<ISimple>>, Dependent<IEnumerable<ISimple>>>();
+      Resolver.AddDependency<ISimple, Simple>();
+
+      var instance = Resolver.Resolve<IDependent<IEnumerable<ISimple>>>();
+      var deps = instance.CtorDependencies();
+      deps.ShouldContain(d => d is Simple);
+    }
+
     [Test]
     public void a_type_can_get_a_dependency_resolver_dependency_assigned()
     {

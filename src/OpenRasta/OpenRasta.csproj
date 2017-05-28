@@ -205,9 +205,12 @@
     <Compile Include="DI\Internal\ContextStoreExtensions.cs" />
     <Compile Include="DI\Internal\DependencyRegistration.cs" />
     <Compile Include="DI\Internal\DependencyRegistrationCollection.cs" />
+    <Compile Include="DI\Internal\EnumerableProfile.cs" />
     <Compile Include="DI\Internal\ObjectBuilder.cs" />
     <Compile Include="DI\Internal\PerRequestLifetimeManager.cs" />
     <Compile Include="DI\Internal\ResolveContext.cs" />
+    <Compile Include="DI\Internal\ResolveProfile.cs" />
+    <Compile Include="DI\Internal\SimpleProfile.cs" />
     <Compile Include="DI\Internal\SingletonLifetimeManager.cs" />
     <Compile Include="DI\Internal\TransientLifetimeManager.cs" />
     <Compile Include="DI\UnregisteredAction.cs" />
