@@ -53,6 +53,7 @@ namespace OpenRasta.Pipeline.Contributors
 
         IEnumerable<Func<IEnumerable<IOperationAsync>, IEnumerable<IOperationAsync>>> GetMethods()
         {
+          // todo func injection
             var operationProcessors = _resolver.ResolveAll<TProcessor>();
 
             foreach (var filter in operationProcessors)

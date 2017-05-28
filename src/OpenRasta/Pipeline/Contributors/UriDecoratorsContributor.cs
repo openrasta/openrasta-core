@@ -18,6 +18,7 @@ using OpenRasta.Web.UriDecorators;
 
 namespace OpenRasta.Pipeline.Contributors
 {
+  // TODO Func injection
     public class UriDecoratorsContributor : IPipelineContributor
     {
         readonly IDependencyResolver _resolver;

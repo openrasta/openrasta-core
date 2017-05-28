@@ -27,6 +27,7 @@ namespace OpenRasta.Pipeline.Contributors
 
         private PipelineContinuation ChallengeIfUnauthorized(ICommunicationContext context)
         {
+          // todo func injectiom
             if (context.OperationResult is OperationResult.Unauthorized)
             {
                 var supportedSchemes = _resolver.ResolveAll<IAuthenticationScheme>();

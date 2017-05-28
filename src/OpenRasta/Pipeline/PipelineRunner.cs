@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using OpenRasta.DI;
 using OpenRasta.Web;
 
 namespace OpenRasta.Pipeline
@@ -11,7 +10,7 @@ namespace OpenRasta.Pipeline
   public class PipelineRunner : IPipeline
   {
     // ReSharper disable once UnusedParameter.Local - Compatibility Shim
-    public PipelineRunner(IDependencyResolver resolver)
+    public PipelineRunner()
     {
       throw new NotImplementedException("Runner is no longer supported");
     }
@@ -29,20 +28,6 @@ namespace OpenRasta.Pipeline
 
     [Obsolete("Don't do it this will deadlock.")]
     public void Run(ICommunicationContext context)
-    {
-      throw new NotImplementedException("Runner is no longer supported");
-    }
-
-
-    // ReSharper disable once UnusedMember.Global - Compatibility Shim
-    protected virtual Task<PipelineContinuation> ExecuteContributor(ICommunicationContext context,
-      ContributorCall call)
-    {
-      throw new NotImplementedException("Runner is no longer supported");
-    }
-
-    // ReSharper disable once UnusedMember.Global - Compatibility Shim
-    protected virtual void FinishPipeline(ICommunicationContext context)
     {
       throw new NotImplementedException("Runner is no longer supported");
     }

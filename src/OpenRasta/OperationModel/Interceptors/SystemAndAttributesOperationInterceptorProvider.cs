@@ -7,14 +7,9 @@ namespace OpenRasta.OperationModel.Interceptors
 {
   public class SystemAndAttributesOperationInterceptorProvider : IOperationInterceptorProvider
   {
-    readonly IOperationInterceptor[] _systemInterceptors;
+    readonly IEnumerable<IOperationInterceptor> _systemInterceptors;
 
-    public SystemAndAttributesOperationInterceptorProvider(IDependencyResolver resolver)
-      : this(resolver.ResolveAll<IOperationInterceptor>().ToArray())
-    {
-    }
-
-    public SystemAndAttributesOperationInterceptorProvider(IOperationInterceptor[] systemInterceptors)
+    public SystemAndAttributesOperationInterceptorProvider(IEnumerable<IOperationInterceptor> systemInterceptors)
     {
       _systemInterceptors = systemInterceptors;
     }

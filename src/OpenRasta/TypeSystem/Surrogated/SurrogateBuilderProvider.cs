@@ -1,28 +1,20 @@
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Linq;
-
-using OpenRasta.DI;
 using OpenRasta.TypeSystem.Surrogates;
 
 namespace OpenRasta.TypeSystem.Surrogated
 {
     public class SurrogateBuilderProvider : ISurrogateProvider
     {
-        readonly ISurrogateBuilder[] _builders;
+        readonly IEnumerable<ISurrogateBuilder> _builders;
         static readonly ConcurrentDictionary<IType, IType> _typeCache = new ConcurrentDictionary<IType, IType>();
         static readonly ConcurrentDictionary<IProperty, IProperty> _propCache = new ConcurrentDictionary<IProperty, IProperty>();
-        // HACK: Waiting to push Func<IEnumerable<T>> resolution
-        // in container. Remove when done.
-        public SurrogateBuilderProvider(IDependencyResolver resolver)
-            : this(resolver.ResolveAll<ISurrogateBuilder>().ToArray())
+ 
+        public SurrogateBuilderProvider(IEnumerable<ISurrogateBuilder> builders)
         {
-        }
-
-        public SurrogateBuilderProvider(ISurrogateBuilder[] builders)
-        {
-            if (builders == null) throw new ArgumentNullException("builders");
-            _builders = builders;
+          _builders = builders ?? throw new ArgumentNullException(nameof(builders));
         }
 
         public T FindSurrogate<T>(T member) where T : IMember

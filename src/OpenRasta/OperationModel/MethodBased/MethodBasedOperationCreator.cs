@@ -20,21 +20,21 @@ namespace OpenRasta.OperationModel.MethodBased
 #pragma warning restore 618
     readonly Func<IEnumerable<IMethod>, IEnumerable<IMethod>> _filterMethod = method => method;
     readonly IDependencyResolver _resolver;
-
-    //// TODO: Remove when support for arrays is added to containers
-    // ReSharper disable once UnusedMember.Global
-    public MethodBasedOperationCreator(IDependencyResolver resolver, IObjectBinderLocator binderLocator)
-      : this(binderLocator,
-        resolver,
-        resolver.ResolveAll<IMethodFilter>().ToArray(),
-        resolver.Resolve<IOperationInterceptorProvider>())
-    {
-    }
+//
+//    //// TODO: Remove when support for arrays is added to containers
+//    // ReSharper disable once UnusedMember.Global
+//    public MethodBasedOperationCreator(IDependencyResolver resolver, IObjectBinderLocator binderLocator)
+//      : this(binderLocator,
+//        resolver,
+//        resolver.ResolveAll<IMethodFilter>().ToArray(),
+//        resolver.Resolve<IOperationInterceptorProvider>())
+//    {
+//    }
 
     public MethodBasedOperationCreator(
       IObjectBinderLocator binderLocator = null,
       IDependencyResolver resolver = null,
-      IMethodFilter[] filters = null,
+      IEnumerable<IMethodFilter> filters = null,
       IOperationInterceptorProvider syncInterceptorProvider = null)
     {
       _resolver = resolver;
@@ -85,7 +85,7 @@ namespace OpenRasta.OperationModel.MethodBased
       return output.StaticType == typeof(Task);
     }
 
-    static IEnumerable<Func<IEnumerable<IMethod>, IEnumerable<IMethod>>> FilterMethods(IMethodFilter[] filters)
+    static IEnumerable<Func<IEnumerable<IMethod>, IEnumerable<IMethod>>> FilterMethods(IEnumerable<IMethodFilter> filters)
     {
       if (filters == null)
       {

@@ -34,7 +34,7 @@ namespace OpenRasta.Pipeline.Contributors
 
             if (requestedAuthSchemeName == null)
                 return PipelineContinuation.Continue;
-
+// todo func injection
             var authenticators = _resolver.ResolveAll<IAuthenticationScheme>();
 
             var schemeToUse = authenticators.SingleOrDefault(scheme => string.Equals(scheme.Name, requestedAuthSchemeName, StringComparison.InvariantCultureIgnoreCase));

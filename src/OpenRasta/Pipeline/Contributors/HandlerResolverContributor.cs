@@ -1,7 +1,6 @@
 
 using System;
 using System.Linq;
-using OpenRasta.DI;
 using OpenRasta.Handlers;
 using OpenRasta.TypeSystem;
 using OpenRasta.Web;
@@ -14,12 +13,10 @@ namespace OpenRasta.Pipeline.Contributors
   /// </summary>
   public class HandlerResolverContributor : KnownStages.IHandlerSelection
   {
-    readonly IDependencyResolver _resolver;
     readonly IHandlerRepository _handlers;
 
-    public HandlerResolverContributor(IDependencyResolver resolver, IHandlerRepository repository)
+    public HandlerResolverContributor(IHandlerRepository repository)
     {
-      _resolver = resolver;
       _handlers = repository;
     }
 

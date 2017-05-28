@@ -15,6 +15,7 @@ using OpenRasta.Web;
 
 namespace OpenRasta.Codecs
 {
+  // TODO inject codec factory
     public abstract class AbstractMultipartFormDataCodec
     {
         const string FORMDATA_CACHE = "__MultipartFormDataCodec_FORMDATA_CACHED";

@@ -21,6 +21,8 @@ namespace OpenRasta.Web.Configuration.Wadl
         readonly IDependencyResolver _resolver;
         private IUriResolver _uriRepository;
         private IHandlerRepository _handlerRepository;
+      
+      // TODO: Func
         public WadlHandler(IDependencyResolver resolver, IUriResolver uriRepository, IHandlerRepository handlerRepository)
         {
             _resolver = resolver;
