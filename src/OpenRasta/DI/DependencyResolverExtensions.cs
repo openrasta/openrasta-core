@@ -65,6 +65,10 @@ namespace OpenRasta.DI
       resolver.AddDependencyInstance(typeof(TService), instance);
     }
 
+    public static void AddDependencyInstance<TService>(this IDependencyResolver resolver, TService instance)
+    {
+      resolver.AddDependencyInstance(typeof(TService), instance);
+    }
     public static void AddDependencyInstance<TService>(this IDependencyResolver resolver, object instance,
       DependencyLifetime lifetime)
     {

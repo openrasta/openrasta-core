@@ -225,6 +225,8 @@ namespace OpenRasta.Configuration
         typeof(RequestEntityReaderHydrator),
         DependencyLifetime.Transient);
       resolver.AddDependency<IPipelineInitializer, ThreePhasePipelineInitializer>();
+      // todo remove this hack, not even sure if it works
+      resolver.AddDependencyInstance<Func<Type,ICodec>>(type=>(ICodec)resolver.Resolve(type));
     }
 
     protected virtual void AddCSharpCodeSnippetModifiers()
