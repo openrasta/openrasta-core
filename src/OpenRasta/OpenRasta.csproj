@@ -195,6 +195,7 @@
     <Compile Include="DI\Internal\DependencyRegistration.cs" />
     <Compile Include="DI\Internal\DependencyRegistrationCollection.cs" />
     <Compile Include="DI\Internal\EnumerableProfile.cs" />
+    <Compile Include="DI\Internal\FuncProfile.cs" />
     <Compile Include="DI\Internal\ObjectBuilder.cs" />
     <Compile Include="DI\Internal\PerRequestLifetimeManager.cs" />
     <Compile Include="DI\Internal\ResolveContext.cs" />

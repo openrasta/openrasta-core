@@ -1,18 +1,18 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 namespace OpenRasta.DI.Internal
 {
   abstract class ResolveProfile
   {
-    public static ResolveProfile Simple(ResolveContext ctx, Type serviceType)
+    static ResolveProfile Simple(ResolveContext ctx, Type serviceType)
     {
       return ctx.Registrations.HasRegistrationForService(serviceType)
         ? new SimpleProfile(ctx, serviceType)
         : null;
     }
 
-    public static ResolveProfile Enumerable(ResolveContext ctx, Type serviceType)
+    static ResolveProfile Enumerable(ResolveContext ctx, Type serviceType)
     {
       if (!serviceType.IsGenericType ||
           serviceType.IsGenericTypeDefinition ||
@@ -20,12 +20,31 @@ namespace OpenRasta.DI.Internal
         return null;
 
       var innerServiceType = serviceType.GetGenericArguments()[0];
-
+      
       return (ResolveProfile) Activator
         .CreateInstance(typeof(EnumerableProfile<>)
           .MakeGenericType(innerServiceType), ctx);
     }
 
+    static ResolveProfile Func(ResolveContext ctx, Type serviceType)
+    {
+      if (serviceType.IsGenericType == false
+          || serviceType.GetGenericTypeDefinition() != typeof(Func<>))
+        return null;
+      var innerType = serviceType.GetGenericArguments()[0];
+      var innerProfile = FindProfile(innerType, ctx);
+      return innerProfile == null
+      ? null
+      : (ResolveProfile)Activator.CreateInstance(typeof(FuncProfile<>).MakeGenericType(innerType), ctx, innerProfile);
+    }
+
     public abstract object Resolve();
+
+    public static ResolveProfile FindProfile(Type serviceType, ResolveContext resolveContext)
+    {
+      return Simple(resolveContext, serviceType)
+             ?? Enumerable(resolveContext, serviceType)
+             ?? Func(resolveContext, serviceType);
+    }
   }
 }
