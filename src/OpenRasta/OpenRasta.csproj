@@ -323,7 +323,6 @@
     <Compile Include="Pipeline\CallGraph\Notification.cs" />
     <Compile Include="Pipeline\CallGraph\TopologicalSortCallGraphGenerator.cs" />
     <Compile Include="Pipeline\ContributorCall.cs" />
-    <Compile Include="Pipeline\Contributors\AbstractOperationProcessing.cs" />
     <Compile Include="Pipeline\Contributors\AuthenticationChallengerContributor.cs" />
     <Compile Include="Pipeline\Contributors\AuthenticationContributor.cs" />
     <Compile Include="Pipeline\Contributors\BootstrapperContributor.cs" />
