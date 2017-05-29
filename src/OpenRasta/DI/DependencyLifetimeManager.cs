@@ -9,7 +9,7 @@ namespace OpenRasta.DI
       Resolver = resolver;
     }
 
-    protected InternalDependencyResolver Resolver { get; private set; }
+    protected InternalDependencyResolver Resolver { get; }
 
     public virtual bool IsRegistrationAvailable(DependencyRegistration registration)
     {

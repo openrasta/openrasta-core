@@ -16,17 +16,17 @@ namespace OpenRasta.DI.Internal
       {
         lock (_registrations)
         {
-          return GetSvcRegistrations(serviceType).ToList();
+          return GetOrCreateRegistrations(serviceType).ToList();
         }
       }
     }
 
     public void Add(DependencyRegistration registration)
     {
-      registration.LifetimeManager.VerifyRegistration(registration);
+      registration.VerifyRegistration(registration);
       lock (_registrations)
       {
-        GetSvcRegistrations(registration.ServiceType).Add(registration);
+        GetOrCreateRegistrations(registration.ServiceType).Add(registration);
       }
     }
 
@@ -34,7 +34,7 @@ namespace OpenRasta.DI.Internal
     {
       lock (_registrations)
       {
-        return GetSvcRegistrations(type).LastOrDefault(x => x.LifetimeManager.IsRegistrationAvailable(x));
+        return GetOrCreateRegistrations(type).LastOrDefault(x => x.IsRegistrationAvailable(x));
       }
     }
 
@@ -42,8 +42,8 @@ namespace OpenRasta.DI.Internal
     {
       lock (_registrations)
       {
-        return _registrations.ContainsKey(type) && GetSvcRegistrations(type)
-                 .Any(x => x.LifetimeManager.IsRegistrationAvailable(x));
+        return _registrations.ContainsKey(type) && GetOrCreateRegistrations(type)
+                 .Any(x => x.IsRegistrationAvailable(x));
       }
     }
 
@@ -60,7 +60,7 @@ namespace OpenRasta.DI.Internal
       }
     }
 
-    public List<DependencyRegistration> GetSvcRegistrations(Type serviceType)
+    List<DependencyRegistration> GetOrCreateRegistrations(Type serviceType)
     {
       if (!_registrations.TryGetValue(serviceType, out var svcRegistrations))
         _registrations.Add(serviceType, svcRegistrations = new List<DependencyRegistration>());

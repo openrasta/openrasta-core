@@ -45,7 +45,7 @@ namespace OpenRasta.DI.Internal
       try
       {
         _recursionDefender.Push(registration);
-        return registration.LifetimeManager.Resolve(this, registration);
+        return registration.ResolveInContext(this);
       }
       finally
       {
