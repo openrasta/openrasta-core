@@ -22,7 +22,6 @@ namespace OpenRasta.OperationModel.MethodBased
 
     readonly IDependencyResolver _resolver;
 
-//
     public MethodBasedOperationCreator(
       IObjectBinderLocator binderLocator = null,
       IDependencyResolver resolver = null,

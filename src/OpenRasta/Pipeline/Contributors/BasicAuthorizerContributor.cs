@@ -15,86 +15,57 @@
 // Adapts approach used in https://github.com/scottlittlewood/OpenRastaAuthSample to support pipeline contributor model.
 
 using System;
-using System.Linq;
 using System.Security.Principal;
-using OpenRasta.DI;
 using OpenRasta.Security;
 using OpenRasta.Web;
-using OpenRasta.Pipeline;
 
 namespace OpenRasta.Pipeline.Contributors
 {
-    public class BasicAuthorizerContributor : IPipelineContributor
+  public class BasicAuthorizerContributor : IPipelineContributor
+  {
+    
+    // ReSharper disable once MemberCanBePrivate.Global -- injected
+    public IAuthenticationProvider AuthProvider { get; set; }
+
+
+    public void Initialize(IPipeline pipelineRunner)
     {
-        private readonly IDependencyResolver _resolver;
-        private IAuthenticationProvider _authentication;
-
-        public BasicAuthorizerContributor(IDependencyResolver resolver)
-        {
-            _resolver = resolver;
-        }
-
-        public void Initialize(IPipeline pipelineRunner)
-        {
-            _authentication = _resolver.Resolve<IAuthenticationProvider>();
-            pipelineRunner.Notify(ReadCredentials)
-                .After<KnownStages.IBegin>()
-                .And
-                .Before<KnownStages.IHandlerSelection>();
-        }
-
-        public PipelineContinuation ReadCredentials(ICommunicationContext context)
-        {
-            if (_resolver.HasDependency(typeof(IAuthenticationProvider)))
-            {
-                _authentication = _resolver.Resolve<IAuthenticationProvider>();
-                var header = ReadBasicAuthHeader(context);
-                if (header != null)
-                {
-                    var credentials = _authentication.GetByUsername(header.Username);
-
-                    if (_authentication.ValidatePassword(credentials, header.Password))
-                    {
-                        IIdentity id = new GenericIdentity(credentials.Username, "Basic");
-                        context.User = new GenericPrincipal(id, credentials.Roles);
-                    }
-                }
-            }
-
-            return PipelineContinuation.Continue;
-        }
-
-        private static BasicAuthorizationHeader ReadBasicAuthHeader(ICommunicationContext context)
-        {
-            try
-            {
-                var header = context.Request.Headers["Authorization"];
-                return string.IsNullOrEmpty(header) ? null : BasicAuthorizationHeader.Parse(header);
-            } catch (ArgumentException ex)
-            {
-                return (null);
-            }
-        }
+      pipelineRunner.Notify(ReadCredentials)
+        .After<KnownStages.IBegin>()
+        .And
+        .Before<KnownStages.IHandlerSelection>();
     }
+
+    PipelineContinuation ReadCredentials(ICommunicationContext context)
+    {
+      if (AuthProvider == null)
+        return PipelineContinuation.Continue;
+
+      var header = ReadBasicAuthHeader(context);
+      if (header == null)
+        return PipelineContinuation.Continue;
+
+      var credentials = AuthProvider.GetByUsername(header.Username);
+
+      if (!AuthProvider.ValidatePassword(credentials, header.Password))
+        return PipelineContinuation.Continue;
+      IIdentity id = new GenericIdentity(credentials.Username, "Basic");
+      context.User = new GenericPrincipal(id, credentials.Roles);
+
+      return PipelineContinuation.Continue;
+    }
+
+    static BasicAuthorizationHeader ReadBasicAuthHeader(ICommunicationContext context)
+    {
+      try
+      {
+        var header = context.Request.Headers["Authorization"];
+        return string.IsNullOrEmpty(header) ? null : BasicAuthorizationHeader.Parse(header);
+      }
+      catch (ArgumentException)
+      {
+        return null;
+      }
+    }
+  }
 }
-
-#region Full license
-
-// Permission is hereby granted, free of charge, to any person obtaining
-// a copy of this software and associated documentation files (the
-// "Software"), to deal in the Software without restriction, including
-// without limitation the rights to use, copy, modify, merge, publish,
-// distribute, sublicense, and/or sell copies of the Software, and to
-// permit persons to whom the Software is furnished to do so, subject to
-// the following conditions:
-// The above copyright notice and this permission notice shall be
-// included in all copies or substantial portions of the Software.
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
-// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
-// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-#endregion

@@ -1,5 +1,4 @@
 ﻿using System.Threading.Tasks;
-using OpenRasta.DI;
 using OpenRasta.OperationModel;
 using OpenRasta.OperationModel.Interceptors;
 using OpenRasta.Web;
@@ -8,8 +7,7 @@ namespace OpenRasta.Pipeline.Contributors
 {
   public class OperationInvokerContributor : KnownStages.IOperationExecution
   {
-    readonly IDependencyResolver _resolver;
-    IOperationExecutor _executor;
+    readonly IOperationExecutor _executor;
 
     public OperationInvokerContributor(IOperationExecutor executor)
     {

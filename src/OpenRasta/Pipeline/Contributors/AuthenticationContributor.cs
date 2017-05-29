@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Principal;
 using OpenRasta.Authentication;
-using OpenRasta.DI;
 using OpenRasta.Diagnostics;
 using OpenRasta.Web;
 
@@ -14,7 +13,6 @@ namespace OpenRasta.Pipeline.Contributors
   public class AuthenticationContributor : KnownStages.IAuthentication
   {
     readonly Func<IEnumerable<IAuthenticationScheme>> _authSchemes;
-    readonly IDependencyResolver _resolver;
     public ILogger Log { get; set; }
 
     public AuthenticationContributor(Func<IEnumerable<IAuthenticationScheme>> authSchemes)
