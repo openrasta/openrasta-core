@@ -17,7 +17,7 @@ namespace OpenRasta.DI.Internal
         return System.Linq.Enumerable.Empty<T>();
       var resolved = (
         from dependency in _ctx.Registrations[typeof(T)]
-        where dependency.LifetimeManager.IsRegistrationAvailable(dependency)
+        where dependency.IsRegistrationAvailable(dependency)
         select _ctx.Resolve<T>(dependency)
       ).ToList();
       return resolved;

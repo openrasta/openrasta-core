@@ -5,33 +5,41 @@ using System.Reflection;
 
 namespace OpenRasta.DI.Internal
 {
-    public class DependencyRegistration
+  public class DependencyRegistration
+  {
+    readonly DependencyLifetimeManager _lifetimeManager;
+
+    public DependencyRegistration(Type serviceType, Type concreteType, DependencyLifetimeManager lifetime,
+      object instance = null)
     {
-        public DependencyRegistration(Type serviceType, Type concreteType, DependencyLifetimeManager lifetime)
-            : this(serviceType, concreteType, lifetime, null)
-        {
-        }
-
-        public DependencyRegistration(Type serviceType, Type concreteType, DependencyLifetimeManager lifetime, object instance)
-        {
-            Key = Guid.NewGuid().ToString();
-            LifetimeManager = lifetime;
-            ServiceType = serviceType;
-            ConcreteType = concreteType;
-            Constructors =
-                new List<KeyValuePair<ConstructorInfo, ParameterInfo[]>>(
-                    concreteType.GetConstructors().Select(ctor => new KeyValuePair<ConstructorInfo, ParameterInfo[]>(ctor, ctor.GetParameters())));
-            Constructors.Sort((kv1, kv2) => kv1.Value.Length.CompareTo(kv2.Value.Length) * -1);
-            Instance = instance;
-            IsInstanceRegistration = instance != null;
-        }
-
-        public Type ConcreteType { get; set; }
-        public List<KeyValuePair<ConstructorInfo, ParameterInfo[]>> Constructors { get; set; }
-        public object Instance { get; set; }
-        public bool IsInstanceRegistration { get; set; }
-        public string Key { get; set; }
-        public DependencyLifetimeManager LifetimeManager { get; set; }
-        public Type ServiceType { get; set; }
+      Key = Guid.NewGuid().ToString();
+      _lifetimeManager = lifetime;
+      ServiceType = serviceType;
+      ConcreteType = concreteType;
+      Constructors =
+        new List<KeyValuePair<ConstructorInfo, ParameterInfo[]>>(
+          concreteType.GetConstructors()
+            .Select(ctor => new KeyValuePair<ConstructorInfo, ParameterInfo[]>(ctor, ctor.GetParameters())));
+      Constructors.Sort((kv1, kv2) => kv1.Value.Length.CompareTo(kv2.Value.Length) * -1);
+      Instance = instance;
+      IsInstanceRegistration = instance != null;
     }
+
+    public Type ConcreteType { get; }
+    public List<KeyValuePair<ConstructorInfo, ParameterInfo[]>> Constructors { get; }
+    public object Instance { get; set; }
+    public bool IsInstanceRegistration { get; }
+    public string Key { get; }
+
+    public Type ServiceType { get; }
+
+    public void VerifyRegistration(DependencyRegistration registration)
+      => _lifetimeManager.VerifyRegistration(registration);
+
+    public bool IsRegistrationAvailable(DependencyRegistration registration)
+      => _lifetimeManager.IsRegistrationAvailable(registration);
+
+    public object ResolveInContext(ResolveContext ctx)
+      => _lifetimeManager.Resolve(ctx, this);
+  }
 }
