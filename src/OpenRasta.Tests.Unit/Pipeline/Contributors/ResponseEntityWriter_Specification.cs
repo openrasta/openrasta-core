@@ -94,7 +94,8 @@ namespace ResponseEntityWriter_Specification
         TypeSystems.Default,
         new MediaType("application/unknown"),
         null,
-        config, false);
+        config,
+        false);
     }
   }
 

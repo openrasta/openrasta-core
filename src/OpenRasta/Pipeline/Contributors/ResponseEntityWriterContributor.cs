@@ -3,25 +3,24 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using OpenRasta.Codecs;
-using OpenRasta.DI;
 using OpenRasta.Diagnostics;
-using OpenRasta.IO;
 using OpenRasta.Web;
-using OpenRasta.Pipeline;
 
 namespace OpenRasta.Pipeline.Contributors
 {
   public class ResponseEntityWriterContributor : KnownStages.IResponseCoding
   {
-    readonly IDependencyResolver _resolver;
     static readonly byte[] PADDING = Enumerable.Repeat((byte) ' ', 512).ToArray();
 
     public ILogger Log { get; } = TraceSourceLogger.Instance;
 
-    public ResponseEntityWriterContributor(IDependencyResolver resolver)
+    readonly Func<Type, ICodec> _codecResolver;
+
+    public ResponseEntityWriterContributor(Func<Type, ICodec> codecResolver)
     {
-      _resolver = resolver;
+      _codecResolver = codecResolver;
     }
+
     public void Initialize(IPipeline pipeline)
     {
       pipeline.NotifyAsync(WriteResponseBuffered).After<KnownStages.ICodecResponseSelection>();
@@ -44,7 +43,7 @@ namespace OpenRasta.Pipeline.Contributors
           context.Response.Entity.Instance,
           context.Response.Entity,
           context.Request.CodecParameters.ToArray());
-        
+
         if (context.Response.Entity.Stream.CanSeek)
           context.Response.Entity.ContentLength = context.Response.Entity.Stream.Length;
         await PadErrorMessageForIE(context);
@@ -76,11 +75,10 @@ namespace OpenRasta.Pipeline.Contributors
       }
       else if ((codecType = context.PipelineData.ResponseCodec?.CodecType) != null)
       {
-        if (_resolver.HasDependency(codecType) == false)
-          _resolver.AddDependency(codecType, DependencyLifetime.Transient);
+//        if (_resolver.HasDependency(codecType) == false)
+//          _resolver.AddDependency(codecType, DependencyLifetime.Transient);
 
-        context.Response.Entity.Codec =
-          codecInstance = _resolver.Resolve(codecType) as ICodec;
+        context.Response.Entity.Codec = codecInstance = _codecResolver(codecType);
       }
 
       if (codecInstance == null)
@@ -116,7 +114,8 @@ namespace OpenRasta.Pipeline.Contributors
           && context.Response.Entity.ContentType == MediaType.Html
           && context.Response.Entity.Stream.Length <= 512)
       {
-        return context.Response.Entity.Stream.WriteAsync(PADDING, 0, (int) (512 - context.Response.Entity.Stream.Length));
+        return context.Response.Entity.Stream.WriteAsync(PADDING, 0,
+          (int) (512 - context.Response.Entity.Stream.Length));
       }
       return Task.CompletedTask;
     }
