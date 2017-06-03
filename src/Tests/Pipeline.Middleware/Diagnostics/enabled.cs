@@ -5,7 +5,6 @@ using OpenRasta.Pipeline;
 using OpenRasta.Pipeline.CallGraph;
 using OpenRasta.Pipeline.Contributors;
 using Shouldly;
-using Tests.Pipeline.Initializer.Examples;
 using Xunit;
 
 namespace Tests.Pipeline.Middleware.Diagnostics
@@ -37,9 +36,5 @@ namespace Tests.Pipeline.Middleware.Diagnostics
       factories.Count().ShouldBe(pipeline.MiddlewareFactories.Count() / 2);
       factories.ShouldAllBe(factory => factory is LoggingMiddlewareFactory);
     }
-  }
-
-  class First : AfterContributor<BootstrapperContributor>
-  {
   }
 }

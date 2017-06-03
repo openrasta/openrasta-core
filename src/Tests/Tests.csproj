@@ -59,6 +59,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DI\current_instance_set_on_single_thread.cs" />
+    <Compile Include="DI\declaration_on_caller_access_on_task.cs" />
     <Compile Include="DI\declaration_on_task_access_on_continuation.cs" />
     <Compile Include="Hosting.HttpListener\disposing.cs" />
     <Compile Include="Hosting.InMemory\no_resolver.cs" />
@@ -87,8 +88,10 @@
     <Compile Include="Pipeline.Middleware\Conversion\pre_execute.cs" />
     <Compile Include="Pipeline.Middleware\Conversion\request.cs" />
     <Compile Include="Pipeline.Middleware\Conversion\response.cs" />
+    <Compile Include="Pipeline.Middleware\DelegateBeforeNextMiddleware.cs" />
     <Compile Include="Pipeline.Middleware\Diagnostics\disabled.cs" />
     <Compile Include="Pipeline.Middleware\Diagnostics\enabled.cs" />
+    <Compile Include="Pipeline.Middleware\Diagnostics\First.cs" />
     <Compile Include="Pipeline.Middleware\Examples\DoNothingContributor.cs" />
     <Compile Include="Pipeline.Middleware\Examples\OperationResultContributor.cs" />
     <Compile Include="Pipeline.Middleware\Examples\SimpleMiddleware.cs" />
@@ -121,12 +124,14 @@
     <Compile Include="Pipeline.Middleware\ResponseContributor\pipeline_in_continue_contrib_aborts.cs" />
     <Compile Include="Pipeline.Middleware\ResponseContributor\pipeline_in_render_now.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Scenarios.Codecs\codec_used_after_optional_parameter.cs" />
+    <Compile Include="Scenarios.Codecs\codec_used_with_optional_parameters.cs" />
     <Compile Include="Scenarios.Codecs\content_extension_with_throwing_handler.cs" />
     <Compile Include="Scenarios.Codecs\media_type_reader_throws.cs" />
-    <Compile Include="Scenarios.Codecs\multipart_as_enumerable_with_uri_params.cs" />
+    <Compile Include="Scenarios.Codecs\multipart_enumerable_with_uri_params.cs" />
     <Compile Include="Scenarios.Codecs\multipart_invalid_content.cs" />
-    <Compile Include="Scenarios.HandlerReturns\redirect_is_absolute_path.cs" />
+    <Compile Include="Scenarios.HandlerReturns\redirect_is_absolute_uri.cs" />
+    <Compile Include="Scenarios.HandlerSelection\CollectionHandler.cs" />
+    <Compile Include="Scenarios.HandlerSelection\post_with_and_without_uri_var_as_int.cs" />
     <Compile Include="Scenarios.HandlerSelection\post_with_and_without_uri_var_as_string.cs" />
     <Compile Include="Scenarios.Uris\json_encoded_uris.cs" />
   </ItemGroup>
