@@ -22,8 +22,14 @@ namespace OpenRasta.OperationModel.Filters
         {
             if (string.IsNullOrEmpty(_commContext.PipelineData.SelectedResource?.UriName))
             {
+              var filteredOperations = OperationsWithNoAttribute(operations).ToList();
+
+              if(filteredOperations.Count == operations.Count())
                 Log.NoResourceOrUriName();
-                return operations;
+              else
+                Log.FoundOperations(filteredOperations);
+              
+              return filteredOperations;
             }
 
             var attribOperations = OperationsWithMatchingAttribute(operations).ToList();
@@ -31,7 +37,15 @@ namespace OpenRasta.OperationModel.Filters
             return attribOperations.Count > 0 ? attribOperations : operations;
         }
 
-        IEnumerable<IOperationAsync> OperationsWithMatchingAttribute(IEnumerable<IOperationAsync> operations)
+      private IEnumerable<IOperationAsync> OperationsWithNoAttribute(IEnumerable<IOperationAsync> operations)
+      {
+            return from operation in operations
+                   let attribute = operation.FindAttribute<HttpOperationAttribute>()
+                   where attribute == null || attribute.ForUriName.IsNullOrEmpty()
+                   select operation;
+      }
+
+      IEnumerable<IOperationAsync> OperationsWithMatchingAttribute(IEnumerable<IOperationAsync> operations)
         {
             return from operation in operations
                    let attribute = operation.FindAttribute<HttpOperationAttribute>()

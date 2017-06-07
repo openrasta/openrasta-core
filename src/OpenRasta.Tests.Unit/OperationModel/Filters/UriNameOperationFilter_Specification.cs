@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Linq;
 using NUnit.Framework;
-using OpenRasta.OperationModel;
 using OpenRasta.OperationModel.Filters;
 using OpenRasta.Tests.Unit.Infrastructure;
 using Shouldly;
@@ -31,18 +27,16 @@ namespace OpenRasta.Tests.Unit.OperationModel.Filters
 
             when_filtering_operations();
 
-          FilteredOperations.Count().ShouldBe(2);
+            FilteredOperations.Count().ShouldBe(2);
 
-          FilteredOperations.SingleOrDefault(x => x.Name == "GetForRouteName")
-                .ShouldNotBeNull();
-            FilteredOperations.SingleOrDefault(x => x.Name == "PostForRouteName")
-                .ShouldNotBeNull();
+            FilteredOperations.SingleOrDefault(x => x.Name == "GetForRouteName").ShouldNotBeNull();
+            FilteredOperations.SingleOrDefault(x => x.Name == "PostForRouteName").ShouldNotBeNull();
         }
     }
-    public class when_no_uri_name_is_resent : uriname_filter_context
+    public class when_no_uri_name_is_present : uriname_filter_context
     {
         [Test]
-        public void no_operation_gets_removed()
+        public void methods_with_the_attribute_are_removed()
         {
             given_pipeline_selectedHandler<Handler>();
             given_filter();
@@ -51,7 +45,9 @@ namespace OpenRasta.Tests.Unit.OperationModel.Filters
 
             when_filtering_operations();
 
-          FilteredOperations.ShouldBe(Operations);
+            FilteredOperations.Count().ShouldBe(3);
+            FilteredOperations.SingleOrDefault(x => x.Name == "GetForRouteName").ShouldBeNull();
+            FilteredOperations.SingleOrDefault(x => x.Name == "PostForRouteName").ShouldBeNull();
         }
     }
 }
