@@ -4,11 +4,11 @@ using System.Linq;
 
 namespace OpenRasta.OperationModel.Interceptors
 {
-  public class DictionaryWrapper : IDictionary<string, object>
+  public class DictionaryAdapter : IDictionary<string, object>
   {
     readonly IDictionary _originalDictionary;
 
-    public DictionaryWrapper(IDictionary originalDictionary)
+    public DictionaryAdapter(IDictionary originalDictionary)
     {
       _originalDictionary = originalDictionary;
     }
@@ -66,10 +66,15 @@ namespace OpenRasta.OperationModel.Interceptors
 
     public object this[string key]
     {
-      get { return _originalDictionary[key]; }
+      get { CheckKeyExists(key); return _originalDictionary[key]; }
       set { _originalDictionary[key] = value; }
     }
 
+    void CheckKeyExists(string key)
+    {
+      if (!_originalDictionary.Contains(key))
+        throw new KeyNotFoundException($"No object found for key '{key}'");
+    }
     public ICollection<string> Keys => new List<string>(_originalDictionary.Keys.Cast<object>().Select(key=>key.ToString()));
 
     public ICollection<object> Values => new List<object>(_originalDictionary.Values.Cast<object>());

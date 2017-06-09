@@ -12,7 +12,7 @@ namespace OpenRasta.OperationModel.Interceptors
     public SyncToAsyncOperation(IOperation inner)
     {
       _inner = inner;
-      ExtendedProperties = new DictionaryWrapper(inner.ExtendedProperties)
+      ExtendedProperties = new DictionaryAdapter(inner.ExtendedProperties)
       {
         {"async", true},
       };

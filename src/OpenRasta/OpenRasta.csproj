@@ -258,7 +258,7 @@
     <Compile Include="OperationModel\Hydrators\RequestEntityReaderHydrator.cs" />
     <Compile Include="OperationModel\Hydrators\RequestReadResult.cs" />
     <Compile Include="OperationModel\InputMember.cs" />
-    <Compile Include="OperationModel\Interceptors\DictionaryWrapper.cs" />
+    <Compile Include="OperationModel\Interceptors\DictionaryAdapter.cs" />
     <Compile Include="OperationModel\Interceptors\InterceptorAttribute.cs" />
     <Compile Include="OperationModel\Interceptors\InterceptorException.cs" />
     <Compile Include="OperationModel\Interceptors\InterceptorProviderAttribute.cs" />
