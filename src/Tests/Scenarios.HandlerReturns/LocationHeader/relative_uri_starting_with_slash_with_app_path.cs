@@ -1,4 +1,5 @@
-﻿using Shouldly;
+﻿using System.Threading.Tasks;
+using Shouldly;
 using Xunit;
 
 namespace Tests.Scenarios.HandlerReturns.LocationHeader
@@ -10,13 +11,16 @@ namespace Tests.Scenarios.HandlerReturns.LocationHeader
     }
 
     [Fact]
-    public void location_header_abs_path_is_relative_to_app_base()
+    public async Task location_header_abs_path_is_relative_to_app_base()
     {
-      Response.StatusCode.ShouldBe(200);
-      ResponseAsync.StatusCode.ShouldBe(200);
+      var r = await Response;
+      var rAsync = await ResponseAsync;
+      
+      r.StatusCode.ShouldBe(200);
+      rAsync.StatusCode.ShouldBe(200);
 
-      Response.Headers["Location"].ShouldBe("http://localhost/myApp/absPathResource");
-      ResponseAsync.Headers["Location"].ShouldBe("http://localhost/myApp/absPathResource");
+      r.Headers["Location"].ShouldBe("http://localhost/myApp/absPathResource");
+      rAsync.Headers["Location"].ShouldBe("http://localhost/myApp/absPathResource");
     }
   }
 }
