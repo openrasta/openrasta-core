@@ -129,7 +129,15 @@
     <Compile Include="Scenarios.Codecs\media_type_reader_throws.cs" />
     <Compile Include="Scenarios.Codecs\multipart_enumerable_with_uri_params.cs" />
     <Compile Include="Scenarios.Codecs\multipart_invalid_content.cs" />
-    <Compile Include="Scenarios.HandlerReturns\redirect_is_absolute_uri.cs" />
+    <Compile Include="Scenarios.HandlerReturns\LocationHeader\AbsUriHandler.cs" />
+    <Compile Include="Scenarios.HandlerReturns\LocationHeader\location_header.cs" />
+    <Compile Include="Scenarios.HandlerReturns\LocationHeader\absolute_uri.cs" />
+    <Compile Include="Scenarios.HandlerReturns\LocationHeader\relative_uri_starting_with_slash.cs" />
+    <Compile Include="Scenarios.HandlerReturns\LocationHeader\relative_uri_starting_with_slash_with_app_path.cs" />
+    <Compile Include="Scenarios.HandlerReturns\LocationHeader\relative_uri.cs" />
+    <Compile Include="Scenarios.HandlerReturns\LocationHeader\relative_uri_with_app_path.cs" />
+    <Compile Include="Scenarios.HandlerReturns\LocationHeader\RelUriAbsPath.cs" />
+    <Compile Include="Scenarios.HandlerReturns\LocationHeader\RelUriRelPath.cs" />
     <Compile Include="Scenarios.HandlerSelection\CollectionHandler.cs" />
     <Compile Include="Scenarios.HandlerSelection\post_with_and_without_uri_var_as_int.cs" />
     <Compile Include="Scenarios.HandlerSelection\post_with_and_without_uri_var_as_string.cs" />

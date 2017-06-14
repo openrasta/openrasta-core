@@ -49,7 +49,7 @@ namespace ResourceTypeResolver_Specification
       given_pipeline_contributor<ResourceTypeResolverContributor>();
 
       given_request_uri("http://localhost/fake");
-      given_registration_urimapping<Fake>("/somewhere");
+      given_uri_registration<Fake>("/somewhere");
 
       when_sending_notification<BootstrapperContributor>()
         .ShouldBe(PipelineContinuation.RenderNow);
@@ -64,7 +64,7 @@ namespace ResourceTypeResolver_Specification
       given_pipeline_contributor<ResourceTypeResolverContributor>();
 
       given_request_uri("http://localhost/fake");
-      given_registration_urimapping<Fake>("/fake");
+      given_uri_registration<Fake>("/fake");
 
       when_sending_notification<BootstrapperContributor>();
 
@@ -77,7 +77,7 @@ namespace ResourceTypeResolver_Specification
       given_app_base_uri("http://localhost/root");
       given_pipeline_contributor<ResourceTypeResolverContributor>();
       given_request_uri("http://localhost/root/fake");
-      given_registration_urimapping<Fake>("/fake");
+      given_uri_registration<Fake>("/fake");
 
       when_sending_notification<BootstrapperContributor>();
 

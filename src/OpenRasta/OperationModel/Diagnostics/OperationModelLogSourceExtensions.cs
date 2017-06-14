@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using OpenRasta.Diagnostics;
 
 namespace OpenRasta.OperationModel.Diagnostics
@@ -9,9 +10,9 @@ namespace OpenRasta.OperationModel.Diagnostics
     {
       log.WriteDebug("No resource or no uri name. Not filtering.");
     } 
-    public static void FoundOperations(this ILogger<OperationModelLogSource> log, ICollection<IOperationAsync> operations)
+    public static void FoundOperations(this ILogger<OperationModelLogSource> log, IEnumerable<IOperationAsync> operations)
     {
-      log.WriteDebug("Found {0} operations with correct attributes", operations.Count);
+      log.WriteDebug("Found {0} operations with correct attributes", operations.Count());
     }
   }
 }

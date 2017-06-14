@@ -41,7 +41,7 @@ namespace OpenRasta.Tests.Unit.OperationModel.Filters
         }
     }
 
-    public class httpmethod_context : operation_filter_context<Handler, HttpMethodOperationFilter>
+    public abstract class httpmethod_context : operation_filter_context<Handler, HttpMethodOperationFilter>
     {
         protected override HttpMethodOperationFilter create_filter()
         {

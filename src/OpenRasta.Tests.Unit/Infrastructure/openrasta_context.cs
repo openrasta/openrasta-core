@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using OpenRasta.Codecs;
@@ -16,6 +17,7 @@ using OpenRasta.Pipeline;
 using OpenRasta.Security;
 using OpenRasta.TypeSystem;
 using OpenRasta.Web;
+using OpenRasta.Web.Internal;
 using Shouldly;
 
 namespace OpenRasta.Tests.Unit.Infrastructure
@@ -75,9 +77,13 @@ namespace OpenRasta.Tests.Unit.Infrastructure
       return (T) Pipeline.Contributors[0];
     }
 
-    public void given_registration_urimapping<T>(string uri)
+    public void given_uri_registration<T>(string uri, string uriName = null)
     {
-      UriResolver.Add(new UriRegistration(uri, typeof(T), null, CultureInfo.CurrentCulture));
+      UriResolver.Add(new UriRegistration(uri, typeof(T), uriName, CultureInfo.CurrentCulture));
+    }
+    public void given_uri_registration(object key, string uri, string uriName = null)
+    {
+      UriResolver.Add(new UriRegistration(uri, key, uriName, CultureInfo.CurrentCulture));
     }
 
     public void given_request_uri(string uri)
@@ -249,6 +255,7 @@ namespace OpenRasta.Tests.Unit.Infrastructure
 
       manager.SetupCommunicationContext(Context = new InMemoryCommunicationContext());
       DependencyManager.SetResolver(Resolver);
+      
     }
 
     protected override void TearDown()
@@ -342,23 +349,19 @@ namespace OpenRasta.Tests.Unit.Infrastructure
         return this;
       }
 
-        public void Initialize(StartupProperties validate)
-        {
-            Initialize();
-        }
-    }
-
-    protected void given_request_uriName(string uriName)
-    {
-      if (Context.PipelineData.SelectedResource == null)
-        Context.PipelineData.SelectedResource = new UriRegistration(null, null, uriName, null);
-      else
+      public void Initialize(StartupProperties validate)
       {
-        var r = Context.PipelineData.SelectedResource;
-        Context.PipelineData.SelectedResource = new UriRegistration(r.UriTemplate, r.ResourceKey, uriName, r.UriCulture);
+        Initialize();
       }
     }
 
+    protected void given_first_resource_selected()
+    {
+      var res = UriResolver.First();
+
+      Context.PipelineData.ResourceKey = res.ResourceKey;
+      Context.PipelineData.SelectedResource = res;
+    }
     protected void given_context_applicationBase(string appBasePath)
     {
       Context.ApplicationBaseUri = new Uri(appBasePath, UriKind.Absolute);
