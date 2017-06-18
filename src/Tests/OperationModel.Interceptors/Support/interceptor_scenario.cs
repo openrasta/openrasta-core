@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using OpenRasta.DI;
 using OpenRasta.OperationModel;
+using OpenRasta.OperationModel.Interceptors;
 using OpenRasta.OperationModel.MethodBased;
 using OpenRasta.TypeSystem;
 
@@ -9,12 +11,15 @@ namespace Tests.OperationModel.Interceptors.Support
 {
   public abstract class interceptor_scenario
   {
-    protected void given_operation<T>(Expression<Func<T,object>> method) where T:new()
+    protected void given_operation<T>(Expression<Func<T,object>> method,
+      IDependencyResolver resolver = null) where T:new()
     {
       var visitor = new HandlerMethodVisitor();
       visitor.Visit(method);
       var mi = visitor .Method;
-      Operation = new MethodBasedOperationCreator()
+      Operation = new MethodBasedOperationCreator(
+          resolver: resolver,
+          syncInterceptorProvider: new SystemAndAttributesOperationInterceptorProvider(resolver))
         .CreateOperation(TypeSystems.Default.From(mi));
     }
 

@@ -71,9 +71,9 @@ namespace OpenRasta.OperationModel
 
 #pragma warning restore 618
 
-    public static IOperationAsync Intercept(this IOperationAsync operation)
+    public static IOperationAsync Intercept(this IOperationAsync operation, IEnumerable<IOperationInterceptorAsync> systemInterceptors = null)
     {
-      return new AsyncOperationWithInterceptors(operation);
+      return new AsyncOperationWithInterceptors(operation, systemInterceptors ?? Enumerable.Empty<IOperationInterceptorAsync>());
     }
   }
 }

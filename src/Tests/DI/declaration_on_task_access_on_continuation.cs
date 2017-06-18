@@ -12,7 +12,7 @@ namespace Tests.DI
     {
       var container = new InternalDependencyResolver();
       IDependencyResolver containerOnTask = null;
-      Task.Run(async () =>
+      Task.Run(() =>
       {
         DependencyManager.SetResolver(container);
         Task.Run(() => { containerOnTask = DependencyManager.Current; }).Wait();

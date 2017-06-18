@@ -12,15 +12,17 @@ namespace OpenRasta.OperationModel
     static readonly Func<IOperationAsync, Task<IEnumerable<OutputMember>>> IdentityInterceptor = op => op.InvokeAsync();
     readonly Func<IOperationAsync, Task<IEnumerable<OutputMember>>> _invoker;
 
-    public AsyncOperationWithInterceptors(IOperationAsync inner)
+    public AsyncOperationWithInterceptors(IOperationAsync inner, IEnumerable<IOperationInterceptorAsync> systemInterceptors)
     {
       _inner = inner;
-      _invoker = AsyncInvoker(inner);
+      _invoker = AsyncInvoker(inner, systemInterceptors);
     }
 
-    static Func<IOperationAsync, Task<IEnumerable<OutputMember>>> AsyncInvoker(IOperationAsync operation)
+    static Func<IOperationAsync, Task<IEnumerable<OutputMember>>> AsyncInvoker(IOperationAsync operation, IEnumerable<IOperationInterceptorAsync> systemInterceptors)
     {
-      return operation.FindAttributes<IOperationInterceptorAsync>()
+      return operation
+        .FindAttributes<IOperationInterceptorAsync>()
+        .Concat(systemInterceptors)
         .Aggregate(IdentityInterceptor, (next, interceptor) => interceptor.Compose(next));
     }
 

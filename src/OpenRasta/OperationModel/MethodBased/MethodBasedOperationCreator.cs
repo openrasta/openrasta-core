@@ -25,9 +25,9 @@ namespace OpenRasta.OperationModel.MethodBased
     // ReSharper disable once UnusedMember.Global
     public MethodBasedOperationCreator(IDependencyResolver resolver, IObjectBinderLocator binderLocator)
       : this(binderLocator,
-        resolver,
-        resolver.ResolveAll<IMethodFilter>().ToArray(),
-        resolver.Resolve<IOperationInterceptorProvider>())
+             resolver,
+             resolver.ResolveAll<IMethodFilter>().ToArray(),
+             resolver.Resolve<IOperationInterceptorProvider>())
     {
     }
 
@@ -57,7 +57,7 @@ namespace OpenRasta.OperationModel.MethodBased
 
     public IOperationAsync CreateOperation(IMethod method)
     {
-      return CreateOperationCore(method).Intercept();
+      return CreateOperationCore(method).Intercept(_resolver?.ResolveAll<IOperationInterceptorAsync>());
     }
 
     IOperationAsync CreateOperationCore(IMethod method)
