@@ -22,7 +22,7 @@ namespace OpenRasta.Hosting
     {
       Log = DependencyManager.IsAvailable
         ? DependencyManager.GetService<ILogger>()
-        : new TraceSourceLogger();
+        : TraceSourceLogger.Instance;
     }
 
     HostManager(IHost host)

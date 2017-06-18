@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.Remoting.Messaging;
+using System.Threading;
 using OpenRasta.Codecs;
 using OpenRasta.Configuration;
 using OpenRasta.Handlers;
@@ -14,19 +15,12 @@ namespace OpenRasta.DI
   /// </summary>
   public static class DependencyManager
   {
-    const string ResolverKey = "openrasta.di.resolvers";
-
-    static Stack<IDependencyResolver> ResolverStack
+    static readonly AsyncLocal<IDependencyResolver> _current = new AsyncLocal<IDependencyResolver>();
+    public static IDependencyResolver Current
     {
-      get
-      {
-        if (CallContext.LogicalGetData(ResolverKey) == null)
-          CallContext.LogicalSetData(ResolverKey, new Stack<IDependencyResolver>());
-        return (Stack<IDependencyResolver>) CallContext.LogicalGetData(ResolverKey);
-      }
+      get => _current.Value;
+      private set => _current.Value = value;
     }
-
-    public static IDependencyResolver Current => ResolverStack.Count > 0 ? ResolverStack.Peek() : null;
 
     static DependencyManager()
     {
@@ -82,12 +76,16 @@ namespace OpenRasta.DI
     /// <remarks>If no dependency registrar is registered in the container, the <see cref="DefaultDependencyRegistrar"/> will be used instead.</remarks>
     public static void SetResolver(IDependencyResolver resolver)
     {
-        ResolverStack.Push(resolver);
+      if (Current != null)
+        throw new InvalidOperationException("A resolver is already set");
+      Current = resolver;
     }
 
     public static void UnsetResolver()
     {
-      if (ResolverStack.Count > 0) ResolverStack.Pop();
+      if(Current == null)
+        throw new InvalidOperationException("A resolver is not set");
+      Current = null;
     }
   }
 }

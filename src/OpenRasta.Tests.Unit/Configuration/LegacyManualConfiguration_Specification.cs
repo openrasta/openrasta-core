@@ -1,15 +1,3 @@
-#region License
-
-/* Authors:
- *      Sebastien Lambla (seb@serialseb.com)
- * Copyright:
- *      (C) 2007-2009 Caffeine IT & naughtyProd Ltd (http://www.caffeine-it.com)
- * License:
- *      This file is distributed under the terms of the MIT License found at the end of this file.
- */
-
-#endregion
-
 using System;
 using System.Globalization;
 using System.Linq;
@@ -40,9 +28,8 @@ namespace LegacyManualConfiguration_Specification
     [Test]
     public void language_and_names_are_properly_registered()
     {
-      GivenAResourceRegistrationFor<Customer>("/customer")
-        .InLanguage("fr")
-        .Named("French");
+      GivenAResourceRegistrationFor<Customer>("/customer",uri=>
+        uri.InLanguage("fr").Named("French"));
 
       WhenTheConfigurationIsFinished();
 
@@ -52,10 +39,10 @@ namespace LegacyManualConfiguration_Specification
     [Test]
     public void registering_two_urls_works()
     {
-      GivenAResourceRegistrationFor<Customer>("/customer/{id}")
+      GivenAResourceRegistrationFor<Customer>("/customer/{id}",uri=>uri
         .InLanguage("en-CA")
         .AndAt("/privileged/customer/{id}")
-        .Named("Privileged");
+        .Named("Privileged"));
 
       WhenTheConfigurationIsFinished();
 
@@ -105,10 +92,10 @@ namespace LegacyManualConfiguration_Specification
     [Test]
     public void a_codec_registered_with_configuration_media_type_doesnt_have_the_attribute_media_type_registered()
     {
-      GivenAResourceRegistrationFor<Customer>("/customer")
+      GivenAResourceRegistrationFor<Customer>("/customer",uri=>uri
         .HandledBy<CustomerHandler>()
         .AndTranscodedBy<Codec>()
-        .ForMediaType("application/vnd.rasta.custom");
+        .ForMediaType("application/vnd.rasta.custom"));
 
       WhenTheConfigurationIsFinished();
 
@@ -119,9 +106,9 @@ namespace LegacyManualConfiguration_Specification
     [Test]
     public void a_codec_registered_with_two_media_type_attributes_is_registered_twice()
     {
-      GivenAResourceRegistrationFor<Customer>("/customer")
+      GivenAResourceRegistrationFor<Customer>("/customer",uri=>uri
         .HandledBy<CustomerHandler>()
-        .AndTranscodedBy<MultiCodec>();
+        .AndTranscodedBy<MultiCodec>());
 
       WhenTheConfigurationIsFinished();
 
@@ -132,11 +119,11 @@ namespace LegacyManualConfiguration_Specification
     [Test]
     public void a_codec_registered_with_two_media_types_in_configuration_is_registered_twice()
     {
-      GivenAResourceRegistrationFor<Customer>("/customer")
+      GivenAResourceRegistrationFor<Customer>("/customer",uri=>uri
         .HandledBy<CustomerHandler>()
         .AndTranscodedBy<Codec>()
         .ForMediaType("application/vnd.rasta.config1")
-        .AndForMediaType("application/vnd.rasta.config2");
+        .AndForMediaType("application/vnd.rasta.config2"));
 
       WhenTheConfigurationIsFinished();
 
@@ -147,9 +134,9 @@ namespace LegacyManualConfiguration_Specification
     [Test]
     public void a_codec_registered_without_media_types_is_registered_with_the_default_attributed_media_types()
     {
-      GivenAResourceRegistrationFor<Customer>("/customer")
+      GivenAResourceRegistrationFor<Customer>("/customer",uri=>uri
         .HandledBy<CustomerHandler>()
-        .AndTranscodedBy<Codec>();
+        .AndTranscodedBy<Codec>());
 
       WhenTheConfigurationIsFinished();
 
@@ -159,9 +146,9 @@ namespace LegacyManualConfiguration_Specification
     [Test]
     public void registering_a_codec_without_media_type_in_config_or_in_attributes_raises_an_error()
     {
-      GivenAResourceRegistrationFor<Customer>("/customer")
+      GivenAResourceRegistrationFor<Customer>("/customer",uri=>uri
         .HandledBy<CustomerHandler>()
-        .AndTranscodedBy<NakedCodec>();
+        .AndTranscodedBy<NakedCodec>());
 
       Executing((Action) WhenTheConfigurationIsFinished)
         .ShouldThrow<OpenRastaConfigurationException>();
@@ -184,8 +171,8 @@ namespace LegacyManualConfiguration_Specification
     [Test]
     public void the_handler_is_registered()
     {
-      GivenAResourceRegistrationFor<Customer>("/customer")
-        .HandledBy<CustomerHandler>();
+      GivenAResourceRegistrationFor<Customer>("/customer",uri=>uri
+        .HandledBy<CustomerHandler>());
 
       WhenTheConfigurationIsFinished();
 
@@ -195,29 +182,3 @@ namespace LegacyManualConfiguration_Specification
 }
 
 #pragma warning restore 612,618
-
-
-#region Full license
-
-//
-// Permission is hereby granted, free of charge, to any person obtaining
-// a copy of this software and associated documentation files (the
-// "Software"), to deal in the Software without restriction, including
-// without limitation the rights to use, copy, modify, merge, publish,
-// distribute, sublicense, and/or sell copies of the Software, and to
-// permit persons to whom the Software is furnished to do so, subject to
-// the following conditions:
-//
-// The above copyright notice and this permission notice shall be
-// included in all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
-// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
-// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-//
-
-#endregion

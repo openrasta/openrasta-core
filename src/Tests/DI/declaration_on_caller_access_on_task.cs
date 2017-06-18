@@ -13,13 +13,13 @@ namespace Tests.DI
       var container = new InternalDependencyResolver();
       DependencyManager.SetResolver(container);
       IDependencyResolver containerOnTask = null;
-      await Task.Run(() => containerOnTask = DependencyManager.Current).ContinueWith(
-        previous => {
-          DependencyManager.UnsetResolver();
-        }
-      );
+      await Task.Run(async () =>
+      {
+        containerOnTask = DependencyManager.Current;
+      });
+      
       containerOnTask.ShouldBeSameAs(container);
-
+      DependencyManager.UnsetResolver();
       DependencyManager.Current.ShouldBeNull();
     }
   }
