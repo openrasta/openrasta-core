@@ -10,19 +10,10 @@ namespace OpenRasta
     {
         public static Func<T,T> Chain<T>(this IEnumerable<Func<T,T>> functions)
         {
-            Func<T, T> root = null;
-            foreach (var func in functions)
-            {
-                if (root == null)
-                    root = func;
-                else
-                {
-                    var current = root;
-                    var next = func;
-                    root = x => next(current(x));
-                }
-            }
-            return root;
+          var enumerable = functions as Func<T, T>[] ?? functions.ToArray();
+          return enumerable
+            .Skip(1)
+            .Aggregate(enumerable[0], (func1, func2) => t => func1(func2(t)));
         }
     }
 }

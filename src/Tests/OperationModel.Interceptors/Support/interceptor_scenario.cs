@@ -11,15 +11,18 @@ namespace Tests.OperationModel.Interceptors.Support
 {
   public abstract class interceptor_scenario
   {
-    protected void given_operation<T>(Expression<Func<T,object>> method,
-      IDependencyResolver resolver = null) where T:new()
+    protected void given_operation<T>(Expression<Func<T, object>> method,
+      IDependencyResolver resolver = null) where T : new()
     {
       var visitor = new HandlerMethodVisitor();
       visitor.Visit(method);
-      var mi = visitor .Method;
+      var mi = visitor.Method;
       Operation = new MethodBasedOperationCreator(
           resolver: resolver,
-          syncInterceptorProvider: new SystemAndAttributesOperationInterceptorProvider(resolver))
+          syncInterceptorProvider:
+          resolver == null
+            ? null
+            : new SystemAndAttributesOperationInterceptorProvider(resolver))
         .CreateOperation(TypeSystems.Default.From(mi));
     }
 

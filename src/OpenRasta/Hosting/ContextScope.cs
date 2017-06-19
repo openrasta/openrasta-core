@@ -3,23 +3,20 @@ using System.Runtime.Remoting.Messaging;
 
 namespace OpenRasta.Hosting
 {
-    public class ContextScope : IDisposable
+  public class ContextScope : IDisposable
+  {
+    public ContextScope(AmbientContext context)
     {
-        readonly object _hostContext;
-        readonly object _savedHostContext;
-
-        public ContextScope(object context)
-        {
-            _savedHostContext = CallContext.HostContext;
-            _hostContext = CallContext.HostContext = context;
-        }
-
-        public void Dispose()
-        {
-            if (_hostContext != _savedHostContext)
-            {
-                CallContext.HostContext = _savedHostContext;
-            }
-        }
+      if (AmbientContext.Current != null)
+        throw new InvalidOperationException("An ambient context already exists");
+      AmbientContext.Current = context;
     }
+
+    public void Dispose()
+    {
+      if (AmbientContext.Current == null)
+        throw new InvalidOperationException("An ambient context does not exists");
+      AmbientContext.Current = null;
+    }
+  }
 }

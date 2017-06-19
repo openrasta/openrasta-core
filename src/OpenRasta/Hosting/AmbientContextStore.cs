@@ -2,12 +2,12 @@
 
 namespace OpenRasta.Hosting
 {
-    public class AmbientContextStore : IContextStore
+  public class AmbientContextStore : IContextStore
+  {
+    public object this[string key]
     {
-        public object this[string key]
-        {
-            get { return AmbientContext.Current[key]; }
-            set { AmbientContext.Current[key] = value; }
-        }
+      get => AmbientContext.Current[key];
+      set => AmbientContext.Current[key] = value;
     }
+  }
 }

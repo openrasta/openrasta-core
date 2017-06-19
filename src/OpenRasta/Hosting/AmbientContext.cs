@@ -1,21 +1,25 @@
 using System.Collections;
 using System.Runtime.Remoting.Messaging;
+using System.Threading;
 
 namespace OpenRasta.Hosting
 {
-    public class AmbientContext
+  public class AmbientContext
+  {
+    readonly Hashtable _items = new Hashtable();
+
+    private static readonly AsyncLocal<AmbientContext> _current = new AsyncLocal<AmbientContext>();
+
+    public static AmbientContext Current
     {
-        readonly Hashtable _items = new Hashtable();
-
-        public static AmbientContext Current
-        {
-            get { return CallContext.HostContext as AmbientContext; }
-        }
-
-        public object this[string key]
-        {
-            get { return _items[key]; }
-            set { _items[key] = value; }
-        }
+      get => _current.Value;
+      set => _current.Value = value;
     }
+
+    public object this[string key]
+    {
+      get => _items[key];
+      set => _items[key] = value;
+    }
+  }
 }
