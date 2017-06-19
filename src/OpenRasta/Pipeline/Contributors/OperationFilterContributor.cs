@@ -11,41 +11,33 @@ namespace OpenRasta.Pipeline.Contributors
 {
   public class OperationFilterContributor : KnownStages.IOperationFiltering
   {
-    private IDependencyResolver _resolver;
+    private readonly Func<IEnumerable<IOperationFilter>> _operationProcessors;
 
     public OperationFilterContributor(IDependencyResolver resolver)
     {
-      _resolver = resolver;
+      _operationProcessors = resolver.ResolveAll<IOperationFilter>;
     }
 
-    protected void InitializeWhen(IPipelineExecutionOrder pipeline)
-    {
-      pipeline.After<KnownStages.IOperationCreation>();
-    }
-
-    public virtual PipelineContinuation ProcessOperations(ICommunicationContext context)
+    PipelineContinuation ProcessOperations(ICommunicationContext context)
     {
       context.PipelineData.OperationsAsync =
-        ProcessOperations(context.PipelineData.OperationsAsync).ToList<IOperationAsync>();
-      if (!context.PipelineData.OperationsAsync.Any())
-        return OnOperationsEmpty(context);
-      return OnOperationProcessingComplete(context.PipelineData.OperationsAsync) ?? PipelineContinuation.Continue;
+        ProcessOperations(context.PipelineData.OperationsAsync).ToList();
+      return !context.PipelineData.OperationsAsync.Any()
+        ? OnOperationsEmpty(context)
+        : PipelineContinuation.Continue;
     }
 
-    public virtual IEnumerable<IOperationAsync> ProcessOperations(IEnumerable<IOperationAsync> operations)
+    private IEnumerable<IOperationAsync> ProcessOperations(IEnumerable<IOperationAsync> operations)
     {
-      var chain = GetMethods().Chain();
-      return chain == null ? new IOperationAsync[0] : chain(operations);
+      return _operationProcessors()
+        .Aggregate(
+          operations = operations.ToList(),
+          (ops, filter) => filter.Process(ops));
     }
 
-    public virtual void Initialize(IPipeline pipelineRunner)
+    public void Initialize(IPipeline pipelineRunner)
     {
-      InitializeWhen(pipelineRunner.Notify(ProcessOperations));
-    }
-
-    protected virtual PipelineContinuation? OnOperationProcessingComplete(IEnumerable<IOperationAsync> ops)
-    {
-      return null;
+      pipelineRunner.Notify(ProcessOperations).After<KnownStages.IOperationCreation>();
     }
 
     protected virtual PipelineContinuation OnOperationsEmpty(ICommunicationContext context)
@@ -57,9 +49,7 @@ namespace OpenRasta.Pipeline.Contributors
 
     private IEnumerable<Func<IEnumerable<IOperationAsync>, IEnumerable<IOperationAsync>>> GetMethods()
     {
-      var operationProcessors = _resolver.ResolveAll<IOperationFilter>();
-
-      foreach (var filter in operationProcessors)
+      foreach (var filter in _operationProcessors())
         yield return filter.Process;
     }
   }

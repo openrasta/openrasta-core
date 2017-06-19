@@ -14,9 +14,7 @@ namespace Tests.OperationModel.Interceptors.Support
     protected void given_operation<T>(Expression<Func<T, object>> method,
       IDependencyResolver resolver = null) where T : new()
     {
-      var visitor = new HandlerMethodVisitor();
-      visitor.Visit(method);
-      var mi = visitor.Method;
+      var mi = HandlerMethodVisitor.FindMethodInfo(method);
       Operation = new MethodBasedOperationCreator(
           resolver: resolver,
           syncInterceptorProvider:

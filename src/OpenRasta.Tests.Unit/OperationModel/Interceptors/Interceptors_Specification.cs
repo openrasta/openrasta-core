@@ -170,7 +170,7 @@ namespace OpenRasta.Tests.Unit.OperationModel.Interceptors
 
     protected void given_interceptor_provider(params IOperationInterceptor[] interceptors)
     {
-      InterceptorProvider = new SystemAndAttributesOperationInterceptorProvider(interceptors);
+      InterceptorProvider = new SystemAndAttributesOperationInterceptorProvider(()=>interceptors);
     }
 
     protected void given_mock_interceptor(Func<IEnumerable<OutputMember>> overriddenMethod)

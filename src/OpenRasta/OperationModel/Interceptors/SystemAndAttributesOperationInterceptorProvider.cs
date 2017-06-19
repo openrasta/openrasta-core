@@ -1,4 +1,5 @@
 #pragma warning disable 618
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using OpenRasta.DI;
@@ -7,21 +8,21 @@ namespace OpenRasta.OperationModel.Interceptors
 {
   public class SystemAndAttributesOperationInterceptorProvider : IOperationInterceptorProvider
   {
-    readonly IOperationInterceptor[] _systemInterceptors;
+    readonly Func<IEnumerable<IOperationInterceptor>> _systemInterceptors;
 
     public SystemAndAttributesOperationInterceptorProvider(IDependencyResolver resolver)
-      : this(resolver.ResolveAll<IOperationInterceptor>().ToArray())
+      : this(resolver.ResolveAll<IOperationInterceptor>)
     {
     }
 
-    public SystemAndAttributesOperationInterceptorProvider(IOperationInterceptor[] systemInterceptors)
+    public SystemAndAttributesOperationInterceptorProvider(Func<IEnumerable<IOperationInterceptor>> systemInterceptors)
     {
       _systemInterceptors = systemInterceptors;
     }
 
     public IEnumerable<IOperationInterceptor> GetInterceptors(IOperation operation)
     {
-      return _systemInterceptors
+      return _systemInterceptors()
         .Concat(GetInterceptorAttributes(operation))
         .Concat(GetInterceptorProviderAttributes(operation))
         .ToList();

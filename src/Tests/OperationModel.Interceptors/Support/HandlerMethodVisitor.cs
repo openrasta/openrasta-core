@@ -1,4 +1,5 @@
-﻿using System.Linq.Expressions;
+﻿using System;
+using System.Linq.Expressions;
 using System.Reflection;
 
 namespace Tests.OperationModel.Interceptors.Support
@@ -12,6 +13,12 @@ namespace Tests.OperationModel.Interceptors.Support
       return base.VisitMethodCall(node);
     }
 
+    public static MethodInfo FindMethodInfo<T>(Expression<Func<T, object>> expr)
+    {
+      var visitor = new HandlerMethodVisitor();
+      visitor.Visit(expr);
+      return visitor.Method;
+    }
     public MethodInfo Method { get; private set; }
   }
 }
