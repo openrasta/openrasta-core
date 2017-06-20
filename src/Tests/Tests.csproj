@@ -78,7 +78,13 @@
     <Compile Include="OperationModel.Interceptors\Support\interceptor_scenario.cs" />
     <Compile Include="OperationModel.Interceptors\Support\NominalFunctionAttribute.cs" />
     <Compile Include="OperationModel.Interceptors\Support\UnknownLaserFlawAttribute.cs" />
-    <Compile Include="OperationModel.Interceptors\sync_system\no_action.cs" />
+    <Compile Include="OperationModel.Interceptors\sync_system\CommContextInterceptor.cs" />
+    <Compile Include="OperationModel.Interceptors\sync_system\Handler.cs" />
+    <Compile Include="OperationModel.Interceptors\sync_system\IMyService.cs" />
+    <Compile Include="OperationModel.Interceptors\sync_system\with_per_request_dependency.cs" />
+    <Compile Include="OperationModel.Interceptors\sync_system\Service.cs" />
+    <Compile Include="OperationModel.Interceptors\sync_system\SystemAttribute.cs" />
+    <Compile Include="OperationModel.Interceptors\sync_system\with_available_dependency.cs" />
     <Compile Include="Pipeline.Initializer\Examples\AfterContributor.cs" />
     <Compile Include="Pipeline.Initializer\Examples\BeforeContributor.cs" />
     <Compile Include="Pipeline.Initializer\Infrastructure\initializer_context.cs" />

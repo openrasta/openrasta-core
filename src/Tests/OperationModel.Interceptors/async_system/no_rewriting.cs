@@ -8,7 +8,7 @@ using Shouldly;
 using Tests.OperationModel.Interceptors.Support;
 using Xunit;
 
-namespace Tests.Scenarios.HandlerSelection.OperationModel.Interceptors.async_system
+namespace Tests.OperationModel.Interceptors.async_system
 {
   public class no_rewriting : interceptor_scenario
   {
