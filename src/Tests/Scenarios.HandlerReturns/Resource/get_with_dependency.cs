@@ -19,6 +19,7 @@ namespace Tests.Scenarios.HandlerReturns.Resource
           .ResourcesOfType<string>()
           .AtUri("/string-sync").Named("sync")
           .And.AtUri("/string-async").Named("async")
+          .And.AtUri("/string-async-void").Named("async-void")
           .HandledBy<Handler>());
     }
 
@@ -34,6 +35,13 @@ namespace Tests.Scenarios.HandlerReturns.Resource
     {
       var response = await server.Get("/string-async");
       response.ReadString().ShouldBe("helloworld");
+    }
+    
+    [Fact]
+    public async Task get_with_async_void_method()
+    {
+      var response = await server.Get("/string-async-void");
+      response.StatusCode.ShouldBe(204);
     }
 
     class Handler
@@ -53,6 +61,13 @@ namespace Tests.Scenarios.HandlerReturns.Resource
       public Task<OperationResult> GetAsync()
       {
         return Task.FromResult<OperationResult>(new OperationResult.OK("helloworld"));
+      }
+      
+      
+      [HttpOperation(ForUriName = "async-void")]
+      public Task GetAsyncVoid()
+      {
+        return Task.CompletedTask;
       }
     }
   }

@@ -57,7 +57,8 @@ namespace OpenRasta.OperationModel.MethodBased
 
     public IOperationAsync CreateOperation(IMethod method)
     {
-      return CreateOperationCore(method).Intercept(_resolver?.ResolveAll<IOperationInterceptorAsync>());
+      return CreateOperationCore(method)
+        .Intercept(_resolver?.ResolveAll<IOperationInterceptorAsync>());
     }
 
     IOperationAsync CreateOperationCore(IMethod method)
@@ -69,7 +70,7 @@ namespace OpenRasta.OperationModel.MethodBased
         return (IOperationAsync) Activator.CreateInstance(
           typeof(AsyncMethod<>)
             .MakeGenericType(output.StaticType.GenericTypeArguments),
-          method, _binderLocator);
+          method, _binderLocator, _resolver);
       var syncMethod = new SyncMethod(method, _binderLocator) {Resolver = _resolver};
       return syncMethod.Intercept(_syncInterceptorProvider).AsAsync();
     }
