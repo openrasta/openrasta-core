@@ -141,6 +141,8 @@
     <Compile Include="Scenarios.HandlerReturns\LocationHeader\relative_uri_with_app_path.cs" />
     <Compile Include="Scenarios.HandlerReturns\LocationHeader\RelUriAbsPath.cs" />
     <Compile Include="Scenarios.HandlerReturns\LocationHeader\RelUriRelPath.cs" />
+    <Compile Include="Scenarios.HandlerReturns\Resource\get_without_dependency.cs" />
+    <Compile Include="Scenarios.HandlerReturns\Resource\get_with_dependency.cs" />
     <Compile Include="Scenarios.HandlerSelection\CollectionHandler.cs" />
     <Compile Include="Scenarios.HandlerSelection\post_with_and_without_uri_var_as_int.cs" />
     <Compile Include="Scenarios.HandlerSelection\post_with_and_without_uri_var_as_string.cs" />
@@ -157,6 +159,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Scenarios.Handler\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
