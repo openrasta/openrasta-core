@@ -32,7 +32,7 @@ namespace OpenRasta.Pipeline.Contributors
       return _operationProcessors()
         .Aggregate(
           operations = operations.ToList(),
-          (ops, filter) => filter.Process(ops));
+          (ops, filter) => filter.Process(ops)).Distinct();
     }
 
     public void Initialize(IPipeline pipelineRunner)
