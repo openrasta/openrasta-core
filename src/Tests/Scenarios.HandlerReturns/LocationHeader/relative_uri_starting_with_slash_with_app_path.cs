@@ -13,8 +13,8 @@ namespace Tests.Scenarios.HandlerReturns.LocationHeader
     [Fact]
     public async Task location_header_abs_path_is_relative_to_app_base()
     {
-      var r = await Response;
-      var rAsync = await ResponseAsync;
+      var r = Response;
+      var rAsync = ResponseAsync;
       
       r.StatusCode.ShouldBe(200);
       rAsync.StatusCode.ShouldBe(200);

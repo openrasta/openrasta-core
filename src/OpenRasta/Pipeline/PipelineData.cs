@@ -56,7 +56,8 @@ namespace OpenRasta.Pipeline
     [Obsolete]
     public IEnumerable<IOperation> Operations
     {
-      get { return OperationsAsync?.Select(op => op.SyncOperation()).Where(op => op != null); }
+      get => SafeGet<IEnumerable<IOperation>>(OPERATIONS) ?? Enumerable.Empty<IOperation>();
+      set => base[OPERATIONS] = value;
     }
 
     public TaskCompletionSource<object> Suspend
@@ -72,8 +73,8 @@ namespace OpenRasta.Pipeline
     }
     public IEnumerable<IOperationAsync> OperationsAsync
     {
-      get { return SafeGet<IEnumerable<IOperationAsync>>(OPERATIONS_ASYNC) ?? Enumerable.Empty<IOperationAsync>(); }
-      set { base[OPERATIONS_ASYNC] = value; }
+      get => SafeGet<IEnumerable<IOperationAsync>>(OPERATIONS_ASYNC) ?? Enumerable.Empty<IOperationAsync>();
+      set => base[OPERATIONS_ASYNC] = value;
     }
 
     /// <summary>

@@ -9,8 +9,8 @@ namespace Tests.Scenarios.HandlerReturns.LocationHeader
     [Fact]
     public async Task location_header_is_relative_uri_abs_path()
     {
-      var r = await Response;
-      var rAsync = await ResponseAsync;
+      var r =  Response;
+      var rAsync = ResponseAsync;
       
       r.StatusCode.ShouldBe(200);
       rAsync.StatusCode.ShouldBe(200);

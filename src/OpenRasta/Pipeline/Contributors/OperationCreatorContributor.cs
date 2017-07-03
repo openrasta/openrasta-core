@@ -30,6 +30,11 @@ namespace OpenRasta.Pipeline.Contributors
 
       var ops = _creator.CreateOperations(context.PipelineData.SelectedHandlers).ToList();
       context.PipelineData.OperationsAsync = ops;
+      
+#pragma warning disable 612 - Used for legacy implementations (see #109)
+      context.PipelineData.Operations =
+        ops.Select(op => new PretendingToBeSyncOperationForLegacyInterceptors(op)).ToList();
+#pragma warning restore 612
 
       LogOperations(context.PipelineData.OperationsAsync);
 

@@ -38,6 +38,7 @@ namespace OperationCreationContributor_Specification
       when_sending_notification();
       then_contributor_returns(PipelineContinuation.Continue);
       Context.PipelineData.Operations.ShouldBeEmpty();
+      Context.PipelineData.OperationsAsync.ShouldBeEmpty();
     }
   }
 
@@ -69,8 +70,12 @@ namespace OperationCreationContributor_Specification
       when_sending_notification();
 
       then_contributor_returns(PipelineContinuation.Continue);
+      
       Context.PipelineData.OperationsAsync.ShouldHaveSingleItem();
       Context.PipelineData.OperationsAsync.ShouldBe(Operations);
+      
+      Context.PipelineData.Operations.ShouldHaveSingleItem();
+      Context.PipelineData.Operations.Single().Name.ShouldBe(Operations.Single().Name);
     }
   }
 
@@ -87,17 +92,19 @@ namespace OperationCreationContributor_Specification
     protected void given_operation_creator_returns(int count)
     {
       var mock = new Mock<IOperationCreator>();
-      Operations = count >= 0 ? Enumerable.Range(0, count).Select(i => CreateMockOperation()).ToList() : null;
+      Operations = count >= 0 ? Enumerable.Range(0, count)
+        .Select(i => CreateMockOperation(i))
+        .ToList() : null;
       mock.Setup(x => x.CreateOperations(It.IsAny<IEnumerable<IType>>()))
         .Returns(Operations);
       Resolver.AddDependencyInstance(typeof(IOperationCreator), mock.Object, DependencyLifetime.Singleton);
     }
 
-    IOperationAsync CreateMockOperation()
+    IOperationAsync CreateMockOperation(int i)
     {
       var operation = new Mock<IOperationAsync>();
       operation.Setup(x => x.ToString()).Returns("Fake method");
-      operation.SetupGet(x => x.Name).Returns("OperationName");
+      operation.SetupGet(x => x.Name).Returns("OperationName " + i);
       return operation.Object;
     }
 

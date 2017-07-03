@@ -290,6 +290,7 @@
     <Compile Include="OperationModel\OperationExtensions.cs" />
     <Compile Include="OperationModel\OperationRequestCodecExtensions.cs" />
     <Compile Include="OperationModel\OutputMember.cs" />
+    <Compile Include="OperationModel\PretendingToBeSyncOperationForLegacyInterceptors.cs" />
     <Compile Include="Pipeline\AbstractContributorMiddleware.cs" />
     <Compile Include="Pipeline\AbstractMiddleware.cs" />
     <Compile Include="Pipeline\CallGraph\ContributorInitializer.cs" />

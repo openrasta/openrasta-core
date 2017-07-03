@@ -7,10 +7,10 @@ namespace Tests.Scenarios.HandlerReturns.LocationHeader
   public class relative_uri : location_header<RelUriRelPath>
   {
     [Fact]
-    public async Task location_is_absolute()
+    public  void location_is_absolute()
     {
-      var r = await Response;
-      var rAsync = await ResponseAsync;
+      var r =  Response;
+      var rAsync =  ResponseAsync;
       r.StatusCode.ShouldBe(200);
       rAsync.StatusCode.ShouldBe(200);
 

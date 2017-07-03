@@ -8,8 +8,8 @@ namespace Tests.Scenarios.HandlerReturns.LocationHeader
 {
   public abstract class location_header<T>
   {
-    protected readonly Task<IResponse> Response;
-    protected readonly Task<IResponse> ResponseAsync;
+    protected readonly IResponse Response;
+    protected readonly IResponse ResponseAsync;
 
     protected location_header(string appPath = null)
     {
@@ -19,8 +19,9 @@ namespace Tests.Scenarios.HandlerReturns.LocationHeader
           .And.AtUri("/resource/async/").Named("async")
           .HandledBy<T>()) {ApplicationVirtualPath = appPath ?? "/"};
 
-      Response = server.Get($"{server.ApplicationVirtualPath}resource/");
-      ResponseAsync = server.Get($"{server.ApplicationVirtualPath}resource/async/");
+      Response = server.Get($"{server.ApplicationVirtualPath}resource/").Result;
+      ResponseAsync = server.Get($"{server.ApplicationVirtualPath}resource/async/").Result;
+      server.Close();
     }
   }
 }
