@@ -13,8 +13,8 @@ namespace Tests.Scenarios.HandlerReturns.LocationHeader
     [Fact]
     public async Task location_is_absolute()
     {
-      var r = Response;
-      var rAsync = ResponseAsync;
+      var r = await Response;
+      var rAsync = await ResponseAsync;
       
       r.StatusCode.ShouldBe(200);
       rAsync.StatusCode.ShouldBe(200);
