@@ -8,27 +8,23 @@ namespace OpenRasta.Configuration
 {
   public static class OpenRastaConfiguration
   {
-    static bool _isBeingConfigured;
-    static readonly object LockConfigBecauseBadDesignDecision = new object();
 
     /// <summary>
     /// Creates a manual configuration of the resources supported by the application.
     /// </summary>
-    public static IDisposable Manual
-    {
-      get
-      {
-        Monitor.Enter(LockConfigBecauseBadDesignDecision);
-        return new FluentConfigurator(LockConfigBecauseBadDesignDecision);
-      }
-    }
+    public static IDisposable Manual => new FluentConfigurator();
+
     class FluentConfigurator : IDisposable
     {
-      readonly object _lockConfigBecauseBadDesignDecision;
+      static readonly object _lockConfigBecauseBadDesignDecision = new object();
 
-      public FluentConfigurator(object lockConfigBecauseBadDesignDecision)
+      public FluentConfigurator()
       {
-        _lockConfigBecauseBadDesignDecision = lockConfigBecauseBadDesignDecision;
+
+        if (!Monitor.TryEnter(_lockConfigBecauseBadDesignDecision, TimeSpan.FromSeconds(5)))
+        {
+          throw new TimeoutException("Could not acquire lock for Manual configuration.");
+        }
       }
 
       public void Dispose()
