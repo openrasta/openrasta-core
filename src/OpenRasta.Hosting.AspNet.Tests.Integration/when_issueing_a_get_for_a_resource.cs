@@ -28,5 +28,6 @@ namespace OpenRasta.Hosting.AspNet.Tests.Integration
 
       TheResponse.ContentType.ShouldContain("text/plain");
     }
+    
   }
 }

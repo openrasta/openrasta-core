@@ -76,69 +76,32 @@ namespace OpenRasta.Hosting.AspNet
     {
       // forces global.asax to be compiled.
       BuildManager.GetReferencedAssemblies();
-      foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies().Where(NotFrameworkAssembly))
-      {
-        try
-        {
-          using (RedirectToLoadedAssembliesToShutUpPolicyRedirection())
-          {
-            var configType = assembly.GetTypes()
-              .FirstOrDefault(t => typeof(T).IsAssignableFrom(t) && t.IsClass);
-            if (configType != null)
-            {
-              return Activator.CreateInstance(configType) as T;
-            }
-          }
-        }
-        catch
-        {
-          // ignored - if none found, returns null on purpose
-        }
-      }
-      return null;
-    }
 
-    static IDisposable RedirectToLoadedAssembliesToShutUpPolicyRedirection()
-    {
-      AppDomain.CurrentDomain.AssemblyResolve += ResolveToAlreadyLoaded;
-      return new ActionOnDispose(() => AppDomain.CurrentDomain.AssemblyResolve -= ResolveToAlreadyLoaded);
-    }
+      var potentialTypes =
+      (
+        from asm in AppDomain.CurrentDomain.ReflectionOnlyGetAssemblies()
+        where asm.GetReferencedAssemblies().Any(name => name.Name.EqualsOrdinalIgnoreCase("openrasta"))
+        where NotFrameworkAssembly(asm)
+        from configType in asm.GetExportedTypes()
+        where configType.IsClass &&
+              configType.IsAbstract == false &&
+              typeof(T).IsAssignableFrom(configType)
+        select configType
+      ).ToList();
 
-    class ActionOnDispose : IDisposable
-    {
-      readonly Action _onDispose;
-
-      bool _disposed;
-
-      public ActionOnDispose(Action onDispose)
-      {
-        _onDispose = onDispose;
-      }
-
-      public void Dispose()
-      {
-        if (_disposed) return;
-        _disposed = true;
-        _onDispose();
-      }
-    }
-
-    static Assembly ResolveToAlreadyLoaded(object sender, ResolveEventArgs args)
-    {
-      return AppDomain.CurrentDomain.GetAssemblies().FirstOrDefault(_ => _.FullName == args.Name);
+      if (potentialTypes.Any() == false) return null;
+      if (potentialTypes.Count > 1)
+        throw new InvalidOperationException($"Looking for {typeof(T)} but found more than one.{Environment.NewLine}" +
+                                            string.Join(Environment.NewLine,
+                                              potentialTypes.Select(t => t.AssemblyQualifiedName)));
+      var cfg = potentialTypes[0];
+      return (T) Activator.CreateInstance(Type.GetType(cfg.AssemblyQualifiedName));
     }
 
     static bool NotFrameworkAssembly(Assembly assembly)
     {
       switch (assembly.GetName().Name)
       {
-        case "System":
-        case "mscorlib":
-        case "System.Core":
-        case "System.Configuration":
-        case "System.Data":
-        case "System.Web":
-        case "System.Xml":
         case "OpenRasta":
         case "OpenRasta.Hosting.AspNet":
           return false;
