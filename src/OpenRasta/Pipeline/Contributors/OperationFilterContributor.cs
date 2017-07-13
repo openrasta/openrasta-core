@@ -11,19 +11,19 @@ namespace OpenRasta.Pipeline.Contributors
 {
   public class OperationFilterContributor : KnownStages.IOperationFiltering
   {
-//    private readonly IDependencyResolver _resolver;
     private readonly Func<IEnumerable<IOperationFilter>> _createFilters;
 
     public OperationFilterContributor(IDependencyResolver resolver)
     {
-      _createFilters = resolver.ResolveAll<IOperationFilter>;
+      _createFilters = ()=>resolver.ResolveAll<IOperationFilter>();
     }
 
     PipelineContinuation ProcessOperations(ICommunicationContext context)
     {
-      context.PipelineData.OperationsAsync =
-        ProcessOperations(context.PipelineData.OperationsAsync.ToList());
-      return !context.PipelineData.OperationsAsync.Any()
+      var ops = ProcessOperations(context.PipelineData.OperationsAsync.ToList());
+      context.PipelineData.OperationsAsync = ops;
+      
+      return !ops.Any()
         ? OnOperationsEmpty(context)
         : PipelineContinuation.Continue;
     }
@@ -32,8 +32,10 @@ namespace OpenRasta.Pipeline.Contributors
     {
       return _createFilters()
        .Aggregate(
-          operations = operations.ToList(),
-          (ops, filter) => filter.Process(ops)).Distinct();
+          operations,
+          (ops, filter) => filter.Process(ops).ToList())
+        .Distinct()
+        .ToList();
     }
 
     public void Initialize(IPipeline pipelineRunner)
@@ -44,7 +46,6 @@ namespace OpenRasta.Pipeline.Contributors
     protected virtual PipelineContinuation OnOperationsEmpty(ICommunicationContext context)
     {
       context.OperationResult = new OperationResult.MethodNotAllowed();
-
       return PipelineContinuation.RenderNow;
     }
   }
