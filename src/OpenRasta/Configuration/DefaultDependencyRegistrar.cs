@@ -246,8 +246,7 @@ namespace OpenRasta.Configuration
     {
       LogSourcedLoggerType = typeof(TraceSourceLogger<>);
       LogSourceTypes.AddRange(
-        Assembly.GetExecutingAssembly()
-          .GetTypes()
+          typeof(ILogSource).Assembly.GetExportedTypes()
           .Where(x => !x.IsAbstract && !x.IsInterface && x.IsAssignableTo<ILogSource>()));
     }
 
