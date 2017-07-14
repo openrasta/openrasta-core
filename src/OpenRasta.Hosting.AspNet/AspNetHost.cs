@@ -75,8 +75,7 @@ namespace OpenRasta.Hosting.AspNet
 
     public static T FindTypeInOpenRastaProject<T>() where T : class
     {
-      // forces global.asax to be compiled.
-      BuildManager.GetReferencedAssemblies();
+      ForceAspNetGlobalAsaxCompilation();
       
       var localAssemblies = 
         Path.GetDirectoryName(new Uri(typeof(AspNetHost).Assembly.EscapedCodeBase).LocalPath);
@@ -115,7 +114,14 @@ namespace OpenRasta.Hosting.AspNet
                                               potentialTypes.Select(t => t.AssemblyQualifiedName)));
       return (T)Activator.CreateInstance(potentialTypes[0]);
     }
-    static readonly byte[] msKey = new byte[] {0xb, 0x7, 0x7, 0xa, 0x5, 0xc, 0x5, 0x6, 0x1, 0x9, 0x3, 0x4, 0xe, 0x0, 0x8, 0x9};
+
+    private static void ForceAspNetGlobalAsaxCompilation()
+    {
+      if (HttpRuntime.AppDomainAppId != null)
+        BuildManager.GetReferencedAssemblies();
+    }
+
+    static readonly byte[] msKey = {0xb, 0x7, 0x7, 0xa, 0x5, 0xc, 0x5, 0x6, 0x1, 0x9, 0x3, 0x4, 0xe, 0x0, 0x8, 0x9};
 
     static bool NotFrameworkAssembly(Assembly assembly)
     {
