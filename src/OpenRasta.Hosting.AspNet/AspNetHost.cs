@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -67,22 +68,40 @@ namespace OpenRasta.Hosting.AspNet
              ?? DependencyResolverAccessorLocator();
     }
 
-    public static Func<IConfigurationSource> ConfigurationSourceLocator = FindTypeInProject<IConfigurationSource>;
+    public static Func<IConfigurationSource> ConfigurationSourceLocator = FindTypeInOpenRastaProject<IConfigurationSource>;
 
     static readonly Func<IDependencyResolverAccessor> DependencyResolverAccessorLocator =
-      FindTypeInProject<IDependencyResolverAccessor>;
+      FindTypeInOpenRastaProject<IDependencyResolverAccessor>;
 
-    static T FindTypeInProject<T>() where T : class
+    public static T FindTypeInOpenRastaProject<T>() where T : class
     {
       // forces global.asax to be compiled.
       BuildManager.GetReferencedAssemblies();
+      
+      var localAssemblies = 
+        Path.GetDirectoryName(new Uri(typeof(AspNetHost).Assembly.EscapedCodeBase).LocalPath);
+      var asms = Directory.GetFiles(localAssemblies, "*.dll", SearchOption.TopDirectoryOnly);
+
+      Type[] loadTypes(Assembly assembly)
+      {
+        try
+        {
+          return assembly.GetExportedTypes();
+        }
+        catch (ReflectionTypeLoadException e)
+        {
+          return e.Types.Where(t => t != null).ToArray();
+        }
+      }
 
       var potentialTypes =
       (
-        from asm in AppDomain.CurrentDomain.ReflectionOnlyGetAssemblies()
-        where asm.GetReferencedAssemblies().Any(name => name.Name.EqualsOrdinalIgnoreCase("openrasta"))
-        where NotFrameworkAssembly(asm)
-        from configType in asm.GetExportedTypes()
+        from asmPath in asms
+        let roAsm = Assembly.ReflectionOnlyLoadFrom(asmPath)
+        where roAsm.GetReferencedAssemblies().Any(name => name.Name.EqualsOrdinalIgnoreCase("openrasta"))
+        where NotFrameworkAssembly(roAsm)
+        let asm = Assembly.Load(roAsm.GetName())
+        from configType in loadTypes(asm)
         where configType.IsClass &&
               configType.IsAbstract == false &&
               typeof(T).IsAssignableFrom(configType)
@@ -94,20 +113,16 @@ namespace OpenRasta.Hosting.AspNet
         throw new InvalidOperationException($"Looking for {typeof(T)} but found more than one.{Environment.NewLine}" +
                                             string.Join(Environment.NewLine,
                                               potentialTypes.Select(t => t.AssemblyQualifiedName)));
-      var cfg = potentialTypes[0];
-      return (T) Activator.CreateInstance(Type.GetType(cfg.AssemblyQualifiedName));
+      return (T)Activator.CreateInstance(potentialTypes[0]);
     }
+    static readonly byte[] msKey = new byte[] {0xb, 0x7, 0x7, 0xa, 0x5, 0xc, 0x5, 0x6, 0x1, 0x9, 0x3, 0x4, 0xe, 0x0, 0x8, 0x9};
 
     static bool NotFrameworkAssembly(Assembly assembly)
     {
-      switch (assembly.GetName().Name)
-      {
-        case "OpenRasta":
-        case "OpenRasta.Hosting.AspNet":
-          return false;
-        default:
-          return true;
-      }
+      var assemblyName = assembly.GetName();
+      return assemblyName.Name != "OpenRasta" &&
+             assemblyName.Name != "OpenRasta.Hosting.AspNet" &&
+             !assemblyName.GetPublicKeyToken().SequenceEqual(msKey);
     }
 
     public bool ConfigureLeafDependencies(IDependencyResolver resolver)

@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>OpenRasta.Hosting.AspNet.Tests.Integration</RootNamespace>
     <AssemblyName>OpenRasta.Hosting.AspNet.Tests.Integration</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <LangVersion>7</LangVersion>
   </PropertyGroup>
@@ -55,6 +55,7 @@
     <Compile Include="..\CommonInfo.cs">
       <Link>CommonInfo.cs</Link>
     </Compile>
+    <Compile Include="finding_types.cs" />
     <Compile Include="when_issueing_a_get_for_a_resource.cs" />
     <Compile Include="Customer.cs" />
     <Compile Include="CustomerHandler.cs" />
