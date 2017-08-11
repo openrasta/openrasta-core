@@ -21,10 +21,7 @@ namespace OpenRasta.OperationModel
 
     public IDictionary ExtendedProperties => throw new NotSupportedException("");
 
-    public string Name
-    {
-      get { return _operationImplementation.Name; }
-    }
+    public string Name => _operationImplementation.Name;
 
     public IEnumerable<OutputMember> Invoke()
     {

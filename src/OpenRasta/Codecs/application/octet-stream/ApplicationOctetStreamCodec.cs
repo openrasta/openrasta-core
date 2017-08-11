@@ -1,18 +1,9 @@
-#region License
-/* Authors:
- *      Sebastien Lambla (seb@serialseb.com)
- * Copyright:
- *      (C) 2007-2009 Caffeine IT & naughtyProd Ltd (http://www.caffeine-it.com)
- * License:
- *      This file is distributed under the terms of the MIT License found at the end of this file.
- */
-#endregion
-
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using OpenRasta.IO;
 using OpenRasta.TypeSystem;
 using OpenRasta.Web;
@@ -24,79 +15,68 @@ namespace OpenRasta.Codecs
     [SupportedType(typeof(IFile))]
     [SupportedType(typeof(Stream))]
     [SupportedType(typeof(byte[]))]
-    public class ApplicationOctetStreamCodec : Codec, IMediaTypeReader, IMediaTypeWriter
+    public partial class ApplicationOctetStreamCodec :
+      Codec,
+      IMediaTypeReaderAsync,
+      IMediaTypeReader,
+      IMediaTypeWriterAsync,
+      IMediaTypeWriter
     {
-        public object ReadFrom(IHttpEntity request, IType destinationType, string destinationName)
+      public async Task<object> ReadFrom(IHttpEntity request, IType destinationType, string destinationName)
         {
             if (destinationType.IsAssignableTo<IFile>())
                 return new HttpEntityFile(request);
             if (destinationType.IsAssignableTo<Stream>())
                 return request.Stream;
             if (destinationType.IsAssignableTo<byte[]>())
-                return request.Stream.ReadToEnd();
+                return await request.Stream.ReadToEndAsync();
             return Missing.Value;
         }
 
-        public void WriteTo(object entity, IHttpEntity response, string[] codecParameters)
+      public async Task WriteTo(object entity, IHttpEntity response, IEnumerable<string> codecParameters)
         {
-            if (!GetWriters(entity, response).Any(x => x))
-                throw new InvalidOperationException();
+            foreach (var writer in GetWritersAsync(entity, response))
+                if (await writer)
+                    return;
+
+            throw new InvalidOperationException();
         }
 
 
-        static bool TryProcessAs<T>(object target, Action<T> action) where T : class
+        static async Task<bool> TryProcessAsAsync<T>(object target, Func<T, Task> action) where T : class
         {
             var typedTarget = target as T;
-            if (typedTarget != null)
-            {
-                action(typedTarget);
-                return true;
-            }
-            return false;
+            if (typedTarget == null) return false;
+            await action(typedTarget);
+            return true;
         }
 
-        static void WriteFileWithFilename(IFile file, string disposition, IHttpEntity response)
+      static async Task WriteFileWithFilenameAsync(IFile file, string disposition, IHttpEntity response)
         {
-            var contentDispositionHeader = response.Headers.ContentDisposition ?? new ContentDispositionHeader(disposition);
+            var contentDispositionHeader =
+                response.Headers.ContentDisposition ?? new ContentDispositionHeader(disposition);
 
             if (!string.IsNullOrEmpty(file.FileName))
                 contentDispositionHeader.FileName = file.FileName;
-            if (!string.IsNullOrEmpty(contentDispositionHeader.FileName) || contentDispositionHeader.Disposition != "inline")
+            if (!string.IsNullOrEmpty(contentDispositionHeader.FileName) ||
+                contentDispositionHeader.Disposition != "inline")
                 response.Headers.ContentDisposition = contentDispositionHeader;
             if (file.ContentType != null && file.ContentType != MediaType.ApplicationOctetStream
                 || (file.ContentType == MediaType.ApplicationOctetStream && response.ContentType == null))
                 response.ContentType = file.ContentType;
             // TODO: use contentLength from IFile
             using (var stream = file.OpenStream())
-                stream.CopyTo(response.Stream);
+                await stream.CopyToAsync(response.Stream);
         }
 
-        IEnumerable<bool> GetWriters(object entity, IHttpEntity response)
+      IEnumerable<Task<bool>> GetWritersAsync(object entity, IHttpEntity response)
         {
-            yield return TryProcessAs<IDownloadableFile>(entity, file => WriteFileWithFilename(file, "attachment", response));
-            yield return TryProcessAs<IFile>(entity, file => WriteFileWithFilename(file, "inline", response));
+            yield return TryProcessAsAsync<IDownloadableFile>(entity,
+                file => WriteFileWithFilenameAsync(file, "attachment", response));
+            yield return TryProcessAsAsync<IFile>(entity, file => WriteFileWithFilenameAsync(file, "inline", response));
             // TODO: Stream to be disposed and length to be written if needed
-            yield return TryProcessAs<Stream>(entity, stream => stream.CopyTo(response.Stream));
-            yield return TryProcessAs<byte[]>(entity, bytes => response.Stream.Write(bytes));
+            yield return TryProcessAsAsync<Stream>(entity, stream => stream.CopyToAsync(response.Stream));
+            yield return TryProcessAsAsync<byte[]>(entity, bytes => response.Stream.WriteAsync(bytes, 0, bytes.Length));
         }
     }
 }
-
-#region Full license
-// Permission is hereby granted, free of charge, to any person obtaining
-// a copy of this software and associated documentation files (the
-// "Software"), to deal in the Software without restriction, including
-// without limitation the rights to use, copy, modify, merge, publish,
-// distribute, sublicense, and/or sell copies of the Software, and to
-// permit persons to whom the Software is furnished to do so, subject to
-// the following conditions:
-// The above copyright notice and this permission notice shall be
-// included in all copies or substantial portions of the Software.
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
-// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
-// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-#endregion

@@ -59,6 +59,7 @@ namespace OpenRasta.Tests.Unit.OperationModel.CodecSelectors
       given_operations();
       given_request_header_content_type((string) null);
       given_registration_codec<ApplicationOctetStreamCodec>();
+      given_request_httpmethod("POST");
       given_request_entity_body(new byte[] {0});
 
       when_filtering_operations();

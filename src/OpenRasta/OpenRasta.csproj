@@ -71,6 +71,7 @@
     <Compile Include="Binding\ValueConverter.cs" />
     <Compile Include="Codecs\application\json\JsonDataContractCodec.cs" />
     <Compile Include="Codecs\application\octet-stream\ApplicationOctetStreamCodec.cs" />
+    <Compile Include="Codecs\application\octet-stream\ApplicationOctetStreamCodec.Sync.cs" />
     <Compile Include="Codecs\application\x-www-form-urlencoded\AbstractApplicationXWwwFormUrlencodedCodec.cs" />
     <Compile Include="Codecs\application\x-www-form-urlencoded\ApplicationXWwwFormUrlencodedKeyedValuesCodec.cs" />
     <Compile Include="Codecs\application\x-www-form-urlencoded\ApplicationXWwwFormUrlencodedObjectCodec.cs" />

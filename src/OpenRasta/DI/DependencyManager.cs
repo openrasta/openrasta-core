@@ -78,14 +78,12 @@ namespace OpenRasta.DI
     {
       if (Current != null)
         throw new InvalidOperationException("A resolver is already set");
-      Current = resolver;
+      Current = resolver ?? throw new ArgumentNullException(nameof(resolver));
     }
 
     public static void UnsetResolver()
     {
-      if(Current == null)
-        throw new InvalidOperationException("A resolver is not set");
-      Current = null;
+      if (Current != null) Current = null;
     }
   }
 }

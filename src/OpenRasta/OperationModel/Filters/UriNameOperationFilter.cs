@@ -28,27 +28,31 @@ namespace OpenRasta.OperationModel.Filters
 
     public IEnumerable<IOperationAsync> Process(IEnumerable<IOperationAsync> operations)
     {
+      return ProcessOperationsList(operations.ToList());
+    }
+
+    private IEnumerable<IOperationAsync> ProcessOperationsList(List<IOperationAsync> operations)
+    {
       if (string.IsNullOrEmpty(_commContext.PipelineData.SelectedResource?.UriName))
       {
         return OperationsWhenNoUriName(operations);
       }
 
-      operations = operations.ToList();
 
-      return Match(ByAttribute(operations))
-             ?? Match(ByConvention(operations))
+      return Match(ByAttribute(operations).ToList())
+             ?? Match(ByConvention(operations).ToList())
              ?? operations;
     }
 
-    static IEnumerable<IOperationAsync> Match(IEnumerable<IOperationAsync> filter)
+    static List<IOperationAsync> Match(List<IOperationAsync> val)
     {
-      var val = filter.ToList();
       return val.Any() ? val : null;
     }
 
-    IEnumerable<IOperationAsync> OperationsWhenNoUriName(IEnumerable<IOperationAsync> operations)
+    List<IOperationAsync> OperationsWhenNoUriName(List<IOperationAsync> operations)
     {
-      var filteredOperations = NotConventionalName(NoAttributesOrEmptyUriNameBinding(operations)).ToList();
+      var filteredOperations = NotConventionalName(
+        NoAttributesOrEmptyUriNameBinding(operations).ToList());
 
       if (filteredOperations.Count == operations.Count())
         Log.NoResourceOrUriName();
@@ -58,18 +62,20 @@ namespace OpenRasta.OperationModel.Filters
       return filteredOperations;
     }
 
-    IEnumerable<IOperationAsync> NotConventionalName(IEnumerable<IOperationAsync> operations)
+    List<IOperationAsync> NotConventionalName(List<IOperationAsync> operations)
     {
       var key = _commContext.PipelineData.SelectedResource.ResourceKey;
       if (key == null) return operations;
       
       var method = _commContext.Request.HttpMethod;
-      return operations.Where(op =>
+      return operations
+        .Where(op =>
         op.Name.StartsWith(method, StringComparison.OrdinalIgnoreCase) == false ||
-        _uris.UriNames[key].Contains(op.Name.Substring(method.Length)) == false);
+        _uris.UriNames[key].Contains(op.Name.Substring(method.Length)) == false)
+        .ToList();
     }
 
-    static IEnumerable<IOperationAsync> NoAttributesOrEmptyUriNameBinding(IEnumerable<IOperationAsync> operations)
+    static IEnumerable<IOperationAsync> NoAttributesOrEmptyUriNameBinding(List<IOperationAsync> operations)
     {
       return from operation in operations
         let attribute = operation.FindAttribute<HttpOperationAttribute>()

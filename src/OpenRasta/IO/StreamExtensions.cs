@@ -10,6 +10,7 @@
 
 using System;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace OpenRasta.IO
 {
@@ -29,13 +30,13 @@ namespace OpenRasta.IO
             return totalWritten;
         }
 
-        public static byte[] ReadToEnd(this Stream stream)
+        public static async Task<byte[]> ReadToEndAsync(this Stream stream)
         {
             var streamToReturn = stream as MemoryStream;
             if (streamToReturn == null)
             {
                 streamToReturn = new MemoryStream();
-                stream.CopyTo(streamToReturn);
+                await stream.CopyToAsync(streamToReturn);
                 streamToReturn.Position = 0;
             }
 
@@ -48,6 +49,24 @@ namespace OpenRasta.IO
             return destinationBytes;
         }
 
+        public static byte[] ReadToEnd(this Stream stream)
+        {
+            var streamToReturn = stream as MemoryStream;
+            if (streamToReturn == null)
+            {
+                streamToReturn = new MemoryStream();
+                stream.CopyTo(streamToReturn);
+                streamToReturn.Position = 0;
+            }
+
+            var destinationBytes = new byte[streamToReturn.Length - streamToReturn.Position];
+            Buffer.BlockCopy(streamToReturn.GetBuffer(),
+                (int)streamToReturn.Position, 
+                destinationBytes, 
+                0, 
+                (int)(streamToReturn.Length - streamToReturn.Position));
+            return destinationBytes;
+        }
         public static void Write(this Stream stream, byte[] buffer)
         {
             stream.Write(buffer, 0, buffer.Length);

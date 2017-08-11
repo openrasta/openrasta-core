@@ -1,4 +1,5 @@
 #region License
+
 /* Authors:
  *      Sebastien Lambla (seb@serialseb.com)
  * Copyright:
@@ -6,7 +7,9 @@
  * License:
  *      This file is distributed under the terms of the MIT License found at the end of this file.
  */
+
 #endregion
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,6 +20,7 @@ using OpenRasta.Web;
 using NUnit.Framework;
 using OpenRasta.IO;
 using System.IO;
+using System.Threading.Tasks;
 using OpenRasta.Tests.Unit.Infrastructure;
 using Shouldly;
 
@@ -35,6 +39,7 @@ namespace ApplicationOctetStreamCodec_Specification
             ThenTheResult
                 .ShouldNotBeNull();
         }
+
         [Test]
         public void the_length_is_set_to_the_proper_value()
         {
@@ -43,7 +48,7 @@ namespace ApplicationOctetStreamCodec_Specification
 
             when_decoding();
 
-          ThenTheResult.Length.ShouldBe(1000);
+            ThenTheResult.Length.ShouldBe(1000);
         }
 
         [Test]
@@ -57,6 +62,7 @@ namespace ApplicationOctetStreamCodec_Specification
             ThenTheResult
                 .ShouldNotBeNull();
         }
+
         [Test]
         public void the_file_name_is_null_if_no_content_disposition_header_is_present()
         {
@@ -66,7 +72,7 @@ namespace ApplicationOctetStreamCodec_Specification
 
             when_decoding();
 
-          ThenTheResult.FileName.ShouldBeNull();
+            ThenTheResult.FileName.ShouldBeNull();
         }
 
         [Test]
@@ -78,108 +84,117 @@ namespace ApplicationOctetStreamCodec_Specification
 
             when_decoding();
 
-          ThenTheResult.FileName.ShouldBe( "test.txt");
+            ThenTheResult.FileName.ShouldBe("test.txt");
         }
 
-        public void when_decoding()
+        public async Task when_decoding()
         {
-            when_decoding<IFile>();
+            await when_decoding<IFile>();
         }
-        public IFile ThenTheResult { get { return then_decoding_result<IFile>(); } }
+
+        public IFile ThenTheResult => then_decoding_result<IFile>();
     }
+
     [TestFixture]
     public class when_converting_an_ifile_to_a_byte_stream : media_type_writer_context<ApplicationOctetStreamCodec>
     {
         object _entity;
 
         [Test]
-        public void a_file_without_name_doesnt_generate_a_header()
+        public async Task a_file_without_name_doesnt_generate_a_header()
         {
             given_context();
             given_entity(new InMemoryFile());
 
-            when_coding();
+            await when_coding();
 
-          Response.Headers.ContentDisposition.ShouldBeNull();
+            Response.Headers.ContentDisposition.ShouldBeNull();
         }
+
         [Test]
-        public void a_file_with_a_name_generates_an_inline_content_disposition()
+        public async Task a_file_with_a_name_generates_an_inline_content_disposition()
         {
             given_context();
-            given_entity(new InMemoryFile() { FileName = "test.txt" });
+            given_entity(new InMemoryFile() {FileName = "test.txt"});
 
-            when_coding();
+            await when_coding();
             Response.Headers.ContentDisposition.ShouldNotBeNull();
 
-          Response.Headers.ContentDisposition.Disposition.ShouldBe( "inline");
-          Response.Headers.ContentDisposition.FileName.ShouldBe( "test.txt");
+            Response.Headers.ContentDisposition.Disposition.ShouldBe("inline");
+            Response.Headers.ContentDisposition.FileName.ShouldBe("test.txt");
         }
+
         [Test]
-        public void a_file_without_a_content_type_generates_an_app_octet_stream_content_type()
+        public async Task a_file_without_a_content_type_generates_an_app_octet_stream_content_type()
         {
             given_context();
             given_entity(new InMemoryFile());
 
-            when_coding();
-          Response.Headers.ContentType.ShouldBe(MediaType.ApplicationOctetStream);
+            await when_coding();
+            Response.Headers.ContentType.ShouldBe(MediaType.ApplicationOctetStream);
         }
-        [Test]
-        public void a_file_with_a_content_type_generates_the_correct_content_type_header()
-        {
-            given_context();
-            given_entity(new InMemoryFile{ContentType = MediaType.TextPlain});
 
-            when_coding();
-          Response.Headers.ContentType.ShouldBe(MediaType.TextPlain);
-        }
         [Test]
-        public void a_file_with_a_content_type_of_app_octet_stream_doesnt_override_response_content_type()
+        public async Task a_file_with_a_content_type_generates_the_correct_content_type_header()
         {
             given_context();
-            given_entity(new InMemoryFile { ContentType = MediaType.ApplicationOctetStream });
+            given_entity(new InMemoryFile {ContentType = MediaType.TextPlain});
+
+            await when_coding();
+            Response.Headers.ContentType.ShouldBe(MediaType.TextPlain);
+        }
+
+        [Test]
+        public async Task a_file_with_a_content_type_of_app_octet_stream_doesnt_override_response_content_type()
+        {
+            given_context();
+            given_entity(new InMemoryFile {ContentType = MediaType.ApplicationOctetStream});
             Response.Headers.ContentType = MediaType.Xml;
 
-            when_coding();
-          Response.Headers.ContentType.ShouldBe(MediaType.Xml);
+            await when_coding();
+            Response.Headers.ContentType.ShouldBe(MediaType.Xml);
         }
+
         [Test]
-        public void a_file_with_a_more_specific_content_type_overrides_the_response_content_type()
+        public async Task a_file_with_a_more_specific_content_type_overrides_the_response_content_type()
         {
             given_context();
-            given_entity(new InMemoryFile { ContentType = MediaType.Xml });
+            given_entity(new InMemoryFile {ContentType = MediaType.Xml});
             Response.Headers.ContentType = MediaType.ApplicationOctetStream;
 
-            when_coding();
-          Response.Headers.ContentType.ShouldBe(MediaType.Xml);
+            await when_coding();
+            Response.Headers.ContentType.ShouldBe(MediaType.Xml);
         }
+
         [Test]
-        public void a_downloadable_file_with_name_generates_a_content_disposition()
+        public async Task a_downloadable_file_with_name_generates_a_content_disposition()
         {
             given_context();
-            given_entity(new InMemoryDownloadableFile() { FileName = "test.txt" });
+            given_entity(new InMemoryDownloadableFile() {FileName = "test.txt"});
 
-            when_coding();
+            await when_coding();
             Response.Headers.ContentDisposition.ShouldNotBeNull();
 
-          Response.Headers.ContentDisposition.Disposition.ShouldBe( "attachment");
-          Response.Headers.ContentDisposition.FileName.ShouldBe( "test.txt");
+            Response.Headers.ContentDisposition.Disposition.ShouldBe("attachment");
+            Response.Headers.ContentDisposition.FileName.ShouldBe("test.txt");
         }
+
         [Test]
-        public void a_downloadable_file_without_name_generates_a_content_disposition()
+        public async Task a_downloadable_file_without_name_generates_a_content_disposition()
         {
             given_context();
             given_entity(new InMemoryDownloadableFile());
 
-            when_coding();
+            await when_coding();
             Response.Headers.ContentDisposition.ShouldNotBeNull();
 
-          Response.Headers.ContentDisposition.Disposition.ShouldBe( "attachment");
-          Response.Headers.ContentDisposition.FileName.ShouldBeNull();
+            Response.Headers.ContentDisposition.Disposition.ShouldBe("attachment");
+            Response.Headers.ContentDisposition.FileName.ShouldBeNull();
         }
-        void when_coding()
+
+        async Task when_coding()
         {
-            var codec = CreateCodec(Context) as IMediaTypeWriter;
-            codec.WriteTo(_entity, Context.Response.Entity, null);
+            await (CreateCodec(Context)).WriteTo(_entity, Context.Response.Entity, null);
         }
 
         void given_entity(InMemoryFile file)
@@ -193,6 +208,7 @@ namespace ApplicationOctetStreamCodec_Specification
             return new ApplicationOctetStreamCodec();
         }
     }
+
     [TestFixture]
     public class when_converting_a_byte_stream_to_an_instance_of_a_stream : applicationoctetstream_context
     {
@@ -205,25 +221,37 @@ namespace ApplicationOctetStreamCodec_Specification
 
             WhenParsing();
 
-          ThenTheResult.Length.ShouldBe(1024);
+            ThenTheResult.Length.ShouldBe(1024);
         }
-        public void WhenParsing() { when_decoding<Stream>(); }
-        public Stream ThenTheResult { get { return then_decoding_result<Stream>(); } }
+
+        public void WhenParsing()
+        {
+            when_decoding<Stream>();
+        }
+
+        public Stream ThenTheResult
+        {
+            get { return then_decoding_result<Stream>(); }
+        }
     }
+
     public class applicationoctetstream_context : media_type_reader_context<ApplicationOctetStreamCodec>
     {
         protected void given_request_entity_stream()
         {
             given_request_entity_stream(1024);
         }
+
         protected void given_request_entity_stream(int length)
         {
-            given_request_stream(stream=>stream.Write(new byte[length]));
+            given_request_stream(stream => stream.Write(new byte[length]));
         }
+
         protected override ApplicationOctetStreamCodec CreateCodec(ICommunicationContext context)
         {
             return new ApplicationOctetStreamCodec();
         }
+
         protected void given_content_disposition_header(string p)
         {
             Context.Request.Entity.Headers.ContentDisposition = new ContentDispositionHeader(p);
@@ -232,6 +260,7 @@ namespace ApplicationOctetStreamCodec_Specification
 }
 
 #region Full license
+
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -252,4 +281,5 @@ namespace ApplicationOctetStreamCodec_Specification
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+
 #endregion

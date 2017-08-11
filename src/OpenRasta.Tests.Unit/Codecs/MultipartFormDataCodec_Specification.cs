@@ -22,6 +22,7 @@ using OpenRasta;
 using System.IO;
 using System.Net.Mime;
 using System;
+using System.Threading.Tasks;
 using Moq;
 using Moq.Language;
 using OpenRasta.DI;
@@ -59,32 +60,32 @@ namespace MultipartFormDataCodec_Specification
     public class when_parsing_parts_for_base_types : multipart_codec
     {
         [Test]
-        public void a_string_is_assigned()
+        public async Task a_string_is_assigned()
         {
             given_context();
             GivenAMultipartRequestStream(Scenarios.TWO_FIELDS);
 
-            when_decoding<string>("username");
+            await when_decoding<string>("username");
 
           then_decoding_result<string>().ShouldBe( "johndoe");
         }
         [Test]
-        public void a_datetime_is_assigned()
+        public async Task a_datetime_is_assigned()
         {
             given_context();
             GivenAMultipartRequestStream(Scenarios.TWO_FIELDS);
 
-            when_decoding<DateTime>("dateofbirth");
+            await when_decoding<DateTime>("dateofbirth");
 
           then_decoding_result<DateTime>().ShouldBe(DateTime.Parse("10 Dec 2001"));
         }
         [Test]
-        public void a_large_field_value_is_stored_on_disk()
+        public async Task a_large_field_value_is_stored_on_disk()
         {
             given_context();
             GivenAMultipartRequestStream(Scenarios.LARGE_FIELD);
 
-            when_decoding<IDictionary<string, IList<IMultipartHttpEntity>>>("field");
+            await when_decoding<IDictionary<string, IList<IMultipartHttpEntity>>>("field");
 
           then_decoding_result<IDictionary<string, IList<IMultipartHttpEntity>>>()["field"].First().Stream.ShouldBeAssignableTo<FileStream>()
             .Length.ShouldBe(85003);
@@ -93,40 +94,40 @@ namespace MultipartFormDataCodec_Specification
     public class when_parsing_parts_with_unicode_names : multipart_codec
     {
         [Test]
-        public void the_field_name_encoded_in_quoted_printable_for_utf_8_is_recognized()
+        public async Task the_field_name_encoded_in_quoted_printable_for_utf_8_is_recognized()
         {
             given_context();
             GivenAMultipartRequestStream(Scenarios.TELEPHONE_FIELD_UTF8_QUOTED);
 
-            when_decoding<string>("Téléphone");
+            await when_decoding<string>("Téléphone");
           then_decoding_result<string>().ShouldBe( "077 777 7777");
         }
         [Test]
-        public void a_field_name_encoded_in_base64_for_utf_8_is_recognized()
+        public async Task a_field_name_encoded_in_base64_for_utf_8_is_recognized()
         {
             given_context();
             GivenAMultipartRequestStream(Scenarios.TELEPHONE_FIELD_UTF8_BASE64);
 
-            when_decoding<string>("Téléphone");
+            await when_decoding<string>("Téléphone");
           then_decoding_result<string>().ShouldBe( "077 777 7777");
         }
         [Test]
-        public void a_field_name_encoded_in_base64_for_iso_is_recognized()
+        public async Task a_field_name_encoded_in_base64_for_iso_is_recognized()
         {
             given_context();
             GivenAMultipartRequestStream(Scenarios.TELEPHONE_FIELD_ISO88591_QUOTED);
 
-            when_decoding<string>("Téléphone");
+            await when_decoding<string>("Téléphone");
           then_decoding_result<string>().ShouldBe( "077 777 7777");
         }
         [Test]
-        public void a_sub_codec_is_used_to_resolve_a_parameter_name()
+        public async Task a_sub_codec_is_used_to_resolve_a_parameter_name()
         {
             
             given_context();
             GivenAMultipartRequestStream(Scenarios.FILE_FIELD);
 
-            when_decoding<IFile>("file");
+           await when_decoding<IFile>("file");
           then_decoding_result<IFile>().FileName.ShouldBe( "temp.txt");
           then_decoding_result<IFile>().Length.ShouldBe(85000);
         }
@@ -134,44 +135,44 @@ namespace MultipartFormDataCodec_Specification
     public class when_parsing_parts_with_names_representing_types : multipart_codec
     {
         [Test]
-        public void a_string_property_is_assigned()
+        public async Task a_string_property_is_assigned()
         {
             
             given_context();
             GivenAMultipartRequestStream(Scenarios.TWO_FIELDS_COMPOSED_NAMES);
 
-            when_decoding<Customer>("customer");
+            await when_decoding<Customer>("customer");
 
           then_decoding_result<Customer>().Username.ShouldBe( "johndoe");
         }
         [Test]
-        public void a_datetime_property_is_assigned()
+        public async Task a_datetime_property_is_assigned()
         {
             given_context();
             GivenAMultipartRequestStream(Scenarios.TWO_FIELDS_COMPOSED_NAMES);
 
-            when_decoding<Customer>("customer");
+            await when_decoding<Customer>("customer");
 
           then_decoding_result<Customer>().DateOfBirth.Year.ShouldBe(2001);
         }
         [Test]
-        public void another_mime_type_for_key_values_is_used_to_parse_the_result_correctly()
+        public async Task another_mime_type_for_key_values_is_used_to_parse_the_result_correctly()
         {
             given_context();
             GivenAMultipartRequestStream(Scenarios.TWO_FIELDS_COMPOSED_NAMES);
 
-            when_decoding<IDictionary<string,string[]>>("additions");
+            await when_decoding<IDictionary<string,string[]>>("additions");
 
           then_decoding_result<IDictionary<string, string[]>>()["oneplusone"][0].ShouldBe( "two");
           then_decoding_result<IDictionary<string, string[]>>()["oneplustwo"][0].ShouldBe( "three");
         }
         [Test]
-        public void construction_of_objects_from_other_media_types_returns_the_correct_values()
+        public async Task construction_of_objects_from_other_media_types_returns_the_correct_values()
         {
             given_context();
             GivenAMultipartRequestStream(Scenarios.NESTED_CONTENT_TYPES);
 
-            when_decoding<Customer>("customer");
+            await when_decoding<Customer>("customer");
 
           then_decoding_result<Customer>().DateOfBirth.Year.ShouldBe(2001);
           then_decoding_result<Customer>().DateOfBirth.Month.ShouldBe(12);

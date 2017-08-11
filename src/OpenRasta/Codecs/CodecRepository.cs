@@ -68,6 +68,7 @@ namespace OpenRasta.Codecs
 
             var readerCodecs = from codec in _codecs.Matching(requestedMediaType)
                                where codec.CodecType.Implements<IMediaTypeReader>() ||
+                                     codec.CodecType.Implements<IMediaTypeReaderAsync>() ||
                                      codec.CodecType.Implements(typeof(IKeyedValuesMediaTypeReader<>))
                                select codec;
 
@@ -162,6 +163,7 @@ namespace OpenRasta.Codecs
             return from mediaType in mediaTypes
                    from codec in _codecs.Matching(mediaType)
                    where codec.CodecType.Implements<IMediaTypeWriter>()
+                    || codec.CodecType.Implements<IMediaTypeWriterAsync>()
                    let match = new CodecMatch(codec, CalculateScoreFor(new[] { resourceType }, codec), int.MaxValue)
                    where match.Score >= 0
                    orderby match descending

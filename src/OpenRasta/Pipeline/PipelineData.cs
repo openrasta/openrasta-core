@@ -17,6 +17,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using OpenRasta.Codecs;
+using OpenRasta.Collections;
 using OpenRasta.OperationModel;
 using OpenRasta.TypeSystem;
 using OpenRasta.Web;
@@ -25,17 +26,16 @@ namespace OpenRasta.Pipeline
 {
   /// <summary>
   /// </summary>
-  /// <remarks>Need to inherit from a yet to be created SafeDictionary</remarks>
-  public class PipelineData : Dictionary<object, object>
+  public class PipelineData : DictionaryBase<object, object>
   {
     const string PIPELINE_STATE = OR_PIPELINE + "PipelineStage";
     const string HANDLER_TYPE = OR_PIPELINE + "HandlerType";
-    const string OPERATIONS = OR_PIPELINE + "Operations";
     const string OR_PIPELINE = "__OR_PIPELINE_";
     const string RESOURCE_KEY = OR_PIPELINE + "ResourceKey";
     const string RESPONSE_CODEC = OR_PIPELINE + "ResponseCodec";
     const string SELECTED_HANDLERS = OR_PIPELINE + "SelectedHandlers";
     const string SELECTED_RESOURCE = OR_PIPELINE + "SelectedResource";
+    const string OPERATIONS = OR_PIPELINE + "Operations";
     const string OPERATIONS_ASYNC = "openrasta.operations";
     const string SUSPEND = "openrasta.pipeline.stages.suspend";
     const string RESUME = "openrasta.pipeline.stages.resume";
@@ -57,7 +57,7 @@ namespace OpenRasta.Pipeline
     public IEnumerable<IOperation> Operations
     {
       get => SafeGet<IEnumerable<IOperation>>(OPERATIONS) ?? Enumerable.Empty<IOperation>();
-      set => base[OPERATIONS] = value;
+      set {}
     }
 
     public TaskCompletionSource<object> Suspend
@@ -74,7 +74,18 @@ namespace OpenRasta.Pipeline
     public IEnumerable<IOperationAsync> OperationsAsync
     {
       get => SafeGet<IEnumerable<IOperationAsync>>(OPERATIONS_ASYNC) ?? Enumerable.Empty<IOperationAsync>();
-      set => base[OPERATIONS_ASYNC] = value;
+      set
+      {
+        base[OPERATIONS_ASYNC] = value;
+        
+#pragma warning disable 618
+        base[OPERATIONS] = value
+          .Select(op => new PretendingToBeSyncOperationForLegacyInterceptors(op))
+          .Cast<IOperation>()
+          .ToList();
+#pragma warning restore 618
+
+      }
     }
 
     /// <summary>

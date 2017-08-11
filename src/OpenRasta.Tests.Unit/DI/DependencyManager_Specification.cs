@@ -21,7 +21,6 @@ namespace DependencyManager_Specification
         [Test]
         public void resolving_a_dependency_when_there_is_no_resolver_raises_an_exception()
         {
-            DependencyManager.SetResolver(null);
             Executing(() => DependencyManager.GetService(typeof (IConvertible))).ShouldThrow<DependencyResolutionException>();
         }
 

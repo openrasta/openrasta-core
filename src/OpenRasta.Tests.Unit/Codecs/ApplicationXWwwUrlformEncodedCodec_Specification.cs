@@ -20,6 +20,7 @@ using NUnit.Framework;
 using OpenRasta.Web;
 using Moq;
 using System.IO;
+using System.Threading.Tasks;
 using OpenRasta.Codecs;
 using OpenRasta.Pipeline;
 using OpenRasta.IO;
@@ -53,78 +54,78 @@ namespace ApplicationXWwwUrlformEncodedCodec_Specification
   public class when_parsing_for_simple_types : app_www_context
   {
     [Test]
-    public void url_encoding_is_resolved()
+    public async Task url_encoding_is_resolved()
     {
       given_context();
       given_request_stream("thecustomer=John%20Doe");
 
-      when_decoding<string>("thecustomer");
+      await when_decoding<string>("thecustomer");
 
       then_decoding_result<string>().ShouldBe( "John Doe");
     }
 
     [Test]
-    public void strings_are_assigned()
+    public async Task strings_are_assigned()
     {
       given_context();
       given_request_stream("thecustomer=John&thecustomer=Jack");
 
-      when_decoding<string[]>("thecustomer");
+      await when_decoding<string[]>("thecustomer");
 
       then_decoding_result<string[]>().ShouldBe((IEnumerable<string>) new[] {"John", "Jack"});
     }
 
     [Test]
-    public void string_arrays_are_assigned()
+    public async Task string_arrays_are_assigned()
     {
       given_context();
       given_request_stream("thecustomer=John");
 
-      when_decoding<string>("thecustomer");
+      await when_decoding<string>("thecustomer");
 
       then_decoding_result<string>().ShouldBe( "John");
     }
 
     [Test]
-    public void guids_are_assigned()
+    public async Task guids_are_assigned()
     {
       given_context();
       given_request_stream("myguid=044A624B-466A-4383-89FA-A02B629C78B9");
 
-      when_decoding<Guid>("myguid");
+      await when_decoding<Guid>("myguid");
 
       then_decoding_result<Guid>().ShouldBe(new Guid("044A624B-466A-4383-89FA-A02B629C78B9"));
     }
 
     [Test]
-    public void invalid_guids_are_assigned()
+    public async Task invalid_guids_are_assigned()
     {
       given_context();
       given_request_stream("myguid=xxx");
 
-      when_decoding<Guid>("myguid");
+      await when_decoding<Guid>("myguid");
 
       then_decoding_result_is_missing();
     }
 
     [Test]
-    public void invalid_nullable_guids_are_assigned()
+    public async Task invalid_nullable_guids_are_assigned()
     {
       given_context();
       given_request_stream("myguid=xxx");
 
-      when_decoding<Guid?>("myguid");
+      await when_decoding<Guid?>("myguid");
 
       then_decoding_result_is_missing();
     }
 
     [Test]
-    public void integers_are_assigned()
+    public async Task integers_are_assigned()
     {
       given_context();
       given_request_stream("thecustomerid=3");
 
-      when_decoding<int>("thecustomerid");
+      await when_decoding<int>("thecustomerid");
 
       then_decoding_result<int>().ShouldBe(3);
     }
@@ -133,12 +134,12 @@ namespace ApplicationXWwwUrlformEncodedCodec_Specification
   public class when_parsing_for_complex_types : app_www_context
   {
     [Test]
-    public void the_complex_type_is_built_when_referenced_by_name()
+    public async Task the_complex_type_is_built_when_referenced_by_name()
     {
       given_context();
       given_request_stream("thecustomer.FirstName=John");
 
-      when_decoding<Customer>("thecustomer");
+      await when_decoding<Customer>("thecustomer");
 
       then_decoding_result<Customer>()
           .FirstName.ShouldBe( "John");

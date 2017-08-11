@@ -13,13 +13,15 @@ namespace OpenRasta.Pipeline.Contributors
     : KnownStages.ICodecRequestSelection
   {
     private readonly IDependencyResolver _resolver;
+    private Func<IEnumerable<IOperationCodecSelector>> _codecSelectors;
 
     public RequestCodecSelector(IDependencyResolver resolver)
     {
       _resolver = resolver;
+      _codecSelectors = ()=>_resolver.ResolveAll<IOperationCodecSelector>();
     }
 
-    static PipelineContinuation OnOperationsEmpty(ICommunicationContext context)
+    private static PipelineContinuation RequestMediaTypeUnsupported(ICommunicationContext context)
     {
       context.OperationResult = new OperationResult.RequestMediaTypeUnsupported();
       return PipelineContinuation.RenderNow;
@@ -27,35 +29,22 @@ namespace OpenRasta.Pipeline.Contributors
 
     private PipelineContinuation ProcessOperations(ICommunicationContext context)
     {
-      context.PipelineData.OperationsAsync = ProcessOperations(context.PipelineData.OperationsAsync).ToList();
-      if (!context.PipelineData.OperationsAsync.Any())
-        return OnOperationsEmpty(context);
-      return OnOperationProcessingComplete(context.PipelineData.OperationsAsync) ?? PipelineContinuation.Continue;
+      var ops = ProcessOperations(context.PipelineData.OperationsAsync.ToList());
+      context.PipelineData.OperationsAsync = ops;
+      return !ops.Any() ? RequestMediaTypeUnsupported(context) : PipelineContinuation.Continue;
     }
 
-    private IEnumerable<IOperationAsync> ProcessOperations(IEnumerable<IOperationAsync> operations)
+    private List<IOperationAsync> ProcessOperations(List<IOperationAsync> operations)
     {
-      var chain = GetMethods().Chain();
-      return chain == null ? new IOperationAsync[0] : chain(operations);
+      return _codecSelectors()
+        .Aggregate(
+          operations,
+          (list, selector) => selector.Process(list).ToList());
     }
 
     public virtual void Initialize(IPipeline pipelineRunner)
     {
       pipelineRunner.Notify(ProcessOperations).After<KnownStages.IOperationFiltering>();
-    }
-
-    static PipelineContinuation? OnOperationProcessingComplete(IEnumerable<IOperationAsync> ops)
-    {
-      return null;
-    }
-
-
-    private IEnumerable<Func<IEnumerable<IOperationAsync>, IEnumerable<IOperationAsync>>> GetMethods()
-    {
-      var operationProcessors = _resolver.ResolveAll<IOperationCodecSelector>();
-
-      foreach (var filter in operationProcessors)
-        yield return filter.Process;
     }
   }
 }

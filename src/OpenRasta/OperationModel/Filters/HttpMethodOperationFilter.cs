@@ -21,8 +21,8 @@ namespace OpenRasta.OperationModel.Filters
         public IEnumerable<IOperationAsync> Process(IEnumerable<IOperationAsync> operations)
         {
             operations = operations.ToList();
-            var operationWithMatchingName = OperationsWithMatchingName(operations);
-            var operationWithMatchingAttribute = OperationsWithMatchingAttribute(operations);
+            var operationWithMatchingName = OperationsWithMatchingName(operations).ToList();
+            var operationWithMatchingAttribute = OperationsWithMatchingAttribute(operations).ToList();
             Log.WriteDebug("Found {0} operation(s) with a matching name.", operationWithMatchingName.Count());
             Log.WriteDebug("Found {0} operation(s) with matching [HttpOperation] attribute.", operationWithMatchingAttribute.Count());
             return operationWithMatchingName.Union(operationWithMatchingAttribute);
@@ -36,7 +36,7 @@ namespace OpenRasta.OperationModel.Filters
                    select operation;
         }
 
-        IEnumerable<IOperationAsync> OperationsWithMatchingName(IEnumerable<IOperationAsync> operations)
+        private IEnumerable<IOperationAsync> OperationsWithMatchingName(IEnumerable<IOperationAsync> operations)
         {
             return from operation in operations
                    where operation.Name.StartsWith(_request.HttpMethod, StringComparison.OrdinalIgnoreCase)

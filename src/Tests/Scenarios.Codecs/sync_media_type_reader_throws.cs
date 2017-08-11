@@ -10,7 +10,7 @@ using Xunit;
 
 namespace Tests.Scenarios.HandlerSelection.Scenarios.Codecs
 {
-  public class media_type_reader_throws
+  public class sync_media_type_reader_throws
   {
     [Fact(Skip="Issue #8")]
     public async Task response_is_400()

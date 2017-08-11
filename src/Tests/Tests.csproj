@@ -133,9 +133,11 @@
     <Compile Include="Pipeline.Middleware\ResponseContributor\pipeline_in_continue_contrib_aborts.cs" />
     <Compile Include="Pipeline.Middleware\ResponseContributor\pipeline_in_render_now.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Scenarios.Codecs\async_media_type_reader.cs" />
+    <Compile Include="Scenarios.Codecs\async_media_type_writer.cs" />
     <Compile Include="Scenarios.Codecs\codec_used_with_optional_parameters.cs" />
     <Compile Include="Scenarios.Codecs\content_extension_with_throwing_handler.cs" />
-    <Compile Include="Scenarios.Codecs\media_type_reader_throws.cs" />
+    <Compile Include="Scenarios.Codecs\sync_media_type_reader_throws.cs" />
     <Compile Include="Scenarios.Codecs\multipart_enumerable_with_uri_params.cs" />
     <Compile Include="Scenarios.Codecs\multipart_invalid_content.cs" />
     <Compile Include="Scenarios.HandlerReturns\LocationHeader\AbsUriHandler.cs" />
