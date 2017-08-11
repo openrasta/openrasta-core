@@ -58,10 +58,10 @@ namespace OpenRasta.Codecs
     {
       yield return TryProcessAs<IDownloadableFile>(entity,
         file => WriteFileWithFilename(file, "attachment", response));
-      yield return TryProcessAs<IFile>(entity, file => WriteFileWithFilenameAsync(file, "inline", response));
+      yield return TryProcessAs<IFile>(entity, file => WriteFileWithFilename(file, "inline", response));
       // TODO: Stream to be disposed and length to be written if needed
-      yield return TryProcessAs<Stream>(entity, stream => stream.CopyToAsync(response.Stream));
-      yield return TryProcessAs<byte[]>(entity, bytes => response.Stream.WriteAsync(bytes, 0, bytes.Length));
+      yield return TryProcessAs<Stream>(entity, stream => stream.CopyTo(response.Stream));
+      yield return TryProcessAs<byte[]>(entity, bytes => response.Stream.Write(bytes, 0, bytes.Length));
     }
   }
 }

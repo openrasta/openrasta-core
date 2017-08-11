@@ -4,7 +4,9 @@ using System.Collections.Generic;
 
 namespace OpenRasta.OperationModel
 {
+#pragma warning disable 618
   public class PretendingToBeSyncOperationForLegacyInterceptors : IOperation
+#pragma warning restore 618
   {
     private readonly IOperationAsync _operationImplementation;
 
