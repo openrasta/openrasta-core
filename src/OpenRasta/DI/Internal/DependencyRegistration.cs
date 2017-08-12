@@ -23,6 +23,8 @@ namespace OpenRasta.DI.Internal
       Constructors.Sort((kv1, kv2) => kv1.Value.Length.CompareTo(kv2.Value.Length) * -1);
       Instance = instance;
       IsInstanceRegistration = instance != null;
+      
+      _lifetimeManager.VerifyRegistration(this);
     }
 
     public Type ConcreteType { get; }
@@ -32,9 +34,6 @@ namespace OpenRasta.DI.Internal
     public string Key { get; }
 
     public Type ServiceType { get; }
-
-    public void VerifyRegistration(DependencyRegistration registration)
-      => _lifetimeManager.VerifyRegistration(registration);
 
     public bool IsRegistrationAvailable(DependencyRegistration registration)
       => _lifetimeManager.IsRegistrationAvailable(registration);

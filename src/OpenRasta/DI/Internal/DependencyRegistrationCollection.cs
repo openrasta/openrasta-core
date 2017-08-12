@@ -18,7 +18,6 @@ namespace OpenRasta.DI.Internal
 
     public void Add(DependencyRegistration registration)
     {
-      registration.VerifyRegistration(registration);
       var regsForTypes = _registrations
         .GetOrAdd(registration.ServiceType, t => new List<DependencyRegistration>());
       regsForTypes.Add(registration);
