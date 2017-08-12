@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using OpenRasta.Collections;
 
@@ -6,7 +7,7 @@ namespace OpenRasta.DI.Internal
 {
   public class SingletonLifetimeManager : DependencyLifetimeManager
   {
-    readonly IDictionary<string, object> _instances = new Dictionary<string, object>();
+    readonly ConcurrentDictionary<string, object> _instances = new ConcurrentDictionary<string, object>();
 
     public SingletonLifetimeManager(InternalDependencyResolver builder)
       : base(builder)
@@ -15,25 +16,17 @@ namespace OpenRasta.DI.Internal
 
     public override object Resolve(ResolveContext context, DependencyRegistration registration)
     {
-        lock (_instances)
-        {
-          if (!_instances.TryGetValue(registration.Key, out var instance))
-            _instances.Add(registration.Key, instance = base.Resolve(context, registration));
-          return instance;
-        }
+      return _instances.GetOrAdd(registration.Key, key => base.Resolve(context, registration));
     }
 
     public override void VerifyRegistration(DependencyRegistration registration)
     {
       if (!registration.IsInstanceRegistration) return;
-      lock (_instances)
-      {
-        if (_instances.ContainsKey(registration.Key))
-          throw new InvalidOperationException(
-            "Trying to register an instance for a registration that already has one.");
-        _instances[registration.Key] = registration.Instance;
-        registration.Instance = null;
-      }
+      
+      if (!_instances.TryAdd(registration.Key, registration.Instance))
+        throw new InvalidOperationException(
+          "Trying to register an instance for a registration that already has one.");
+      registration.Instance = null;
     }
   }
 }
