@@ -35,7 +35,7 @@ namespace OpenRasta.DI.Internal
         throw new DependencyResolutionException(
           "A dependency registered as an instance wasn't found. The registration was removed.");
 
-      instance = base.Resolve(context, registration);
+      instance = CreateObject(context, registration);
 
       StoreInstanceInContext(contextStore, registration.Key, instance);
       return instance;

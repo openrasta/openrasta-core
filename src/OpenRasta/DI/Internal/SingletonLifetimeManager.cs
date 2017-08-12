@@ -16,7 +16,7 @@ namespace OpenRasta.DI.Internal
 
     public override object Resolve(ResolveContext context, DependencyRegistration registration)
     {
-      return _instances.GetOrAdd(registration.Key, key => base.Resolve(context, registration));
+      return _instances.GetOrAdd(registration.Key, key => CreateObject(context, registration));
     }
 
     public override void VerifyRegistration(DependencyRegistration registration)

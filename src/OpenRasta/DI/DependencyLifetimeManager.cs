@@ -16,7 +16,9 @@ namespace OpenRasta.DI
       return true;
     }
 
-    public virtual object Resolve(ResolveContext context, DependencyRegistration registration)
+    public abstract object Resolve(ResolveContext context, DependencyRegistration registration);
+
+    protected static object CreateObject(ResolveContext context, DependencyRegistration registration)
     {
       return context.Builder.CreateObject(registration);
     }
