@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using OpenRasta.Diagnostics;
 using OpenRasta.DI.Internal;
 using OpenRasta.Pipeline;
 
@@ -11,7 +10,6 @@ namespace OpenRasta.DI
   public class InternalDependencyResolver : DependencyResolverCore, IDependencyResolver
   {
     readonly Dictionary<DependencyLifetime, DependencyLifetimeManager> _lifetimeManagers;
-    ILogger _log = TraceSourceLogger.Instance;
 
     public InternalDependencyResolver()
     {
@@ -53,7 +51,7 @@ namespace OpenRasta.DI
     protected override object ResolveCore(Type serviceType)
     {
       try
-    {
+      {
         return new ResolveContext(Registrations).Resolve(serviceType);
       }
       catch (Exception e)
@@ -65,7 +63,10 @@ namespace OpenRasta.DI
     public void HandleIncomingRequestProcessed()
     {
       var store = (IContextStore) Resolve(typeof(IContextStore));
-      store.Destruct();
+      lock (store)
+      {
+        store.Destruct();
+      }
     }
 
     public bool HasDependency(Type serviceType)

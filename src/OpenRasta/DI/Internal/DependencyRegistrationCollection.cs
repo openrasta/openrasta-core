@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using OpenRasta.Collections.Specialized;
 using OpenRasta.Pipeline;
 
 namespace OpenRasta.DI.Internal
@@ -23,9 +24,9 @@ namespace OpenRasta.DI.Internal
 
     public void Add(DependencyRegistration registration)
     {
-      registration.VerifyRegistration(registration);
       lock (_registrations)
       {
+        registration.VerifyRegistration(registration);
         GetOrCreateRegistrations(registration.ServiceType).Add(registration);
       }
     }
@@ -55,7 +56,10 @@ namespace OpenRasta.DI.Internal
         {
           var toRemove = reg.Value.Where(x => x.IsInstanceRegistration && x.Key == key).ToList();
 
-          toRemove.ForEach(x => reg.Value.Remove(x));
+          foreach (var x in toRemove)
+          {
+            reg.Value.Remove(x);
+          }
         }
       }
     }

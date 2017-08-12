@@ -76,7 +76,9 @@ namespace OpenRasta.Pipeline
         catch (Exception e)
         {
           env.ServerErrors.Add(new Error {Exception = e});
-#pragma warning disable 618 - Compatibility
+          
+#pragma warning disable 618
+          // set for compatibility
           env.PipelineData.PipelineStage.CurrentState = PipelineContinuation.Abort;
 #pragma warning restore 618
 
