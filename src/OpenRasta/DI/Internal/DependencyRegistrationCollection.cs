@@ -1,51 +1,40 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using OpenRasta.Collections.Specialized;
 using OpenRasta.Pipeline;
 
 namespace OpenRasta.DI.Internal
 {
   public class DependencyRegistrationCollection : IContextStoreDependencyCleaner
   {
-    readonly Dictionary<Type, List<DependencyRegistration>> _registrations =
-      new Dictionary<Type, List<DependencyRegistration>>();
+    readonly ConcurrentDictionary<Type, List<DependencyRegistration>> _registrations =
+      new ConcurrentDictionary<Type, List<DependencyRegistration>>();
 
-    public IEnumerable<DependencyRegistration> this[Type serviceType]
-    {
-      get
-      {
-        lock (_registrations)
-        {
-          return GetOrCreateRegistrations(serviceType).ToList();
-        }
-      }
-    }
+    public IEnumerable<DependencyRegistration> this[Type serviceType] =>
+      _registrations.TryGetValue(serviceType, out var result)
+        ? result
+        : Enumerable.Empty<DependencyRegistration>();
 
     public void Add(DependencyRegistration registration)
     {
-      lock (_registrations)
-      {
-        registration.VerifyRegistration(registration);
-        GetOrCreateRegistrations(registration.ServiceType).Add(registration);
-      }
+      registration.VerifyRegistration(registration);
+      var regsForTypes = _registrations
+        .GetOrAdd(registration.ServiceType, t => new List<DependencyRegistration>());
+      regsForTypes.Add(registration);
     }
 
     public DependencyRegistration GetRegistrationForService(Type type)
     {
-      lock (_registrations)
-      {
-        return GetOrCreateRegistrations(type).LastOrDefault(x => x.IsRegistrationAvailable(x));
-      }
+      return _registrations.TryGetValue(type, out var regs)
+        ? regs.LastOrDefault(x => x.IsRegistrationAvailable(x))
+        : null;
     }
 
     public bool HasRegistrationForService(Type type)
     {
-      lock (_registrations)
-      {
-        return _registrations.ContainsKey(type) && GetOrCreateRegistrations(type)
-                 .Any(x => x.IsRegistrationAvailable(x));
-      }
+      return _registrations.TryGetValue(type, out var regs) 
+             && regs.Any(x => x.IsRegistrationAvailable(x));
     }
 
     public void Destruct(string key, object instance)
@@ -62,14 +51,6 @@ namespace OpenRasta.DI.Internal
           }
         }
       }
-    }
-
-    List<DependencyRegistration> GetOrCreateRegistrations(Type serviceType)
-    {
-      if (!_registrations.TryGetValue(serviceType, out var svcRegistrations))
-        _registrations.Add(serviceType, svcRegistrations = new List<DependencyRegistration>());
-
-      return svcRegistrations;
     }
   }
 }
