@@ -25,7 +25,8 @@ namespace OpenRasta.DI
 
     protected override void AddDependencyCore(Type serviceType, Type concreteType, DependencyLifetime lifetime)
     {
-      Registrations.Add(new DependencyRegistration(serviceType, concreteType, _lifetimeManagers[lifetime]));
+      var depRegistration = new DependencyRegistration(serviceType, concreteType, _lifetimeManagers[lifetime]);
+      Registrations.Add(depRegistration);
     }
 
     protected override void AddDependencyCore(Type concreteType, DependencyLifetime lifetime)
