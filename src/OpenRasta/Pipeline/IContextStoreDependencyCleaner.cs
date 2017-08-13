@@ -1,7 +1,9 @@
+using OpenRasta.DI.Internal;
+
 namespace OpenRasta.Pipeline
 {
     public interface IContextStoreDependencyCleaner
     {
-        void Destruct(string key, object instance);
+        void Destruct(DependencyRegistration registration, object instance);
     }
 }

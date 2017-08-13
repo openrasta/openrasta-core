@@ -2,6 +2,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using OpenRasta.Collections;
 using OpenRasta.Pipeline;
 
 namespace OpenRasta.DI.Internal
@@ -18,9 +19,8 @@ namespace OpenRasta.DI.Internal
 
     public void Add(DependencyRegistration registration)
     {
-      var regsForTypes = _registrations
-        .GetOrAdd(registration.ServiceType, t => new List<DependencyRegistration>());
-      regsForTypes.Add(registration);
+      GetOrAddRegistrations(registration.ServiceType)
+        .Add(registration);
     }
 
     public DependencyRegistration GetRegistrationForService(Type type)
@@ -30,26 +30,27 @@ namespace OpenRasta.DI.Internal
         : null;
     }
 
+    private List<DependencyRegistration> GetOrAddRegistrations(Type type)
+    {
+      return _registrations.GetOrAdd(type, t => new List<DependencyRegistration>());
+    }
+
     public bool HasRegistrationForService(Type type)
     {
       return _registrations.TryGetValue(type, out var regs) 
              && regs.Any(x => x.IsRegistrationAvailable);
     }
 
-    public void Destruct(string key, object instance)
+    public void Destruct(DependencyRegistration registration, object instance)
     {
-      lock (_registrations)
-      {
-        foreach (var reg in _registrations)
-        {
-          var toRemove = reg.Value.Where(x => x.IsInstanceRegistration && x.Key == key).ToList();
+      if (!_registrations.TryGetValue(registration.ServiceType, out var match))
+        return;
+      match.RemoveAll(r =>r.IsInstanceRegistration && r.Key == registration.Key);
+    }
 
-          foreach (var x in toRemove)
-          {
-            reg.Value.Remove(x);
-          }
-        }
-      }
+    public object Resolve(ResolveContext ctx, Type serviceType)
+    {
+      return ctx.Resolve(GetRegistrationForService(serviceType));
     }
   }
 }

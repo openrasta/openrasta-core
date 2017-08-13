@@ -15,7 +15,7 @@ namespace OpenRasta.DI.Internal
 
     public override object Resolve()
     {
-      return _ctx.Resolve(_ctx.Registrations.GetRegistrationForService(_serviceType));
+      return _ctx.Registrations.Resolve(_ctx, _serviceType);
     }
   }
 }
