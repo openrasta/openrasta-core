@@ -11,19 +11,11 @@ namespace OpenRasta.DI
 
     protected InternalDependencyResolver Resolver { get; }
 
-    public virtual bool IsRegistrationAvailable(DependencyRegistration registration)
-    {
-      return true;
-    }
+    public abstract bool Contains(DependencyRegistration registration);
 
     public abstract object Resolve(ResolveContext context, DependencyRegistration registration);
 
-    protected static object CreateObject(ResolveContext context, DependencyRegistration registration)
-    {
-      return context.Builder.CreateObject(registration);
-    }
-
-    public virtual void VerifyRegistration(DependencyRegistration registration)
+    public virtual void Add(DependencyRegistration registration)
     {
     }
   }

@@ -7,9 +7,14 @@ namespace OpenRasta.DI.Internal
     {
     }
 
+    public override bool Contains(DependencyRegistration registration)
+    {
+      return true;
+    }
+
     public override object Resolve(ResolveContext context, DependencyRegistration registration)
     {
-      return CreateObject(context, registration);
+      return context.Builder.CreateObject(registration);
     }
   }
 }

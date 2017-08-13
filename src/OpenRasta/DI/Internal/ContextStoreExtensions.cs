@@ -13,7 +13,7 @@ namespace OpenRasta.DI.Internal
       lock (allInstances)
       {
         foreach (var dep in allInstances)
-          dep.Cleaner?.Destruct(dep.Key, dep.Instance);
+          dep.Cleanup();
         allInstances.Clear();
       }
     }

@@ -15,6 +15,11 @@ namespace OpenRasta.DI.Internal
     {
     }
 
+    public override bool Contains(DependencyRegistration registration)
+    {
+      return true;
+    }
+
     public override object Resolve(ResolveContext context, DependencyRegistration registration)
     {
       var lazy = _instances
@@ -24,10 +29,10 @@ namespace OpenRasta.DI.Internal
 
     private static Lazy<object> ThreadSafeLazyFactory(ResolveContext context, DependencyRegistration registration)
     {
-      return new Lazy<object>(() => CreateObject(context, registration), LazyThreadSafetyMode.ExecutionAndPublication);
+      return new Lazy<object>(() => context.Builder.CreateObject(registration), LazyThreadSafetyMode.ExecutionAndPublication);
     }
 
-    public override void VerifyRegistration(DependencyRegistration registration)
+    public override void Add(DependencyRegistration registration)
     {
       if (!registration.IsInstanceRegistration) return;
 
