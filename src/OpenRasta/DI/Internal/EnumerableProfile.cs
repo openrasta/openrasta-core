@@ -14,10 +14,10 @@ namespace OpenRasta.DI.Internal
     public override object Resolve()
     {
       if (!_ctx.Registrations.HasRegistrationForService(typeof(T)))
-        return System.Linq.Enumerable.Empty<T>();
+        return Enumerable.Empty<T>();
       var resolved = (
         from dependency in _ctx.Registrations[typeof(T)]
-        where dependency.IsRegistrationAvailable(dependency)
+        where dependency.IsRegistrationAvailable
         select _ctx.Resolve<T>(dependency)
       ).ToList();
       return resolved;

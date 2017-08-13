@@ -26,14 +26,14 @@ namespace OpenRasta.DI.Internal
     public DependencyRegistration GetRegistrationForService(Type type)
     {
       return _registrations.TryGetValue(type, out var regs)
-        ? regs.LastOrDefault(x => x.IsRegistrationAvailable(x))
+        ? regs.LastOrDefault(x => x.IsRegistrationAvailable)
         : null;
     }
 
     public bool HasRegistrationForService(Type type)
     {
       return _registrations.TryGetValue(type, out var regs) 
-             && regs.Any(x => x.IsRegistrationAvailable(x));
+             && regs.Any(x => x.IsRegistrationAvailable);
     }
 
     public void Destruct(string key, object instance)

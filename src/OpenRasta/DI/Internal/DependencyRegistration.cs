@@ -24,7 +24,7 @@ namespace OpenRasta.DI.Internal
       Instance = instance;
       IsInstanceRegistration = instance != null;
       
-      _lifetimeManager.VerifyRegistration(this);
+      _lifetimeManager.Add(this);
     }
 
     public Type ConcreteType { get; }
@@ -35,8 +35,8 @@ namespace OpenRasta.DI.Internal
 
     public Type ServiceType { get; }
 
-    public bool IsRegistrationAvailable(DependencyRegistration registration)
-      => _lifetimeManager.IsRegistrationAvailable(registration);
+    public bool IsRegistrationAvailable
+      => _lifetimeManager.Contains(this);
 
     public object ResolveInContext(ResolveContext ctx)
       => _lifetimeManager.Resolve(ctx, this);

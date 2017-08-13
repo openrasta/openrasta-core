@@ -10,7 +10,7 @@ namespace OpenRasta.DI.Internal
     {
     }
 
-    public override bool IsRegistrationAvailable(DependencyRegistration registration)
+    public override bool Contains(DependencyRegistration registration)
     {
       if (!Resolver.HasDependency(typeof(IContextStore))) return false;
 
@@ -19,7 +19,7 @@ namespace OpenRasta.DI.Internal
 
       var store = Resolver.Resolve<IContextStore>();
 
-      return store.GetContextInstances().Any(x => x.Key == registration.Key);
+      return store.GetContextInstances().Any(x => x. Key == registration.Key);
     }
 
     public override object Resolve(ResolveContext context, DependencyRegistration registration)
@@ -35,13 +35,13 @@ namespace OpenRasta.DI.Internal
         throw new DependencyResolutionException(
           "A dependency registered as an instance wasn't found. The registration was removed.");
 
-      instance = CreateObject(context, registration);
+      instance = context.Builder.CreateObject(registration);
 
       StoreInstanceInContext(contextStore, registration.Key, instance);
       return instance;
     }
 
-    public override void VerifyRegistration(DependencyRegistration registration)
+    public override void Add(DependencyRegistration registration)
     {
       if (!registration.IsInstanceRegistration) return;
       
@@ -67,7 +67,8 @@ namespace OpenRasta.DI.Internal
     void StoreInstanceInContext(IContextStore contextStore, string key, object instance)
     {
       contextStore[key] = instance;
-      contextStore.GetContextInstances().Add(new ContextStoreDependency(key, instance, Resolver.Registrations));
+      contextStore.GetContextInstances()
+        .Add(new ContextStoreDependency(key, instance, Resolver.Registrations));
     }
   }
 }
