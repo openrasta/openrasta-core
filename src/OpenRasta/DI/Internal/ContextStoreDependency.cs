@@ -19,7 +19,7 @@ namespace OpenRasta.DI.Internal
 
     public void Cleanup()
     {
-      _cleaner?.Destruct(_registration,_instance);
+      _cleaner?.UnregisterTemporaryRegistration(_registration,_instance);
     }
   }
 }
