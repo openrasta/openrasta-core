@@ -2,7 +2,6 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using OpenRasta.Collections;
 using OpenRasta.Pipeline;
 
 namespace OpenRasta.DI.Internal
@@ -41,7 +40,7 @@ namespace OpenRasta.DI.Internal
              && regs.Any(x => x.IsRegistrationAvailable);
     }
 
-    public void Destruct(DependencyRegistration registration, object instance)
+    public void UnregisterTemporaryRegistration(DependencyRegistration registration, object instance)
     {
       if (!_registrations.TryGetValue(registration.ServiceType, out var match))
         return;

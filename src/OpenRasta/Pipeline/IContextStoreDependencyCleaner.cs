@@ -4,6 +4,6 @@ namespace OpenRasta.Pipeline
 {
     public interface IContextStoreDependencyCleaner
     {
-        void Destruct(DependencyRegistration registration, object instance);
+        void UnregisterTemporaryRegistration(DependencyRegistration registration, object instance);
     }
 }
