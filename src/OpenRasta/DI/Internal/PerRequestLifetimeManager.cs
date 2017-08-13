@@ -37,7 +37,7 @@ namespace OpenRasta.DI.Internal
 
       instance = context.Builder.CreateObject(registration);
 
-      StoreInstanceInContext(contextStore, registration.Key, instance);
+      StoreInstanceInContext(contextStore, registration, instance);
       return instance;
     }
 
@@ -46,13 +46,12 @@ namespace OpenRasta.DI.Internal
       if (!registration.IsInstanceRegistration) return;
       
       CheckContextStoreAvailable();
-      var instance = registration.Instance;
-      registration.Instance = null;
-      var store = Resolver.Resolve<IContextStore>();
-      if (store[registration.Key] != null)
+      var contextStore = Resolver.Resolve<IContextStore>();
+      if (contextStore[registration.Key] != null)
         throw new DependencyResolutionException("An instance is being registered for an existing registration.");
 
-      StoreInstanceInContext(store, registration.Key, instance);
+      StoreInstanceInContext(contextStore, registration, registration.Instance);
+      registration.Instance = null;
     }
 
     void CheckContextStoreAvailable()
@@ -64,11 +63,11 @@ namespace OpenRasta.DI.Internal
       }
     }
 
-    void StoreInstanceInContext(IContextStore contextStore, string key, object instance)
+    void StoreInstanceInContext(IContextStore contextStore, DependencyRegistration dependency, object instance)
     {
-      contextStore[key] = instance;
+      contextStore[dependency.Key] = instance;
       contextStore.GetContextInstances()
-        .Add(new ContextStoreDependency(key, instance, Resolver.Registrations));
+        .Add(new ContextStoreDependency(dependency, instance, Resolver.Registrations));
     }
   }
 }
