@@ -5,9 +5,39 @@ using System.Reflection;
 
 namespace OpenRasta.DI.Internal
 {
-  public class DependencyRegistration
+  public class DependencyRegistration : IEquatable<DependencyRegistration>
   {
     readonly DependencyLifetimeManager _lifetimeManager;
+
+    public bool Equals(DependencyRegistration other)
+    {
+      if (ReferenceEquals(null, other)) return false;
+      if (ReferenceEquals(this, other)) return true;
+      return string.Equals(Key, other.Key);
+    }
+
+    public override bool Equals(object obj)
+    {
+      if (ReferenceEquals(null, obj)) return false;
+      if (ReferenceEquals(this, obj)) return true;
+      if (obj.GetType() != this.GetType()) return false;
+      return Equals((DependencyRegistration) obj);
+    }
+
+    public override int GetHashCode()
+    {
+      return Key.GetHashCode();
+    }
+
+    public static bool operator ==(DependencyRegistration left, DependencyRegistration right)
+    {
+      return Equals(left, right);
+    }
+
+    public static bool operator !=(DependencyRegistration left, DependencyRegistration right)
+    {
+      return !Equals(left, right);
+    }
 
     public DependencyRegistration(Type serviceType, Type concreteType, DependencyLifetimeManager lifetime,
       object instance = null)
@@ -29,7 +59,7 @@ namespace OpenRasta.DI.Internal
 
     public Type ConcreteType { get; }
     public List<KeyValuePair<ConstructorInfo, ParameterInfo[]>> Constructors { get; }
-    public object Instance { get; set; }
+    object Instance { get; }
     public bool IsInstanceRegistration { get; }
     public string Key { get; }
 
@@ -40,5 +70,9 @@ namespace OpenRasta.DI.Internal
 
     public object ResolveInContext(ResolveContext ctx)
       => _lifetimeManager.Resolve(ctx, this);
+
+    public object CreateInstance(ResolveContext context) =>
+      IsInstanceRegistration ? Instance : new ObjectBuilder(context).CreateObject(this);
+
   }
 }
