@@ -17,7 +17,7 @@ namespace OpenRasta.DI.Internal
 
     public override bool Contains(DependencyRegistration registration)
     {
-      return true;
+      return registration.LifetimeManager == this;
     }
 
     public override object Resolve(ResolveContext context, DependencyRegistration registration)
@@ -29,18 +29,11 @@ namespace OpenRasta.DI.Internal
 
     private static Lazy<object> ThreadSafeLazyFactory(ResolveContext context, DependencyRegistration registration)
     {
-      return new Lazy<object>(() => context.Builder.CreateObject(registration), LazyThreadSafetyMode.ExecutionAndPublication);
+      return new Lazy<object>(() => registration.CreateInstance(context), LazyThreadSafetyMode.ExecutionAndPublication);
     }
 
     public override void Add(DependencyRegistration registration)
     {
-      if (!registration.IsInstanceRegistration) return;
-
-      var instance = registration.Instance;
-      if (!_instances.TryAdd(registration.Key, new Lazy<object>(()=>instance)))
-        throw new InvalidOperationException(
-          "Trying to register an instance for a registration that already has one.");
-      registration.Instance = null;
     }
 
     public override void ClearScope()
