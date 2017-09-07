@@ -51,7 +51,7 @@ namespace OpenRasta.DI
     protected override object ResolveCore(Type serviceType)
     {
       try
-    {
+      {
         return new ResolveContext(Registrations).Resolve(serviceType);
       }
       catch (Exception e)
@@ -62,11 +62,7 @@ namespace OpenRasta.DI
 
     public void HandleIncomingRequestProcessed()
     {
-      var store = (IContextStore) Resolve(typeof(IContextStore));
-      lock (store)
-      {
-      store.Destruct();
-    }
+      _lifetimeManagers[DependencyLifetime.PerRequest].ClearScope();
     }
 
     public bool HasDependency(Type serviceType)

@@ -6,7 +6,7 @@ using OpenRasta.Pipeline;
 
 namespace OpenRasta.DI.Internal
 {
-  public class DependencyRegistrationCollection : IContextStoreDependencyCleaner
+  public class DependencyRegistrationCollection
   {
     readonly ConcurrentDictionary<Type, List<DependencyRegistration>> _registrations =
       new ConcurrentDictionary<Type, List<DependencyRegistration>>();
@@ -40,16 +40,15 @@ namespace OpenRasta.DI.Internal
              && regs.Any(x => x.IsRegistrationAvailable);
     }
 
-    public void UnregisterTemporaryRegistration(DependencyRegistration registration, object instance)
-    {
-      if (!_registrations.TryGetValue(registration.ServiceType, out var match))
-        return;
-      match.RemoveAll(r =>r.IsInstanceRegistration && r.Key == registration.Key);
-    }
-
     public object Resolve(ResolveContext ctx, Type serviceType)
     {
       return ctx.Resolve(GetRegistrationForService(serviceType));
+    }
+
+    public void Remove(DependencyRegistration transitiveRegistration)
+    {
+      if (_registrations.TryGetValue(transitiveRegistration.ServiceType, out var regs))
+        regs.Remove(transitiveRegistration);
     }
   }
 }
