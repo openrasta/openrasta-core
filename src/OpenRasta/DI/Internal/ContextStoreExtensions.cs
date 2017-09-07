@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using OpenRasta.Pipeline;
 
@@ -6,6 +7,7 @@ namespace OpenRasta.DI.Internal
   public static class ContextStoreExtensions
   {
     const string CTX_INSTANCES_KEY = "__OR_CTX_INSTANCES_KEY";
+    private const string CTX_INSTANCES_KEY_CONCURRENT = nameof(CTX_INSTANCES_KEY_CONCURRENT);
 
     public static void Destruct(this IContextStore store)
     {
@@ -24,6 +26,17 @@ namespace OpenRasta.DI.Internal
       {
         return (IList<ContextStoreDependency>)
           (store[CTX_INSTANCES_KEY] ?? (store[CTX_INSTANCES_KEY] = new List<ContextStoreDependency>()));
+      }
+    }
+    
+    
+    public static ConcurrentDictionary<DependencyRegistration, object> GetConcurrentContextInstances(this IContextStore store)
+    {
+      lock (store)
+      {
+        return (ConcurrentDictionary<DependencyRegistration, object>)
+        (store[CTX_INSTANCES_KEY_CONCURRENT] ??
+         (store[CTX_INSTANCES_KEY_CONCURRENT] = new ConcurrentDictionary<DependencyRegistration, object>()));
       }
     }
   }
