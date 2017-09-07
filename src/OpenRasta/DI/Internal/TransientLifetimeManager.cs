@@ -16,5 +16,10 @@ namespace OpenRasta.DI.Internal
     {
       return context.Builder.CreateObject(registration);
     }
+
+    public override void ClearScope()
+    {
+      
+    }
   }
 }

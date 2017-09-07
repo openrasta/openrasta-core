@@ -18,5 +18,7 @@ namespace OpenRasta.DI
     public virtual void Add(DependencyRegistration registration)
     {
     }
+
+    public abstract void ClearScope();
   }
 }
