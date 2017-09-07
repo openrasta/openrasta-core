@@ -201,7 +201,6 @@
     <Compile Include="DI\IDependencyResolver.cs" />
     <Compile Include="DI\IDependencyResolverAccessor.cs" />
     <Compile Include="DI\InternalDependencyResolver.cs" />
-    <Compile Include="DI\Internal\ContextStoreDependency.cs" />
     <Compile Include="DI\Internal\ContextStoreExtensions.cs" />
     <Compile Include="DI\Internal\DependencyRegistration.cs" />
     <Compile Include="DI\Internal\DependencyRegistrationCollection.cs" />

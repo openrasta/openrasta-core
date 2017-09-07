@@ -63,11 +63,7 @@ namespace OpenRasta.DI
 
     public void HandleIncomingRequestProcessed()
     {
-      var store = (IContextStore) Resolve(typeof(IContextStore));
-      lock (store)
-      {
-        store.Destruct();
-      }
+      _lifetimeManagers[DependencyLifetime.PerRequest].ClearScope();
     }
 
     public bool HasDependency(Type serviceType)
