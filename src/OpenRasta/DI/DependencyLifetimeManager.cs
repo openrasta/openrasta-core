@@ -11,7 +11,10 @@ namespace OpenRasta.DI
 
     protected InternalDependencyResolver Resolver { get; }
 
-    public abstract bool Contains(DependencyRegistration registration);
+    public virtual bool Contains(DependencyRegistration registration)
+    {
+      return registration.LifetimeManager == this;
+    }
 
     public abstract object Resolve(ResolveContext context, DependencyRegistration registration);
 
@@ -19,6 +22,8 @@ namespace OpenRasta.DI
     {
     }
 
-    public abstract void ClearScope();
+    public virtual void ClearScope()
+    {
+    }
   }
 }

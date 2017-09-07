@@ -44,7 +44,7 @@ namespace OpenRasta.DI.Internal
     {
       foreach (var property in from pi in instanceObject.GetType().GetProperties()
         where pi.CanWrite && pi.GetIndexParameters().Length == 0
-        let reg = ResolveContext.Registrations.GetRegistrationForService(pi.PropertyType)
+        let reg = ResolveContext.Registrations.LastRegistrationForService(pi.PropertyType)
         where reg != null && ResolveContext.CanResolve(reg)
         select new {pi, reg})
         property.pi.SetValue(instanceObject, ResolveContext.Resolve(property.reg), null);

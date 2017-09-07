@@ -15,11 +15,6 @@ namespace OpenRasta.DI.Internal
     {
     }
 
-    public override bool Contains(DependencyRegistration registration)
-    {
-      return registration.LifetimeManager == this;
-    }
-
     public override object Resolve(ResolveContext context, DependencyRegistration registration)
     {
       var lazy = _instances
@@ -32,13 +27,9 @@ namespace OpenRasta.DI.Internal
       return new Lazy<object>(() => registration.CreateInstance(context), LazyThreadSafetyMode.ExecutionAndPublication);
     }
 
-    public override void Add(DependencyRegistration registration)
-    {
-    }
-
     public override void ClearScope()
     {
-      
+      // clearup idispose?
     }
   }
 }
