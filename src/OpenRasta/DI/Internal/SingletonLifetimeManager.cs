@@ -42,5 +42,10 @@ namespace OpenRasta.DI.Internal
           "Trying to register an instance for a registration that already has one.");
       registration.Instance = null;
     }
+
+    public override void ClearScope()
+    {
+      
+    }
   }
 }

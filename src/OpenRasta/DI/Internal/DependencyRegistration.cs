@@ -59,7 +59,7 @@ namespace OpenRasta.DI.Internal
 
     public Type ConcreteType { get; }
     public List<KeyValuePair<ConstructorInfo, ParameterInfo[]>> Constructors { get; }
-    object Instance { get; }
+    public object Instance { get; set; }
     public bool IsInstanceRegistration { get; }
     public string Key { get; }
 

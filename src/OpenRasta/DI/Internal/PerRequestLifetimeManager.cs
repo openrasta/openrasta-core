@@ -54,6 +54,11 @@ namespace OpenRasta.DI.Internal
       registration.Instance = null;
     }
 
+    public override void ClearScope()
+    {
+      
+    }
+
     void CheckContextStoreAvailable()
     {
       if (!Resolver.HasDependency(typeof(IContextStore)))
