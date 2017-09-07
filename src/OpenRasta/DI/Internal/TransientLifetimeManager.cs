@@ -7,19 +7,9 @@ namespace OpenRasta.DI.Internal
     {
     }
 
-    public override bool Contains(DependencyRegistration registration)
-    {
-      return true;
-    }
-
     public override object Resolve(ResolveContext context, DependencyRegistration registration)
     {
       return registration.CreateInstance(context);
-    }
-
-    public override void ClearScope()
-    {
-      
     }
   }
 }
