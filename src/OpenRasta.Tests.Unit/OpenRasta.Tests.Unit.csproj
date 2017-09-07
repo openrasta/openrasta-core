@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>OpenRasta.Tests.Unit</RootNamespace>
     <AssemblyName>OpenRasta.Tests.Unit</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <LangVersion>7</LangVersion>
   </PropertyGroup>
