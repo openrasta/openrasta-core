@@ -7,7 +7,7 @@ namespace OpenRasta.DI.Internal
 {
   public class DependencyRegistration : IEquatable<DependencyRegistration>
   {
-    readonly DependencyLifetimeManager _lifetimeManager;
+    public DependencyLifetimeManager LifetimeManager { get; }
 
     public bool Equals(DependencyRegistration other)
     {
@@ -43,7 +43,7 @@ namespace OpenRasta.DI.Internal
       object instance = null)
     {
       Key = Guid.NewGuid().ToString();
-      _lifetimeManager = lifetime;
+      LifetimeManager = lifetime;
       ServiceType = serviceType;
       ConcreteType = concreteType;
       Constructors =
@@ -54,7 +54,7 @@ namespace OpenRasta.DI.Internal
       Instance = instance;
       IsInstanceRegistration = instance != null;
       
-      _lifetimeManager.Add(this);
+      LifetimeManager.Add(this);
     }
 
     public Type ConcreteType { get; }
@@ -66,10 +66,10 @@ namespace OpenRasta.DI.Internal
     public Type ServiceType { get; }
 
     public bool IsRegistrationAvailable
-      => _lifetimeManager.Contains(this);
+      => LifetimeManager.Contains(this);
 
     public object ResolveInContext(ResolveContext ctx)
-      => _lifetimeManager.Resolve(ctx, this);
+      => LifetimeManager.Resolve(ctx, this);
 
     public object CreateInstance(ResolveContext context) =>
       IsInstanceRegistration ? Instance : new ObjectBuilder(context).CreateObject(this);
