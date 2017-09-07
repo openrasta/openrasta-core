@@ -14,7 +14,7 @@ namespace OpenRasta.DI.Internal
 
     public override object Resolve(ResolveContext context, DependencyRegistration registration)
     {
-      return context.Builder.CreateObject(registration);
+      return registration.CreateInstance(context);
     }
 
     public override void ClearScope()
