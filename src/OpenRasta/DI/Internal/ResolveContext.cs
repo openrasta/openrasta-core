@@ -23,10 +23,7 @@ namespace OpenRasta.DI.Internal
 
     public object Resolve(Type serviceType)
     {
-      var resolveProfile = ResolveProfile.FindProfile(serviceType, this)
-                           ?? throw new DependencyResolutionException($"Could not find a resolve profile for {serviceType}");
-      
-      return resolveProfile.Resolve();
+      return TryResolve(serviceType) ?? throw new DependencyResolutionException($"Could not find a resolve profile for {serviceType}");
     }
 
     public object TryResolve(Type serviceType)
