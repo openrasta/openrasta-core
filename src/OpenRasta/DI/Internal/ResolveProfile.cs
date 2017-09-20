@@ -30,6 +30,7 @@ namespace OpenRasta.DI.Internal
       if (serviceType.IsGenericType == false
           || serviceType.GetGenericTypeDefinition() != typeof(Func<>))
         return null;
+      
       var innerType = serviceType.GetGenericArguments()[0];
       var innerProfile = FindProfile(innerType, ctx);
       return innerProfile == null
