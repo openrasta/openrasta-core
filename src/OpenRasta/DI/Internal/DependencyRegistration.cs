@@ -51,7 +51,7 @@ namespace OpenRasta.DI.Internal
           concreteType.GetConstructors()
             .Select(ctor => new KeyValuePair<ConstructorInfo, ParameterInfo[]>(ctor, ctor.GetParameters())));
       Constructors.Sort((kv1, kv2) => kv1.Value.Length.CompareTo(kv2.Value.Length) * -1);
-      Instance = instance;
+      _instance = instance;
       IsInstanceRegistration = instance != null;
       
       LifetimeManager.Add(this);
@@ -59,7 +59,7 @@ namespace OpenRasta.DI.Internal
 
     public Type ConcreteType { get; }
     public List<KeyValuePair<ConstructorInfo, ParameterInfo[]>> Constructors { get; }
-    public object Instance { get; set; }
+    private readonly object _instance;
     public bool IsInstanceRegistration { get; }
     public string Key { get; }
 
@@ -72,7 +72,7 @@ namespace OpenRasta.DI.Internal
       => LifetimeManager.Resolve(ctx, this);
 
     public object CreateInstance(ResolveContext context) =>
-      IsInstanceRegistration ? Instance : new ObjectBuilder(context).CreateObject(this);
+      IsInstanceRegistration ? _instance : new ObjectBuilder(context).CreateObject(this);
 
   }
 }

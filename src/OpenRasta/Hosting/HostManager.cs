@@ -131,7 +131,6 @@ namespace OpenRasta.Hosting
     void BuildPipeline()
     {
       _pipeline = Resolver.Resolve<IPipelineInitializer>().Initialize(_startupProperties);
-
     }
 
     void ExecuteConfigurationSource()
@@ -215,6 +214,8 @@ namespace OpenRasta.Hosting
       Log.WriteDebug("Incoming host request for " + e.Context.Request.Uri);
       var task = CallWithDependencyResolver(async () =>
       {
+        e.Context.PipelineData[Keys.Request.ResolverRequestScope] = Resolver.CreateRequestScope();
+        
         // register the required dependency in the web context
         var context = e.Context;
         SetupCommunicationContext(context);
@@ -228,6 +229,7 @@ namespace OpenRasta.Hosting
     {
       VerifyConfiguration(e);
     }
+
     protected virtual void HandleHostStart(object sender, EventArgs e)
     {
       VerifyConfiguration(new StartupProperties());
@@ -235,8 +237,10 @@ namespace OpenRasta.Hosting
 
     protected virtual void HandleIncomingRequestProcessed(object sender, IncomingRequestProcessedEventArgs e)
     {
-      Log.WriteDebug("Request finished.");
-      CallWithDependencyResolver(() => Resolver.HandleIncomingRequestProcessed());
+      CallWithDependencyResolver(() =>
+      {
+        ((IDisposable) e.Context.PipelineData[Keys.Request.ResolverRequestScope]).Dispose();
+      });
     }
   }
 }

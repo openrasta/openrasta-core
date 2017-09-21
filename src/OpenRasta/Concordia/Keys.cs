@@ -5,6 +5,7 @@
     public static class Request
     {
       public const string PipelineTask = "openrasta.pipeline.completion";
+      public const string ResolverRequestScope = "openrasta.di.resolverRequestScope";
     }
 
     public const string HandleCatastrophicExceptions = "openrasta.errors.HandleCatastrophicExceptions";

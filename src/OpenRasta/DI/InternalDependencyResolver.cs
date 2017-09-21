@@ -4,10 +4,11 @@ using System.Collections.Generic;
 using System.Linq;
 using OpenRasta.DI.Internal;
 using OpenRasta.Pipeline;
+using OpenRasta.Web;
 
 namespace OpenRasta.DI
 {
-  public class InternalDependencyResolver : DependencyResolverCore, IDependencyResolver
+  public class InternalDependencyResolver : DependencyResolverCore, IDependencyResolver, IRequestScopedResolver
   {
     readonly Dictionary<DependencyLifetime, DependencyLifetimeManager> _lifetimeManagers;
 
@@ -75,6 +76,12 @@ namespace OpenRasta.DI
     {
       return Registrations.HasRegistrationForService(serviceType) &&
              Registrations[serviceType].Count(r => r.ConcreteType == concreteType) >= 1;
+    }
+
+    public IDisposable CreateRequestScope()
+    {
+      return new ActionOnDispose(() =>
+        _lifetimeManagers[DependencyLifetime.PerRequest].ClearScope());
     }
   }
 }

@@ -13,7 +13,7 @@ namespace OpenRasta.DI.Internal
       Builder = new ObjectBuilder(this);
     }
 
-    public ObjectBuilder Builder { get; }
+    private ObjectBuilder Builder { get; }
     public DependencyRegistrationCollection Registrations { get; }
 
     public bool CanResolve(DependencyRegistration registration)
