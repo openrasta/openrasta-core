@@ -10,19 +10,18 @@ namespace OpenRasta.DI
   public class InternalDependencyResolver : DependencyResolverCore, IDependencyResolver, IRequestScopedResolver
   {
     readonly Dictionary<DependencyLifetime, DependencyLifetimeManager> _lifetimeManagers;
+    public DependencyRegistrationCollection Registrations { get; }
 
     public InternalDependencyResolver()
     {
       Registrations = new DependencyRegistrationCollection();
       _lifetimeManagers = new Dictionary<DependencyLifetime, DependencyLifetimeManager>
       {
-        {DependencyLifetime.Transient, new TransientLifetimeManager(this)},
-        {DependencyLifetime.Singleton, new SingletonLifetimeManager(this)},
+        {DependencyLifetime.Transient, new TransientLifetimeManager()},
+        {DependencyLifetime.Singleton, new SingletonLifetimeManager()},
         {DependencyLifetime.PerRequest, new PerRequestLifetimeManager(this)}
       };
     }
-
-    public DependencyRegistrationCollection Registrations { get; }
 
     protected override void AddDependencyCore(Type serviceType, Type concreteType, DependencyLifetime lifetime)
     {

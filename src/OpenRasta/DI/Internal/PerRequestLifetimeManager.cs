@@ -5,18 +5,21 @@ namespace OpenRasta.DI.Internal
 {
   public class PerRequestLifetimeManager : DependencyLifetimeManager
   {
+    private readonly InternalDependencyResolver _resolver;
+
     public PerRequestLifetimeManager(InternalDependencyResolver resolver)
-      : base(resolver)
     {
+      _resolver = resolver;
     }
+    
 
     public override bool Contains(DependencyRegistration registration)
     {
-      if (!Resolver.HasDependency(typeof(IContextStore))) return false;
+      if (!_resolver.HasDependency(typeof(IContextStore))) return false;
 
       if (!registration.IsInstanceRegistration) return true;
 
-      var store = Resolver.Resolve<IContextStore>();
+      var store = _resolver.Resolve<IContextStore>();
 
       return store.GetConcurrentContextInstances().ContainsKey(registration);
     }
@@ -25,7 +28,7 @@ namespace OpenRasta.DI.Internal
     {
       CheckContextStoreAvailable();
 
-      var store = Resolver.Resolve<IContextStore>();
+      var store = _resolver.Resolve<IContextStore>();
 
       return store.GetConcurrentContextInstances().GetOrAdd(registration, reg => reg.CreateInstance(context));
     }
@@ -33,24 +36,24 @@ namespace OpenRasta.DI.Internal
     public override void Add(DependencyRegistration registration)
     {
       if (!registration.IsInstanceRegistration) return;
-      Resolver.Resolve<IContextStore>().GetConcurrentContextInstances()
-        .TryAdd(registration, registration.CreateInstance(new ResolveContext(Resolver.Registrations)));
+      _resolver.Resolve<IContextStore>().GetConcurrentContextInstances()
+        .TryAdd(registration, registration.CreateInstance(new ResolveContext(_resolver.Registrations)));
     }
 
     public override void ClearScope()
     {
-      foreach (var transitiveRegistration in Resolver.Resolve<IContextStore>().GetConcurrentContextInstances().Keys)
+      foreach (var transitiveRegistration in _resolver.Resolve<IContextStore>().GetConcurrentContextInstances().Keys)
       {
         if (transitiveRegistration.IsInstanceRegistration)
         {
-          Resolver.Registrations.Remove(transitiveRegistration);
+          _resolver.Registrations.Remove(transitiveRegistration);
         }
       }
     }
 
     void CheckContextStoreAvailable()
     {
-      if (!Resolver.HasDependency(typeof(IContextStore)))
+      if (!_resolver.HasDependency(typeof(IContextStore)))
       {
         throw new DependencyResolutionException(
           "Could not resolve the context store. Make sure you have registered one.");
