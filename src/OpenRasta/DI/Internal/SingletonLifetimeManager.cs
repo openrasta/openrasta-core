@@ -10,11 +10,6 @@ namespace OpenRasta.DI.Internal
   {
     readonly ConcurrentDictionary<string, Lazy<object>> _instances = new ConcurrentDictionary<string, Lazy<object>>();
 
-    public SingletonLifetimeManager(InternalDependencyResolver builder)
-      : base(builder)
-    {
-    }
-
     public override object Resolve(ResolveContext context, DependencyRegistration registration)
     {
       var lazy = _instances
@@ -25,11 +20,6 @@ namespace OpenRasta.DI.Internal
     private static Lazy<object> ThreadSafeLazyFactory(ResolveContext context, DependencyRegistration registration)
     {
       return new Lazy<object>(() => registration.CreateInstance(context), LazyThreadSafetyMode.ExecutionAndPublication);
-    }
-
-    public override void ClearScope()
-    {
-      // clearup idispose?
     }
   }
 }
