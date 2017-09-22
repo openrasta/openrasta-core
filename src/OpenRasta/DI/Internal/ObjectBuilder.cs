@@ -33,7 +33,7 @@ namespace OpenRasta.DI.Internal
 
 
         if (unresolvedDependencies.Any() == false) return AssignProperties(constructor.Key.Invoke(dependents));
-        
+
         LogUnresolvedConstructor(unresolvedDependencies, ref unresolvedDependenciesMessage);
       }
       throw new DependencyResolutionException(
@@ -44,10 +44,10 @@ namespace OpenRasta.DI.Internal
     {
       foreach (var property in from pi in instanceObject.GetType().GetProperties()
         where pi.CanWrite && pi.GetIndexParameters().Length == 0
-        let reg = ResolveContext.Registrations.LastRegistrationForService(pi.PropertyType)
-        where reg != null && ResolveContext.CanResolve(reg)
-        select new {pi, reg})
-        property.pi.SetValue(instanceObject, ResolveContext.Resolve(property.reg), null);
+        let instance = ResolveContext.TryResolve(pi.PropertyType)
+        where instance != null
+        select new {pi, instance})
+        property.pi.SetValue(instanceObject, property.instance, null);
 
       return instanceObject;
     }

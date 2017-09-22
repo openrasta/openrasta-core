@@ -38,7 +38,7 @@ namespace OpenRasta.DI.Internal
       : (ResolveProfile)Activator.CreateInstance(typeof(FuncProfile<>).MakeGenericType(innerType), ctx, innerProfile);
     }
 
-    public abstract object Resolve();
+    public abstract object TryResolve();
 
     public static ResolveProfile FindProfile(Type serviceType, ResolveContext resolveContext)
     {

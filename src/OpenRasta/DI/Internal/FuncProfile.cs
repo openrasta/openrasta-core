@@ -13,14 +13,14 @@ namespace OpenRasta.DI.Internal
       _profile = profile;
     }
 
-    public override object Resolve()
+    public override object TryResolve()
     {
       return ResolveTyped();
     }
 
     Func<T> ResolveTyped()
     {
-      return () => (T) _profile.Resolve();
+      return () => (T) _profile.TryResolve();
     }
   }
 }

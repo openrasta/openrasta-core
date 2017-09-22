@@ -10,16 +10,9 @@ namespace OpenRasta.DI.Internal
     public ResolveContext(DependencyRegistrationCollection registrations)
     {
       Registrations = registrations;
-      Builder = new ObjectBuilder(this);
     }
 
-    private ObjectBuilder Builder { get; }
     public DependencyRegistrationCollection Registrations { get; }
-
-    public bool CanResolve(DependencyRegistration registration)
-    {
-      return !_recursionDefender.Contains(registration);
-    }
 
     public object Resolve(Type serviceType)
     {
@@ -28,7 +21,7 @@ namespace OpenRasta.DI.Internal
 
     public object TryResolve(Type serviceType)
     {
-      return ResolveProfile.FindProfile(serviceType, this)?.Resolve();
+      return ResolveProfile.FindProfile(serviceType, this)?.TryResolve();
     }
 
     public T Resolve<T>(DependencyRegistration registration)
@@ -36,10 +29,16 @@ namespace OpenRasta.DI.Internal
       return (T) Resolve(registration);
     }
 
-    public object Resolve(DependencyRegistration registration)
+    private object Resolve(DependencyRegistration registration)
+    {
+      return TryResolve(registration)
+        ?? throw new InvalidOperationException("Recursive dependencies are not allowed.");
+    }
+
+    public object TryResolve(DependencyRegistration registration)
     {
       if (_recursionDefender.Contains(registration))
-        throw new InvalidOperationException("Recursive dependencies are not allowed.");
+        return null;
       try
       {
         _recursionDefender.Push(registration);
