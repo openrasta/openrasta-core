@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Runtime.Remoting.Messaging;
 using System.Threading;
@@ -20,6 +21,23 @@ namespace OpenRasta.Hosting
     {
       get => _items[key];
       set => _items[key] = value;
+    }
+
+    public T GetOrAdd<T>(string key, Func<T> factory)
+    {
+      T result;
+      if (_items.ContainsKey(key))
+        result = (T) _items[key];
+      else
+        _items[key] = result = factory();
+      return result;
+    }
+
+    public bool TryGet<T>(string key, out T instance)
+    {
+      var success = _items.ContainsKey(key);
+      instance = success ? (T)_items[key] : default(T);
+      return success;
     }
   }
 }

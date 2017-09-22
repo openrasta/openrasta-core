@@ -221,16 +221,21 @@ namespace InternalDependencyResolver_Specification
     public void per_request_creates_new_instance_in_between_requests()
     {
       InMemoryStore = new InMemoryContextStore();
+      
+      
       Resolver.AddDependencyInstance<IContextStore>(InMemoryStore);
 
       Resolver.AddDependency<IUnknown, JohnDoe>(DependencyLifetime.PerRequest);
 
-      var firstInstance = Resolver.Resolve<IUnknown>();
-
-
-      Resolver.HandleIncomingRequestProcessed();
+      IUnknown firstInstance;
+      IUnknown secondInstance;
+      
+      using (Resolver.CreateRequestScope())
+        firstInstance = Resolver.Resolve<IUnknown>();
       InMemoryStore.Clear();
-      var secondInstance = Resolver.Resolve<IUnknown>();
+      
+      using(Resolver.CreateRequestScope())
+        secondInstance = Resolver.Resolve<IUnknown>();
 
       firstInstance.ShouldNotBeSameAs(secondInstance);
     }
@@ -248,13 +253,12 @@ namespace InternalDependencyResolver_Specification
     {
       GivenInMemoryStore();
       var firstInstance = new TheClass();
+      using (Resolver.CreateRequestScope())
+      {
+        Resolver.AddDependencyInstance<TheClass>(firstInstance, DependencyLifetime.PerRequest);
 
-      Resolver.AddDependencyInstance<TheClass>(firstInstance, DependencyLifetime.PerRequest);
-
-      Resolver.Resolve<TheClass>().ShouldBeSameAs(firstInstance);
-
-      Resolver.HandleIncomingRequestProcessed();
-
+        Resolver.Resolve<TheClass>().ShouldBeSameAs(firstInstance);
+      }
       Executing(() => Resolver.Resolve<TheClass>()).ShouldThrow<DependencyResolutionException>();
     }
   }

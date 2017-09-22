@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using OpenRasta.Concordia;
 using OpenRasta.DI.Internal;
 using OpenRasta.Pipeline;
 using OpenRasta.Web;
@@ -11,11 +12,18 @@ namespace OpenRasta.DI
   public class InternalDependencyResolver : DependencyResolverCore, IDependencyResolver, IRequestScopedResolver
   {
     readonly Dictionary<DependencyLifetime, DependencyLifetimeManager> _lifetimeManagers;
-    public DependencyRegistrationCollection Registrations { get; }
+    private readonly DependencyRegistrationCollection _registrations;
+    private const string CTX_REGISTRATIONS = "openrasta.di.requestRegistrations";
+
+    public IDependencyRegistrationCollection Registrations => 
+      new ResolveContext(_registrations).TryResolve<IContextStore>(out var ctx) &&
+      ctx.TryGet<IDependencyRegistrationCollection>(CTX_REGISTRATIONS, out var ctxRegistrations)
+          ? ctxRegistrations
+          : _registrations;
 
     public InternalDependencyResolver()
     {
-      Registrations = new DependencyRegistrationCollection();
+      _registrations = new DependencyRegistrationCollection();
       _lifetimeManagers = new Dictionary<DependencyLifetime, DependencyLifetimeManager>
       {
         {DependencyLifetime.Transient, new TransientLifetimeManager()},
@@ -26,8 +34,7 @@ namespace OpenRasta.DI
 
     protected override void AddDependencyCore(Type serviceType, Type concreteType, DependencyLifetime lifetime)
     {
-      var depRegistration = new DependencyRegistration(serviceType, concreteType, _lifetimeManagers[lifetime]);
-      Registrations.Add(depRegistration);
+      Registrations.Add(new DependencyRegistration(serviceType, concreteType, _lifetimeManagers[lifetime]));
     }
 
     protected override void AddDependencyCore(Type concreteType, DependencyLifetime lifetime)
@@ -37,11 +44,11 @@ namespace OpenRasta.DI
 
     protected override void AddDependencyInstanceCore(Type serviceType, object instance, DependencyLifetime lifetime)
     {
-      var instanceType = instance.GetType();
-
-      var registration = new DependencyRegistration(serviceType, instanceType, _lifetimeManagers[lifetime], instance);
-
-      Registrations.Add(registration);
+      Registrations.Add(new DependencyRegistration(
+        serviceType,
+        instance.GetType(),
+        _lifetimeManagers[lifetime],
+        instance));
     }
 
     protected override IEnumerable<TService> ResolveAllCore<TService>()
@@ -49,6 +56,7 @@ namespace OpenRasta.DI
       return ((IEnumerable<object>) ResolveCore(typeof(IEnumerable<TService>))).Cast<TService>();
     }
 
+    
     protected override object ResolveCore(Type serviceType)
     {
       try
@@ -63,7 +71,7 @@ namespace OpenRasta.DI
 
     public void HandleIncomingRequestProcessed()
     {
-      _lifetimeManagers[DependencyLifetime.PerRequest].ClearScope();
+      throw new NotSupportedException();
     }
 
     public bool HasDependency(Type serviceType)
@@ -79,6 +87,9 @@ namespace OpenRasta.DI
 
     public IDisposable CreateRequestScope()
     {
+      new ResolveContext(_registrations)
+        .Resolve<IContextStore>()
+        .Add(CTX_REGISTRATIONS, new RequestContextRegistrations(_registrations));
       return new ActionOnDispose(() =>
         _lifetimeManagers[DependencyLifetime.PerRequest].ClearScope());
     }
