@@ -11,16 +11,19 @@ namespace OpenRasta.DI.Internal
       _ctx = ctx;
     }
 
-    public override object TryResolve()
+    public override bool TryResolve(out object instance)
     {
       if (!_ctx.Registrations.HasRegistrationForService(typeof(T)))
-        return Enumerable.Empty<T>();
-      var resolved = (
+      {
+        instance = Enumerable.Empty<T>();
+        return true;
+      }
+      instance = (
         from dependency in _ctx.Registrations[typeof(T)]
         where dependency.IsRegistrationAvailable
         select _ctx.Resolve<T>(dependency)
       ).ToList();
-      return resolved;
+      return true;
     }
   }
 }

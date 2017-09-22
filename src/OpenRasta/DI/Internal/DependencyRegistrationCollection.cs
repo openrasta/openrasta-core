@@ -40,11 +40,10 @@ namespace OpenRasta.DI.Internal
              && regs.Any(x => x.IsRegistrationAvailable);
     }
 
-    public object TryResolve(ResolveContext ctx, Type serviceType)
+    public bool TryResolve(ResolveContext ctx, Type serviceType, out object instance)
     {
-      return ctx.TryResolve(LastRegistrationForService(serviceType));
+      return ctx.TryResolve(LastRegistrationForService(serviceType), out instance);
     }
-
     public void Remove(DependencyRegistration transitiveRegistration)
     {
       if (_registrations.TryGetValue(transitiveRegistration.ServiceType, out var regs))
