@@ -53,10 +53,17 @@ namespace OpenRasta.DI.Internal
       return instanceObject;
     }
 
-    (PropertyInfo pi, bool success, object instance) ResolveProperty(PropertyInfo pi)
+    class propResult
+    {
+      public PropertyInfo pi;
+      public bool success;
+      public object instance;
+
+    }
+    propResult ResolveProperty(PropertyInfo pi)
     {
       var success = ResolveContext.TryResolve(pi.PropertyType, out var instance);
-      return (pi, success, instance);
+      return new propResult{pi=pi, success=success, instance=instance};
     }
     void LogUnresolvedConstructor(IEnumerable<ParameterInfo> unresolvedDependencies,
       ref StringBuilder unresolvedDependenciesMessage)

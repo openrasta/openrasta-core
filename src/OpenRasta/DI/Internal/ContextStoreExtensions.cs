@@ -12,9 +12,8 @@ namespace OpenRasta.DI.Internal
     {
       lock (store)
       {
-        return (ConcurrentDictionary<DependencyRegistration, object>)
-        (store[CTX_INSTANCES_KEY_CONCURRENT] ??
-         (store[CTX_INSTANCES_KEY_CONCURRENT] = new ConcurrentDictionary<DependencyRegistration, object>()));
+        return store.GetOrAdd(CTX_INSTANCES_KEY_CONCURRENT,
+                       ()=> new ConcurrentDictionary<DependencyRegistration, object>());
       }
     }
   }

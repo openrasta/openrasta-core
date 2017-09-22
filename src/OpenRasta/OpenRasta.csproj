@@ -195,6 +195,7 @@
     <Compile Include="DI\Internal\DependencyRegistrationCollection.cs" />
     <Compile Include="DI\Internal\EnumerableProfile.cs" />
     <Compile Include="DI\Internal\FuncProfile.cs" />
+    <Compile Include="DI\Internal\IDependencyRegistrationCollection.cs" />
     <Compile Include="DI\Internal\ObjectBuilder.cs" />
     <Compile Include="DI\Internal\PerRequestLifetimeManager.cs" />
     <Compile Include="DI\Internal\ResolveContext.cs" />
@@ -203,6 +204,7 @@
     <Compile Include="DI\Internal\SingletonLifetimeManager.cs" />
     <Compile Include="DI\Internal\TransientLifetimeManager.cs" />
     <Compile Include="DI\IRequestScopedResolver.cs" />
+    <Compile Include="DI\RequestContextRegistrations.cs" />
     <Compile Include="DI\UnregisteredAction.cs" />
     <Compile Include="Error.cs" />
     <Compile Include="ErrorFrom.cs" />

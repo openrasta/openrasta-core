@@ -7,13 +7,17 @@ namespace OpenRasta.DI.Internal
   {
     readonly Stack<DependencyRegistration> _recursionDefender = new Stack<DependencyRegistration>();
 
-    public ResolveContext(DependencyRegistrationCollection registrations)
+    public ResolveContext(IDependencyRegistrationCollection registrations)
     {
       Registrations = registrations;
     }
 
-    public DependencyRegistrationCollection Registrations { get; }
+    public IDependencyRegistrationCollection Registrations { get; }
 
+    public T Resolve<T>()
+    {
+      return (T)Resolve(typeof(T));
+    }
     public object Resolve(Type serviceType)
     {
       return TryResolve(serviceType, out var instance)
@@ -27,6 +31,14 @@ namespace OpenRasta.DI.Internal
       var profile = ResolveProfile.FindProfile(serviceType, this);
 
       return profile != null && profile.TryResolve(out instance);
+    }
+
+    public bool TryResolve<T>(out T instance)
+    {
+      instance = default(T);
+      var success = TryResolve(typeof(T), out var untyped);
+      if (success) instance = (T) untyped;
+      return success;
     }
 
     public T Resolve<T>(DependencyRegistration registration)

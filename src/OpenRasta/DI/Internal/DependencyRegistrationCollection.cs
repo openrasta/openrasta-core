@@ -6,7 +6,7 @@ using OpenRasta.Pipeline;
 
 namespace OpenRasta.DI.Internal
 {
-  public class DependencyRegistrationCollection
+  public class DependencyRegistrationCollection : IDependencyRegistrationCollection
   {
     readonly ConcurrentDictionary<Type, List<DependencyRegistration>> _registrations =
       new ConcurrentDictionary<Type, List<DependencyRegistration>>();
