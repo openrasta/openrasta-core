@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using OpenRasta.Pipeline;
 
 namespace OpenRasta.Hosting
@@ -26,6 +26,11 @@ namespace OpenRasta.Hosting
     public void Add<T>(string key, T instance)
     {
       AmbientContext.Current[key] = instance;
+    }
+
+    public void Remove(string key)
+    {
+      AmbientContext.Current.Remove(key);
     }
   }
 }

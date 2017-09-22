@@ -9,7 +9,7 @@ namespace OpenRasta.DI
   public class InternalDependencyResolver : DependencyResolverCore, IDependencyResolver, IRequestScopedResolver
   {
     readonly Dictionary<DependencyLifetime, DependencyLifetimeManager> _lifetimeManagers;
-    private readonly DependencyRegistrationCollection _registrations;
+    private readonly GlobalRegistrations _registrations;
     private const string CTX_REGISTRATIONS = "openrasta.di.requestRegistrations";
 
     public IDependencyRegistrationCollection Registrations => 
@@ -20,7 +20,7 @@ namespace OpenRasta.DI
 
     public InternalDependencyResolver()
     {
-      _registrations = new DependencyRegistrationCollection();
+      _registrations = new GlobalRegistrations();
       _lifetimeManagers = new Dictionary<DependencyLifetime, DependencyLifetimeManager>
       {
         {DependencyLifetime.Transient, new TransientLifetimeManager()},
@@ -31,7 +31,7 @@ namespace OpenRasta.DI
 
     protected override void AddDependencyCore(Type serviceType, Type concreteType, DependencyLifetime lifetime)
     {
-      Registrations.Add(new DependencyRegistration(serviceType, concreteType, _lifetimeManagers[lifetime]));
+      Registrations.Add(new DependencyRegistration(serviceType, concreteType, lifetime,_lifetimeManagers[lifetime]));
     }
 
     protected override void AddDependencyCore(Type concreteType, DependencyLifetime lifetime)
@@ -44,6 +44,7 @@ namespace OpenRasta.DI
       Registrations.Add(new DependencyRegistration(
         serviceType,
         instance.GetType(),
+        lifetime,
         _lifetimeManagers[lifetime],
         instance));
     }
@@ -83,11 +84,17 @@ namespace OpenRasta.DI
 
     public IDisposable CreateRequestScope()
     {
-      new ResolveContext(_registrations)
-        .Resolve<IContextStore>()
-        .Add(CTX_REGISTRATIONS, new RequestContextRegistrations(_registrations));
+      var requestContextRegistrations = new RequestContextRegistrations(_registrations);
+      var contextStore = new ResolveContext(_registrations)
+        .Resolve<IContextStore>();
+      contextStore
+        .Add(CTX_REGISTRATIONS, requestContextRegistrations);
       return new ActionOnDispose(() =>
-        _lifetimeManagers[DependencyLifetime.PerRequest].ClearScope());
+      {
+        _lifetimeManagers[DependencyLifetime.PerRequest].ClearScope();
+        requestContextRegistrations.Dispose();
+        contextStore.Remove(CTX_REGISTRATIONS);
+      });
     }
   }
 }

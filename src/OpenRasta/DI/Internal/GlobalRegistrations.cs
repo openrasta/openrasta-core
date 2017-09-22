@@ -6,11 +6,11 @@ using OpenRasta.Pipeline;
 
 namespace OpenRasta.DI.Internal
 {
-  public class DependencyRegistrationCollection : IDependencyRegistrationCollection
+  public class GlobalRegistrations : IDependencyRegistrationCollection
   {
     readonly ConcurrentDictionary<Type, List<DependencyRegistration>> _registrations =
       new ConcurrentDictionary<Type, List<DependencyRegistration>>();
-
+    
     public IEnumerable<DependencyRegistration> this[Type serviceType] =>
       _registrations.TryGetValue(serviceType, out var result)
         ? result

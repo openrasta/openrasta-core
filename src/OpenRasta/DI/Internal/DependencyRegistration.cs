@@ -39,13 +39,14 @@ namespace OpenRasta.DI.Internal
       return !Equals(left, right);
     }
 
-    public DependencyRegistration(Type serviceType, Type concreteType, DependencyLifetimeManager lifetime,
+    public DependencyRegistration(Type serviceType, Type concreteType, DependencyLifetime lifetime, DependencyLifetimeManager lifetimeManager,
       object instance = null)
     {
       Key = Guid.NewGuid().ToString();
-      LifetimeManager = lifetime;
+      LifetimeManager = lifetimeManager;
       ServiceType = serviceType;
       ConcreteType = concreteType;
+      Lifetime = lifetime;
       Constructors =
         new List<KeyValuePair<ConstructorInfo, ParameterInfo[]>>(
           concreteType.GetConstructors()
@@ -58,6 +59,7 @@ namespace OpenRasta.DI.Internal
     }
 
     public Type ConcreteType { get; }
+    public DependencyLifetime Lifetime { get; }
     public List<KeyValuePair<ConstructorInfo, ParameterInfo[]>> Constructors { get; }
     private readonly object _instance;
     public bool IsInstanceRegistration { get; }
@@ -71,7 +73,10 @@ namespace OpenRasta.DI.Internal
     public object ResolveInContext(ResolveContext ctx)
       => LifetimeManager.Resolve(ctx, this);
 
-    public object CreateInstance(ResolveContext context) =>
+    public Func<ResolveContext, object> CreateInstance => CreateInstanceImplementation;
+    public object Instance => _instance;
+
+    private object CreateInstanceImplementation(ResolveContext context) =>
       IsInstanceRegistration ? _instance : new ObjectBuilder(context).CreateObject(this);
 
   }
