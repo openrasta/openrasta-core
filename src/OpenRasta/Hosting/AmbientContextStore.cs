@@ -27,5 +27,10 @@ namespace OpenRasta.Hosting
     {
       AmbientContext.Current[key] = instance;
     }
+
+    public void Remove(string key)
+    {
+      AmbientContext.Current.Remove(key);
+    }
   }
 }

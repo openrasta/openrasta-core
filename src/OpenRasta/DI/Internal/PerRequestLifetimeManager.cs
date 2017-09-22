@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using OpenRasta.Pipeline;
 
@@ -6,12 +7,12 @@ namespace OpenRasta.DI.Internal
   public class PerRequestLifetimeManager : DependencyLifetimeManager
   {
     private readonly InternalDependencyResolver _resolver;
+    
 
     public PerRequestLifetimeManager(InternalDependencyResolver resolver)
     {
       _resolver = resolver;
     }
-    
 
     public override bool Contains(DependencyRegistration registration)
     {

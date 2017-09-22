@@ -27,5 +27,10 @@ namespace OpenRasta.Hosting.InMemory
       {
         base[key] = instance;
       }
+
+      public void Remove(string key)
+      {
+        base.Remove(key);
+      }
     }
 }

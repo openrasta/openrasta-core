@@ -39,5 +39,10 @@ namespace OpenRasta.Hosting
       instance = success ? (T)_items[key] : default(T);
       return success;
     }
+
+    public void Remove(string key)
+    {
+      _items.Remove(key);
+    }
   }
 }
