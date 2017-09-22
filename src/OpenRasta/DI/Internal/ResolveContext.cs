@@ -16,12 +16,17 @@ namespace OpenRasta.DI.Internal
 
     public object Resolve(Type serviceType)
     {
-      return TryResolve(serviceType) ?? throw new DependencyResolutionException($"Could not find a resolve profile for {serviceType}");
+      return TryResolve(serviceType, out var instance)
+        ? instance
+        : throw new DependencyResolutionException($"Could not find a resolve profile for {serviceType}");
     }
 
-    public object TryResolve(Type serviceType)
+    public bool TryResolve(Type serviceType, out object instance)
     {
-      return ResolveProfile.FindProfile(serviceType, this)?.TryResolve();
+      instance = null;
+      var profile = ResolveProfile.FindProfile(serviceType, this);
+
+      return profile != null && profile.TryResolve(out instance);
     }
 
     public T Resolve<T>(DependencyRegistration registration)
@@ -31,18 +36,21 @@ namespace OpenRasta.DI.Internal
 
     private object Resolve(DependencyRegistration registration)
     {
-      return TryResolve(registration)
-        ?? throw new InvalidOperationException("Recursive dependencies are not allowed.");
+      return TryResolve(registration, out var instance)
+        ? instance
+        : throw new InvalidOperationException("Recursive dependencies are not allowed.");
     }
 
-    public object TryResolve(DependencyRegistration registration)
+    public bool TryResolve(DependencyRegistration registration, out object instance)
     {
+      instance = null;
       if (_recursionDefender.Contains(registration))
-        return null;
+        return false;
       try
       {
         _recursionDefender.Push(registration);
-        return registration.ResolveInContext(this);
+        instance = registration.ResolveInContext(this);
+        return true;
       }
       finally
       {

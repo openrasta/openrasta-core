@@ -13,14 +13,18 @@ namespace OpenRasta.DI.Internal
       _profile = profile;
     }
 
-    public override object TryResolve()
+    public override bool TryResolve(out object instance)
     {
-      return ResolveTyped();
+      instance = ResolveTyped();
+      return true;
     }
 
+    // ReSharper disable once MergeConditionalExpression
     Func<T> ResolveTyped()
     {
-      return () => (T) _profile.TryResolve();
+      return () => _profile.TryResolve(out var instance)
+        ? (instance is T ? (T) instance : default(T))
+        : default(T);
     }
   }
 }

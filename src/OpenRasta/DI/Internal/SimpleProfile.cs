@@ -13,9 +13,9 @@ namespace OpenRasta.DI.Internal
       _serviceType = serviceType;
     }
 
-    public override object TryResolve()
+    public override bool TryResolve(out object instance)
     {
-      return _ctx.Registrations.TryResolve(_ctx, _serviceType);
+      return _ctx.Registrations.TryResolve(_ctx, _serviceType, out instance);
     }
   }
 }

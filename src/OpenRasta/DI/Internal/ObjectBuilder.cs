@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -26,9 +27,9 @@ namespace OpenRasta.DI.Internal
         var dependents = constructor.Value
           .Select(pi =>
           {
-            var result = ResolveContext.TryResolve(pi.ParameterType);
-            if (result == null) unresolvedDependencies.Add(pi);
-            return result;
+            var success = ResolveContext.TryResolve(pi.ParameterType, out var instance);
+            if (!success) unresolvedDependencies.Add(pi);
+            return instance;
           }).ToArray();
 
 
@@ -44,14 +45,19 @@ namespace OpenRasta.DI.Internal
     {
       foreach (var property in from pi in instanceObject.GetType().GetProperties()
         where pi.CanWrite && pi.GetIndexParameters().Length == 0
-        let instance = ResolveContext.TryResolve(pi.PropertyType)
-        where instance != null
-        select new {pi, instance})
+        let resolve = ResolveProperty(pi)
+        where resolve.success
+        select resolve)
         property.pi.SetValue(instanceObject, property.instance, null);
 
       return instanceObject;
     }
 
+    (PropertyInfo pi, bool success, object instance) ResolveProperty(PropertyInfo pi)
+    {
+      var success = ResolveContext.TryResolve(pi.PropertyType, out var instance);
+      return (pi, success, instance);
+    }
     void LogUnresolvedConstructor(IEnumerable<ParameterInfo> unresolvedDependencies,
       ref StringBuilder unresolvedDependenciesMessage)
     {
