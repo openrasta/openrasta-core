@@ -11,7 +11,7 @@ namespace OpenRasta.DI.Internal
       _ctx = ctx;
     }
 
-    public override object Resolve()
+    public override object TryResolve()
     {
       if (!_ctx.Registrations.HasRegistrationForService(typeof(T)))
         return Enumerable.Empty<T>();
