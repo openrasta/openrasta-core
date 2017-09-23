@@ -59,7 +59,13 @@ namespace OpenRasta.DI
       return ((IEnumerable<object>) ResolveCore(typeof(IEnumerable<TService>))).Cast<TService>();
     }
 
-    
+
+    public bool TryResolve<T>(out T instance)
+    {
+      var success = new ResolveContext(Registrations).TryResolve(typeof(T), out var untyped);
+      instance = (T)untyped;
+      return success;
+    }
     protected override object ResolveCore(Type serviceType)
     {
       try
@@ -72,6 +78,7 @@ namespace OpenRasta.DI
       }
     }
 
+    [Obsolete]
     public void HandleIncomingRequestProcessed()
     {
       throw new NotSupportedException();
@@ -96,7 +103,7 @@ namespace OpenRasta.DI
         .Add(CTX_REGISTRATIONS, requestContextRegistrations);
       return new ActionOnDispose(() =>
       {
-        _lifetimeManagers[DependencyLifetime.PerRequest].ClearScope();
+        _lifetimeManagers[DependencyLifetime.PerRequest].EndScope();
         requestContextRegistrations.Dispose();
         contextStore.Remove(CTX_REGISTRATIONS);
       });

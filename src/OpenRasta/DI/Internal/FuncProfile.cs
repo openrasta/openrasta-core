@@ -4,13 +4,11 @@ namespace OpenRasta.DI.Internal
 {
   internal class FuncProfile<T> : ResolveProfile
   {
-    readonly ResolveContext _ctx;
-    readonly ResolveProfile _profile;
+    readonly ResolveProfile _innerProfile;
 
-    public FuncProfile(ResolveContext ctx, ResolveProfile profile)
+    public FuncProfile(ResolveProfile innerProfile)
     {
-      _ctx = ctx;
-      _profile = profile;
+      _innerProfile = innerProfile;
     }
 
     public override bool TryResolve(out object instance)
@@ -22,7 +20,7 @@ namespace OpenRasta.DI.Internal
     // ReSharper disable once MergeConditionalExpression
     Func<T> ResolveTyped()
     {
-      return () => _profile.TryResolve(out var instance)
+      return () => _innerProfile.TryResolve(out var instance)
         ? (instance is T ? (T) instance : default(T))
         : default(T);
     }
