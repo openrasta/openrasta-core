@@ -35,12 +35,7 @@ namespace OpenRasta.DI.Internal
     public void Add(DependencyRegistration registration)
     {
       var bag = _registrations.GetOrAdd(registration.ServiceType, type => new RegistrationBag());
-      bag.Add(new DependencyRegistration(
-        registration.ServiceType,
-        registration.ConcreteType,
-        registration.Lifetime,
-        _lifetimes[registration.Lifetime],
-        registration.Instance));
+      bag.Add(registration.OverrideLifetimeManager(_lifetimes[registration.Lifetime]));
     }
 
     public bool HasRegistrationForService(Type type)

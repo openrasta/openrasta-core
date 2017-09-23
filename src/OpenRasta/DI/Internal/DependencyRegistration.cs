@@ -39,8 +39,12 @@ namespace OpenRasta.DI.Internal
       return !Equals(left, right);
     }
 
-    public DependencyRegistration(Type serviceType, Type concreteType, DependencyLifetime lifetime, DependencyLifetimeManager lifetimeManager,
-      object instance = null)
+    public DependencyRegistration(
+      Type serviceType,
+      Type concreteType,
+      DependencyLifetime lifetime, 
+      DependencyLifetimeManager lifetimeManager,
+      Func<ResolveContext,object> factory = null)
     {
       Key = Guid.NewGuid().ToString();
       LifetimeManager = lifetimeManager;
@@ -52,17 +56,22 @@ namespace OpenRasta.DI.Internal
           concreteType.GetConstructors()
             .Select(ctor => new KeyValuePair<ConstructorInfo, ParameterInfo[]>(ctor, ctor.GetParameters())));
       Constructors.Sort((kv1, kv2) => kv1.Value.Length.CompareTo(kv2.Value.Length) * -1);
-      _instance = instance;
-      IsInstanceRegistration = instance != null;
-      
+      Factory = factory ?? DefaultFactory;
       LifetimeManager.Add(this);
     }
 
+    public DependencyRegistration OverrideLifetimeManager(DependencyLifetimeManager manager)
+    {
+      return new DependencyRegistration(
+        ServiceType,
+        ConcreteType,
+        Lifetime,
+        manager,
+        Factory);
+    }
     public Type ConcreteType { get; }
     public DependencyLifetime Lifetime { get; }
     public List<KeyValuePair<ConstructorInfo, ParameterInfo[]>> Constructors { get; }
-    private readonly object _instance;
-    public bool IsInstanceRegistration { get; }
     public string Key { get; }
 
     public Type ServiceType { get; }
@@ -73,11 +82,11 @@ namespace OpenRasta.DI.Internal
     public object ResolveInContext(ResolveContext ctx)
       => LifetimeManager.Resolve(ctx, this);
 
-    public Func<ResolveContext, object> CreateInstance => CreateInstanceImplementation;
-    public object Instance => _instance;
+    public Func<ResolveContext, object> Factory { get; set; }
 
-    private object CreateInstanceImplementation(ResolveContext context) =>
-      IsInstanceRegistration ? _instance : new ObjectBuilder(context).CreateObject(this);
-
+    object DefaultFactory(ResolveContext context)
+    {
+      return new ObjectBuilder(context).CreateObject(this);
+    }
   }
 }

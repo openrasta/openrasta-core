@@ -14,42 +14,27 @@ namespace OpenRasta.DI.Internal
       _resolver = resolver;
     }
 
-    public override bool Contains(DependencyRegistration registration)
-    {
-      if (!_resolver.HasDependency(typeof(IContextStore))) return false;
-
-      if (!registration.IsInstanceRegistration) return true;
-
-      var store = _resolver.Resolve<IContextStore>();
-
-      return store.GetConcurrentContextInstances().ContainsKey(registration);
-    }
-
     public override object Resolve(ResolveContext context, DependencyRegistration registration)
     {
       CheckContextStoreAvailable();
 
       var store = _resolver.Resolve<IContextStore>();
 
-      return store.GetConcurrentContextInstances().GetOrAdd(registration, reg => reg.CreateInstance(context));
+      return store
+        .GetConcurrentContextInstances()
+        .GetOrAdd(registration, reg => reg.Factory(context));
     }
 
-    public override void Add(DependencyRegistration registration)
-    {
-      if (!registration.IsInstanceRegistration) return;
-      _resolver.Resolve<IContextStore>().GetConcurrentContextInstances()
-        .TryAdd(registration, registration.CreateInstance(new ResolveContext(_resolver.Registrations)));
-    }
+//    public override void Add(DependencyRegistration registration)
+//    {
+//      if (!registration.IsInstanceRegistration) return;
+//      _resolver.Resolve<IContextStore>().GetConcurrentContextInstances()
+//        .TryAdd(registration, registration.CreateInstance(new ResolveContext(_resolver.Registrations)));
+//    }
 
     public override void ClearScope()
     {
-      foreach (var transitiveRegistration in _resolver.Resolve<IContextStore>().GetConcurrentContextInstances().Keys)
-      {
-        if (transitiveRegistration.IsInstanceRegistration)
-        {
-          _resolver.Registrations.Remove(transitiveRegistration);
-        }
-      }
+      _resolver.Resolve<IContextStore>().GetConcurrentContextInstances().Clear();
     }
 
     void CheckContextStoreAvailable()
