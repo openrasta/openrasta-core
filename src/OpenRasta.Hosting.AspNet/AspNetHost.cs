@@ -68,7 +68,8 @@ namespace OpenRasta.Hosting.AspNet
              ?? DependencyResolverAccessorLocator();
     }
 
-    public static Func<IConfigurationSource> ConfigurationSourceLocator = FindTypeInOpenRastaProject<IConfigurationSource>;
+    public static Func<IConfigurationSource> ConfigurationSourceLocator =
+      FindTypeInOpenRastaProject<IConfigurationSource>;
 
     static readonly Func<IDependencyResolverAccessor> DependencyResolverAccessorLocator =
       FindTypeInOpenRastaProject<IDependencyResolverAccessor>;
@@ -76,8 +77,8 @@ namespace OpenRasta.Hosting.AspNet
     public static T FindTypeInOpenRastaProject<T>() where T : class
     {
       ForceAspNetGlobalAsaxCompilation();
-      
-      var localAssemblies = 
+
+      var localAssemblies =
         Path.GetDirectoryName(new Uri(typeof(AspNetHost).Assembly.EscapedCodeBase).LocalPath);
       var asms = Directory.GetFiles(localAssemblies, "*.dll", SearchOption.TopDirectoryOnly);
 
@@ -112,13 +113,12 @@ namespace OpenRasta.Hosting.AspNet
         throw new InvalidOperationException($"Looking for {typeof(T)} but found more than one.{Environment.NewLine}" +
                                             string.Join(Environment.NewLine,
                                               potentialTypes.Select(t => t.AssemblyQualifiedName)));
-      return (T)Activator.CreateInstance(potentialTypes[0]);
+      return (T) Activator.CreateInstance(potentialTypes[0]);
     }
 
     private static void ForceAspNetGlobalAsaxCompilation()
     {
-      if (HttpRuntime.AppDomainAppId != null)
-        BuildManager.GetReferencedAssemblies();
+      BuildManager.GetReferencedAssemblies();
     }
 
     static readonly byte[] msKey = {0xb, 0x7, 0x7, 0xa, 0x5, 0xc, 0x5, 0x6, 0x1, 0x9, 0x3, 0x4, 0xe, 0x0, 0x8, 0x9};

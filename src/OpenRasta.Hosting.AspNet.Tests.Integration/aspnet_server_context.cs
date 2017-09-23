@@ -24,7 +24,7 @@ namespace OpenRasta.Hosting.AspNet.Tests.Integration
 
     void SelectPort()
     {
-      _port = 6687;
+      _port = 6688;
     }
 
     [TestFixtureTearDown]
