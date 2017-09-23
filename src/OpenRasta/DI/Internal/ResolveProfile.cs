@@ -35,7 +35,7 @@ namespace OpenRasta.DI.Internal
       var innerProfile = FindProfile(innerType, ctx);
       return innerProfile == null
       ? null
-      : (ResolveProfile)Activator.CreateInstance(typeof(FuncProfile<>).MakeGenericType(innerType), ctx, innerProfile);
+      : (ResolveProfile)Activator.CreateInstance(typeof(FuncProfile<>).MakeGenericType(innerType), innerProfile);
     }
 
     public abstract bool TryResolve(out object instance);

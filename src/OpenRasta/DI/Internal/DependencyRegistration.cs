@@ -12,16 +12,14 @@ namespace OpenRasta.DI.Internal
     public bool Equals(DependencyRegistration other)
     {
       if (ReferenceEquals(null, other)) return false;
-      if (ReferenceEquals(this, other)) return true;
-      return string.Equals(Key, other.Key);
+      return ReferenceEquals(this, other) || string.Equals(Key, other.Key);
     }
 
     public override bool Equals(object obj)
     {
       if (ReferenceEquals(null, obj)) return false;
       if (ReferenceEquals(this, obj)) return true;
-      if (obj.GetType() != this.GetType()) return false;
-      return Equals((DependencyRegistration) obj);
+      return obj.GetType() == GetType() && Equals((DependencyRegistration) obj);
     }
 
     public override int GetHashCode()
@@ -57,7 +55,6 @@ namespace OpenRasta.DI.Internal
             .Select(ctor => new KeyValuePair<ConstructorInfo, ParameterInfo[]>(ctor, ctor.GetParameters())));
       Constructors.Sort((kv1, kv2) => kv1.Value.Length.CompareTo(kv2.Value.Length) * -1);
       Factory = factory ?? DefaultFactory;
-      LifetimeManager.Add(this);
     }
 
     public DependencyRegistration OverrideLifetimeManager(DependencyLifetimeManager manager)
@@ -76,13 +73,10 @@ namespace OpenRasta.DI.Internal
 
     public Type ServiceType { get; }
 
-    public bool IsRegistrationAvailable
-      => LifetimeManager.Contains(this);
-
     public object ResolveInContext(ResolveContext ctx)
       => LifetimeManager.Resolve(ctx, this);
 
-    public Func<ResolveContext, object> Factory { get; set; }
+    public Func<ResolveContext, object> Factory { get; }
 
     object DefaultFactory(ResolveContext context)
     {

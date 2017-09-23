@@ -13,7 +13,7 @@ namespace OpenRasta.DI.Internal
     
     public IEnumerable<DependencyRegistration> this[Type serviceType] =>
       _registrations.TryGetValue(serviceType, out var bag)
-        ? bag.All.ToArray()
+        ? bag.All
         : Enumerable.Empty<DependencyRegistration>();
 
     public void Add(DependencyRegistration registration)
@@ -38,11 +38,6 @@ namespace OpenRasta.DI.Internal
     public bool TryResolve(ResolveContext ctx, Type serviceType, out object instance)
     {
       return ctx.TryResolve(LastRegistrationForService(serviceType), out instance);
-    }
-    public void Remove(DependencyRegistration transitiveRegistration)
-    {
-      if (_registrations.TryGetValue(transitiveRegistration.ServiceType, out var bag))
-        bag.TryRemove(transitiveRegistration, out _);
     }
   }
 }

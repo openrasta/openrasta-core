@@ -9,6 +9,5 @@ namespace OpenRasta.DI.Internal
     void Add(DependencyRegistration registration);
     bool HasRegistrationForService(Type type);
     bool TryResolve(ResolveContext ctx, Type serviceType, out object instance);
-    void Remove(DependencyRegistration transitiveRegistration);
   }
 }

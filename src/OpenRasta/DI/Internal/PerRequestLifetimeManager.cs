@@ -16,34 +16,18 @@ namespace OpenRasta.DI.Internal
 
     public override object Resolve(ResolveContext context, DependencyRegistration registration)
     {
-      CheckContextStoreAvailable();
-
-      var store = _resolver.Resolve<IContextStore>();
-
+      if (!_resolver.TryResolve<IContextStore>(out var store))
+        throw new DependencyResolutionException(
+          "Could not resolve the context store. Make sure you have registered one.");
+      
       return store
         .GetConcurrentContextInstances()
         .GetOrAdd(registration, reg => reg.Factory(context));
     }
 
-//    public override void Add(DependencyRegistration registration)
-//    {
-//      if (!registration.IsInstanceRegistration) return;
-//      _resolver.Resolve<IContextStore>().GetConcurrentContextInstances()
-//        .TryAdd(registration, registration.CreateInstance(new ResolveContext(_resolver.Registrations)));
-//    }
-
-    public override void ClearScope()
+    public override void EndScope()
     {
       _resolver.Resolve<IContextStore>().GetConcurrentContextInstances().Clear();
-    }
-
-    void CheckContextStoreAvailable()
-    {
-      if (!_resolver.HasDependency(typeof(IContextStore)))
-      {
-        throw new DependencyResolutionException(
-          "Could not resolve the context store. Make sure you have registered one.");
-      }
     }
   }
 }

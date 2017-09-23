@@ -192,6 +192,7 @@
     <Compile Include="Diagnostics\NullLogger.cs" />
     <Compile Include="Diagnostics\OperationContextErrorCollector.cs" />
     <Compile Include="Diagnostics\TraceSourceLogger.cs" />
+    <Compile Include="DI\ActionOnDispose.cs" />
     <Compile Include="DI\DependencyLifetime.cs" />
     <Compile Include="DI\DependencyLifetimeManager.cs" />
     <Compile Include="DI\DependencyManager.cs" />

@@ -50,25 +50,12 @@ namespace OpenRasta.DI.Internal
         : _globalRegistrations.TryResolve(ctx, serviceType, out instance);
     }
 
-    public void Remove(DependencyRegistration transitiveRegistration)
-    {
-      if (_registrations.TryGetValue(transitiveRegistration.ServiceType, out var bag)
-          && bag.TryRemove(transitiveRegistration, out var isEmpty))
-      {
-        if (isEmpty)
-        {
-          _registrations.TryRemove(transitiveRegistration.ServiceType, out _);
-        }
-      }
-      else
-      {
-        _globalRegistrations.Remove(transitiveRegistration);
-      }
-    }
-
     public void Dispose()
     {
-      
+      foreach (var lifetime in _lifetimes.Values)
+      {
+        lifetime.EndScope();
+      }
     }
   }
 }

@@ -41,12 +41,7 @@ namespace OpenRasta.DI.Internal
       return success;
     }
 
-    public T Resolve<T>(DependencyRegistration registration)
-    {
-      return (T) Resolve(registration);
-    }
-
-    private object Resolve(DependencyRegistration registration)
+    public object Resolve(DependencyRegistration registration)
     {
       return TryResolve(registration, out var instance)
         ? instance
