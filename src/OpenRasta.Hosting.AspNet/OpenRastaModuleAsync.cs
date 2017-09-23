@@ -23,12 +23,34 @@ namespace OpenRasta.Hosting.AspNet
         ? (AspNetPipeline) new IntegratedPipeline()
         : new ClassicPipeline(), LazyThreadSafetyMode.PublicationOnly);
 
-    PipelineStageAsync<KnownStages.IUriMatching> _postResolveStep;
-    AspNetHost _host;
-
-    public void Init(HttpApplication context)
+    private static readonly Lazy<(AspNetHost host, PipelineStageAsync<KnownStages.IUriMatching> resolveStep)> _host 
+      = new Lazy<(AspNetHost host, PipelineStageAsync<KnownStages.IUriMatching>)>(() =>
     {
-      var startupProperties = new StartupProperties
+      var host = new AspNetHost(DefaultStartupProperties());
+      HostManager.RegisterHost(host);
+      var resolveStep = new PipelineStageAsync<KnownStages.IUriMatching>(host, Pipeline);
+      return (host, resolveStep);
+    });
+
+    public void Init(HttpApplication application)
+    {
+      application.AddOnPostResolveRequestCacheAsync(DelayedStepBegin(), DelayedStepEnd());
+      application.EndRequest += HandleHttpApplicationEndRequestEvent;
+    }
+
+    private EndEventHandler DelayedStepEnd()
+    {
+      return _host.Value.resolveStep.End;
+    }
+
+    private BeginEventHandler DelayedStepBegin()
+    {
+      return _host.Value.resolveStep.Begin;
+    }
+
+    private static StartupProperties DefaultStartupProperties()
+    {
+      return new StartupProperties
       {
         OpenRasta =
         {
@@ -42,15 +64,6 @@ namespace OpenRasta.Hosting.AspNet
           }
         }
       };
-      _host = new AspNetHost(startupProperties);
-      HostManager.RegisterHost(_host);
-      _host.RaiseStart();
-
-      _postResolveStep = new PipelineStageAsync<KnownStages.IUriMatching>(_host, Pipeline);
-
-      context.AddOnPostResolveRequestCacheAsync(_postResolveStep.Begin, _postResolveStep.End);
-
-      context.EndRequest += HandleHttpApplicationEndRequestEvent;
     }
 
     const string COMM_CONTEXT_KEY = "__OR_COMM_CONTEXT";
@@ -61,7 +74,7 @@ namespace OpenRasta.Hosting.AspNet
       CallContext.LogicalSetData("__OR_CONTEXT", httpContext);
       var commContext = (ICommunicationContext) httpContext.Items[COMM_CONTEXT_KEY];
       if (commContext.PipelineData.ContainsKey("openrasta.hosting.aspnet.handled"))
-        _host.RaiseIncomingRequestProcessed(commContext);
+        _host.Value.host.RaiseIncomingRequestProcessed(commContext);
     }
   }
 }

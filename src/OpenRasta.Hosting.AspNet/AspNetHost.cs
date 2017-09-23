@@ -118,7 +118,8 @@ namespace OpenRasta.Hosting.AspNet
 
     private static void ForceAspNetGlobalAsaxCompilation()
     {
-      BuildManager.GetReferencedAssemblies();
+      if (HttpRuntime.AppDomainAppId != null)
+        BuildManager.GetReferencedAssemblies();
     }
 
     static readonly byte[] msKey = {0xb, 0x7, 0x7, 0xa, 0x5, 0xc, 0x5, 0x6, 0x1, 0x9, 0x3, 0x4, 0xe, 0x0, 0x8, 0x9};
