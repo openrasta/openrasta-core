@@ -60,7 +60,9 @@ build:
   verbosity: minimal
 
 test:
-  assemblies: src\OpenRasta.Hosting.AspNet.Tests.Integration\bin\$(configuration)\OpenRasta.Hosting.AspNet.Tests.Integration.dll
+  assemblies: 
+   - src\OpenRasta.Hosting.AspNet.Tests.Integration\bin\$(configuration)\OpenRasta.Hosting.AspNet.Tests.Integration.dll
+   - src\Tests\bin\$(configuration)\Tests.dll
 
 artifacts:
 - path: src\OpenRasta.Hosting.AspNet\bin\$(configuration)\*.dll
