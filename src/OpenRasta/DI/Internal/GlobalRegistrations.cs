@@ -8,36 +8,31 @@ namespace OpenRasta.DI.Internal
 {
   public class GlobalRegistrations : IDependencyRegistrationCollection
   {
-    readonly ConcurrentDictionary<Type, List<DependencyRegistration>> _registrations =
-      new ConcurrentDictionary<Type, List<DependencyRegistration>>();
+    readonly ConcurrentDictionary<Type, RegistrationBag> _registrations =
+      new ConcurrentDictionary<Type, RegistrationBag>();
     
     public IEnumerable<DependencyRegistration> this[Type serviceType] =>
-      _registrations.TryGetValue(serviceType, out var result)
-        ? result
+      _registrations.TryGetValue(serviceType, out var bag)
+        ? bag.All.ToArray()
         : Enumerable.Empty<DependencyRegistration>();
 
     public void Add(DependencyRegistration registration)
     {
-      GetOrAddRegistrations(registration.ServiceType)
+      _registrations
+        .GetOrAdd(registration.ServiceType, t => new RegistrationBag())
         .Add(registration);
     }
 
     private DependencyRegistration LastRegistrationForService(Type serviceType)
     {
       return _registrations.TryGetValue(serviceType, out var regs)
-        ? regs.LastOrDefault(x => x.IsRegistrationAvailable)
+        ? regs.Last
         : null;
-    }
-
-    private List<DependencyRegistration> GetOrAddRegistrations(Type type)
-    {
-      return _registrations.GetOrAdd(type, t => new List<DependencyRegistration>());
     }
 
     public bool HasRegistrationForService(Type type)
     {
-      return _registrations.TryGetValue(type, out var regs) 
-             && regs.Any(x => x.IsRegistrationAvailable);
+      return _registrations.ContainsKey(type);
     }
 
     public bool TryResolve(ResolveContext ctx, Type serviceType, out object instance)
@@ -46,8 +41,8 @@ namespace OpenRasta.DI.Internal
     }
     public void Remove(DependencyRegistration transitiveRegistration)
     {
-      if (_registrations.TryGetValue(transitiveRegistration.ServiceType, out var regs))
-        regs.Remove(transitiveRegistration);
+      if (_registrations.TryGetValue(transitiveRegistration.ServiceType, out var bag))
+        bag.TryRemove(transitiveRegistration, out _);
     }
   }
 }

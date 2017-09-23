@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using NUnit.Framework;
 using OpenRasta.DI;
 using OpenRasta.Hosting;
@@ -79,11 +80,13 @@ namespace InternalDependencyResolver_Specification
       Resolver.AddDependency<IContextStore, AmbientContextStore>();
 
       using (new ContextScope(scope1))
+      using (Resolver.CreateRequestScope())
       {
         Resolver.AddDependencyInstance<TheClass>(objectForScope1, DependencyLifetime.PerRequest);
       }
 
       using (new ContextScope(scope2))
+      using (Resolver.CreateRequestScope())
       {
         Resolver.HasDependency(typeof(TheClass)).ShouldBeFalse();
 
@@ -108,6 +111,8 @@ namespace InternalDependencyResolver_Specification
       Resolver.AddDependency<TheDependentClass>(DependencyLifetime.Transient);
 
       using (new ContextScope(scope))
+      using (Resolver.CreateRequestScope())
+
       {
         Resolver.AddDependencyInstance(typeof(TheClass), objectForScope, DependencyLifetime.PerRequest);
 
@@ -127,6 +132,8 @@ namespace InternalDependencyResolver_Specification
 
       var contextStore = new AmbientContext();
       using (new ContextScope(contextStore))
+      using (Resolver.CreateRequestScope())
+
       {
         var objectForScope = new TheClassThatNeedsYou(new NeedYou());
 
@@ -166,15 +173,26 @@ namespace InternalDependencyResolver_Specification
 
       Resolver.AddDependency<IContextStore, AmbientContextStore>();
 
+      IDisposable scope1Request, scope2Request;
       using (new ContextScope(scope1))
+      {
+        scope1Request = Resolver.CreateRequestScope();
         Resolver.AddDependencyInstance<TheClass>(objectForScope1, DependencyLifetime.PerRequest);
+      }
 
       using (new ContextScope(scope2))
+      {
+        scope2Request = Resolver.CreateRequestScope();
         Resolver.AddDependencyInstance<TheClass>(objectForScope2, DependencyLifetime.PerRequest);
+      }
 
       using (new ContextScope(scope1))
       {
         Resolver.Resolve<TheClass>().ShouldBeSameAs(objectForScope1);
+      }
+      using (new ContextScope(scope2))
+      {
+        Resolver.Resolve<TheClass>().ShouldBeSameAs(objectForScope2);
       }
     }
 
@@ -186,19 +204,26 @@ namespace InternalDependencyResolver_Specification
       var objectForScope2 = new TheClass();
       var scope1 = new AmbientContext();
       var scope2 = new AmbientContext();
+      IDisposable scope1Request, scope2Request;
 
       Resolver.AddDependency<IContextStore, AmbientContextStore>();
 
       using (new ContextScope(scope1))
+      {
+        Resolver.CreateRequestScope();
         Resolver.AddDependencyInstance<TheClass>(objectForScope1, DependencyLifetime.PerRequest);
+      }
 
       using (new ContextScope(scope2))
+      {
+        Resolver.CreateRequestScope();
         Resolver.AddDependencyInstance<TheClass>(objectForScope2, DependencyLifetime.PerRequest);
+      }
 
       using (new ContextScope(scope1))
       {
         Resolver.ResolveAll<TheClass>()
-          .ShouldBe(new[]{objectForScope1});
+          .ShouldBe(new[] {objectForScope1});
       }
     }
 
@@ -209,32 +234,35 @@ namespace InternalDependencyResolver_Specification
       var firstInstance = new TheClass();
       var secondInstance = new TheClass();
 
-      Resolver.AddDependencyInstance<TheClass>(firstInstance, DependencyLifetime.PerRequest);
-      Resolver.AddDependencyInstance<TheClass>(secondInstance, DependencyLifetime.PerRequest);
+      using (Resolver.CreateRequestScope())
+      {
+        Resolver.AddDependencyInstance<TheClass>(firstInstance, DependencyLifetime.PerRequest);
+        Resolver.AddDependencyInstance<TheClass>(secondInstance, DependencyLifetime.PerRequest);
 
-      var result = Resolver.ResolveAll<TheClass>();
+        var result = Resolver.ResolveAll<TheClass>();
 
-      (result.Contains(firstInstance) || result.Contains(secondInstance)).ShouldBeTrue();
+        (result.Contains(firstInstance) || result.Contains(secondInstance)).ShouldBeTrue();
+      }
     }
 
     [Test]
     public void per_request_creates_new_instance_in_between_requests()
     {
       InMemoryStore = new InMemoryContextStore();
-      
-      
+
+
       Resolver.AddDependencyInstance<IContextStore>(InMemoryStore);
 
       Resolver.AddDependency<IUnknown, JohnDoe>(DependencyLifetime.PerRequest);
 
       IUnknown firstInstance;
       IUnknown secondInstance;
-      
+
       using (Resolver.CreateRequestScope())
         firstInstance = Resolver.Resolve<IUnknown>();
       InMemoryStore.Clear();
-      
-      using(Resolver.CreateRequestScope())
+
+      using (Resolver.CreateRequestScope())
         secondInstance = Resolver.Resolve<IUnknown>();
 
       firstInstance.ShouldNotBeSameAs(secondInstance);

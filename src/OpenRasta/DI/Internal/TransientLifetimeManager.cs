@@ -4,7 +4,7 @@ namespace OpenRasta.DI.Internal
   {
     public override object Resolve(ResolveContext context, DependencyRegistration registration)
     {
-      return registration.CreateInstance(context);
+      return registration.Factory(context);
     }
   }
 }

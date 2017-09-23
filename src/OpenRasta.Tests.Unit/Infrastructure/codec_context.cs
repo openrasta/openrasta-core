@@ -19,12 +19,16 @@ namespace OpenRasta.Tests.Unit.Infrastructure
     {
       Host = new InMemoryHost();
       HostManager = Host.HostManager;
-      HostManager.SetupCommunicationContext(Context = new InMemoryCommunicationContext());
       DependencyManager.SetResolver(Host.Resolver);
+      RequestScope = Host.Resolver.CreateRequestScope();
+      HostManager.SetupCommunicationContext(Context = new InMemoryCommunicationContext());
     }
+
+    IDisposable RequestScope { get; set; }
 
     protected override void TearDown()
     {
+      RequestScope.Dispose();
       DependencyManager.UnsetResolver();
     }
   }

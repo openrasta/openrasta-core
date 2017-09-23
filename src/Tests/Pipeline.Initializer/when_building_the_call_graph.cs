@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using OpenRasta;
 using OpenRasta.Pipeline;
 using OpenRasta.Pipeline.CallGraph;
@@ -70,14 +71,20 @@ namespace Tests.Pipeline.Initializer
         typeof(FourthIsAfterThirdContributor)
       }, false);
 
-      pipeline.Contributors.ShouldHaveSameElementsAs(new[]
-      {
-        typeof(BootstrapperContributor),
-        typeof(ThirdIsBeforeFirstContributor),
-        typeof(FirstIsAfterBootstrapContributor),
-        typeof(SecondIsAfterFirstContributor),
-        typeof(FourthIsAfterThirdContributor)
-      }, (a, b) => a.GetType() == b);
+      var contribs = pipeline.Contributors.Select(c => c.GetType()).ToList();
+      int idx<T>() => contribs.IndexOf(typeof(T));
+      
+      
+      idx<FirstIsAfterBootstrapContributor>().ShouldBeGreaterThan(
+        idx<BootstrapperContributor>());
+
+      idx<SecondIsAfterFirstContributor>().ShouldBeGreaterThan(
+        idx<FirstIsAfterBootstrapContributor>());
+      
+      idx<ThirdIsBeforeFirstContributor>().ShouldBeLessThan(
+        idx<FirstIsAfterBootstrapContributor>());
+      idx<FourthIsAfterThirdContributor>().ShouldBeGreaterThan(
+        idx < ThirdIsBeforeFirstContributor>());
     }
 
     [Theory]

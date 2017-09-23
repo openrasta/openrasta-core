@@ -26,6 +26,7 @@ namespace OpenRasta.Tests.Unit.Infrastructure
   {
     Dictionary<Type, Func<ICommunicationContext, Task<PipelineContinuation>>> _actions;
     InMemoryHost Host;
+    private IDisposable _requestScope;
 
     public openrasta_context()
     {
@@ -252,7 +253,7 @@ namespace OpenRasta.Tests.Unit.Infrastructure
       var manager = Host.HostManager;
       Resolver.AddDependencyInstance(typeof(IErrorCollector), Errors = new TestErrorCollector());
       Resolver.AddDependency<IPathManager, PathManager>();
-
+      _requestScope = Resolver.CreateRequestScope();
       manager.SetupCommunicationContext(Context = new InMemoryCommunicationContext());
       DependencyManager.SetResolver(Resolver);
       
@@ -261,6 +262,7 @@ namespace OpenRasta.Tests.Unit.Infrastructure
     protected override void TearDown()
     {
       base.TearDown();
+      _requestScope.Dispose();
       DependencyManager.UnsetResolver();
     }
 

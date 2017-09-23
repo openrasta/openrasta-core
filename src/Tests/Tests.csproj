@@ -58,10 +58,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DI\current_instance_set_on_single_thread.cs" />
-    <Compile Include="DI\declaration_on_caller_access_on_task.cs" />
-    <Compile Include="DI\declaration_on_async_task_access_on_continuation.cs" />
-    <Compile Include="DI\declaration_on_task_access_on_continuation.cs" />
+    <Compile Include="DI.DependencyManager\current_instance_set_on_single_thread.cs" />
+    <Compile Include="DI.DependencyManager\declaration_on_caller_access_on_task.cs" />
+    <Compile Include="DI.DependencyManager\declaration_on_async_task_access_on_continuation.cs" />
+    <Compile Include="DI.DependencyManager\declaration_on_task_access_on_continuation.cs" />
     <Compile Include="Hosting.HttpListener\disposing.cs" />
     <Compile Include="Hosting.InMemory\no_resolver.cs" />
     <Compile Include="Hosting.InMemory\custom_resolver.cs" />

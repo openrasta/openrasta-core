@@ -16,7 +16,7 @@ namespace OpenRasta.DI
     private readonly GlobalRegistrations _registrations;
     private const string CTX_REGISTRATIONS = "openrasta.di.requestRegistrations";
 
-    public IDependencyRegistrationCollection Registrations => 
+    private IDependencyRegistrationCollection Registrations => 
       new ResolveContext(_registrations).TryResolve<IContextStore>(out var ctx) &&
       ctx.TryGet<IDependencyRegistrationCollection>(CTX_REGISTRATIONS, out var ctxRegistrations)
           ? ctxRegistrations
@@ -45,12 +45,17 @@ namespace OpenRasta.DI
 
     protected override void AddDependencyInstanceCore(Type serviceType, object instance, DependencyLifetime lifetime)
     {
-      Registrations.Add(new DependencyRegistration(
+      var registrations = Registrations;
+      
+      if (lifetime == DependencyLifetime.PerRequest && registrations == _registrations)
+        throw new InvalidOperationException("Request scope is not available, cannot register PerRequest instances");
+      
+      registrations.Add(new DependencyRegistration(
         serviceType,
         instance.GetType(),
         lifetime,
         _lifetimeManagers[lifetime],
-        instance));
+        context=>instance));
     }
 
     protected override IEnumerable<TService> ResolveAllCore<TService>()
