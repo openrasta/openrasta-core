@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using OpenRasta.DI.Internal;
+using OpenRasta.Hosting;
 using OpenRasta.Pipeline;
 
 namespace OpenRasta.DI
@@ -9,18 +10,37 @@ namespace OpenRasta.DI
   public class InternalDependencyResolver : DependencyResolverCore, IDependencyResolver, IRequestScopedResolver
   {
     readonly Dictionary<DependencyLifetime, DependencyLifetimeManager> _lifetimeManagers;
-    private readonly GlobalRegistrations _registrations;
+    private readonly GlobalRegistrations _globalRegistrations;
     private const string CTX_REGISTRATIONS = "openrasta.di.requestRegistrations";
 
-    private IDependencyRegistrationCollection Registrations => 
-      new ResolveContext(_registrations).TryResolve<IContextStore>(out var ctx) &&
-      ctx.TryGet<IDependencyRegistrationCollection>(CTX_REGISTRATIONS, out var ctxRegistrations)
-          ? ctxRegistrations
-          : _registrations;
+
+    private IContextStore _cached;
+    private bool _changesSinceStoreLookup = true;
+
+    private IContextStore ContextStore
+    {
+      get
+      {
+        if (_cached != null) return _cached;
+        if (!_changesSinceStoreLookup) return null;
+
+        if (new ResolveContext(_globalRegistrations).TryResolve(out _cached))
+          return _cached;
+
+        _changesSinceStoreLookup = false;
+        return null;
+      }
+    }
+
+    private IDependencyRegistrationCollection Registrations =>
+      ContextStore != null &&
+      ContextStore.TryGet<IDependencyRegistrationCollection>(CTX_REGISTRATIONS, out var ctxRegistrations)
+        ? ctxRegistrations
+        : _globalRegistrations;
 
     public InternalDependencyResolver()
     {
-      _registrations = new GlobalRegistrations();
+      _globalRegistrations = new GlobalRegistrations();
       _lifetimeManagers = new Dictionary<DependencyLifetime, DependencyLifetimeManager>
       {
         {DependencyLifetime.Transient, new TransientLifetimeManager()},
@@ -29,29 +49,30 @@ namespace OpenRasta.DI
       };
     }
 
-    protected override void AddDependencyCore(Type serviceType, Type concreteType, DependencyLifetime lifetime)
-    {
-      Registrations.Add(new DependencyRegistration(serviceType, concreteType, lifetime,_lifetimeManagers[lifetime]));
-    }
-
     protected override void AddDependencyCore(Type concreteType, DependencyLifetime lifetime)
     {
       AddDependencyCore(concreteType, concreteType, lifetime);
     }
+    
+    protected override void AddDependencyCore(Type serviceType, Type concreteType, DependencyLifetime lifetime)
+    {
+      Registrations.Add(new DependencyRegistration(serviceType, concreteType, lifetime, _lifetimeManagers[lifetime]));
+      _changesSinceStoreLookup = true;
+    }
+
 
     protected override void AddDependencyInstanceCore(Type serviceType, object instance, DependencyLifetime lifetime)
     {
-      var registrations = Registrations;
-      
-      if (lifetime == DependencyLifetime.PerRequest && registrations == _registrations)
+      if (lifetime == DependencyLifetime.PerRequest && Registrations == _globalRegistrations)
         throw new InvalidOperationException("Request scope is not available, cannot register PerRequest instances");
-      
-      registrations.Add(new DependencyRegistration(
+
+      Registrations.Add(new DependencyRegistration(
         serviceType,
         instance.GetType(),
         lifetime,
         _lifetimeManagers[lifetime],
-        context=>instance));
+        context => instance));
+      _changesSinceStoreLookup = true;
     }
 
     protected override IEnumerable<TService> ResolveAllCore<TService>()
@@ -63,9 +84,10 @@ namespace OpenRasta.DI
     public bool TryResolve<T>(out T instance)
     {
       var success = new ResolveContext(Registrations).TryResolve(typeof(T), out var untyped);
-      instance = (T)untyped;
+      instance = (T) untyped;
       return success;
     }
+
     protected override object ResolveCore(Type serviceType)
     {
       try
@@ -97,16 +119,14 @@ namespace OpenRasta.DI
 
     public IDisposable CreateRequestScope()
     {
-      var requestContextRegistrations = new RequestContextRegistrations(_registrations);
-      var contextStore = new ResolveContext(_registrations)
-        .Resolve<IContextStore>();
-      contextStore
-        .Add(CTX_REGISTRATIONS, requestContextRegistrations);
+      var requestContextRegistrations = new RequestContextRegistrations(_globalRegistrations);
+      ContextStore.Add(CTX_REGISTRATIONS, requestContextRegistrations);
+      
       return new ActionOnDispose(() =>
       {
         _lifetimeManagers[DependencyLifetime.PerRequest].EndScope();
         requestContextRegistrations.Dispose();
-        contextStore.Remove(CTX_REGISTRATIONS);
+        ContextStore.Remove(CTX_REGISTRATIONS);
       });
     }
   }

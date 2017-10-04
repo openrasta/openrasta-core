@@ -30,6 +30,7 @@ namespace OpenRasta.DI
       resolver.AddDependency<TService, TImplementation>(DependencyLifetime.Singleton);
       return resolver;
     }
+
     /// <summary>
     /// Adds a concrete dependency with the specified lifetime.
     /// </summary>
@@ -75,17 +76,8 @@ namespace OpenRasta.DI
       resolver.AddDependencyInstance(serviceType, instance, DependencyLifetime.Singleton);
     }
 
-    public static void AddDependencyInstance<TService>(this IDependencyResolver resolver, object instance)
-    {
-      resolver.AddDependencyInstance(typeof(TService), instance);
-    }
-
-    public static void AddDependencyInstance<TService>(this IDependencyResolver resolver, TService instance)
-    {
-      resolver.AddDependencyInstance(typeof(TService), instance);
-    }
-    public static void AddDependencyInstance<TService>(this IDependencyResolver resolver, object instance,
-      DependencyLifetime lifetime)
+    public static void AddDependencyInstance<TService>(this IDependencyResolver resolver, TService instance,
+      DependencyLifetime lifetime = DependencyLifetime.Singleton)
     {
       resolver.AddDependencyInstance(typeof(TService), instance, lifetime);
     }
@@ -134,6 +126,5 @@ namespace OpenRasta.DI
         ? scoped.CreateRequestScope()
         : new ActionOnDispose(resolver.HandleIncomingRequestProcessed);
     }
-
   }
 }
