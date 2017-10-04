@@ -76,13 +76,8 @@ namespace OpenRasta.DI
       resolver.AddDependencyInstance(serviceType, instance, DependencyLifetime.Singleton);
     }
 
-    public static void AddDependencyInstance<TService>(this IDependencyResolver resolver, object instance)
-    {
-      resolver.AddDependencyInstance(typeof(TService), instance);
-    }
-
-    public static void AddDependencyInstance<TService>(this IDependencyResolver resolver, object instance,
-      DependencyLifetime lifetime)
+    public static void AddDependencyInstance<TService>(this IDependencyResolver resolver, TService instance,
+      DependencyLifetime lifetime = DependencyLifetime.Singleton)
     {
       resolver.AddDependencyInstance(typeof(TService), instance, lifetime);
     }
@@ -136,7 +131,6 @@ namespace OpenRasta.DI
   public class ActionOnDispose : IDisposable
   {
     private readonly Action _onDispose;
-
     public ActionOnDispose(Action onDispose)
     {
       _onDispose = onDispose;
