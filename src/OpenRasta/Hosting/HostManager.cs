@@ -28,8 +28,7 @@ namespace OpenRasta.Hosting
     HostManager(IHost host)
     {
       Host = host;
-      var withStartup = host as IHostStartWithStartupProperties;
-      if (withStartup != null)
+      if (host is IHostStartWithStartupProperties withStartup)
       {
         withStartup.Start += HandleHostStartWithProps;
         _startDisposer = () => withStartup.Start -= HandleHostStartWithProps;
@@ -41,6 +40,12 @@ namespace OpenRasta.Hosting
       }
       Host.IncomingRequestReceived += HandleHostIncomingRequestReceived;
       Host.IncomingRequestProcessed += HandleIncomingRequestProcessed;
+      Host.Stop += HandleHostStop;
+    }
+
+    private void HandleHostStop(object sender, EventArgs e)
+    {
+      Dispose();
     }
 
     public IHost Host { get; }
@@ -96,9 +101,7 @@ namespace OpenRasta.Hosting
 
     void AssignResolver()
     {
-      Resolver = Host.ResolverAccessor != null
-        ? Host.ResolverAccessor.Resolver
-        : new InternalDependencyResolver();
+      Resolver = Host.ResolverAccessor?.Resolver ?? new InternalDependencyResolver();
       if (!Resolver.HasDependency<IDependencyResolver>())
         Resolver.AddDependencyInstance(typeof(IDependencyResolver), Resolver);
       Log.WriteDebug("Using dependency resolver of type {0}", Resolver.GetType());
