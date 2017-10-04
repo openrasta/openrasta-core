@@ -73,9 +73,9 @@ namespace OpenRasta.Hosting.AspNet.Tests.Integration
       {
         TheResponse = request.GetResponse() as HttpWebResponse;
       }
-      catch (WebException exception) when (exception.Response is HttpWebResponse)
+      catch (WebException exception) when (exception.Response is HttpWebResponse r)
       {
-         TheResponse = (HttpWebResponse) exception.Response;
+         TheResponse = r;
       }
     }
 

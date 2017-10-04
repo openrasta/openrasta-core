@@ -40,6 +40,7 @@ namespace OpenRasta.Hosting.AspNet
       _legacyStart.Raise(this);
       var start = _start;
       start?.Invoke(this, _properties);
+      _currentState = State.Started;
     }
 
     public event EventHandler Stop;
@@ -49,12 +50,22 @@ namespace OpenRasta.Hosting.AspNet
     readonly Lazy<IConfigurationSource> _configSourceFactory;
     readonly Lazy<IDependencyResolverAccessor> _resolverAccessor;
 
-
+    private State _currentState = State.Unitiliazed;
+    
+    enum State
+    {
+      Started,
+      Disposed,
+      Unitiliazed,
+      Stopped
+    }
+    
     public AspNetHost(StartupProperties properties)
     {
       _properties = properties;
       _resolverAccessor = new Lazy<IDependencyResolverAccessor>(CreateResolverAccessor);
       _configSourceFactory = new Lazy<IConfigurationSource>(ConfigurationSourceLocator);
+      
     }
 
     IConfigurationSource ConfigurationSource => _configSourceFactory.Value;
@@ -135,7 +146,7 @@ namespace OpenRasta.Hosting.AspNet
     public bool ConfigureLeafDependencies(IDependencyResolver resolver)
     {
       if (ConfigurationSource != null)
-        resolver.AddDependencyInstance<IConfigurationSource>(ConfigurationSource);
+        resolver.AddDependencyInstance(ConfigurationSource);
       return true;
     }
 
@@ -149,11 +160,22 @@ namespace OpenRasta.Hosting.AspNet
 
     protected internal void RaiseIncomingRequestProcessed(ICommunicationContext context)
     {
+      CheckStarted();
+
       IncomingRequestProcessed.Raise(this, new IncomingRequestProcessedEventArgs(context));
+    }
+
+    private void CheckStarted()
+    {
+      if (_currentState != State.Started)
+      {
+        throw new InvalidOperationException("asp.net host has not been started");
+      }
     }
 
     protected internal Task RaiseIncomingRequestReceived(ICommunicationContext context)
     {
+      CheckStarted();
       var incomingRequestReceivedEventArgs = new IncomingRequestReceivedEventArgs(context);
       IncomingRequestReceived.Raise(this, incomingRequestReceivedEventArgs);
       return incomingRequestReceivedEventArgs.RunTask;
@@ -162,6 +184,7 @@ namespace OpenRasta.Hosting.AspNet
     protected internal void RaiseStop()
     {
       Stop.Raise(this);
+      _currentState = State.Stopped;
     }
   }
 }

@@ -52,7 +52,7 @@ namespace OpenRasta.Hosting.AspNet.AspNetHttpListener
       }
       catch (Exception e)
       {
-        Trace.WriteLine(e.ToString());
+         Trace.WriteLine(e.ToString());
       }
     }
 

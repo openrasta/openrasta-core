@@ -16,6 +16,7 @@ namespace OpenRasta.Hosting.AspNet
     {
     }
 
+
     static AspNetPipeline Pipeline => _pipeline.Value;
 
     static readonly Lazy<AspNetPipeline> _pipeline = new Lazy<AspNetPipeline>(() =>
@@ -23,29 +24,32 @@ namespace OpenRasta.Hosting.AspNet
         ? (AspNetPipeline) new IntegratedPipeline()
         : new ClassicPipeline(), LazyThreadSafetyMode.PublicationOnly);
 
-    private static readonly Lazy<(AspNetHost host, PipelineStageAsync<KnownStages.IUriMatching> resolveStep)> _host 
+    private static readonly Lazy<(AspNetHost host, PipelineStageAsync<KnownStages.IUriMatching> resolveStep)> _host
       = new Lazy<(AspNetHost host, PipelineStageAsync<KnownStages.IUriMatching>)>(() =>
-    {
-      var host = new AspNetHost(DefaultStartupProperties());
-      HostManager.RegisterHost(host);
-      var resolveStep = new PipelineStageAsync<KnownStages.IUriMatching>(host, Pipeline);
-      return (host, resolveStep);
-    });
+      {
+        var host = new AspNetHost(DefaultStartupProperties());
+        HostManager.RegisterHost(host);
+        host.RaiseStart();
+        var resolveStep = new PipelineStageAsync<KnownStages.IUriMatching>(host, Pipeline);
+        return (host, resolveStep);
+      });
 
     public void Init(HttpApplication application)
     {
-      application.AddOnPostResolveRequestCacheAsync(DelayedStepBegin(), DelayedStepEnd());
+      application.AddOnPostResolveRequestCacheAsync(DelayedStepBegin, DelayedStepEnd);
       application.EndRequest += HandleHttpApplicationEndRequestEvent;
     }
+
+    private void DelayedStepEnd(IAsyncResult ar)
+      => _host.Value.resolveStep.End(ar);
+
+    private IAsyncResult DelayedStepBegin(object sender, EventArgs e, AsyncCallback cb, object extradata)
+      => _host.Value.resolveStep.Begin(sender, e, cb, extradata);
+
 
     private EndEventHandler DelayedStepEnd()
     {
       return _host.Value.resolveStep.End;
-    }
-
-    private BeginEventHandler DelayedStepBegin()
-    {
-      return _host.Value.resolveStep.Begin;
     }
 
     private static StartupProperties DefaultStartupProperties()
@@ -70,7 +74,11 @@ namespace OpenRasta.Hosting.AspNet
 
     void HandleHttpApplicationEndRequestEvent(object sender, EventArgs e)
     {
-      var httpContext = ((HttpApplication) sender).Context;
+      if (!(sender is HttpApplication app) || app?.Context?.Items.Contains(COMM_CONTEXT_KEY) == false)
+        return;
+
+      var httpContext = app.Context;
+
       CallContext.LogicalSetData("__OR_CONTEXT", httpContext);
       var commContext = (ICommunicationContext) httpContext.Items[COMM_CONTEXT_KEY];
       if (commContext.PipelineData.ContainsKey("openrasta.hosting.aspnet.handled"))
