@@ -124,4 +124,31 @@ namespace OpenRasta.DI
             return resolver.HasDependency(typeof(T)) ? resolver.Resolve<T>() : defaultValue();
         }
     }
+<<<<<<< HEAD
 }
+=======
+
+    public static IDisposable CreateRequestScope(this IDependencyResolver resolver)
+    {
+      return resolver is IRequestScopedResolver scoped
+        ? scoped.CreateRequestScope()
+        : new ActionOnDispose(resolver.HandleIncomingRequestProcessed);
+    }
+
+  }
+  public class ActionOnDispose : IDisposable
+  {
+    private readonly Action _onDispose;
+
+    public ActionOnDispose(Action onDispose)
+    {
+      _onDispose = onDispose;
+    }
+    public void Dispose()
+    {
+      _onDispose();
+    }
+  }
+
+}
+>>>>>>> 4aed36a... Dispose request scope dependencies
