@@ -114,7 +114,7 @@ namespace OpenRasta.DI
     public bool HasDependencyImplementation(Type serviceType, Type concreteType)
     {
       return Registrations.HasRegistrationForService(serviceType) &&
-             Registrations[serviceType].Count(r => r.ConcreteType == concreteType) >= 1;
+             Registrations[serviceType].Any(r => r.ConcreteType == concreteType);
     }
 
     public IDisposable CreateRequestScope()

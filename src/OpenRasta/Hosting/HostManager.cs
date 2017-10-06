@@ -102,8 +102,8 @@ namespace OpenRasta.Hosting
     void AssignResolver()
     {
       Resolver = Host.ResolverAccessor?.Resolver ?? new InternalDependencyResolver();
-      if (!Resolver.HasDependency<IDependencyResolver>())
-        Resolver.AddDependencyInstance(typeof(IDependencyResolver), Resolver);
+//      if (!Resolver.HasDependency<IDependencyResolver>())
+//        Resolver.AddDependencyInstance(typeof(IDependencyResolver), Resolver);
       Log.WriteDebug("Using dependency resolver of type {0}", Resolver.GetType());
     }
 
@@ -112,7 +112,7 @@ namespace OpenRasta.Hosting
       IsConfigured = false;
       _startupProperties = startupProperties;
       AssignResolver();
-      Resolver.AddDependencyInstance<IHost>(Host, DependencyLifetime.Singleton);
+      Resolver.AddDependencyInstance(Host);
       CallWithDependencyResolver(() =>
       {
         RegisterRootDependencies();
