@@ -44,7 +44,7 @@ namespace OpenRasta.DI.Internal
                 return AssignProperties(constructor.Key.Invoke(dependents.ToArray()));
             }
             throw new DependencyResolutionException(
-                "Could not resolve type {0} because its dependencies couldn't be fullfilled\r\n{1}".With(registration.ConcreteType.Name, unresolvedDependenciesMessage));
+              $"Could not resolve type {registration.ConcreteType.Name} because its dependencies couldn't be fullfilled\r\n{unresolvedDependenciesMessage}");
         }
 
         object AssignProperties(object instanceObject)

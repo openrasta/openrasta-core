@@ -94,7 +94,7 @@ namespace OpenRasta.DI
         protected override object ResolveCore(Type serviceType)
         {
             if (!Registrations.HasRegistrationForService(serviceType))
-                throw new DependencyResolutionException("No type registered for {0}".With(serviceType.Name));
+                throw new DependencyResolutionException($"No type registered for {serviceType.Name}");
 
             return Resolve(Registrations.GetRegistrationForService(serviceType));
         }

@@ -59,7 +59,8 @@ namespace OpenRasta.DI
             {
                 if (e is DependencyResolutionException)
                     throw;
-                throw new DependencyResolutionException("An error occurred while trying to resolve type {0}.".With(serviceType.Name), e);
+                throw new DependencyResolutionException(
+                  $"An error occurred while trying to resolve type {serviceType.Name}.", e);
             }
         }
 
@@ -73,7 +74,8 @@ namespace OpenRasta.DI
             {
                 if (e is DependencyResolutionException)
                     throw;
-                throw new DependencyResolutionException("An error occurred while trying to resolve type {0}.".With(typeof(TService).Name), e);
+                throw new DependencyResolutionException(
+                  $"An error occurred while trying to resolve type {typeof(TService).Name}.", e);
             }
         }
 
@@ -86,15 +88,14 @@ namespace OpenRasta.DI
                 throw new ArgumentNullException("concreteType");
             if (concreteType.IsAbstract)
                 throw new InvalidOperationException(
-                    "The type {0} is abstract. You cannot register an abstract type for initialization.".With(
-                        concreteType.FullName));
+                  $"The type {concreteType.FullName} is abstract. You cannot register an abstract type for initialization.");
         }
 
         protected static void CheckLifetime(DependencyLifetime lifetime)
         {
             if (!Enum.IsDefined(typeof(DependencyLifetime), lifetime))
                 throw new InvalidOperationException(
-                    string.Format("Value {0} is unknown for enumeration DependencyLifetime.", lifetime));
+                  $"Value {lifetime} is unknown for enumeration DependencyLifetime.");
         }
 
         protected static void CheckServiceType(Type serviceType, Type concreteType)
@@ -105,7 +106,7 @@ namespace OpenRasta.DI
                 throw new ArgumentNullException("concreteType");
             if (!serviceType.IsAssignableFrom(concreteType))
                 throw new InvalidOperationException(
-                    "The type {0} doesn't implement or inherit from {1}.".With(concreteType.Name, serviceType.Name));
+                  $"The type {concreteType.Name} doesn't implement or inherit from {serviceType.Name}.");
         }
     }
 }
