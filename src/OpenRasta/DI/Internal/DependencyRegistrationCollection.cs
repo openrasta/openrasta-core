@@ -29,7 +29,7 @@ namespace OpenRasta.DI.Internal
         GetSvcRegistrations(registration.ServiceType).Add(registration);
       }
     }
-    
+
     public DependencyRegistration GetRegistrationForService(Type type)
     {
       lock (_registrations)

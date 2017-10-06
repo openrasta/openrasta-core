@@ -29,6 +29,7 @@ namespace OpenRasta.Diagnostics
         {
         }
 
+      public static ILogger Instance { get; } = new TraceSourceLogger();
         public TraceSourceLogger(TraceSource source)
         {
             _source = source;
