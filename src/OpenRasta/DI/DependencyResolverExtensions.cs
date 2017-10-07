@@ -127,18 +127,4 @@ namespace OpenRasta.DI
         : new ActionOnDispose(resolver.HandleIncomingRequestProcessed);
     }
   }
-
-  public class ActionOnDispose : IDisposable
-  {
-    private readonly Action _onDispose;
-    public ActionOnDispose(Action onDispose)
-    {
-      _onDispose = onDispose;
-    }
-
-    public void Dispose()
-    {
-      _onDispose();
-    }
-  }
 }
