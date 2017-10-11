@@ -23,7 +23,7 @@ namespace OpenRasta.DI.Internal
         .Add(registration);
     }
 
-    private DependencyRegistration LastRegistrationForService(Type serviceType)
+    public DependencyRegistration DefaultRegistrationFor(Type serviceType)
     {
       return _registrations.TryGetValue(serviceType, out var regs)
         ? regs.Last
@@ -37,7 +37,7 @@ namespace OpenRasta.DI.Internal
 
     public bool TryResolve(ResolveContext ctx, Type serviceType, out object instance)
     {
-      return ctx.TryResolve(LastRegistrationForService(serviceType), out instance);
+      return ctx.TryResolve(DefaultRegistrationFor(serviceType), out instance);
     }
   }
 }
