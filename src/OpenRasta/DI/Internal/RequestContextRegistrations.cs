@@ -50,12 +50,6 @@ namespace OpenRasta.DI.Internal
         ? regs.Last
         : _globalRegistrations.DefaultRegistrationFor(serviceType);
     }
-    public bool TryResolve(ResolveContext ctx, Type serviceType, out object instance)
-    {
-      return _registrations.TryGetValue(serviceType, out var bag)
-        ? ctx.TryResolve(bag.Last, out instance)
-        : _globalRegistrations.TryResolve(ctx, serviceType, out instance);
-    }
 
     public void Dispose()
     {
