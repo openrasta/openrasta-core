@@ -1,3 +1,4 @@
+using System;
 using OpenRasta.Codecs;
 using OpenRasta.DI;
 using OpenRasta.Hosting;
@@ -8,7 +9,8 @@ namespace OpenRasta.Testing.Contexts
 {
     public abstract class codec_context<TCodec> : context where TCodec:ICodec
     {
-        public InMemoryHost Host { get; private set; }
+      private IDisposable _rqx;
+      public InMemoryHost Host { get; private set; }
         protected ICommunicationContext Context { get; private set; }
         protected HostManager HostManager { get; set; }
         protected abstract TCodec CreateCodec(ICommunicationContext context);
@@ -17,12 +19,14 @@ namespace OpenRasta.Testing.Contexts
         {
             Host = new InMemoryHost(null);
             HostManager = Host.HostManager;
+            _rqx = Host.Resolver.CreateRequestScope();
             HostManager.SetupCommunicationContext(Context = new InMemoryCommunicationContext());
             DependencyManager.SetResolver(Host.Resolver);
         }
         
         protected override void TearDown()
         {
+          _rqx.Dispose();
             DependencyManager.UnsetResolver();
         }
     }

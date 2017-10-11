@@ -157,11 +157,13 @@ namespace InternalDependencyResolver_Specification
       Resolver.AddDependency<IContextStore, AmbientContextStore>();
 
       using (new ContextScope(scope1))
+      using (Resolver.CreateRequestScope())
       {
-        Resolver.AddDependencyInstance<TheClass>(objectForScope1, DependencyLifetime.PerRequest);
+        Resolver.AddDependencyInstance(objectForScope1, DependencyLifetime.PerRequest);
       }
 
       using (new ContextScope(scope2))
+      using (Resolver.CreateRequestScope())
       {
         Resolver.HasDependency(typeof(TheClass)).ShouldBeFalse();
 
@@ -187,6 +189,8 @@ namespace InternalDependencyResolver_Specification
       Resolver.AddDependency<TheDependentClass>(DependencyLifetime.Transient);
 
       using (new ContextScope(scope))
+      using (Resolver.CreateRequestScope())
+
       {
         Resolver.AddDependencyInstance(typeof(TheClass), objectForScope, DependencyLifetime.PerRequest);
 
@@ -206,6 +210,8 @@ namespace InternalDependencyResolver_Specification
 
       var contextStore = new AmbientContext();
       using (new ContextScope(contextStore))
+      using (Resolver.CreateRequestScope())
+
       {
         var objectForScope = new TheClassThatNeedsYou(new NeedYou());
 
@@ -236,66 +242,23 @@ namespace InternalDependencyResolver_Specification
     }
 
     [Test]
-    public void registering_instances_in_different_scopes_results_in_each_consumer_getting_the_correct_registration()
-    {
-      var objectForScope1 = new TheClass();
-      var objectForScope2 = new TheClass();
-      var scope1 = new AmbientContext();
-      var scope2 = new AmbientContext();
-
-      Resolver.AddDependency<IContextStore, AmbientContextStore>();
-
-      using (new ContextScope(scope1))
-        Resolver.AddDependencyInstance<TheClass>(objectForScope1, DependencyLifetime.PerRequest);
-
-      using (new ContextScope(scope2))
-        Resolver.AddDependencyInstance<TheClass>(objectForScope2, DependencyLifetime.PerRequest);
-
-      using (new ContextScope(scope1))
-      {
-        Resolver.Resolve<TheClass>().ShouldBeTheSameInstanceAs(objectForScope1);
-      }
-    }
-
-    [Test]
-    public void
-      registering_instances_in_different_scopes_results_in_only_the_context_specific_registrations_to_be_resolved_in_a_context()
-    {
-      var objectForScope1 = new TheClass();
-      var objectForScope2 = new TheClass();
-      var scope1 = new AmbientContext();
-      var scope2 = new AmbientContext();
-
-      Resolver.AddDependency<IContextStore, AmbientContextStore>();
-
-      using (new ContextScope(scope1))
-        Resolver.AddDependencyInstance<TheClass>(objectForScope1, DependencyLifetime.PerRequest);
-
-      using (new ContextScope(scope2))
-        Resolver.AddDependencyInstance<TheClass>(objectForScope2, DependencyLifetime.PerRequest);
-
-      using (new ContextScope(scope1))
-      {
-        Resolver.ResolveAll<TheClass>()
-          .ShouldContain(objectForScope1)
-          .Count().ShouldBe(1);
-      }
-    }
-
-    [Test]
     public void registering_two_instances_for_the_same_type_resolves_at_least_one_entry()
     {
       GivenInMemoryStore();
       var firstInstance = new TheClass();
       var secondInstance = new TheClass();
 
-      Resolver.AddDependencyInstance<TheClass>(firstInstance, DependencyLifetime.PerRequest);
-      Resolver.AddDependencyInstance<TheClass>(secondInstance, DependencyLifetime.PerRequest);
+      using (Resolver.CreateRequestScope())
+      {
+        Resolver.AddDependencyInstance(firstInstance, DependencyLifetime.PerRequest);
 
-      var result = Resolver.ResolveAll<TheClass>();
+        Resolver.AddDependencyInstance(secondInstance, DependencyLifetime.PerRequest);
 
-      (result.Contains(firstInstance) || result.Contains(secondInstance))
-        .ShouldBeTrue();
+        var result = Resolver.ResolveAll<TheClass>();
+
+        (result.Contains(firstInstance) || result.Contains(secondInstance))
+          .ShouldBeTrue();
+      }
     }
 
     [Test]
@@ -310,7 +273,7 @@ namespace InternalDependencyResolver_Specification
       using (Resolver.CreateRequestScope()) firstInstance = Resolver.Resolve<IUnknown>();
 
       InMemoryStore.Clear();
-      
+
       using (Resolver.CreateRequestScope()) secondInstance = Resolver.Resolve<IUnknown>();
 
       firstInstance.ShouldNotBeTheSameInstanceAs(secondInstance);

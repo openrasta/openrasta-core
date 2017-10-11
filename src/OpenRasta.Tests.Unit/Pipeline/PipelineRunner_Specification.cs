@@ -123,7 +123,7 @@ namespace PipelineRunner_Specification
             }, (a, b) => a.Target.GetType() == b);
         }
 
-        [Test]
+        [Test, Ignore("Rewritten in the 2.6 branch, deactivating this one for now")]
         public void registering_all_the_contributors_results_in_a_correct_call_graph_topological()
         {
             var pipeline = CreatePipeline(typeof(TopologicalSortCallGraphGenerator), new[]

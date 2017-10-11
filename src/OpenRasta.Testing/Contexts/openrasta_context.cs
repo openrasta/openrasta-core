@@ -21,8 +21,9 @@ namespace OpenRasta.Testing.Contexts
     {
         Dictionary<Type, Func<ICommunicationContext, PipelineContinuation>> _actions;
         InMemoryHost Host;
+      private IDisposable _rqx;
 
-        public openrasta_context()
+      public openrasta_context()
         {
             TypeSystem = TypeSystems.Default;
         }
@@ -233,15 +234,16 @@ namespace OpenRasta.Testing.Contexts
             var manager = Host.HostManager;
             Resolver.AddDependencyInstance(typeof(IErrorCollector), Errors = new TestErrorCollector());
             Resolver.AddDependency<IPathManager, PathManager>();
-            
+            _rqx = Resolver.CreateRequestScope();           
             manager.SetupCommunicationContext(Context = new InMemoryCommunicationContext());
             DependencyManager.SetResolver(Resolver);
         }
 
         protected override void TearDown()
         {
-            base.TearDown();
+            _rqx.Dispose();
             DependencyManager.UnsetResolver();
+            base.TearDown();
         }
 
         public class SinglePipeline<T> : IPipeline, IPipelineExecutionOrder, IPipelineExecutionOrderAnd where T : class, IPipelineContributor
