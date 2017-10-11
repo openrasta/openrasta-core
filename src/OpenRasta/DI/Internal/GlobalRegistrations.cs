@@ -34,10 +34,5 @@ namespace OpenRasta.DI.Internal
     {
       return _registrations.ContainsKey(type);
     }
-
-    public bool TryResolve(ResolveContext ctx, Type serviceType, out object instance)
-    {
-      return ctx.TryResolve(DefaultRegistrationFor(serviceType), out instance);
-    }
   }
 }

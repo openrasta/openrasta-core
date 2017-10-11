@@ -7,9 +7,8 @@ namespace OpenRasta.DI.Internal
   {
     static ResolveProfile Simple(ResolveContext ctx, Type serviceType)
     {
-      return ctx.Registrations.HasRegistrationForService(serviceType)
-        ? new SimpleProfile(ctx, serviceType)
-        : null;
+      var registration = ctx.Registrations.DefaultRegistrationFor(serviceType);
+      return registration != null ? new SimpleProfile(registration, ctx) : null;
     }
 
     static ResolveProfile Enumerable(ResolveContext ctx, Type serviceType)
