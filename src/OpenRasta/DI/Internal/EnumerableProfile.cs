@@ -1,19 +1,22 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace OpenRasta.DI.Internal
 {
   class EnumerableProfile<T> : ResolveProfile
   {
-    readonly ResolveContext _ctx;
+    private readonly IEnumerable<DependencyRegistration> _registrations;
+    private readonly ResolveContext _ctx;
 
-    public EnumerableProfile(ResolveContext ctx)
+    public EnumerableProfile(IEnumerable<DependencyRegistration> registrations, ResolveContext ctx)
     {
+      _registrations = registrations;
       _ctx = ctx;
     }
 
     public override bool TryResolve(out object instance)
     {
-      var serviceTypeRegistrations = _ctx.Registrations[typeof(T)];
+      var serviceTypeRegistrations = _registrations;
       
       if (!serviceTypeRegistrations.Any())
       {
@@ -24,7 +27,7 @@ namespace OpenRasta.DI.Internal
       instance = (
         from dependency in serviceTypeRegistrations  
         select (T)_ctx.Resolve(dependency)
-      ).ToList();
+      ).ToArray();
       
       return true;
     }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace OpenRasta.DI.Internal
 {
@@ -19,9 +20,12 @@ namespace OpenRasta.DI.Internal
 
       
       var innerServiceType = serviceType.GenericTypeArguments[0];
+      var registrations = ctx.Registrations[innerServiceType];
       return (ResolveProfile) Activator
-        .CreateInstance(typeof(EnumerableProfile<>)
-          .MakeGenericType(innerServiceType), ctx);
+        .CreateInstance(
+          typeof(EnumerableProfile<>)
+          .MakeGenericType(innerServiceType),
+          registrations, ctx);
     }
 
     static ResolveProfile Func(ResolveContext ctx, Type serviceType)
