@@ -14,38 +14,12 @@ namespace OpenRasta.DI.Internal
 
     public IDependencyRegistrationCollection Registrations { get; }
 
-    public T Resolve<T>()
-    {
-      return (T)Resolve(typeof(T));
-    }
-    public object Resolve(Type serviceType)
-    {
-      return TryResolve(serviceType, out var instance)
-        ? instance
-        : throw new DependencyResolutionException($"Could not find a resolve profile for {serviceType}");
-    }
-
     public bool TryResolve(Type serviceType, out object instance)
     {
       instance = null;
       var profile = ResolveProfile.FindProfile(serviceType, this);
 
       return profile != null && profile.TryResolve(out instance);
-    }
-
-    public bool TryResolve<T>(out T instance)
-    {
-      instance = default(T);
-      var success = TryResolve(typeof(T), out var untyped);
-      if (success) instance = (T) untyped;
-      return success;
-    }
-
-    public object Resolve(DependencyRegistration registration)
-    {
-      return TryResolve(registration, out var instance)
-        ? instance
-        : throw new InvalidOperationException("Recursive dependencies are not allowed.");
     }
 
     public bool TryResolve(DependencyRegistration registration, out object instance)
