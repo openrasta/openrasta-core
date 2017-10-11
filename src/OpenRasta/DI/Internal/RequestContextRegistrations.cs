@@ -43,6 +43,13 @@ namespace OpenRasta.DI.Internal
       return _registrations.ContainsKey(type) || _globalRegistrations.HasRegistrationForService(type);
     }
 
+    
+    public DependencyRegistration DefaultRegistrationFor(Type serviceType)
+    {
+      return _registrations.TryGetValue(serviceType, out var regs)
+        ? regs.Last
+        : _globalRegistrations.DefaultRegistrationFor(serviceType);
+    }
     public bool TryResolve(ResolveContext ctx, Type serviceType, out object instance)
     {
       return _registrations.TryGetValue(serviceType, out var bag)
