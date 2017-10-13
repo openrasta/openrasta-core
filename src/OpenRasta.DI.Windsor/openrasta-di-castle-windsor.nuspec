@@ -14,12 +14,5 @@
         <releaseNotes />
         <copyright>Copyright 2007</copyright>
         <tags>OpenRasta DI Castle Windsor</tags>
-        <dependencies>
-            <dependency id="openrasta-core" version="2.5.0" />
-            <dependency id="Castle.Windsor" version="3.3.0" />
-        </dependencies>
     </metadata>
-    <files>
-        <file src="bin\release\OpenRasta.DI.Windsor.dll" target="lib\net40\OpenRasta.DI.Windsor.dll" />
-    </files>
 </package>
