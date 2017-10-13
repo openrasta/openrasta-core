@@ -1,6 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 15
+VisualStudioVersion = 15.0.27004.2002
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenRasta.DI.Windsor", "OpenRasta.DI.Windsor\OpenRasta.DI.Windsor.csproj", "{ED7BA1F8-6257-4BDC-B6BE-F22D9C5BC140}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenRasta.DI.Windsor.Tests.Unit", "OpenRasta.DI.Windsor.Tests.Unit\OpenRasta.DI.Windsor.Tests.Unit.csproj", "{9070DF13-BC24-4935-BAC5-49A4876960E9}"
@@ -27,5 +29,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F05EF29D-75AD-436B-A09F-7198F05C9CDE}
 	EndGlobalSection
 EndGlobal
