@@ -192,6 +192,9 @@ namespace OpenRasta.Hosting
             Log.WriteDebug("Incoming host request for " + e.Context.Request.Uri);
             ThreadScopedAction(() =>
             {
+              
+              e.Context.PipelineData["openrasta.di.RequestScope"] = Resolver.CreateRequestScope();
+        
                 // register the required dependency in the web context
                 var context = e.Context;
                 SetupCommunicationContext(context);
@@ -209,7 +212,11 @@ namespace OpenRasta.Hosting
         protected virtual void HandleIncomingRequestProcessed(object sender, IncomingRequestProcessedEventArgs e)
         {
             Log.WriteDebug("Request finished.");
-            ThreadScopedAction(() => Resolver.HandleIncomingRequestProcessed());
+            ThreadScopedAction(() =>
+            {
+              var scope = (IDisposable) e.Context.PipelineData["openrasta.di.RequestScope"];
+              scope.Dispose();
+            });
         }
     }
 }
