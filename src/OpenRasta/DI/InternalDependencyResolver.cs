@@ -57,6 +57,7 @@ namespace OpenRasta.DI
         {DependencyLifetime.Singleton, new SingletonLifetimeManager()},
         {DependencyLifetime.PerRequest, new PerRequestLifetimeManager(this)}
       };
+      AddDependencyInstance(typeof(IDependencyResolver),this,DependencyLifetime.Singleton);
     }
 
     protected override void AddDependencyCore(Type concreteType, DependencyLifetime lifetime)
