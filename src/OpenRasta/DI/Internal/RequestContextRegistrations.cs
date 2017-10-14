@@ -27,10 +27,10 @@ namespace OpenRasta.DI.Internal
       };
     }
 
-    public IEnumerable<DependencyRegistration> this[Type serviceType] =>
+    public IEnumerable<DependencyRegistration> this[Type serviceType] => 
       _registrations.TryGetValue(serviceType, out var bag)
-        ? bag.All.Concat(_globalRegistrations[serviceType]).ToArray()
-        : _globalRegistrations[serviceType];
+      ? bag.All.Concat(_globalRegistrations[serviceType]).ToArray()
+      : _globalRegistrations[serviceType];
 
     public void Add(DependencyRegistration registration)
     {
