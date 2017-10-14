@@ -34,10 +34,6 @@
     <Reference Include="Castle.Core, Version=3.3.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc">
       <HintPath>..\..\packages\Castle.Core.3.3.3\lib\net45\Castle.Core.dll</HintPath>
     </Reference>
-    <Reference Include="Moq, Version=4.2.1507.118, Culture=neutral, PublicKeyToken=69f491c39445e920, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Moq.4.2.1507.0118\lib\net40\Moq.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="Moq, Version=4.5.16.0, Culture=neutral, PublicKeyToken=69f491c39445e920">
       <HintPath>..\..\packages\Moq.4.5.16\lib\net45\Moq.dll</HintPath>
     </Reference>
@@ -221,10 +217,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\OpenRasta.Testing\OpenRasta.Testing.csproj">
-      <Project>{434205BD-81FF-44BE-9911-7597DDEB3EAB}</Project>
-      <Name>OpenRasta.Testing</Name>
-    </ProjectReference>
     <ProjectReference Include="..\OpenRasta\OpenRasta.csproj">
       <Project>{3d251617-2581-4d9c-a639-5cfb0bb09420}</Project>
       <Name>OpenRasta</Name>
