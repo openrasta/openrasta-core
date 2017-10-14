@@ -12,8 +12,10 @@ namespace OpenRasta.Hosting.AspNet
 {
   public class OpenRastaModuleAsync : IHttpModule
   {
+    private static ILogger _log = TraceSourceLogger.Instance;
     public void Dispose()
     {
+      _host.Value.host.RaiseStop();
     }
 
 
@@ -36,21 +38,22 @@ namespace OpenRasta.Hosting.AspNet
 
     public void Init(HttpApplication application)
     {
-      application.AddOnPostResolveRequestCacheAsync(DelayedStepBegin, DelayedStepEnd);
+      application.BeginRequest += (sender, args) =>
+      {
+        // Necessary to avoid recursive Lazy<T> value exception
+        _log.WriteInfo($"Initializing host of type {_host.Value.host.GetType()}");
+      };
+      application.AddOnPostResolveRequestCacheAsync(DelayedStepBegin,
+        DelayedStepEnd);
       application.EndRequest += HandleHttpApplicationEndRequestEvent;
     }
 
-    private void DelayedStepEnd(IAsyncResult ar)
+    private static void DelayedStepEnd(IAsyncResult ar)
       => _host.Value.resolveStep.End(ar);
 
-    private IAsyncResult DelayedStepBegin(object sender, EventArgs e, AsyncCallback cb, object extradata)
+    private static IAsyncResult DelayedStepBegin(object sender, EventArgs e, AsyncCallback cb, object extradata)
       => _host.Value.resolveStep.Begin(sender, e, cb, extradata);
 
-
-    private EndEventHandler DelayedStepEnd()
-    {
-      return _host.Value.resolveStep.End;
-    }
 
     private static StartupProperties DefaultStartupProperties()
     {

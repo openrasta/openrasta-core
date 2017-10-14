@@ -27,7 +27,7 @@ namespace OpenRasta.Hosting.AspNet.Tests.Integration
       _port = 6688;
     }
 
-    [TestFixtureTearDown]
+    [OneTimeTearDown]
     public void tear()
     {
       _http?.Stop();

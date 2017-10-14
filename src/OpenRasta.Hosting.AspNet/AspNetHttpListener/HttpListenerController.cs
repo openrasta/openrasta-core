@@ -26,6 +26,7 @@ namespace OpenRasta.Hosting.AspNet.AspNetHttpListener
       Host = (HttpListenerAspNetHost)ApplicationHost.CreateApplicationHost(
                                           typeof(HttpListenerAspNetHost), _virtualDir, _physicalDir);
 
+      
       Host.Configure(_prefixes, _virtualDir, _physicalDir, configuration);
       Host.Start();
     }

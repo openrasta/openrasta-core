@@ -33,7 +33,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="OpenRasta, Version=2.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\packages\openrasta-core.2.6.0-ci-1127\lib\net462\OpenRasta.dll</HintPath>
+      <HintPath>..\packages\openrasta-core.2.6.0-ci-1138\lib\net462\OpenRasta.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />

@@ -26,6 +26,12 @@ namespace OpenRasta.Hosting.AspNet.AspNetHttpListener
       foreach (var prefix in prefixes)
         _listener.Prefixes.Add(prefix);
       AspNetHost.ConfigurationSourceLocator = () => new DelegateConfiguration(configuration);
+      AppDomain.CurrentDomain.UnhandledException += HandleException;
+    }
+
+    private void HandleException(object sender, UnhandledExceptionEventArgs e)
+    {
+      Trace.WriteLine(e.ToString());
     }
 
     public override object InitializeLifetimeService()
@@ -33,7 +39,7 @@ namespace OpenRasta.Hosting.AspNet.AspNetHttpListener
       return null;
     }
 
-    public void ProcessRequest()
+    private void ProcessRequest()
     {
       HttpListenerContext ctx;
       try
@@ -42,6 +48,11 @@ namespace OpenRasta.Hosting.AspNet.AspNetHttpListener
       }
       catch (HttpListenerException)
       {
+        return;
+      }
+      catch (Exception e)
+      {
+        Trace.WriteLine(e.ToString());
         return;
       }
       QueueNextRequestWait();

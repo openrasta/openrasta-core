@@ -161,16 +161,13 @@ namespace OpenRasta.Hosting.AspNet
     protected internal void RaiseIncomingRequestProcessed(ICommunicationContext context)
     {
       CheckStarted();
-
       IncomingRequestProcessed.Raise(this, new IncomingRequestProcessedEventArgs(context));
     }
 
     private void CheckStarted()
     {
       if (_currentState != State.Started)
-      {
         throw new InvalidOperationException("asp.net host has not been started");
-      }
     }
 
     protected internal Task RaiseIncomingRequestReceived(ICommunicationContext context)
