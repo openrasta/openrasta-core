@@ -38,14 +38,12 @@ namespace OpenRasta.DI
       {
         try
         {
-          return ContextStore != null &&
-                 ContextStore[CTX_REGISTRATIONS] is IDependencyRegistrationCollection ctxRegistrations
-            ? ctxRegistrations
-            : _globalRegistrations;
+          var ctxRegistrations = ContextStore?[CTX_REGISTRATIONS] as IDependencyRegistrationCollection;
+          return ctxRegistrations ?? _globalRegistrations;
         }
         catch
         {
-          return null;
+          return _globalRegistrations;
         }
       }
     }

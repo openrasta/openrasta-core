@@ -16,7 +16,7 @@ namespace OpenRasta.DI.Internal
 
     public override bool TryResolve(out object instance)
     {
-      var serviceTypeRegistrations = _registrations;
+      var serviceTypeRegistrations = _registrations.ToArray();
       
       if (!serviceTypeRegistrations.Any())
       {

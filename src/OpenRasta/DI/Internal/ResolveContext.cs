@@ -56,8 +56,7 @@ namespace OpenRasta.DI.Internal
 
       var innerServiceType = serviceType.GetGenericArguments()[0];
 
-      var registrations = ctx.Registrations[serviceType];
-      if (registrations.Any() == false) return null;
+      var registrations = ctx.Registrations[innerServiceType];
       
       return (ResolveProfile) Activator
         .CreateInstance(
