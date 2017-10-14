@@ -32,11 +32,23 @@ namespace OpenRasta.DI
       }
     }
 
-    private IDependencyRegistrationCollection Registrations =>
-      ContextStore != null &&
-      ContextStore.TryGet<IDependencyRegistrationCollection>(CTX_REGISTRATIONS, out var ctxRegistrations)
-        ? ctxRegistrations
-        : _globalRegistrations;
+    private IDependencyRegistrationCollection Registrations
+    {
+      get
+      {
+        try
+        {
+          return ContextStore != null &&
+                 ContextStore[CTX_REGISTRATIONS] is IDependencyRegistrationCollection ctxRegistrations
+            ? ctxRegistrations
+            : _globalRegistrations;
+        }
+        catch
+        {
+          return null;
+        }
+      }
+    }
 
     public InternalDependencyResolver()
     {
@@ -118,14 +130,16 @@ namespace OpenRasta.DI
 
     public IDisposable CreateRequestScope()
     {
+      if (ContextStore == null)
+        throw new DependencyResolutionException("Cannot resolve per-request outisde of request scope.");
       var requestContextRegistrations = new RequestContextRegistrations(_globalRegistrations);
-      ContextStore.Add(CTX_REGISTRATIONS, requestContextRegistrations);
+      ContextStore[CTX_REGISTRATIONS] = requestContextRegistrations;
       
       return new ActionOnDispose(() =>
       {
         _lifetimeManagers[DependencyLifetime.PerRequest].EndScope();
         requestContextRegistrations.Dispose();
-        ContextStore.Remove(CTX_REGISTRATIONS);
+        ContextStore[CTX_REGISTRATIONS] = null;
       });
     }
   }

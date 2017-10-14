@@ -202,6 +202,7 @@
     <Compile Include="DI\Internal\RegistrationBag.cs" />
     <Compile Include="DI\Internal\RequestContextRegistrations.cs" />
     <Compile Include="DI\Internal\ResolveContext.cs" />
+    <Compile Include="DI\Internal\ResolveContextExtensions.cs" />
     <Compile Include="DI\Internal\ResolveProfile.cs" />
     <Compile Include="DI\Internal\SimpleProfile.cs" />
     <Compile Include="DI\Internal\SingletonLifetimeManager.cs" />
