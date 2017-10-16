@@ -54,6 +54,8 @@
       <Link>CommonInfo.cs</Link>
     </Compile>
     <Compile Include="Constants.cs" />
+    <Compile Include="ContextStoreDependency.cs" />
+    <Compile Include="ContextStoreExtensions.cs" />
     <Compile Include="ContextStoreInstanceActivator.cs" />
     <Compile Include="ContextStoreLifetime.cs" />
     <Compile Include="Convert.cs" />

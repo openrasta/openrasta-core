@@ -2,7 +2,6 @@ using System;
 using Castle.MicroKernel;
 using Castle.MicroKernel.Context;
 using Castle.MicroKernel.Lifestyle;
-using OpenRasta.DI.Internal;
 using OpenRasta.Pipeline;
 
 namespace OpenRasta.DI.Windsor

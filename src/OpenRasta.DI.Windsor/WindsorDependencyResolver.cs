@@ -16,12 +16,11 @@ using Castle.Core;
 using Castle.MicroKernel;
 using Castle.MicroKernel.Registration;
 using Castle.Windsor;
-using OpenRasta.DI.Internal;
 using OpenRasta.Pipeline;
 
 namespace OpenRasta.DI.Windsor
 {
-    public class WindsorDependencyResolver : DependencyResolverCore, IDependencyResolver
+  public class WindsorDependencyResolver : DependencyResolverCore, IDependencyResolver
     {
         readonly IWindsorContainer _windsorContainer;
         static readonly object ContainerLock = new object();
