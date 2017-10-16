@@ -1,0 +1,21 @@
+version: 2.5.{build}
+image: Visual Studio 2017
+configuration: Release
+platform: Any CPU
+assembly_info:
+  patch: true
+  file: src\CommonInfo.cs
+  assembly_version: 2.0.0.0
+  assembly_file_version: '{version}'
+  assembly_informational_version: '{version}'
+before_build:
+- cmd: nuget restore src/openrasta-castle-windsor.sln
+build:
+  publish_nuget: true
+  publish_nuget_symbols: true
+  include_nuget_references: true
+  verbosity: minimal
+test:
+  assemblies:
+    only:
+    - src\OpenRasta.DI.Windsor.Tests.Unit\bin\$(configuration)\OpenRasta.DI.Windsor.Tests.Unit.dll
