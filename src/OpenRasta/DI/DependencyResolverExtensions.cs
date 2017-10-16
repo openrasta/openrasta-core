@@ -82,6 +82,17 @@ namespace OpenRasta.DI
       resolver.AddDependencyInstance(typeof(TService), instance, lifetime);
     }
 
+    [Obsolete("Kept for compat reasons")]
+    public static void AddDependencyInstance<TService>(this IDependencyResolver resolver, object instance)
+    {
+      resolver.AddDependencyInstance(typeof(TService), instance);
+    }
+    [Obsolete("Kept for compat reasons")]
+    public static void AddDependencyInstance<TService>(this IDependencyResolver resolver, object instance, DependencyLifetime lifetime)
+    {
+      resolver.AddDependencyInstance(typeof(TService), instance, lifetime);
+    }
+    
     public static bool HasDependency<T>(this IDependencyResolver resolver)
     {
       return resolver.HasDependency(typeof(T));
