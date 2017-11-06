@@ -8,7 +8,7 @@
 *.sln.docstates
 .idea/
 packages/
-
+.DS_Store
 # Build results
 [Dd]ebug/
 [Dd]ebugPublic/
