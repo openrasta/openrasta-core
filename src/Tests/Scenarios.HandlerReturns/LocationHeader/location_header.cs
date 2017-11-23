@@ -1,8 +1,10 @@
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using OpenRasta.Configuration;
 using OpenRasta.Hosting.InMemory;
 using OpenRasta.Web;
 using Tests.Scenarios.HandlerSelection;
+using Xunit;
 
 namespace Tests.Scenarios.HandlerReturns.LocationHeader
 {

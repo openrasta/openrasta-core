@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using OpenRasta.Concordia;
 using OpenRasta.Configuration;
+using OpenRasta.Diagnostics;
 using OpenRasta.DI;
 using OpenRasta.Pipeline;
 using OpenRasta.Web;
@@ -72,8 +73,10 @@ namespace OpenRasta.Hosting.InMemory
           new Uri("http://localhost/", UriKind.Absolute),
           new Uri(ApplicationVirtualPath, UriKind.Relative)),
         Request = request,
-        Response = new InMemoryResponse()
+        Response = new InMemoryResponse(),
+        ServerErrors = new ServerErrorList { Log = Resolver.ResolveWithDefault<ILogger>(() => new NullLogger() ) }
       };
+
       try
       {
           await RaiseIncomingRequestReceived(context);
