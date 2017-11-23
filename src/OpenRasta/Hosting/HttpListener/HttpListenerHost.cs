@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
+using OpenRasta.Configuration;
+using OpenRasta.Diagnostics;
 using OpenRasta.DI;
 using OpenRasta.Pipeline;
 
@@ -9,6 +11,7 @@ namespace OpenRasta.Hosting.HttpListener
 {
   public class HttpListenerHost : MarshalByRefObject, IHost, IDisposable
   {
+    readonly IConfigurationSource _configuration;
     bool _isDisposed;
     System.Net.HttpListener _listener;
     IDependencyResolverAccessor _resolverAccessor;
@@ -19,12 +22,20 @@ namespace OpenRasta.Hosting.HttpListener
       Dispose(false);
     }
 
+    public HttpListenerHost() { }
+
+    public HttpListenerHost(IConfigurationSource configuration)
+    {
+      _configuration = configuration;
+    }
+
     public event EventHandler<IncomingRequestProcessedEventArgs> IncomingRequestProcessed = (s, e) => { };
     public event EventHandler<IncomingRequestReceivedEventArgs> IncomingRequestReceived = (s, e) => { };
 
     public event EventHandler Start = (s, e) => { };
     public event EventHandler Stop = (s, e) => { };
     public string ApplicationVirtualPath { get; private set; }
+    public IDependencyResolver Resolver { get; private set; }
 
     public IDependencyResolverAccessor ResolverAccessor
     {
@@ -77,7 +88,7 @@ namespace OpenRasta.Hosting.HttpListener
         return;
       }
       var ambientContext = new AmbientContext();
-      var context = new HttpListenerCommunicationContext(this, nativeContext);
+      var context = new HttpListenerCommunicationContext(this, nativeContext, Resolver.ResolveWithDefault(() => TraceSourceLogger.Instance));
       try
       {
         using (new ContextScope(ambientContext))
@@ -130,7 +141,10 @@ namespace OpenRasta.Hosting.HttpListener
 
     public virtual bool ConfigureRootDependencies(IDependencyResolver resolver)
     {
+      Resolver = resolver;
       resolver.AddDependency<IContextStore, AmbientContextStore>(DependencyLifetime.Singleton);
+      if (_configuration != null) resolver.AddDependencyInstance(_configuration);
+
       return true;
     }
 

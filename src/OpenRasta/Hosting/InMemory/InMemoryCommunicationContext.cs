@@ -23,7 +23,7 @@ namespace OpenRasta.Hosting.InMemory
             ApplicationBaseUri = new Uri("http://localhost/");
             Request = new InMemoryRequest();
             Response = new InMemoryResponse();
-            ServerErrors = new List<Error>();
+            ServerErrors = new ServerErrorList();
             PipelineData = new PipelineData();
         }
 

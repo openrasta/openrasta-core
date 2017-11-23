@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Security.Principal;
+using OpenRasta.Diagnostics;
 using OpenRasta.Pipeline;
 using OpenRasta.Web;
 
@@ -12,9 +13,9 @@ namespace OpenRasta.Hosting.HttpListener
         readonly IHost _host;
         readonly HttpListenerContext _nativeContext;
 
-        public HttpListenerCommunicationContext(IHost host, HttpListenerContext nativeContext)
+        public HttpListenerCommunicationContext(IHost host, HttpListenerContext nativeContext, ILogger logger)
         {
-            ServerErrors = new List<Error>();
+            ServerErrors = new ServerErrorList { Log = logger };
             PipelineData = new PipelineData();
             _host = host;
             _nativeContext = nativeContext;

@@ -154,6 +154,10 @@
     <Compile Include="Scenarios.HandlerSelection\CollectionHandler.cs" />
     <Compile Include="Scenarios.HandlerSelection\post_with_and_without_uri_var_as_int.cs" />
     <Compile Include="Scenarios.HandlerSelection\post_with_and_without_uri_var_as_string.cs" />
+    <Compile Include="Scenarios.HandlerThrows\exception_with_logging_from_http_listener_host.cs" />
+    <Compile Include="Scenarios.HandlerThrows\exception_with_logging_in_memory_host.cs" />
+    <Compile Include="Scenarios.HandlerThrows\FakeLogger.cs" />
+    <Compile Include="Scenarios.HandlerThrows\ThrowingHandler.cs" />
     <Compile Include="Scenarios.Uris\json_encoded_uris.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -168,6 +172,7 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
