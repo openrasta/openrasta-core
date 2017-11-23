@@ -8,6 +8,8 @@
 *.sln.docstates
 .idea/
 packages/
+.vs
+
 .DS_Store
 # Build results
 [Dd]ebug/
