@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Net;
+using System.Threading;
 using System.Threading.Tasks;
 using OpenRasta.DI;
 using OpenRasta.Pipeline;
@@ -13,6 +14,8 @@ namespace OpenRasta.Hosting.HttpListener
     System.Net.HttpListener _listener;
     IDependencyResolverAccessor _resolverAccessor;
     Type _resolverFactory;
+    int _pendingRequestCount;
+    readonly ManualResetEvent _zeroPendingRequests = new ManualResetEvent(true);
 
     ~HttpListenerHost()
     {
@@ -80,6 +83,9 @@ namespace OpenRasta.Hosting.HttpListener
       var context = new HttpListenerCommunicationContext(this, nativeContext);
       try
       {
+        Interlocked.Increment(ref _pendingRequestCount);
+        _zeroPendingRequests.Reset();
+
         using (new ContextScope(ambientContext))
         {
           var incomingRequestReceivedEventArgs = new IncomingRequestReceivedEventArgs(context);
@@ -92,6 +98,11 @@ namespace OpenRasta.Hosting.HttpListener
         using (new ContextScope(ambientContext))
         {
           IncomingRequestProcessed(this, new IncomingRequestProcessedEventArgs(context));
+        }
+
+        if (Interlocked.Decrement(ref _pendingRequestCount) == 0)
+        {
+          _zeroPendingRequests.Set();
         }
       }
     }
@@ -147,6 +158,8 @@ namespace OpenRasta.Hosting.HttpListener
       _listener.Abort();
       _listener.Close();
       _isDisposed = true;
+
+      _zeroPendingRequests.WaitOne(TimeSpan.FromSeconds(5));
     }
 
     void CheckNotDisposed()
