@@ -20,14 +20,16 @@ using OpenRasta.Pipeline;
 
 namespace OpenRasta.DI.Windsor
 {
-  public class WindsorDependencyResolver : DependencyResolverCore, IDependencyResolver
+    public class WindsorDependencyResolver : DependencyResolverCore, IDependencyResolver, IDisposable
     {
         readonly IWindsorContainer _windsorContainer;
+        readonly bool _disposeContainerOnCleanup;
         static readonly object ContainerLock = new object();
 
-        public WindsorDependencyResolver(IWindsorContainer container)
+        public WindsorDependencyResolver(IWindsorContainer container, bool disposeContainerOnCleanup = false)
         {
             _windsorContainer = container;
+            _disposeContainerOnCleanup = disposeContainerOnCleanup;
         }
 
         public bool HasDependency(Type serviceType)
@@ -168,6 +170,14 @@ namespace OpenRasta.DI.Windsor
         {
             return typeof (ContextStoreLifetime).IsAssignableFrom(component.CustomLifestyle)
                    && component.ExtendedProperties[Constants.REG_IS_INSTANCE_KEY] != null;
+        }
+
+        public void Dispose()
+        {
+            if (_disposeContainerOnCleanup)
+            {
+                _windsorContainer?.Dispose();
+            }
         }
     }
 }
