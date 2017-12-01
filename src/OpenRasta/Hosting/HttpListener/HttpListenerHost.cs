@@ -88,7 +88,7 @@ namespace OpenRasta.Hosting.HttpListener
         return;
       }
       var ambientContext = new AmbientContext();
-      var context = new HttpListenerCommunicationContext(this, nativeContext, Resolver.ResolveWithDefault(() => TraceSourceLogger.Instance));
+      var context = new HttpListenerCommunicationContext(this, nativeContext, Resolver.Resolve<ILogger>());
       try
       {
         using (new ContextScope(ambientContext))

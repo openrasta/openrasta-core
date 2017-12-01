@@ -74,7 +74,7 @@ namespace OpenRasta.Hosting.InMemory
           new Uri(ApplicationVirtualPath, UriKind.Relative)),
         Request = request,
         Response = new InMemoryResponse(),
-        ServerErrors = new ServerErrorList { Log = Resolver.ResolveWithDefault<ILogger>(() => new NullLogger() ) }
+        ServerErrors = new ServerErrorList { Log = Resolver.Resolve<ILogger>() }
       };
 
       try
