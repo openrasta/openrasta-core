@@ -86,20 +86,25 @@ namespace OpenRasta.Hosting.HttpListener
         Interlocked.Increment(ref _pendingRequestCount);
         _zeroPendingRequests.Reset();
 
-        using (new ContextScope(ambientContext))
+        try
         {
-          var incomingRequestReceivedEventArgs = new IncomingRequestReceivedEventArgs(context);
-          IncomingRequestReceived(this, incomingRequestReceivedEventArgs);
-          await incomingRequestReceivedEventArgs.RunTask;
+          using (new ContextScope(ambientContext))
+          {
+            var incomingRequestReceivedEventArgs = new IncomingRequestReceivedEventArgs(context);
+            IncomingRequestReceived(this, incomingRequestReceivedEventArgs);
+            await incomingRequestReceivedEventArgs.RunTask;
+          }
+        }
+        finally
+        {
+          using (new ContextScope(ambientContext))
+          {
+            IncomingRequestProcessed(this, new IncomingRequestProcessedEventArgs(context));
+          }
         }
       }
       finally
       {
-        using (new ContextScope(ambientContext))
-        {
-          IncomingRequestProcessed(this, new IncomingRequestProcessedEventArgs(context));
-        }
-
         if (Interlocked.Decrement(ref _pendingRequestCount) == 0)
         {
           _zeroPendingRequests.Set();
