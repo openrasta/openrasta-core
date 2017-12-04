@@ -22,17 +22,17 @@ namespace Tests.Scenarios.HandlerThrows
     {
       _fakeLogger = new FakeLogger();
 
-      var uri = $"http://+:80/Temporary_Listen_Addresses/{Guid.NewGuid()}/";
+      var appPathVDir = $"Temporary_Listen_Addresses/{Guid.NewGuid()}/";
 
       _httpListenerHost = new HttpListenerHost(new Configuration(_fakeLogger));
-      _httpListenerHost.Initialize(new [] { uri }, null, null);
+      _httpListenerHost.Initialize(new [] { $"http://+:80/{appPathVDir}" }, appPathVDir, null);
       _httpListenerHost.StartListening();
 
       using (var webClient = new WebClient())
       {
         try
         {
-          webClient.DownloadString(uri.Replace("+", "localhost"));
+          webClient.DownloadString($"http://localhost/{appPathVDir}");
         }
         catch (WebException e)
         {
@@ -66,14 +66,18 @@ namespace Tests.Scenarios.HandlerThrows
 
       public void Configure()
       {
-        ResourceSpace.Uses.Resolver.AddDependencyInstance(
-          typeof(ILogger),
-          _fakeLogger,
-          DependencyLifetime.Singleton);
+        using (OpenRastaConfiguration.Manual)
+        {
+          ResourceSpace.Uses.Resolver.AddDependencyInstance(
+            typeof(ILogger),
+            _fakeLogger,
+            DependencyLifetime.Singleton);
 
-        ResourceSpace.Has.ResourcesNamed("root")
-          .AtUri("/")
-          .HandledBy<ThrowingHandler>().TranscodedBy<TextPlainCodec>();
+          ResourceSpace.Has.ResourcesNamed("root")
+            .AtUri("/")
+            .HandledBy<ThrowingHandler>().TranscodedBy<TextPlainCodec>();
+          
+        }
       }
     }
   }
