@@ -76,7 +76,6 @@ namespace Tests.Scenarios.HandlerThrows
           ResourceSpace.Has.ResourcesNamed("root")
             .AtUri("/")
             .HandledBy<ThrowingHandler>().TranscodedBy<TextPlainCodec>();
-          
         }
       }
     }
