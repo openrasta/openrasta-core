@@ -18,6 +18,8 @@ install:
           $version = "$version-ci-$build"
         } elseif ($env:APPVEYOR_REPO_TAG) {
           $version = $env:APPVEYOR_REPO_TAG_NAME
+        } elseif ($env:APPVEYOR_PULL_REQUEST_NUMBER) {
+          $version = "$version-pr-$env:APPVEYOR_PULL_REQUEST_NUMBER-$build"
         }
         else {
           $version = "$version-br-$branch-$build"
@@ -28,7 +30,7 @@ install:
   - gem install chandler --no-ri --no-rdoc
   - ps: set-content ~/.netrc "machine api.github.com login $env:github_username password $env:github_password" -encoding ascii
   - ps: cp ~/.netrc ~/_netrc
-  - chandler push
+  - ps: if (-not $env:APPVEYOR_PULL_REQUEST_NUMBER) {chandler push }
 
 assembly_info:
   patch: true
