@@ -79,11 +79,17 @@ namespace OpenRasta.Hosting.InMemory
 
       try
       {
+        using (new ContextScope(ambientContext))
+        {
           await RaiseIncomingRequestReceived(context);
+        }
       }
       finally
       {
+        using (new ContextScope(ambientContext))
+        {
           RaiseIncomingRequestProcessed(context);
+        }
       }
       if (context.Response.Entity?.Stream.CanSeek == true)
         context.Response.Entity.Stream.Position = 0;
