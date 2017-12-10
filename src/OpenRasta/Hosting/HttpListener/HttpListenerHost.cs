@@ -77,7 +77,7 @@ namespace OpenRasta.Hosting.HttpListener
       return null;
     }
 
-    async Task RunLoop()
+    async Task AcceptRequests()
     {
       while (_listener.IsListening)
       {
@@ -138,7 +138,7 @@ namespace OpenRasta.Hosting.HttpListener
         Start(this, EventArgs.Empty);
       }
       _listener.Start();
-      Task.Run(RunLoop);
+      Task.Run(AcceptRequests);
     }
 
     public void StopListening()
