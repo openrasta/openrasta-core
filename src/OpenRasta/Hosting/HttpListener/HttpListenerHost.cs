@@ -79,6 +79,9 @@ namespace OpenRasta.Hosting.HttpListener
 
     async Task ProcessContext()
     {
+      CheckNotDisposed();
+      if (!_listener.IsListening) return;
+
       QueueNextRequestPending();
       HttpListenerContext nativeContext;
 
