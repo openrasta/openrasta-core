@@ -77,22 +77,26 @@ namespace OpenRasta.Hosting.HttpListener
       return null;
     }
 
-    async Task ProcessContext()
+    async Task RunLoop()
     {
-      CheckNotDisposed();
-      if (!_listener.IsListening) return;
-
-      QueueNextRequestPending();
-      HttpListenerContext nativeContext;
-
-      try
+      while (_listener.IsListening)
       {
-        nativeContext = await _listener.GetContextAsync();
+        try
+        {
+          var context = await _listener.GetContextAsync();
+#pragma warning disable 4014
+          Task.Run(async () => await ProcessContext(context));
+#pragma warning restore 4014
+        }
+        catch (HttpListenerException)
+        {
+          return;
+        }
       }
-      catch (HttpListenerException)
-      {
-        return;
-      }
+    }
+
+    async Task ProcessContext(HttpListenerContext nativeContext)
+    {
       var ambientContext = new AmbientContext();
       var context = new HttpListenerCommunicationContext(this, nativeContext, Resolver.Resolve<ILogger>());
       try
@@ -134,7 +138,7 @@ namespace OpenRasta.Hosting.HttpListener
         Start(this, EventArgs.Empty);
       }
       _listener.Start();
-      QueueNextRequestPending();
+      Task.Run(RunLoop);
     }
 
     public void StopListening()
@@ -188,11 +192,6 @@ namespace OpenRasta.Hosting.HttpListener
     {
       if (_isDisposed)
         throw new ObjectDisposedException("HttpListenerHost");
-    }
-
-    void QueueNextRequestPending()
-    {
-      Task.Run(ProcessContext);
     }
   }
 }
