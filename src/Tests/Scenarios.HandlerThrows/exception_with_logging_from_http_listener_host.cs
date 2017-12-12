@@ -12,7 +12,7 @@ using Xunit;
 
 namespace Tests.Scenarios.HandlerThrows
 {
-  public class exception_with_logging_from_http_listener_host
+  public class exception_with_logging_from_http_listener_host : IDisposable
   {
     readonly FakeLogger _fakeLogger;
     readonly HttpListenerHost _httpListenerHost;
@@ -23,27 +23,24 @@ namespace Tests.Scenarios.HandlerThrows
       _fakeLogger = new FakeLogger();
 
       var appPathVDir = $"Temporary_Listen_Addresses/{Guid.NewGuid()}/";
+      
+      var port = new Random().Next(1024,2048);
 
       _httpListenerHost = new HttpListenerHost(new Configuration(_fakeLogger));
-      _httpListenerHost.Initialize(new [] { $"http://+:80/{appPathVDir}" }, appPathVDir, null);
+      _httpListenerHost.Initialize(new [] { $"http://+:{port}/{appPathVDir}" }, appPathVDir, null);
       _httpListenerHost.StartListening();
 
       using (var webClient = new WebClient())
       {
         try
         {
-          webClient.DownloadString($"http://localhost/{appPathVDir}");
+          webClient.DownloadString($"http://localhost:{port}/{appPathVDir}");
         }
         catch (WebException e)
         {
           _response = (HttpWebResponse) e.Response;
         }
       }
-    }
-
-    ~exception_with_logging_from_http_listener_host()
-    {
-      _httpListenerHost.Close();
     }
 
     [Fact]
@@ -78,6 +75,12 @@ namespace Tests.Scenarios.HandlerThrows
             .HandledBy<ThrowingHandler>().TranscodedBy<TextPlainCodec>();
         }
       }
+    }
+
+    public void Dispose()
+    {
+      ((IDisposable) _httpListenerHost).Dispose();
+      _response.Dispose();
     }
   }
 }
