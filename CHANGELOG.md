@@ -44,6 +44,22 @@ OpenRasta adheres to [Semantic Versioning](http://semver.org/).
    now we check correctly.
 ### Security
 
+## [2.5.2000] - 2017-12-12
+### Changed
+Releases can take longer than expected, look at Duke Nukem Forever. The 2.6 release
+is so full of goodness that we're spending a bit more time polishing it. In the
+meantime, thanks to the sponsorship of our friends at olo.com, we backported
+some of that goodness to the 2.5 branch.
+
+### Changed
+ - The DI container is now lock-free, which should enable more throughput, less
+   deadlocks, and generally make the experience even smoother.
+ - As we move towards removing the container dependencies in the core, note that
+   your  container must support resolving `Func`s and `IEnumerable`s to continue
+   functioning.
+ - Containers can now support explicit request scoping, so if your container
+   support that, look at the code and update!
+
 ## [2.5.1050] - 2016-12-15
 ### Fixed
  - When we removed the authentication support from the out of the box experience,
