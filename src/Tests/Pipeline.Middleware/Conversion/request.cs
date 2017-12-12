@@ -14,12 +14,14 @@ namespace Tests.Pipeline.Middleware.Conversion
     {
       var calls = new ContributorCall[]
       {
+        new ContributorCall(new DoNothingContributor(), OpenRasta.Pipeline.Middleware.IdentitySingleTap, "before"),
         new ContributorCall(new UriMatchingContributor(), OpenRasta.Pipeline.Middleware.IdentitySingleTap, "uri"),
-        new ContributorCall(new DoNothingContributor(), OpenRasta.Pipeline.Middleware.IdentitySingleTap, "stuff")
+        new ContributorCall(new DoNothingContributor(), OpenRasta.Pipeline.Middleware.IdentitySingleTap, "after")
       };
       var middlewareChain = calls.ToMiddleware().ToArray();
       middlewareChain[0].ShouldBeOfType<PreExecuteMiddleware>();
       middlewareChain[1].ShouldBeOfType<RequestMiddleware>();
+      middlewareChain[2].ShouldBeOfType<RequestMiddleware>();
     }
   }
 }

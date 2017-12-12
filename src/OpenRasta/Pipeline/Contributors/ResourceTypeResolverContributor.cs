@@ -62,7 +62,7 @@ namespace OpenRasta.Pipeline.Contributors
 
         private OperationResult.NotFound CreateNotFound(ICommunicationContext context)
         {
-            return new OperationResult.NotFound
+            return new OperationResult. NotFound
             {
                 Description =
                     "No registered resource could be found for "

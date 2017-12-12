@@ -29,6 +29,10 @@ namespace OpenRasta.Pipeline
           if (startupProperties?.OpenRasta.Errors.HandleAllExceptions == true)
             yield return (new ResponseRetryMiddleware(), null);
         }
+        
+        if (contributorCall.Target is KnownStages.IUriMatching)
+          converter = CreateRequestMiddleware;
+        
         var middleware = converter(contributorCall);
         yield return (middleware, contributorCall);
         if (startupProperties?.OpenRasta.Pipeline.ContributorTrailers != null)
@@ -37,8 +41,6 @@ namespace OpenRasta.Pipeline
             .Select(pair => pair.Value))
             yield return (followups(), null);
 
-        if (contributorCall.Target is KnownStages.IUriMatching)
-          converter = CreateRequestMiddleware;
       }
     }
 

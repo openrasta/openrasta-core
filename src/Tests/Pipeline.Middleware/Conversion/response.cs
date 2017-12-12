@@ -22,7 +22,7 @@ namespace Tests.Pipeline.Middleware.Conversion
       };
       var middlewareChain = calls.ToMiddleware(new StartupProperties()).ToArray();
       middlewareChain[0].ShouldBeOfType<PreExecuteMiddleware>();
-      middlewareChain[1].ShouldBeOfType<PreExecuteMiddleware>();
+      middlewareChain[1].ShouldBeOfType<RequestMiddleware>();
       middlewareChain[2].ShouldBeOfType<RequestMiddleware>();
       middlewareChain[3].ShouldBeOfType<OpenRasta.Pipeline.ResponseRetryMiddleware>();
       middlewareChain[4].ShouldBeOfType<ResponseMiddleware>();
