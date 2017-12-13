@@ -54,6 +54,14 @@ build:
   publish_nuget: true
   publish_nuget_symbols: true
   include_nuget_references: true
+  
+dotnet_csproj:
+  patch: true
+  file: 'src\OpenRasta\OpenRasta.csproj'
+  version: '{version}'
+  assembly_version: '{version}'
+  file_version: '{version}'
+  informational_version: '{version}'
 
 environment:
   SSL_CERT_FILE: C:\ca\cacert.pem
