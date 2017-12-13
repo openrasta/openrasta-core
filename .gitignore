@@ -9,6 +9,7 @@
 .idea/
 packages/
 .vs
+.vscode/
 
 .DS_Store
 # Build results
