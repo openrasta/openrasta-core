@@ -53,7 +53,7 @@ dotnet_csproj:
   patch: true
   file: '**\*.csproj'
   version: '{version}'
-  assembly_version: '{version}'
+  assembly_version: $(AssemblyMajor).0.0.0
   file_version: '{version}'
   informational_version: '{version}'
 
