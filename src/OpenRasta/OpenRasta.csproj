@@ -11,9 +11,9 @@
     <PackageId>openrasta-core</PackageId>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <Company>Caffeine IT- naughtyProd Limited</Company>
-    <InformationalVersion></InformationalVersion>
-    <FileVersion></FileVersion>
-    <AssemblyVersion></AssemblyVersion>
+    <InformationalVersion>2.6.0</InformationalVersion>
+    <FileVersion>2.6.0</FileVersion>
+    <AssemblyVersion>2.6.0</AssemblyVersion>
     <TargetFramework>net462</TargetFramework>
     
   </PropertyGroup>
