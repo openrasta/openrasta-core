@@ -26,6 +26,7 @@ install:
         }
         Set-AppveyorBuildVariable -Name "AssemblyMajor" -Value "$major"
         Update-AppVeyorBuild -Version "$version"
+        Write-Output "$version"
 
   - gem install chandler --no-ri --no-rdoc
   - ps: set-content ~/.netrc "machine api.github.com login $env:github_username password $env:github_password" -encoding ascii
