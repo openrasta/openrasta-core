@@ -48,13 +48,6 @@ nuget:
   project_feed: true
   disable_publish_on_pr: true
 
-build:
-  parallel: true
-  verbosity: minimal
-  publish_nuget: true
-  publish_nuget_symbols: true
-  include_nuget_references: true
-  
 dotnet_csproj:
   patch: true
   file: 'src\OpenRasta\OpenRasta.csproj'
@@ -62,6 +55,13 @@ dotnet_csproj:
   assembly_version: '{version}'
   file_version: '{version}'
   informational_version: '{version}'
+
+build:
+  parallel: true
+  verbosity: minimal
+  publish_nuget: true
+  publish_nuget_symbols: true
+  include_nuget_references: true
 
 environment:
   SSL_CERT_FILE: C:\ca\cacert.pem
