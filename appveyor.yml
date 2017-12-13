@@ -32,12 +32,12 @@ install:
   - ps: cp ~/.netrc ~/_netrc
   - ps: if (-not $env:APPVEYOR_PULL_REQUEST_NUMBER) {chandler push }
 
-assembly_info:
-  patch: true
-  file: src\CommonInfo.cs
-  assembly_version: $(AssemblyMajor).0.0.0
-  assembly_file_version: '{version}'
-  assembly_informational_version: '{version}'
+#assembly_info:
+  #patch: true
+  #file: src\CommonInfo.cs
+  #assembly_version: $(AssemblyMajor).0.0.0
+  #assembly_file_version: '{version}'
+  #assembly_informational_version: '{version}'
 
 before_build:
   - cmd: set PATH=C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\MSBuild\15.0\Bin;C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\MSBuild\15.0\Bin;C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional\MSBuild\15.0\Bin;%PATH%
