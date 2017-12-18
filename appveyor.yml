@@ -12,7 +12,7 @@ dotnet_csproj:
 
 before_build:
   - cmd: dotnet --info
-  - cmd: dotnet restore \src\openrasta-castle-windsor.sln --verbosity Minimal
+  - cmd: dotnet restore .\src\openrasta-castle-windsor.sln --verbosity Minimal
 
 build:
   parallel: true
