@@ -21,6 +21,11 @@ build:
   publish_nuget_symbols: true
   include_nuget_references: true
 
+test:
+  assemblies:
+    only:
+      - OpenRasta.DI.Windsor.Tests.Unit.dll
+
 artifacts:
 - path: src\OpenRasta.DI.Windsor\bin\$(configuration)\net461\*.dll
   name: dlls
