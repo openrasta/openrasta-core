@@ -14,13 +14,19 @@
     <InformationalVersion>2.6.0</InformationalVersion>
     <FileVersion>2.6.0</FileVersion>
     <AssemblyVersion>2.6.0</AssemblyVersion>
-    <TargetFramework>net461</TargetFramework>
+    <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="System.ValueTuple" Version="4.3.1" />
+    <PackageReference Include="System.ValueTuple" Version="4.4.0"/>
   </ItemGroup>
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
+    <PackageReference Include="System.CodeDom" Version="4.4.0"/>
+  </ItemGroup>
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
+    <DefineConstants>$(DefineConstants);CORE</DefineConstants>
+  </PropertyGroup>
   <ItemGroup>
-    <None Include="Resources\error-test.htm" />
-    <EmbeddedResource Include="Resources\error.css" />
+    <None Include="Resources\error-test.htm"/>
+    <EmbeddedResource Include="Resources\error.css"/>
   </ItemGroup>
 </Project>

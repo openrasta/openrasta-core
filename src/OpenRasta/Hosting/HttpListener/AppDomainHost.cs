@@ -1,3 +1,4 @@
+#if !CORE
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -92,3 +93,4 @@ namespace OpenRasta.Hosting
         }
     }
 }
+#endif

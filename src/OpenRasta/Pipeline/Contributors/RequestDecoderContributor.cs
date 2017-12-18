@@ -1,13 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Remoting.Channels;
 using System.Threading.Tasks;
 using OpenRasta.DI;
 using OpenRasta.OperationModel;
 using OpenRasta.OperationModel.Hydrators;
 using OpenRasta.Web;
-using OpenRasta.Pipeline;
 
 namespace OpenRasta.Pipeline.Contributors
 {
