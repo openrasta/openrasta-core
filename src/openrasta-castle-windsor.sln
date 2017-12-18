@@ -1,16 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27004.2002
+VisualStudioVersion = 15.0.27130.2010
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenRasta.DI.Windsor", "OpenRasta.DI.Windsor\OpenRasta.DI.Windsor.csproj", "{ED7BA1F8-6257-4BDC-B6BE-F22D9C5BC140}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenRasta.DI.Windsor", "OpenRasta.DI.Windsor\OpenRasta.DI.Windsor.csproj", "{ED7BA1F8-6257-4BDC-B6BE-F22D9C5BC140}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenRasta.DI.Windsor.Tests.Unit", "OpenRasta.DI.Windsor.Tests.Unit\OpenRasta.DI.Windsor.Tests.Unit.csproj", "{9070DF13-BC24-4935-BAC5-49A4876960E9}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{56F8827C-F33F-4E0D-A5A8-FCFF9C005B5B}"
-	ProjectSection(SolutionItems) = preProject
-		CommonInfo.cs = CommonInfo.cs
-	EndProjectSection
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenRasta.DI.Windsor.Tests.Unit", "OpenRasta.DI.Windsor.Tests.Unit\OpenRasta.DI.Windsor.Tests.Unit.csproj", "{9070DF13-BC24-4935-BAC5-49A4876960E9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

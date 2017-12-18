@@ -1,77 +1,23 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{ED7BA1F8-6257-4BDC-B6BE-F22D9C5BC140}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>OpenRasta.DI.Windsor</RootNamespace>
-    <AssemblyName>OpenRasta.DI.Windsor</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
+    <Authors>Sebastien Lambla</Authors>
+    <PackageProjectUrl>https://github.com/openrasta/openrasta-castle-windsor</PackageProjectUrl>
+    <PackageLicenseUrl>http://openrasta.org/</PackageLicenseUrl>
+    <PackageIconUrl>http://openrasta.org/openRastaLogo-32x32.png</PackageIconUrl>
+    <Description>Open Rasta dependence injection using Castle Windsor</Description>
+    <PackageTags>OpenRasta CastleWindsor DI</PackageTags>
+    <Version>2.5.0</Version>
+    <Copyright>Copyright 2007</Copyright>
+    <PackageId>openrasta-di-castle-windsor</PackageId>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <Company>Caffeine IT- naughtyProd Limited</Company>
+    <InformationalVersion>2.5.0</InformationalVersion>
+    <FileVersion>2.5.0</FileVersion>
+    <AssemblyVersion>2.5.0</AssemblyVersion>
+    <TargetFramework>net461</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Castle.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
-      <HintPath>..\packages\Castle.Core.4.2.1\lib\net45\Castle.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="Castle.Windsor, Version=4.0.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
-      <HintPath>..\packages\Castle.Windsor.4.1.0\lib\net45\Castle.Windsor.dll</HintPath>
-    </Reference>
-    <Reference Include="OpenRasta, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\openrasta-core.2.5.1050\lib\net40\OpenRasta.dll</HintPath>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Configuration" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Runtime.Remoting" />
-    <Reference Include="System.Web" />
-    <Reference Include="System.Xml" />
+    <PackageReference Include="Castle.Windsor" Version="4.1.0" />
+    <PackageReference Include="openrasta-core" Version="2.5.2000" />
   </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\CommonInfo.cs">
-      <Link>CommonInfo.cs</Link>
-    </Compile>
-    <Compile Include="Constants.cs" />
-    <Compile Include="ContextStoreDependency.cs" />
-    <Compile Include="ContextStoreExtensions.cs" />
-    <Compile Include="ContextStoreInstanceActivator.cs" />
-    <Compile Include="ContextStoreLifetime.cs" />
-    <Compile Include="Convert.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="WindsorDependencyResolver.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="openrasta-di-castle-windsor.nuspec" />
-    <None Include="packages.config" />
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
 </Project>
