@@ -1,6 +1,5 @@
 using System;
 using System.Collections;
-using System.Runtime.Remoting.Messaging;
 using System.Threading;
 
 namespace OpenRasta.Hosting
