@@ -14,7 +14,7 @@
     <InformationalVersion>2.6.0</InformationalVersion>
     <FileVersion>2.6.0</FileVersion>
     <AssemblyVersion>2.6.0</AssemblyVersion>
-    <TargetFramework>net462</TargetFramework>
+    <TargetFramework>net461</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="System.ValueTuple" Version="4.3.1" />
