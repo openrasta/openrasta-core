@@ -1,11 +1,11 @@
 openrasta-castle-windsor
 ========================
 
-[![Build status](https://ci.appveyor.com/api/projects/status/68rfy3jpiwd63fdv)](https://ci.appveyor.com/project/holytshirt/openrasta-castle-windsor)
+[![Build status](https://ci.appveyor.com/api/projects/status/qu3788bhj9tb1m4s/branch/master?svg=true)](https://ci.appveyor.com/project/OpenRasta/openrasta-castle-windsor/branch/master)
 
 Integrates Castle Windsor with OpenRasta.
 
-Currently built against Castle Windsor 3.3.0 and OpenRasta-core 2.5
+Currently built against Castle Windsor 4.1.0 and OpenRasta-core 2.5.2000
 
 To configure OpenRasta that is been used with Asp.Net hosting the configuration for Castle-Windsor is:
 
