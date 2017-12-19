@@ -40,13 +40,14 @@ namespace MediaType_Specification
     {
       Should.Throw<FormatException>(() => MediaType.Parse("godknows,skiuroiu232u42iu4;;';"));
     }
-
+#if !CORE
     [Test, SetCulture("fr-FR")]
     public void parsing_a_quality_value_when_using_another_culture_still_parse_the_dot_value()
     {
       var mediaType = new MediaType("application/xml;q=0.3");
       mediaType.Quality.ShouldBe(0.3f);
     }
+#endif
   }
 
   [TestFixture]
