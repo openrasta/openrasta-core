@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Castle.Core;
+using Castle.Facilities.TypedFactory;
 using Castle.MicroKernel;
 using Castle.MicroKernel.Registration;
 using Castle.Windsor;
@@ -30,6 +31,7 @@ namespace OpenRasta.DI.Windsor
         {
             _windsorContainer = container;
             _disposeContainerOnCleanup = disposeContainerOnCleanup;
+            container.AddFacility<TypedFactoryFacility>();
         }
 
         public bool HasDependency(Type serviceType)
