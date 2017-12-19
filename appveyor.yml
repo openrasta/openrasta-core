@@ -75,3 +75,7 @@ artifacts:
   name: dlls
 - path: src\openrasta\bin\$(configuration)\net461\*.pdb
   name: pdbs
+- path: src\openrasta\bin\$(configuration)\netstandard2.0\*.dll
+  name: dlls
+- path: src\openrasta\bin\$(configuration)\netstandard2.0\*.pdb
+  name: pdbs
