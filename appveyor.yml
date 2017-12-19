@@ -71,7 +71,11 @@ environment:
     secure:
       1lXaOJ0GvCAOd0O9DDvVqw2eb7TvP2jve12u3hD2g4J7RVW2c2jC5XuRFyEuduUA
 artifacts:
-- path: src\openrasta\bin\$(configuration)\**\*.dll
+- path: src\openrasta\bin\$(configuration)\net461\*.dll
   name: dlls
-- path: src\openrasta\bin\$(configuration)\**\*.pdb
+- path: src\openrasta\bin\$(configuration)\net461\*.pdb
   name: pdbs
+- path: src\openrasta\bin\$(configuration)\netstandard2.0\*.dll
+  name: ncdlls
+- path: src\openrasta\bin\$(configuration)\netstandard2.0\*.pdb
+  name: ncpdbs
