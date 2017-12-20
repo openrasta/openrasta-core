@@ -52,9 +52,11 @@ namespace OpenRasta.Pipeline.Contributors
             return PipelineContinuation.RenderNow;
         }
 
+        protected virtual IEnumerable<TProcessor> OrderProcessors(IEnumerable<TProcessor> operations) => operations;
+
         IEnumerable<Func<IEnumerable<IOperation>, IEnumerable<IOperation>>> GetMethods()
         {
-            var operationProcessors = _resolver.ResolveAll<TProcessor>();
+            var operationProcessors = OrderProcessors(_resolver.ResolveAll<TProcessor>());
 
             foreach (var filter in operationProcessors)
                 yield return filter.Process;
