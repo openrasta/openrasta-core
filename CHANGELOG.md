@@ -44,6 +44,14 @@ OpenRasta adheres to [Semantic Versioning](http://semver.org/).
    now we check correctly.
 ### Security
 
+## [2.5.2001] - 2017-12-21
+### Fixed
+ - A lock-free container can result in unpredictable ordering of the components
+   you get, and OpenRasta's filters were not as independent as we thought. The
+   issue is fixed differently in 2.6, but here's a patch for the 2.5 release that
+   fixes the issue with handler methods without attributes not being found when
+   there's a uri name in the route.
+
 ## [2.5.2000] - 2017-12-12
 ### Changed
 Releases can take longer than expected, look at Duke Nukem Forever. The 2.6 release
