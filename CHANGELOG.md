@@ -12,7 +12,8 @@ OpenRasta adheres to [Semantic Versioning](http://semver.org/).
    and `IMediaTypeWriterAsync`, and async interceptor with `IOperationInterceptorAsync`
 
 ### Changed
- - Cool kids have moved on, so we follow. .net 4.6.1 is now a minimum.
+ - Cool kids have moved on, so we follow. .net 4.6.1 is now a minimum, and we ship
+   netstandard2.0 too. Are we cool now? 🕶
  - The AppVeyor build is now under the OpenRasta organisation. We were not
    really organised before, so we (well, @holytshirt) sorted it out, and we feel
    much cleaner.
