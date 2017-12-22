@@ -1,4 +1,3 @@
-
 namespace OpenRasta.DI.Windsor
 {
     internal static class Constants

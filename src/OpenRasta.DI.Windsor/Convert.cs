@@ -7,13 +7,17 @@ namespace OpenRasta.DI.Windsor
     {
         public static LifestyleType ToLifestyleType(DependencyLifetime lifetime)
         {
-            if (lifetime == DependencyLifetime.Singleton)
-                return LifestyleType.Singleton;
-            if (lifetime == DependencyLifetime.PerRequest)
-                return LifestyleType.Custom;
-            if (lifetime == DependencyLifetime.Transient)
-                return LifestyleType.Transient;
-            throw new ArgumentOutOfRangeException("lifetime", "The provided lifetime is not recognized.");
+            switch (lifetime)
+            {
+                case DependencyLifetime.Singleton:
+                    return LifestyleType.Singleton;
+                case DependencyLifetime.PerRequest:
+                    return LifestyleType.Custom;
+                case DependencyLifetime.Transient:
+                    return LifestyleType.Transient;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(lifetime), lifetime, "The provided lifetime is not recognized.");
+            }
         }
     }
 }

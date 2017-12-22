@@ -3,19 +3,17 @@ using OpenRasta.Pipeline;
 
 namespace OpenRasta.DI.Windsor
 {
-  public class ContextStoreDependency
-  {
-    public ContextStoreDependency(string key, object instance, IContextStoreDependencyCleaner cleaner)
+    public class ContextStoreDependency
     {
-      if (key == null) throw new ArgumentNullException("key");
-      if (instance == null) throw new ArgumentNullException("instance");
-      Key = key;
-      Instance = instance;
-      Cleaner = cleaner;
-    }
+        public ContextStoreDependency(string key, object instance, IContextStoreDependencyCleaner cleaner)
+        {
+            Key = key ?? throw new ArgumentNullException(nameof(key));
+            Instance = instance ?? throw new ArgumentNullException(nameof(instance));
+            Cleaner = cleaner;
+        }
 
-    public IContextStoreDependencyCleaner Cleaner { get; set; }
-    public object Instance { get; set; }
-    public string Key { get; set; }
-  }
+        public IContextStoreDependencyCleaner Cleaner { get; set; }
+        public object Instance { get; set; }
+        public string Key { get; set; }
+    }
 }

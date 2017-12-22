@@ -10,8 +10,8 @@ namespace OpenRasta.DI.Windsor
     public static void Destruct(this IContextStore store)
     {
       foreach (var dep in store.GetContextInstances())
-        if (dep.Cleaner != null)
-          dep.Cleaner.Destruct(dep.Key, dep.Instance);
+        dep.Cleaner?.Destruct(dep.Key, dep.Instance);
+
       store.GetContextInstances().Clear();
     }
 
