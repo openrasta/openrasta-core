@@ -17,6 +17,7 @@ namespace Tests.Scenarios.HandlerThrows
     readonly FakeLogger _fakeLogger;
     readonly HttpListenerHost _httpListenerHost;
     readonly HttpWebResponse _response;
+    static readonly Random _random = new Random();
 
     public exception_with_logging_from_http_listener_host()
     {
@@ -24,7 +25,7 @@ namespace Tests.Scenarios.HandlerThrows
 
       var appPathVDir = $"Temporary_Listen_Addresses/{Guid.NewGuid()}/";
       
-      var port = new Random().Next(1024,2048);
+      var port = _random.Next(1024,2048);
 
       _httpListenerHost = new HttpListenerHost(new Configuration(_fakeLogger));
       _httpListenerHost.Initialize(new [] { $"http://+:{port}/{appPathVDir}" }, appPathVDir, null);
