@@ -262,9 +262,7 @@ namespace OpenRasta.Configuration
 
     protected virtual void AddOperationFilters()
     {
-      AddOperationFilter<HttpMethodOperationFilter>();
-      AddOperationFilter<UriNameOperationFilter>();
-      AddOperationFilter<UriParametersFilter>();
+      AddOperationFilter<CompoundOperationFilter>();
     }
 
     protected virtual void AddOperationHydrator<T>()
