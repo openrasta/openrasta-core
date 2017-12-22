@@ -31,7 +31,16 @@ namespace OpenRasta.DI.Windsor
         {
             _windsorContainer = container;
             _disposeContainerOnCleanup = disposeContainerOnCleanup;
-            container.AddFacility<TypedFactoryFacility>();
+
+            if (_windsorContainer.Kernel.GetFacilities().All(x => x.GetType() != typeof(TypedFactoryFacility)))
+            {
+                _windsorContainer.AddFacility<TypedFactoryFacility>();
+            }
+
+            if (!_windsorContainer.Kernel.HasComponent(typeof(IDependencyResolver)))
+            {
+                _windsorContainer.Register(Component.For<IDependencyResolver>().Instance(this));
+            }
         }
 
         public bool HasDependency(Type serviceType)
@@ -64,14 +73,17 @@ namespace OpenRasta.DI.Windsor
             var handlers = _windsorContainer.Kernel.GetAssignableHandlers(typeof (TService));
             var resolved = new List<TService>();
             foreach (var handler in AvailableHandlers(handlers))
+            {
                 try
                 {
-                    resolved.Add( _windsorContainer.Resolve<TService>(handler.ComponentModel.Name));
+                    resolved.Add(_windsorContainer.Resolve<TService>(handler.ComponentModel.Name));
                 }
                 catch
                 {
                     continue;
                 }
+            }
+
             return resolved;
         }
 
