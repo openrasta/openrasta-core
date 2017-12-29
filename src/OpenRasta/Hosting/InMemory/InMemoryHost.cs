@@ -20,18 +20,21 @@ namespace OpenRasta.Hosting.InMemory
     {
       
     }
-    public InMemoryHost(Action configuration, IDependencyResolver dependencyResolver = null)
+    public InMemoryHost(Action configuration, IDependencyResolver dependencyResolver = null, StartupProperties startup = null)
       : this(new DelegateConfigurationSource(configuration), dependencyResolver)
     {
     }
 
-    public InMemoryHost(IConfigurationSource configuration, IDependencyResolver dependencyResolver = null)
+    public InMemoryHost(
+      IConfigurationSource configuration,
+      IDependencyResolver dependencyResolver = null,
+      StartupProperties startup = null)
     {
       Resolver = dependencyResolver ?? new InternalDependencyResolver();
       _configuration = configuration;
       ApplicationVirtualPath = "/";
       HostManager = HostManager.RegisterHost(this);
-      RaiseStart(new StartupProperties());
+      RaiseStart(startup ?? new StartupProperties());
     }
 
     public event EventHandler<IncomingRequestProcessedEventArgs> IncomingRequestProcessed;

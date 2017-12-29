@@ -24,18 +24,9 @@ namespace MetaModelHandler_Specification
 
         protected override void SetUp()
         {
-            base.SetUp();
             Resolver = new InternalDependencyResolver();
             MetaModel = new MetaModelRepository(Resolver);
-            DependencyManager.SetResolver(Resolver);
         }
-
-        protected override void TearDown()
-        {
-            base.TearDown();
-            DependencyManager.UnsetResolver();
-        }
-
         protected void when_executing_the_handler()
         {
             Handler.PreProcess(MetaModel);
@@ -185,6 +176,7 @@ namespace MetaModelHandler_Specification
             CodecRepository = new CodecRepository();
             Handler = new CodecMetaModelHandler(CodecRepository);
         }
+      
         [Test]
         public void a_codec_registered_without_a_media_type_uses_theattribute()
         {

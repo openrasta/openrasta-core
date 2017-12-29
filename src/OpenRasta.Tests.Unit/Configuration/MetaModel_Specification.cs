@@ -20,7 +20,7 @@ using TypeSystems = OpenRasta.TypeSystem.TypeSystems;
 
 namespace Configuration_Specification
 {
-  public class configuration_context : context
+  public abstract class configuration_context : context
   {
     protected static IHas ResourceSpaceHas;
     protected static IUses ResourceSpaceUses;
