@@ -1,6 +1,7 @@
 using System;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using OpenRasta.Concordia;
 using OpenRasta.Configuration;
 using OpenRasta.Hosting.InMemory;
 using OpenRasta.Web;
@@ -13,15 +14,19 @@ namespace Tests.Scenarios.HandlerReturns.LocationHeader
   {
     protected readonly Task<IResponse> Response;
     protected readonly Task<IResponse> ResponseAsync;
-    private InMemoryHost _server;
+    readonly InMemoryHost _server;
 
     protected location_header(string appPath = null)
     {
-      _server = new InMemoryHost(() =>
-        ResourceSpace.Has.ResourcesNamed("root")
+      _server = new InMemoryHost(
+        () => ResourceSpace.Has.ResourcesNamed("root")
           .AtUri("/resource/")
           .And.AtUri("/resource/async/").Named("async")
-          .HandledBy<T>()) {ApplicationVirtualPath = appPath ?? "/"};
+          .HandledBy<T>(),
+        startup: new StartupProperties {OpenRasta = {Errors = {HandleAllExceptions = false, HandleCatastrophicExceptions = false}}})
+      {
+        ApplicationVirtualPath = appPath ?? "/"
+      };
 
       Response = _server.Get($"{_server.ApplicationVirtualPath}resource/");
       ResponseAsync = _server.Get($"{_server.ApplicationVirtualPath}resource/async/");

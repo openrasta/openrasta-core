@@ -95,7 +95,6 @@ namespace OpenRasta.Diagnostics
 
       public void Dispose()
       {
-        Trace.CorrelationManager.StopLogicalOperation();
         Source.TraceData(TraceEventType.Stop, 1, $"Exiting {Initiator.GetType().Name}: {Message}");
       }
     }

@@ -255,15 +255,14 @@ namespace OpenRasta.Tests.Unit.Infrastructure
       Resolver.AddDependency<IPathManager, PathManager>();
       _requestScope = Resolver.CreateRequestScope();
       manager.SetupCommunicationContext(Context = new InMemoryCommunicationContext());
-      DependencyManager.SetResolver(Resolver);
+//      DependencyManager.SetResolver(Resolver);
       
     }
 
     protected override void TearDown()
     {
-      base.TearDown();
-      _requestScope.Dispose();
-      DependencyManager.UnsetResolver();
+        base.TearDown();
+        _requestScope.Dispose();
     }
 
     public class SinglePipeline<T> : IPipeline, IPipelineExecutionOrder, IPipelineExecutionOrderAnd

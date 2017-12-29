@@ -58,7 +58,7 @@ namespace OpenRasta.DI
       if (dependencyType == null)
         return null;
       if (Current == null)
-        throw new DependencyResolutionException("Cannot resolve services when no _resolver has been configured.");
+        throw new DependencyResolutionException("Cannot resolve services when no resolver has been configured.");
       if (AutoRegisterDependencies && !dependencyType.IsAbstract)
       {
         if (!Current.HasDependency(dependencyType))
@@ -74,8 +74,7 @@ namespace OpenRasta.DI
     /// <remarks>If no dependency registrar is registered in the container, the <see cref="DefaultDependencyRegistrar"/> will be used instead.</remarks>
     public static void SetResolver(IDependencyResolver resolver)
     {
-      if (Current != null)
-        throw new InvalidOperationException("A resolver is already set");
+      if (Current != null) throw new InvalidOperationException("A resolver is already set");
       Current = resolver ?? throw new ArgumentNullException(nameof(resolver));
     }
 

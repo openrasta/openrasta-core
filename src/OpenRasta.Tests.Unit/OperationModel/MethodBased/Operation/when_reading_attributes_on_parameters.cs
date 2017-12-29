@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using NUnit.Framework;
+using OpenRasta.DI;
 using OpenRasta.Tests.Unit.Infrastructure;
 using Shouldly;
 
@@ -10,9 +11,17 @@ namespace OpenRasta.Tests.Unit.OperationModel.MethodBased.Operation
     [Test]
     public void an_attribute_not_defined_returns_null()
     {
-      given_operation("GetHasParameterAttribute", typeof(int));
+      try
+      {
+        DependencyManager.SetResolver(new InternalDependencyResolver());
+        given_operation("GetHasParameterAttribute", typeof(int));
 
-      Operation.Inputs.First().Binder.ShouldBeAssignableTo<ParameterBinder>();
+        Operation.Inputs.First().Binder.ShouldBeAssignableTo<ParameterBinder>();
+      }
+      finally
+      {
+        DependencyManager.UnsetResolver();
+      }
     }
   }
 }
