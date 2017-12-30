@@ -2,14 +2,30 @@
 All notable changes to OpenRasta will be documented in this file.
 OpenRasta adheres to [Semantic Versioning](http://semver.org/).
 
+
 ## [Unreleased]
+### Added
+
+### Changed
+
+### Deprecated
+
+### Removed
+
+
+## [2.6.0-preview.1]
 ### Added
  - A new pipeline with "double tap" semantics, which makes most of the old pipeline
    look like an old picture, keen memories but visibly dated.
  - Things don't always happen when we want them too, so everything has been made
    async. This includes async contributors with a new `NotifyAsync`, async
    handlers (just return `Task` or `Task<T>`), codecs with `IMediaTypeReaderAsync`
-   and `IMediaTypeWriterAsync`, and async interceptor with `IOperationInterceptorAsync`
+   and `IMediaTypeWriterAsync`, and async interceptor with `IOperationInterceptorAsync`.
+ - We have an all new in-the-box IoC container. While removing the container from
+   OpenRasta is on the cards, it's a long path, and in the meantime we now provide
+   you with a production-grade one, lock-free, fast, and just plain better. You
+   can even inject `Func<>` and `IEnumerable<>` now. Thanks to our friends at Olo
+   for sponsoring that work!
 
 ### Changed
  - Cool kids have moved on, so we follow. .net 4.6.1 is now a minimum, and we ship
@@ -21,7 +37,8 @@ OpenRasta adheres to [Semantic Versioning](http://semver.org/).
    `IEnumerable`.
  - Methods on handlers returning `void` or `Task` will now return a 202 accepted
    instead of a 204 no content. If we can't know the semantics we shouldn't give
-   any better guarantees.
+   any better guarantees. If you wish to return a 200, return an OperationResult
+   instead.
  - Operations that were not ready for invocation would sometime fail. Now,
    either we respond with a 400 when we can't match the request to the response,
    or a `500` if we can't chose the correct method because the call was ambiguous.
@@ -32,7 +49,17 @@ OpenRasta adheres to [Semantic Versioning](http://semver.org/).
    or if you'd rather let exceptions bubble up, so your server can show their default
    error page or whatever.
  - ⌚️ is relative, apparently. But `RedirectLocation` wasn't. So we allowed relative
-   URIs. 
+   URIs.
+ - RFC 2047 may sound like black magic, but if you need it, there's a new implementation
+   that should be a tad more accurate, and not throw random exceptions on .net core
+ - The `HttpListerHost` has been refactored to manage connections better, clean-up better
+   and be more usable. Thanks @nmosafi!
+ - With the new container having non-deterministic ordering of components, finding
+   in which order to wire-up a pipeline is a bit more... Well less... Well it's non
+   deterministic. So we switched the default call graph generator to the topological
+   one we've had for a while. Check your pipelines. If you wish to revert to the old
+   behaviour, a simple `ResourceSpace.Use.CustomDependency<IGenerateCallGraphs,WeightedCallGraphGenerator>()`
+   should do the trick, although we don't recommend that.
 
 
 ### Deprecated
@@ -48,12 +75,15 @@ OpenRasta adheres to [Semantic Versioning](http://semver.org/).
    he will never lie again.
 
 ### Removed
+ - We try not to remove stuff before the 3.0 jump, so if anything disappeared
+   by accident, for exemple in `PipelineData`, please let us know, it's a bug.
 
 ### Fixed
  - When padding error messages in HTML for IE clients, we would send an
    incorrect Length, and no one wants that, so we made it accurate and bigger.
  - We would try and pad the result even if the response stream is not seekable,
    now we check correctly.
+
 ### Security
 
 ## [2.5.2001] - 2017-12-21
@@ -66,12 +96,10 @@ OpenRasta adheres to [Semantic Versioning](http://semver.org/).
 
 ## [2.5.2000] - 2017-12-12
 ### Changed
-Releases can take longer than expected, look at Duke Nukem Forever. The 2.6 release
-is so full of goodness that we're spending a bit more time polishing it. In the
-meantime, thanks to the sponsorship of our friends at olo.com, we backported
-some of that goodness to the 2.5 branch.
-
-### Security
+ - Releases can take longer than expected, look at Duke Nukem Forever. The 2.6 release
+   is so full of goodness that we're spending a bit more time polishing it. In the
+   meantime, thanks to the sponsorship of our friends at olo.com, we backported
+   some of that goodness to the 2.5 branch.
 
 ## [2.5.1050] - 2016-12-15
 ### Fixed
