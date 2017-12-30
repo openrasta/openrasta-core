@@ -20,15 +20,12 @@ install:
           $version = $env:APPVEYOR_REPO_TAG_NAME
         } elseif ($env:APPVEYOR_PULL_REQUEST_NUMBER) {
           $version = "$version-pr-$env:APPVEYOR_PULL_REQUEST_NUMBER-$build"
-        }
-        else {
+        } else {
           $version = "$version-br-$branch-$build"
         }
         Set-AppveyorBuildVariable -Name "AssemblyMajor" -Value "$major"
         Update-AppVeyorBuild -Version "$version"
         Write-Output "$version"
-
-  - ps: | 
         if (-not $env:APPVEYOR_PULL_REQUEST_NUMBER) {
           gem install chandler --no-ri --no-rdoc
           set-content ~/.netrc "machine api.github.com login $env:github_username password $env:github_password" -encoding ascii
@@ -80,4 +77,4 @@ artifacts:
 - path: src\OpenRasta.Hosting.AspNet\bin\$(configuration)\*.pdb
   name: pdbs
 - path: "*.nupkg"
-  name: nuget		    name: nuget
+  name: nuget
