@@ -15,7 +15,7 @@ namespace OpenRasta.Pipeline.CallGraph
         {
             return _dependencyResolver.HasDependency<IGenerateCallGraphs>()
                 ? _dependencyResolver.Resolve<IGenerateCallGraphs>()
-                : new WeightedCallGraphGenerator();
+                : new TopologicalSortCallGraphGenerator();
         }
     }
 }
