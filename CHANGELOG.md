@@ -1,19 +1,39 @@
 # Change Log
-All notable changes to OpenRasta will be documented in this file.
+All notable changes to OpenRasta's asp.net hosting will be documented in this file.
 OpenRasta adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### ADDED
+### CHANGED
+### FIXED
+### Known issues
+
+## 2.6.0-preview.1 [2017-12-30]
+### ADDED
  - As there's an async OpenRasta, so the asp.net hosting one evolves. It can
-   now run both sync and async pipelines transparently, in theory.
+   now run your code... Eventually.
 
 ### CHANGED
- - Now targets .net 4.5
+ - We now target .net 4.6.1, as apaprently 4.6.2 was a naughty child and no
+   one likes them.
 
 ### FIXED
  - The uninstall wasn't really uninstalling because it wasn't being shipped
    in the nuget package. The uninstall script has now been reprimanded and
-   will not do it again.
+   will not do it again. It now only removes the web.config section as it is
+   no longer needed. Death by a 1000 angle brackets!
+ 
+### Known issues
+ - The integrated pipeline mode is a bit hairy, so there may be some compatibility
+   issues. For example, we don't currently capture and restore thread identity
+   as we move through the asp.net pipeline stages. We may fix it eventually though.
+
+## 2.5.2000 - [2017-12-12]
+
+Sync'ing the version between hosting and core, it's tidier...
+
+### FIXED
+ - Under some unknown conditions, the logger would be null, this may have now been fixed.
 
 ## 2.5.25 - [2015-01-27]
 ### ADDED
