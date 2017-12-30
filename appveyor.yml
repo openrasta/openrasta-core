@@ -65,7 +65,7 @@ build:
   
 after_build:
   - nuget pack src/OpenRasta.Hosting.AspNet/ -Properties "Configuration=Release;Platform=AnyCPU" -Symbols -IncludeReferencedProjects
-`
+
 test:
   assemblies: 
    - src\OpenRasta.Hosting.AspNet.Tests.Integration\bin\$(configuration)\OpenRasta.Hosting.AspNet.Tests.Integration.dll
