@@ -6,28 +6,35 @@ install:
   - set PATH=C:\Ruby23\bin;%PATH%
   - ps: $AllProtocols = [System.Net.SecurityProtocolType]'Ssl3,Tls,Tls11,Tls12'
   - ps: "[System.Net.ServicePointManager]::SecurityProtocol = $AllProtocols"
-  - ps: mkdir c:\ca; iwr http://curl.haxx.se/ca/cacert.pem -outfile C:\ca\cacert.pem
+  - ps: mkdir c:\ca; iwr https://curl.haxx.se/ca/cacert.pem -outfile C:\ca\cacert.pem
   - set SSL_CERT_FILE=C:\ca\cacert.pem
   - ps: |
         $version = [version]$(cat VERSION)
         $build = $env:APPVEYOR_BUILD_NUMBER
         $major = $version.Major
+        
         $branch = $env:APPVEYOR_REPO_BRANCH
         if ($branch -eq 'master') {
           $version = "$version-ci-$build"
-        } elseif ($env:APPVEYOR_REPO_TAG) {
+        } elseif ($env:APPVEYOR_REPO_TAG -eq "true") {
           $version = $env:APPVEYOR_REPO_TAG_NAME
+        } elseif ($env:APPVEYOR_PULL_REQUEST_NUMBER) {
+          $version = "$version-pr-$env:APPVEYOR_PULL_REQUEST_NUMBER-$build"
         }
         else {
           $version = "$version-br-$branch-$build"
         }
         Set-AppveyorBuildVariable -Name "AssemblyMajor" -Value "$major"
         Update-AppVeyorBuild -Version "$version"
+        Write-Output "$version"
 
-  - gem install chandler --no-ri --no-rdoc
-  - ps: set-content ~/.netrc "machine api.github.com login $env:github_username password $env:github_password" -encoding ascii
-  - ps: cp ~/.netrc ~/_netrc
-  - chandler push
+  - ps: | 
+        if (-not $env:APPVEYOR_PULL_REQUEST_NUMBER) {
+          gem install chandler --no-ri --no-rdoc
+          set-content ~/.netrc "machine api.github.com login $env:github_username password $env:github_password" -encoding ascii
+          cp ~/.netrc ~/_netrc
+          chandler push
+        }
 
 assembly_info:
   patch: true
@@ -58,7 +65,10 @@ build:
   publish_nuget_symbols: true
   include_nuget_references: true
   verbosity: minimal
-
+  
+after_build:
+  - nuget pack src/OpenRasta.Hosting.AspNet/ -Properties "Configuration=Release;Platform=AnyCPU" -Symbols -IncludeReferencedProjects
+`
 test:
   assemblies: 
    - src\OpenRasta.Hosting.AspNet.Tests.Integration\bin\$(configuration)\OpenRasta.Hosting.AspNet.Tests.Integration.dll
@@ -69,3 +79,5 @@ artifacts:
   name: dlls
 - path: src\OpenRasta.Hosting.AspNet\bin\$(configuration)\*.pdb
   name: pdbs
+- path: "*.nupkg"
+  name: nuget		    name: nuget
