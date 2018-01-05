@@ -108,6 +108,7 @@ namespace OpenRasta.Hosting.HttpListener
         {
           using (new ContextScope(ambientContext))
           {
+            Resolver.AddDependencyInstance(typeof(HttpListenerContext), nativeContext);
             var incomingRequestReceivedEventArgs = new IncomingRequestReceivedEventArgs(context);
             IncomingRequestReceived(this, incomingRequestReceivedEventArgs);
             await incomingRequestReceivedEventArgs.RunTask;
