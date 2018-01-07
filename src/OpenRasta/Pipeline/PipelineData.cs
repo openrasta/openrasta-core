@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
-using System.Threading.Tasks;
 using OpenRasta.Codecs;
 using OpenRasta.Collections;
 using OpenRasta.OperationModel;
@@ -24,8 +23,6 @@ namespace OpenRasta.Pipeline
     const string SELECTED_RESOURCE = OR_PIPELINE + "SelectedResource";
     const string OPERATIONS = OR_PIPELINE + "Operations";
     const string OPERATIONS_ASYNC = "openrasta.operations";
-    const string SUSPEND = "openrasta.pipeline.stages.suspend";
-    const string RESUME = "openrasta.pipeline.stages.resume";
 
     const string SSL_CLIENT_CERTIFICATE = "ssl.ClientCertificate";
 
@@ -33,6 +30,7 @@ namespace OpenRasta.Pipeline
     {
       PipelineStage = new PipelineStage();
     }
+
     /// <summary>
     /// Gets the type of the handler selected when matching a request against the registerd resource.
     /// </summary>
@@ -46,7 +44,8 @@ namespace OpenRasta.Pipeline
     {
       get => SafeGet<X509Certificate>(SSL_CLIENT_CERTIFICATE);
       set => base[SSL_CLIENT_CERTIFICATE] = value;
-    } 
+    }
+
     [Obsolete]
     public IEnumerable<IOperation> Operations
     {
@@ -54,31 +53,19 @@ namespace OpenRasta.Pipeline
       set => throw new NotImplementedException();
     }
 
-    public TaskCompletionSource<object> Suspend
-    {
-      get => SafeGet<TaskCompletionSource<object>>(SUSPEND);
-      set => base[SUSPEND] = value;
-    }
-
-    public TaskCompletionSource<object> Resume
-    {
-      get => SafeGet<TaskCompletionSource<object>>(RESUME);
-      set => base[RESUME] = value;
-    }
     public IEnumerable<IOperationAsync> OperationsAsync
     {
       get => SafeGet<IEnumerable<IOperationAsync>>(OPERATIONS_ASYNC) ?? Enumerable.Empty<IOperationAsync>();
       set
       {
         base[OPERATIONS_ASYNC] = value;
-        
+
 #pragma warning disable 618
         base[OPERATIONS] = value
           .Select(op => new PretendingToBeSyncOperationForLegacyInterceptors(op))
           .Cast<IOperation>()
           .ToList();
 #pragma warning restore 618
-
       }
     }
 
