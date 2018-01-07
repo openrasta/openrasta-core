@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Reflection;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using OpenRasta.Codecs;
 using OpenRasta.Collections;
@@ -40,6 +41,8 @@ namespace OpenRasta.Pipeline
     const string SUSPEND = "openrasta.pipeline.stages.suspend";
     const string RESUME = "openrasta.pipeline.stages.resume";
 
+    const string SSL_CLIENT_CERTIFICATE = "ssl.ClientCertificate";
+
     public PipelineData()
     {
       PipelineStage = new PipelineStage();
@@ -53,11 +56,16 @@ namespace OpenRasta.Pipeline
       set { base[HANDLER_TYPE] = value; }
     }
 
+    public X509Certificate ClientCertificate
+    {
+      get => SafeGet<X509Certificate>(SSL_CLIENT_CERTIFICATE);
+      set => base[SSL_CLIENT_CERTIFICATE] = value;
+    } 
     [Obsolete]
     public IEnumerable<IOperation> Operations
     {
       get => SafeGet<IEnumerable<IOperation>>(OPERATIONS) ?? Enumerable.Empty<IOperation>();
-      set {}
+      set => throw new NotImplementedException();
     }
 
     public TaskCompletionSource<object> Suspend
