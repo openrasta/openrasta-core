@@ -10,7 +10,6 @@ namespace OpenRasta.Web
       var owinCert = ctx.PipelineData.Owin.SslClientCertificate;
       if (owinCert != null) return CertToCert2(owinCert);
 
-
       var certLoader = ctx.PipelineData.Owin.SslLoadClientCertAsync;
       if (certLoader == null) return null;
       await certLoader();
@@ -20,7 +19,12 @@ namespace OpenRasta.Web
 
     static X509Certificate2 CertToCert2(X509Certificate cert)
     {
-      return cert is X509Certificate2 cert2 ? cert2 : new X509Certificate2(cert);
+      switch (cert)
+      {
+        case null: return null;
+        case X509Certificate2 cert2: return cert2;
+        default: return new X509Certificate2(cert);
+      }
     }
   }
 }
