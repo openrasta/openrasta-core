@@ -1,4 +1,5 @@
 using System;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using OpenRasta.Concordia;
 using OpenRasta.Configuration;
@@ -41,6 +42,9 @@ namespace OpenRasta.Hosting.InMemory
     public event EventHandler<IncomingRequestReceivedEventArgs> IncomingRequestReceived;
 
     public event EventHandler Stop;
+
+    public Func<Task<X509Certificate2>> LoadClientCertificate { get; set; } =
+      () => Task.FromResult<X509Certificate2>(null);
 
     public string ApplicationVirtualPath
     {
