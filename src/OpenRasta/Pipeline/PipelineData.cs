@@ -11,7 +11,6 @@ using OpenRasta.Web;
 
 namespace OpenRasta.Pipeline
 {
-  
   static class PipelineDataKeys
   {
     public const string OR_PIPELINE = "__OR_PIPELINE_";
@@ -24,20 +23,28 @@ namespace OpenRasta.Pipeline
     public const string SELECTED_RESOURCE = OR_PIPELINE + "SelectedResource";
     public const string OPERATIONS = OR_PIPELINE + "Operations";
     public const string OPERATIONS_ASYNC = "openrasta.operations";
+    public const string LEGACY_KEYS = "openrasta.LegacyKeys";
 
     public const string OWIN_SSL_CLIENT_CERTIFICATE = "ssl.ClientCertificate";
-    public const string OWIN_SSL_CLIENT_CERTIFICATE2 = "ssl.ClientCertificate2";
     public const string OWIN_SSL_CLIENT_CERTIFICATE_LOAD = "ssl.LoadClientCertAsync";
   }
 
   /// <summary>
   /// </summary>
-  public class PipelineData : DictionaryBase<object, object>
+  public class PipelineData : DictionaryBase<string, object>, IDictionary<object, object>
   {
     public PipelineData()
     {
       PipelineStage = new PipelineStage();
       Owin = new OwinData(this);
+      LegacyKeys = new Dictionary<object, object>();
+    }
+
+    public PipelineData(IDictionary<string, object> owinEnv) : base(owinEnv)
+    {
+      PipelineStage = new PipelineStage();
+      Owin = new OwinData(this);
+      LegacyKeys = new Dictionary<object, object>();
     }
 
     public OwinData Owin { get; }
@@ -49,6 +56,12 @@ namespace OpenRasta.Pipeline
     {
       get => SafeGet<Type>(PipelineDataKeys.HANDLER_TYPE);
       set => base[PipelineDataKeys.HANDLER_TYPE] = value;
+    }
+
+    IDictionary<object, object> LegacyKeys
+    {
+      get => (Dictionary<object, object>) this[PipelineDataKeys.LEGACY_KEYS];
+      set => this[PipelineDataKeys.LEGACY_KEYS] = value;
     }
 
     [Obsolete]
@@ -114,7 +127,7 @@ namespace OpenRasta.Pipeline
       set => base[PipelineDataKeys.PIPELINE_STATE] = value;
     }
 
-    public new object this[object key]
+    public new object this[string key]
     {
       get => ContainsKey(key) ? base[key] : null;
       set => base[key] = value;
@@ -140,16 +153,67 @@ namespace OpenRasta.Pipeline
         set => _pipelineData[PipelineDataKeys.OWIN_SSL_CLIENT_CERTIFICATE] = value;
       }
 
-      public X509Certificate2 SslClientCertificate2
-      {
-        get => _pipelineData.SafeGet<X509Certificate2>(PipelineDataKeys.OWIN_SSL_CLIENT_CERTIFICATE2);
-        set => _pipelineData[PipelineDataKeys.OWIN_SSL_CLIENT_CERTIFICATE2] = value;
-      }
       public Func<Task> SslLoadClientCertAsync
       {
         get => _pipelineData.SafeGet<Func<Task>>(PipelineDataKeys.OWIN_SSL_CLIENT_CERTIFICATE_LOAD);
         set => _pipelineData[PipelineDataKeys.OWIN_SSL_CLIENT_CERTIFICATE_LOAD] = value;
       }
+    }
+
+    IEnumerator<KeyValuePair<object, object>> IEnumerable<KeyValuePair<object, object>>.GetEnumerator()
+    {
+      return LegacyKeys.GetEnumerator();
+    }
+
+    void ICollection<KeyValuePair<object, object>>.Add(KeyValuePair<object, object> item)
+    {
+      LegacyKeys.Add(item);
+    }
+
+    bool ICollection<KeyValuePair<object, object>>.Contains(KeyValuePair<object, object> item)
+    {
+      return LegacyKeys.Contains(item);
+    }
+
+    void ICollection<KeyValuePair<object, object>>.CopyTo(KeyValuePair<object, object>[] array, int arrayIndex)
+    {
+      LegacyKeys.CopyTo(array, arrayIndex);
+    }
+
+    bool ICollection<KeyValuePair<object, object>>.Remove(KeyValuePair<object, object> item)
+    {
+      return LegacyKeys.Remove(item);
+    }
+
+    void IDictionary<object, object>.Add(object key, object value)
+    {
+      LegacyKeys.Add(key, value);
+    }
+
+    bool IDictionary<object, object>.ContainsKey(object key)
+    {
+      return LegacyKeys.ContainsKey(key);
+    }
+
+    bool IDictionary<object, object>.Remove(object key)
+    {
+      return LegacyKeys.Remove(key);
+    }
+
+    bool IDictionary<object, object>.TryGetValue(object key, out object value)
+    {
+      return LegacyKeys.TryGetValue(key, out value);
+    }
+
+    object IDictionary<object, object>.this[object key]
+    {
+      get { return LegacyKeys[key]; }
+      set { LegacyKeys[key] = value; }
+    }
+
+    ICollection<object> IDictionary<object, object>.Keys
+    {
+      get { return LegacyKeys.Keys; }
     }
   }
 }
