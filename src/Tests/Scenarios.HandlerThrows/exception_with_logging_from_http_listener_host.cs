@@ -24,12 +24,24 @@ namespace Tests.Scenarios.HandlerThrows
       _fakeLogger = new FakeLogger();
 
       var appPathVDir = $"Temporary_Listen_Addresses/{Guid.NewGuid()}/";
-      
-      var port = _random.Next(1024,2048);
 
-      _httpListenerHost = new HttpListenerHost(new Configuration(_fakeLogger));
-      _httpListenerHost.Initialize(new [] { $"http://+:{port}/{appPathVDir}" }, appPathVDir, null);
-      _httpListenerHost.StartListening();
+      var started = false;
+      int port = -1;
+      do
+      {
+        try
+        {
+          port = _random.Next(2048, 4096);
+
+          _httpListenerHost = new HttpListenerHost(new Configuration(_fakeLogger));
+          _httpListenerHost.Initialize(new[] {$"http://+:{port}/{appPathVDir}"}, appPathVDir, null);
+          _httpListenerHost.StartListening();
+          started = true;
+        }
+        catch
+        {
+        }
+      } while (!started);
 
       using (var webClient = new WebClient())
       {
@@ -46,12 +58,16 @@ namespace Tests.Scenarios.HandlerThrows
 
     [Fact]
     public void gives_500_status() => _response.StatusCode.ShouldBe(HttpStatusCode.InternalServerError);
+
     [Fact]
     public void logs_an_exception() => _fakeLogger.Exceptions.ShouldHaveSingleItem();
+
     [Fact]
     public void logs_correct_exception() => _fakeLogger.Exceptions.Single().ShouldBeOfType<TargetInvocationException>();
+
     [Fact]
-    public void logs_correct_inner_exception() => _fakeLogger.Exceptions.Single().InnerException?.Message.ShouldBe("This is an exception");
+    public void logs_correct_inner_exception() =>
+      _fakeLogger.Exceptions.Single().InnerException?.Message.ShouldBe("This is an exception");
 
     class Configuration : IConfigurationSource
     {
