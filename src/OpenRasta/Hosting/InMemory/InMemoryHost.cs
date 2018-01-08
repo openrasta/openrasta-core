@@ -17,11 +17,12 @@ namespace OpenRasta.Hosting.InMemory
     string _applicationVirtualPath;
 
     public InMemoryHost() :
-      this((IConfigurationSource)null)
+      this((IConfigurationSource) null)
     {
-      
     }
-    public InMemoryHost(Action configuration, IDependencyResolver dependencyResolver = null, StartupProperties startup = null)
+
+    public InMemoryHost(Action configuration, IDependencyResolver dependencyResolver = null,
+      StartupProperties startup = null)
       : this(new DelegateConfigurationSource(configuration), dependencyResolver)
     {
     }
@@ -43,8 +44,7 @@ namespace OpenRasta.Hosting.InMemory
 
     public event EventHandler Stop;
 
-    public Func<Task<X509Certificate2>> LoadClientCertificate { get; set; } =
-      () => Task.FromResult<X509Certificate2>(null);
+    public X509Certificate2 ClientCertificate { get; set; } = null;
 
     public string ApplicationVirtualPath
     {
@@ -81,9 +81,13 @@ namespace OpenRasta.Hosting.InMemory
           new Uri(ApplicationVirtualPath, UriKind.Relative)),
         Request = request,
         Response = new InMemoryResponse(),
-        ServerErrors = new ServerErrorList { Log = Resolver.Resolve<ILogger>() }
+        ServerErrors = new ServerErrorList {Log = Resolver.Resolve<ILogger>()},
       };
-
+      context.PipelineData.Owin.SslLoadClientCertAsync = () =>
+        {
+          context.PipelineData.Owin.SslClientCertificate = ClientCertificate;
+          return Task.CompletedTask;
+        };
       try
       {
         using (new ContextScope(ambientContext))
@@ -98,10 +102,13 @@ namespace OpenRasta.Hosting.InMemory
           RaiseIncomingRequestProcessed(context);
         }
       }
+
       if (context.Response.Entity?.Stream.CanSeek == true)
         context.Response.Entity.Stream.Position = 0;
       return context.Response;
     }
+
+    public Task LoadCertAsync { get; set; }
 
     void IDisposable.Dispose()
     {
