@@ -1,14 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Security.Claims;
 using System.Security.Principal;
-using Microsoft.Owin;
+using LibOwin;
 using OpenRasta.Diagnostics;
 using OpenRasta.Pipeline;
 using OpenRasta.Web;
 
 namespace OpenRasta.Hosting.Katana
 {
-  public class OwinCommunicationContext : ICommunicationContext
+  class OwinCommunicationContext : ICommunicationContext
   {
     readonly IOwinContext _nativeContext;
 
@@ -47,7 +48,7 @@ namespace OpenRasta.Hosting.Katana
     public IPrincipal User
     {
       get => _nativeContext.Request.User;
-      set => _nativeContext.Request.User = value;
+      set => _nativeContext.Request.User = value is ClaimsPrincipal claim ? claim : new ClaimsPrincipal(value);
     }
   }
 }

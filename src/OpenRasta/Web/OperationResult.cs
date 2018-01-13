@@ -43,20 +43,20 @@ namespace OpenRasta.Web
     public void Execute(ICommunicationContext context)
     {
       context.Response.StatusCode = StatusCode;
-      if (RedirectLocation?.IsAbsoluteUri == true)
+      switch (RedirectLocation?.IsAbsoluteUri)
       {
-        context.Response.Headers["Location"] = RedirectLocation.AbsoluteUri;
-      }
-      else if (RedirectLocation?.IsAbsoluteUri == false && RedirectLocation.ToString().StartsWith("/"))
-      {
-        var locationWithoutPrecedingSlash = RedirectLocation.ToString().Substring(1);
-        context.Response.Headers["Location"] = new Uri(
-          context.ApplicationBaseUri,
-          new Uri(locationWithoutPrecedingSlash,UriKind.Relative)).AbsoluteUri;
-      }
-      else if (RedirectLocation?.IsAbsoluteUri == false && RedirectLocation.ToString().StartsWith("/") == false)
-      {
-        context.Response.Headers["Location"] = new Uri(context.Request.Uri, RedirectLocation).AbsoluteUri;
+        case true:
+          context.Response.Headers["Location"] = RedirectLocation.AbsoluteUri;
+          break;
+        case false when RedirectLocation.ToString().StartsWith("/"):
+          var locationWithoutPrecedingSlash = RedirectLocation.ToString().Substring(1);
+          context.Response.Headers["Location"] = new Uri(
+            context.ApplicationBaseUri,
+            new Uri(locationWithoutPrecedingSlash,UriKind.Relative)).AbsoluteUri;
+          break;
+        case false when RedirectLocation.ToString().StartsWith("/") == false:
+          context.Response.Headers["Location"] = new Uri(context.Request.Uri, RedirectLocation).AbsoluteUri;
+          break;
       }
 
 

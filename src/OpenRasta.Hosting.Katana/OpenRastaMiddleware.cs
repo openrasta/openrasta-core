@@ -1,14 +1,28 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Owin;
+using LibOwin;
 using OpenRasta.Configuration;
 using OpenRasta.Diagnostics;
 using OpenRasta.DI;
 
 namespace OpenRasta.Hosting.Katana
 {
-  public class OpenRastaMiddleware : OwinMiddleware
+  class OwinMiddleware
+  {
+    public OwinMiddleware Next { get; }
+
+    protected OwinMiddleware(OwinMiddleware next)
+    {
+      Next = next;
+    }
+      
+    public virtual Task Invoke(IOwinContext owinContext)
+    {
+      return Next.Invoke(owinContext);
+    }
+  }
+  class OpenRastaMiddleware : OwinMiddleware
   {
     static readonly object SyncRoot = new object();
     HostManager _hostManager;
