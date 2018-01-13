@@ -6,43 +6,30 @@ namespace OpenRasta.Collections
 {
   public abstract class DictionaryBase<TKey, TValue> : IDictionary<TKey, TValue>, IDictionary
   {
-    readonly IDictionary<TKey, TValue> _baseDictionary;
+    protected readonly IDictionary<TKey, TValue> BaseDictionary;
 
     protected DictionaryBase(IDictionary<TKey, TValue> baseDictionary = null)
     {
-      _baseDictionary = baseDictionary ?? new Dictionary<TKey, TValue>();
+      BaseDictionary = baseDictionary ?? new Dictionary<TKey, TValue>();
     }
 
     protected DictionaryBase(IEqualityComparer<TKey> comparer)
     {
-      _baseDictionary = new Dictionary<TKey, TValue>(comparer);
+      BaseDictionary = new Dictionary<TKey, TValue>(comparer);
     }
 
-    public int Count => _baseDictionary.Count;
 
-    public bool IsReadOnly => ((IDictionary) _baseDictionary).IsReadOnly;
+    bool IDictionary.IsFixedSize => ((IDictionary) BaseDictionary).IsFixedSize;
 
-    public ICollection<TKey> Keys => _baseDictionary.Keys;
+    bool ICollection<KeyValuePair<TKey, TValue>>.IsReadOnly => BaseDictionary.IsReadOnly;
 
-    public ICollection<TValue> Values => _baseDictionary.Values;
+    bool ICollection.IsSynchronized => ((ICollection) BaseDictionary).IsSynchronized;
 
-    bool IDictionary.IsFixedSize => ((IDictionary) _baseDictionary).IsFixedSize;
+    ICollection IDictionary.Keys => ((IDictionary) BaseDictionary).Keys;
 
-    bool ICollection<KeyValuePair<TKey, TValue>>.IsReadOnly => _baseDictionary.IsReadOnly;
+    object ICollection.SyncRoot => ((ICollection) BaseDictionary).SyncRoot;
 
-    bool ICollection.IsSynchronized => ((ICollection) _baseDictionary).IsSynchronized;
-
-    ICollection IDictionary.Keys => ((IDictionary) _baseDictionary).Keys;
-
-    object ICollection.SyncRoot => ((ICollection) _baseDictionary).SyncRoot;
-
-    ICollection IDictionary.Values => ((IDictionary) _baseDictionary).Values;
-
-    public virtual TValue this[TKey key]
-    {
-      get => _baseDictionary[key];
-      set => _baseDictionary[key] = value;
-    }
+    ICollection IDictionary.Values => ((IDictionary) BaseDictionary).Values;
 
     object IDictionary.this[object key]
     {
@@ -52,31 +39,27 @@ namespace OpenRasta.Collections
 
     void ICollection.CopyTo(Array array, int index)
     {
-      ((ICollection) _baseDictionary).CopyTo(array, index);
+      ((ICollection) BaseDictionary).CopyTo(array, index);
     }
 
-    public virtual void Clear()
-    {
-      _baseDictionary.Clear();
-    }
 
     void ICollection<KeyValuePair<TKey, TValue>>.Add(KeyValuePair<TKey, TValue> item)
     {
       Add(item.Key, item.Value);
     }
 
-    bool ICollection<KeyValuePair<TKey, TValue>>.Contains(KeyValuePair<TKey, TValue> item) => _baseDictionary.Contains(item);
+    bool ICollection<KeyValuePair<TKey, TValue>>.Contains(KeyValuePair<TKey, TValue> item) => BaseDictionary.Contains(item);
 
     void ICollection<KeyValuePair<TKey, TValue>>.CopyTo(KeyValuePair<TKey, TValue>[] array, int arrayIndex)
     {
-      _baseDictionary.CopyTo(array, arrayIndex);
+      BaseDictionary.CopyTo(array, arrayIndex);
     }
 
     bool ICollection<KeyValuePair<TKey, TValue>>.Remove(KeyValuePair<TKey, TValue> item)
     {
-      if (_baseDictionary.ContainsKey(item.Key) &&
-          (ReferenceEquals(item.Value, _baseDictionary[item.Key]) ||
-           item.Value.Equals(_baseDictionary[item.Key])))
+      if (BaseDictionary.ContainsKey(item.Key) &&
+          (ReferenceEquals(item.Value, BaseDictionary[item.Key]) ||
+           item.Value.Equals(BaseDictionary[item.Key])))
         return Remove(item.Key);
       return false;
     }
@@ -88,12 +71,12 @@ namespace OpenRasta.Collections
 
     bool IDictionary.Contains(object key)
     {
-      return ((IDictionary) _baseDictionary).Contains(key);
+      return ((IDictionary) BaseDictionary).Contains(key);
     }
 
     IDictionaryEnumerator IDictionary.GetEnumerator()
     {
-      return ((IDictionary) _baseDictionary).GetEnumerator();
+      return ((IDictionary) BaseDictionary).GetEnumerator();
     }
 
     void IDictionary.Remove(object key)
@@ -101,34 +84,65 @@ namespace OpenRasta.Collections
       Remove((TKey) key);
     }
 
-    public virtual void Add(TKey key, TValue value)
-    {
-      _baseDictionary.Add(key, value);
-    }
-
-    public bool ContainsKey(TKey key)
-    {
-      return _baseDictionary.ContainsKey(key);
-    }
-
-    public virtual bool Remove(TKey key)
-    {
-      return _baseDictionary.Remove(key);
-    }
-
-    public bool TryGetValue(TKey key, out TValue value)
-    {
-      return _baseDictionary.TryGetValue(key, out value);
-    }
 
     IEnumerator IEnumerable.GetEnumerator()
     {
-      return ((IEnumerable) _baseDictionary).GetEnumerator();
+      return ((IEnumerable) BaseDictionary).GetEnumerator();
     }
 
     IEnumerator<KeyValuePair<TKey, TValue>> IEnumerable<KeyValuePair<TKey, TValue>>.GetEnumerator()
     {
-      return _baseDictionary.GetEnumerator();
+      return BaseDictionary.GetEnumerator();
+    }
+    
+    
+    public virtual int Count => BaseDictionary.Count;
+
+    public bool IsReadOnly => ((IDictionary) BaseDictionary).IsReadOnly;
+
+    public virtual ICollection<TKey> Keys => BaseDictionary.Keys;
+
+    public virtual ICollection<TValue> Values => BaseDictionary.Values;
+    
+    public virtual void Add(TKey key, TValue value)
+    {
+      BaseDictionary.Add(key, value);
+    }
+
+    public virtual bool ContainsKey(TKey key)
+    {
+      return BaseDictionary.ContainsKey(key);
+    }
+
+    public virtual bool Remove(TKey key)
+    {
+      return BaseDictionary.Remove(key);
+    }
+
+    public virtual bool TryGetValue(TKey key, out TValue value)
+    {
+      return BaseDictionary.TryGetValue(key, out value);
+    }
+    
+    public virtual void Clear()
+    {
+      BaseDictionary.Clear();
+    }
+    
+    public virtual TValue this[TKey key]
+    {
+      get => CompatibilityThisGetter(key);
+      set => CompatibilityThisSetter(key, value);
+    }
+
+    protected virtual TValue CompatibilityThisSetter(TKey key, TValue value)
+    {
+      return BaseDictionary[key] = value;
+    }
+
+    protected virtual TValue CompatibilityThisGetter(TKey key)
+    {
+      return BaseDictionary[key];
     }
   }
 }
