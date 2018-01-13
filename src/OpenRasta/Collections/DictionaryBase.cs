@@ -135,9 +135,9 @@ namespace OpenRasta.Collections
       set => CompatibilityThisSetter(key, value);
     }
 
-    protected virtual TValue CompatibilityThisSetter(TKey key, TValue value)
+    protected virtual void CompatibilityThisSetter(TKey key, TValue value)
     {
-      return BaseDictionary[key] = value;
+      BaseDictionary[key] = value;
     }
 
     protected virtual TValue CompatibilityThisGetter(TKey key)

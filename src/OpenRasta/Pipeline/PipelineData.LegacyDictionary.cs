@@ -10,8 +10,8 @@ namespace OpenRasta.Pipeline
 
     public new object this[object key]
     {
-      get => LegacyKeys.TryGetValue(key, out var val) ? val : null;
-      set => LegacyKeys[key] = value;
+      get => TryGetValue(key, out var val) ? val : null;
+      set => CompatibilityThisSetter(key, value);
     }
 
     public override void Add(object key, object value)
@@ -52,9 +52,12 @@ namespace OpenRasta.Pipeline
       return key is string keyString ? _env[keyString] : base.CompatibilityThisGetter(key);
     }
 
-    protected override object CompatibilityThisSetter(object key, object value)
+    protected override void CompatibilityThisSetter(object key, object value)
     {
-      return key is string keyString ? _env[keyString] : base.CompatibilityThisSetter(key, value);
+      if (key is string keyString)
+        _env[keyString] = value;
+      else
+        BaseDictionary[key] = value;
     }
   }
 }
