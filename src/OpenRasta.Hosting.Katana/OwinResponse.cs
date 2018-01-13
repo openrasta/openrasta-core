@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.Owin;
+using LibOwin;
+
 using OpenRasta.DI;
 using OpenRasta.Web;
 
 namespace OpenRasta.Hosting.Katana
 {
-  public class OwinResponse : IResponse
+  class OwinResponse : IResponse
   {
     public OwinResponse(IOwinContext context)
     {

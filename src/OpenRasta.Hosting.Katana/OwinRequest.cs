@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Globalization;
 using System.Linq;
-using Microsoft.Owin;
+using LibOwin;
 using OpenRasta.Web;
 
 namespace OpenRasta.Hosting.Katana
 {
-  public class OwinRequest : IRequest
+  class OwinRequest : IRequest
   {
     public OwinRequest(IOwinRequest ctx)
     {
