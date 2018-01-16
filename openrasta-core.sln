@@ -21,6 +21,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenRasta.Hosting.Katana", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenRasta.Codecs.Newtonsoft.Json", "src\OpenRasta.Codecs.Newtonsoft.Json\OpenRasta.Codecs.Newtonsoft.Json.csproj", "{1016D8C7-4F47-4335-8DF1-636EEBBF5A71}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenRasta.Hosting.AspNetCore", "src\OpenRasta.Hosting.AspNetCore\OpenRasta.Hosting.AspNetCore.csproj", "{D51FCC79-E112-4757-8E64-58D46D71F2FA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -47,6 +49,10 @@ Global
 		{1016D8C7-4F47-4335-8DF1-636EEBBF5A71}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1016D8C7-4F47-4335-8DF1-636EEBBF5A71}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1016D8C7-4F47-4335-8DF1-636EEBBF5A71}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D51FCC79-E112-4757-8E64-58D46D71F2FA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D51FCC79-E112-4757-8E64-58D46D71F2FA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D51FCC79-E112-4757-8E64-58D46D71F2FA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D51FCC79-E112-4757-8E64-58D46D71F2FA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

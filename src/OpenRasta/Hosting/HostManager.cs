@@ -38,12 +38,13 @@ namespace OpenRasta.Hosting
         Host.Start += HandleHostStart;
         _startDisposer = () => Host.Start -= HandleHostStart;
       }
+
       Host.IncomingRequestReceived += HandleHostIncomingRequestReceived;
       Host.IncomingRequestProcessed += HandleIncomingRequestProcessed;
       Host.Stop += HandleHostStop;
     }
 
-    private void HandleHostStop(object sender, EventArgs e)
+    void HandleHostStop(object sender, EventArgs e)
     {
       Dispose();
     }
@@ -79,6 +80,7 @@ namespace OpenRasta.Hosting
           _registrations.Remove(host);
         }
       }
+
       managerToDispose?.Dispose();
     }
 
@@ -218,7 +220,7 @@ namespace OpenRasta.Hosting
       var task = CallWithDependencyResolver(async () =>
       {
         e.Context.PipelineData[Keys.Request.ResolverRequestScope] = Resolver.CreateRequestScope();
-        
+
         // register the required dependency in the web context
         var context = e.Context;
         SetupCommunicationContext(context);

@@ -1,4 +1,5 @@
-﻿using System.Net.Http;
+﻿using System;
+using System.Net.Http;
 using System.Net.Http.Headers;
 using Microsoft.Owin.Testing;
 using OpenRasta.Hosting.Katana;
@@ -8,13 +9,14 @@ using Xunit;
 namespace Tests.Hosting.Owin
 {
   // ReSharper disable once InconsistentNaming
-  public class hosting_on_IAppBuilder
+  public class hosting_on_IAppBuilder : IDisposable
   {
     readonly HttpClient client;
+    TestServer server;
 
     public hosting_on_IAppBuilder()
     {
-      var server = TestServer.Create(app => app.UseOpenRasta(new TaskApi()));
+      server = TestServer.Create(app => app.UseOpenRasta(new TaskApi()));
       client = server.HttpClient;
       client.DefaultRequestHeaders.Accept.Add(MediaTypeWithQualityHeaderValue.Parse("application/json"));
     }
@@ -24,6 +26,11 @@ namespace Tests.Hosting.Owin
     {
       var response = await client.GetAsync("/tasks");
       response.EnsureSuccessStatusCode();
+    }
+
+    public void Dispose()
+    {
+      server?.Dispose();
     }
   }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using OpenRasta.Configuration;
 using OpenRasta.DI;
@@ -10,10 +11,13 @@ namespace OpenRasta.Hosting.Katana
   using MidFunc = Func<AppFunc, AppFunc>;
   public static class AspNetCoreBuildFuncExtensions
   {
-    public static Action<MidFunc> UseOpenRasta(this Action<MidFunc> builder, IConfigurationSource configurationSource,
-      IDependencyResolverAccessor dependencyResolver = null)
+    public static Action<MidFunc> UseOpenRasta(
+      this Action<MidFunc> builder,
+      IConfigurationSource configurationSource,
+      IDependencyResolverAccessor dependencyResolver = null,
+      CancellationToken onAppDisposing = default(CancellationToken))
     {
-      builder(new OpenRastaMiddleware(configurationSource, dependencyResolver).ToMidFunc());
+      builder(new OpenRastaMiddleware(configurationSource, dependencyResolver, onAppDisposing).ToMidFunc());
       return builder;
     }
   }
@@ -21,9 +25,10 @@ namespace OpenRasta.Hosting.Katana
   public static class OwinDelegates
   {
     public static MidFunc CreateMiddleware(IConfigurationSource configurationSource,
-      IDependencyResolverAccessor dependencyResolver = null)
+      IDependencyResolverAccessor dependencyResolver = null,
+      CancellationToken onAppDisposing = default(CancellationToken))
     {
-      return new OpenRastaMiddleware(configurationSource, dependencyResolver).ToMidFunc();
+      return new OpenRastaMiddleware(configurationSource, dependencyResolver, onAppDisposing).ToMidFunc();
     }
   }
 }
