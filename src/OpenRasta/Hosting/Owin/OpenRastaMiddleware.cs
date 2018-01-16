@@ -31,8 +31,8 @@ namespace OpenRasta.Hosting.Katana
     {
       return next =>
       {
-        Compose(new AppFuncMiddleware(next));
-        return env => Invoke(new OwinContext(env));
+        var composed = Compose(new AppFuncMiddleware(next));
+        return env => composed.Invoke(new OwinContext(env));
       };
     }
   }
