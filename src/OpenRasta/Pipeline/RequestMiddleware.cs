@@ -7,9 +7,12 @@ namespace OpenRasta.Pipeline
 {
   public class RequestMiddleware : AbstractContributorMiddleware
   {
-    public RequestMiddleware(ContributorCall call)
+    readonly bool _catchExceptions;
+
+    public RequestMiddleware(ContributorCall call, bool catchExceptions = true)
       : base(call)
     {
+      _catchExceptions = catchExceptions;
     }
 
     public override async Task Invoke(ICommunicationContext env)
@@ -25,15 +28,14 @@ namespace OpenRasta.Pipeline
       try
       {
         env.PipelineData.PipelineStage.CurrentState
-            = await ContributorInvoke(env);
+          = await ContributorInvoke(env);
       }
-      catch (Exception e)
+      catch (Exception e) when (_catchExceptions)
       {
         env.Abort(e);
       }
+
       await Next.Invoke(env);
     }
   }
 }
-
-

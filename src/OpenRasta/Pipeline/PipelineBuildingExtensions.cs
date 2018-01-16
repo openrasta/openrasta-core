@@ -18,7 +18,7 @@ namespace OpenRasta.Pipeline
       this IEnumerable<ContributorCall> callGraph,
       StartupProperties startupProperties = null)
     {
-      Func<ContributorCall, IPipelineMiddlewareFactory> converter = CreatePreExecuteMiddleware;
+      Func<ContributorCall,StartupProperties, IPipelineMiddlewareFactory> converter = CreatePreExecuteMiddleware;
 
 
       foreach (var contributorCall in callGraph)
@@ -33,7 +33,7 @@ namespace OpenRasta.Pipeline
         if (contributorCall.Target is KnownStages.IUriMatching)
           converter = CreateRequestMiddleware;
         
-        var middleware = converter(contributorCall);
+        var middleware = converter(contributorCall, startupProperties);
         yield return (middleware, contributorCall);
         if (startupProperties?.OpenRasta.Pipeline.ContributorTrailers != null)
           foreach (var followups in startupProperties.OpenRasta.Pipeline.ContributorTrailers
@@ -44,19 +44,19 @@ namespace OpenRasta.Pipeline
       }
     }
 
-    static IPipelineMiddlewareFactory CreatePreExecuteMiddleware(ContributorCall contrib)
+    static IPipelineMiddlewareFactory CreatePreExecuteMiddleware(ContributorCall contrib, StartupProperties props)
     {
       return new PreExecuteMiddleware(contrib);
     }
 
-    static IPipelineMiddlewareFactory CreateResponseMiddleware(ContributorCall contrib)
+    static IPipelineMiddlewareFactory CreateResponseMiddleware(ContributorCall contrib, StartupProperties props)
     {
       return new ResponseMiddleware(contrib);
     }
 
-    static IPipelineMiddlewareFactory CreateRequestMiddleware(ContributorCall contrib)
+    static IPipelineMiddlewareFactory CreateRequestMiddleware(ContributorCall contrib, StartupProperties props)
     {
-      return new RequestMiddleware(contrib);
+      return new RequestMiddleware(contrib, props.OpenRasta.Errors.HandleAllExceptions);
     }
   }
 }
