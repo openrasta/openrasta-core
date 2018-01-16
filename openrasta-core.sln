@@ -19,6 +19,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "src\Tests\Tests.cs
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenRasta.Hosting.Katana", "src\OpenRasta.Hosting.Katana\OpenRasta.Hosting.Katana.csproj", "{CE4A43AD-FCC6-4BC4-947C-635FEB91CA36}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenRasta.Codecs.Newtonsoft.Json", "src\OpenRasta.Codecs.Newtonsoft.Json\OpenRasta.Codecs.Newtonsoft.Json.csproj", "{1016D8C7-4F47-4335-8DF1-636EEBBF5A71}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -41,6 +43,10 @@ Global
 		{CE4A43AD-FCC6-4BC4-947C-635FEB91CA36}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CE4A43AD-FCC6-4BC4-947C-635FEB91CA36}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CE4A43AD-FCC6-4BC4-947C-635FEB91CA36}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1016D8C7-4F47-4335-8DF1-636EEBBF5A71}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1016D8C7-4F47-4335-8DF1-636EEBBF5A71}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1016D8C7-4F47-4335-8DF1-636EEBBF5A71}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1016D8C7-4F47-4335-8DF1-636EEBBF5A71}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
