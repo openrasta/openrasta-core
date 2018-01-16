@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <Authors>Sebastien Lambla</Authors>
+    <PackageProjectUrl>https://github.com/openrasta/openrasta-core</PackageProjectUrl>
+    <PackageLicenseUrl>http://openrasta.org/</PackageLicenseUrl>
+    <PackageIconUrl>http://openrasta.org/openRastaLogo-32x32.png</PackageIconUrl>
+    <Description>Allows using Newtonsoft.Json to transcode JSON</Description>
+    <PackageTags>OpenRasta REST HTTP XML JSON API Newtonsoft</PackageTags>
+    <Version>2.6.0</Version>
+    <Copyright>Copyright 20070-2017 Videndel</Copyright>
+    <PackageId>OpenRasta.Codecs.Newtonsoft.Json</PackageId>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <Company>Videndel</Company>
+    <InformationalVersion>2.6.0</InformationalVersion>
+    <FileVersion>2.6.0</FileVersion>
+    <AssemblyVersion>2.6.0</AssemblyVersion>
+    <TargetFrameworks>netstandard2.0;net461</TargetFrameworks>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\OpenRasta\OpenRasta.csproj">
+      <Project>{3D251617-2581-4D9C-A639-5CFB0BB09420}</Project>
+      <Name>OpenRasta</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
+  </ItemGroup>
+</Project>
