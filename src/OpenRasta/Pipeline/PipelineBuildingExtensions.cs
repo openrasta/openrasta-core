@@ -35,11 +35,13 @@ namespace OpenRasta.Pipeline
         
         var middleware = converter(contributorCall, startupProperties);
         yield return (middleware, contributorCall);
-        if (startupProperties?.OpenRasta.Pipeline.ContributorTrailers != null)
-          foreach (var followups in startupProperties.OpenRasta.Pipeline.ContributorTrailers
-            .Where(pair => pair.Key(contributorCall))
-            .Select(pair => pair.Value))
-            yield return (followups(), null);
+        
+        if (startupProperties?.OpenRasta.Pipeline.ContributorTrailers == null) continue;
+        
+        foreach (var followups in startupProperties.OpenRasta.Pipeline.ContributorTrailers
+          .Where(pair => pair.Key(contributorCall))
+          .Select(pair => pair.Value))
+          yield return (followups(), null);
 
       }
     }
@@ -56,7 +58,7 @@ namespace OpenRasta.Pipeline
 
     static IPipelineMiddlewareFactory CreateRequestMiddleware(ContributorCall contrib, StartupProperties props)
     {
-      return new RequestMiddleware(contrib, props.OpenRasta.Errors.HandleAllExceptions);
+      return new RequestMiddleware(contrib, props?.OpenRasta.Errors.HandleAllExceptions ?? true);
     }
   }
 }
