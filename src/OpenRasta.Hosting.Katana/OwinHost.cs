@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Threading.Tasks;
+using LibOwin;
 using OpenRasta.Configuration;
 using OpenRasta.Diagnostics;
 using OpenRasta.DI;
@@ -9,15 +11,12 @@ namespace OpenRasta.Hosting.Katana
 {
   public class OwinHost : IHost
   {
-    public OwinHost(IConfigurationSource configuration)
-    {
-      ConfigurationSource = configuration;
-    }
-
-    public OwinHost(IConfigurationSource configuration, IDependencyResolverAccessor resolverAccesor)
+    public OwinHost(IConfigurationSource configuration,
+      IDependencyResolverAccessor resolverAccesor = null, string applicationVirtualPath = "/")
     {
       ConfigurationSource = configuration;
       ResolverAccessor = resolverAccesor;
+      ApplicationVirtualPath = applicationVirtualPath;
     }
 
     public IConfigurationSource ConfigurationSource { get; set; }
@@ -26,8 +25,9 @@ namespace OpenRasta.Hosting.Katana
 
     public bool ConfigureRootDependencies(IDependencyResolver resolver)
     {
-      resolver.AddDependency<IContextStore, OwinContextStore>(DependencyLifetime.Singleton);
-      resolver.AddDependency<ICommunicationContext, OwinCommunicationContext>(DependencyLifetime.PerRequest);
+      if (ConfigurationSource != null)
+        resolver.AddDependencyInstance(ConfigurationSource);
+      resolver.AddDependency<IContextStore, AmbientContextStore>(DependencyLifetime.Singleton);
       resolver.AddDependency<ILogger<OwinLogSource>, TraceSourceLogger<OwinLogSource>>(
         DependencyLifetime.Transient);
       return true;
@@ -35,20 +35,43 @@ namespace OpenRasta.Hosting.Katana
 
     public bool ConfigureLeafDependencies(IDependencyResolver resolver)
     {
-      if (ConfigurationSource != null)
-        resolver.AddDependencyInstance(ConfigurationSource);
       return true;
     }
 
-    public string ApplicationVirtualPath { get; private set; }
+    public string ApplicationVirtualPath { get; }
     public IDependencyResolverAccessor ResolverAccessor { get; }
     public event EventHandler Start;
     public event EventHandler Stop;
     public event EventHandler<IncomingRequestReceivedEventArgs> IncomingRequestReceived;
 
-    internal virtual void RaiseIncomingRequestReceived(ICommunicationContext context)
+    internal async Task<ICommunicationContext> ProcessRequestAsync(IOwinContext owinContext)
     {
-      IncomingRequestReceived.Raise(this, new IncomingRequestReceivedEventArgs(context));
+      var commContext = new OwinCommunicationContext(owinContext, TraceSourceLogger.Instance);
+      
+      var ambientContext = new AmbientContext();
+
+      try
+      {
+        using (new ContextScope(ambientContext))
+        {
+          await RaiseIncomingRequestReceived(commContext);
+        }
+      }
+      finally
+      {
+        using (new ContextScope(ambientContext))
+        {
+          RaiseIncomingRequestProcessed(commContext);
+        }
+      }
+      return commContext;
+    }
+
+    internal virtual Task RaiseIncomingRequestReceived(ICommunicationContext context)
+    {
+      var request = new IncomingRequestReceivedEventArgs(context);
+      IncomingRequestReceived.Raise(this, request);
+      return request.RunTask;
     }
 
     internal void RaiseIncomingRequestProcessed(ICommunicationContext context)

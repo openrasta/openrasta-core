@@ -6,12 +6,12 @@ using OpenRasta.Configuration;
 using OpenRasta.Diagnostics;
 using OpenRasta.DI;
 using OpenRasta.Web;
-using AppFunc = System.Func<System.Collections.Generic.IDictionary<string,object>, System.Threading.Tasks.Task>;
+using AppFunc = System.Func<System.Collections.Generic.IDictionary<string, object>, System.Threading.Tasks.Task>;
 
 namespace OpenRasta.Hosting.Katana
 {
-  using MidFunc = Func<AppFunc,AppFunc>;
-  
+  using MidFunc = Func<AppFunc, AppFunc>;
+
   class OwinMiddleware
   {
     protected OwinMiddleware Next { get; set; }
@@ -21,7 +21,7 @@ namespace OpenRasta.Hosting.Katana
       Next = next;
       return this;
     }
-    
+
     public virtual Task Invoke(IOwinContext owinContext)
     {
       return Next?.Invoke(owinContext);
@@ -51,7 +51,7 @@ namespace OpenRasta.Hosting.Katana
       return _app(owinContext.Environment);
     }
   }
-  
+
   class OpenRastaMiddleware : OwinMiddleware
   {
     static readonly object SyncRoot = new object();
@@ -63,17 +63,17 @@ namespace OpenRasta.Hosting.Katana
       Host = new OwinHost(options, resolverAccesor);
     }
 
-    static ILogger<OwinLogSource> Log { get; set; }
     static OwinHost Host { get; set; }
 
     public override async Task Invoke(IOwinContext owinContext)
     {
       TryInitializeHosting();
 
-      var commContext = new OwinCommunicationContext(owinContext, Log);
+
+      ICommunicationContext commContext;
       try
       {
-        ProcessRequest(commContext);
+        commContext = await Host.ProcessRequestAsync(owinContext);
       }
       catch (Exception e)
       {
@@ -81,18 +81,15 @@ namespace OpenRasta.Hosting.Katana
         owinContext.Response.Write(e.ToString());
         return;
       }
-      if (commContext.OperationResult is OperationResult.NotFound notFound && notFound.Reason == NotFoundReason.NotMapped)
-        await Next.Invoke(owinContext);
-    }
 
-    void ProcessRequest(OwinCommunicationContext commContext)
-    {
-      lock (SyncRoot)
+      if (commContext != null &&
+          commContext.OperationResult is OperationResult.NotFound notFound &&
+          notFound.Reason == NotFoundReason.NotMapped)
       {
-        Host.RaiseIncomingRequestReceived(commContext);
-        Host.RaiseIncomingRequestProcessed(commContext);
+        await Next.Invoke(owinContext);
       }
     }
+
 
 
     void TryInitializeHosting()
