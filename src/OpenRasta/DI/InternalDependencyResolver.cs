@@ -10,14 +10,14 @@ namespace OpenRasta.DI
   public class InternalDependencyResolver : DependencyResolverCore, IDependencyResolver, IRequestScopedResolver
   {
     readonly Dictionary<DependencyLifetime, DependencyLifetimeManager> _lifetimeManagers;
-    private readonly GlobalRegistrations _globalRegistrations;
-    private const string CTX_REGISTRATIONS = "openrasta.di.requestRegistrations";
+    readonly GlobalRegistrations _globalRegistrations;
+    const string CTX_REGISTRATIONS = "openrasta.di.requestRegistrations";
 
 
-    private IContextStore _cached;
-    private bool _changesSinceStoreLookup = true;
+    IContextStore _cached;
+    bool _changesSinceStoreLookup = true;
 
-    private IContextStore ContextStore
+    IContextStore ContextStore
     {
       get
       {
@@ -32,7 +32,7 @@ namespace OpenRasta.DI
       }
     }
 
-    private IDependencyRegistrationCollection Registrations
+    IDependencyRegistrationCollection Registrations
     {
       get
       {
