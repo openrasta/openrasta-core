@@ -5,37 +5,60 @@ using LibOwin;
 using OpenRasta.Configuration;
 using OpenRasta.Diagnostics;
 using OpenRasta.DI;
+using OpenRasta.Web;
+using AppFunc = System.Func<System.Collections.Generic.IDictionary<string,object>, System.Threading.Tasks.Task>;
 
 namespace OpenRasta.Hosting.Katana
 {
+  using MidFunc = Func<AppFunc,AppFunc>;
+  
   class OwinMiddleware
   {
-    public OwinMiddleware Next { get; }
+    protected OwinMiddleware Next { get; set; }
 
-    protected OwinMiddleware(OwinMiddleware next)
+    protected virtual OwinMiddleware Compose(OwinMiddleware next = null)
     {
       Next = next;
+      return this;
     }
-      
+    
     public virtual Task Invoke(IOwinContext owinContext)
     {
-      return Next.Invoke(owinContext);
+      return Next?.Invoke(owinContext);
+    }
+
+    public MidFunc ToMidFunc()
+    {
+      return next =>
+      {
+        Compose(new AppFuncMiddleware(next));
+        return env => Invoke(new OwinContext(env));
+      };
     }
   }
+
+  class AppFuncMiddleware : OwinMiddleware
+  {
+    readonly AppFunc _app;
+
+    public AppFuncMiddleware(AppFunc app)
+    {
+      _app = app;
+    }
+
+    public override Task Invoke(IOwinContext owinContext)
+    {
+      return _app(owinContext.Environment);
+    }
+  }
+  
   class OpenRastaMiddleware : OwinMiddleware
   {
     static readonly object SyncRoot = new object();
     HostManager _hostManager;
 
-    public OpenRastaMiddleware(OwinMiddleware next, IConfigurationSource options)
-      : base(next)
-    {
-      Host = new OwinHost(options);
-    }
-
-    public OpenRastaMiddleware(OwinMiddleware next, IConfigurationSource options,
-      IDependencyResolverAccessor resolverAccesor)
-      : base(next)
+    public OpenRastaMiddleware(IConfigurationSource options,
+      IDependencyResolverAccessor resolverAccesor = null)
     {
       Host = new OwinHost(options, resolverAccesor);
     }
@@ -47,31 +70,28 @@ namespace OpenRasta.Hosting.Katana
     {
       TryInitializeHosting();
 
+      var commContext = new OwinCommunicationContext(owinContext, Log);
       try
       {
-        owinContext = ProcessRequest(owinContext);
+        ProcessRequest(commContext);
       }
       catch (Exception e)
       {
         owinContext.Response.StatusCode = 500;
         owinContext.Response.Write(e.ToString());
+        return;
       }
-
-      await Next.Invoke(owinContext);
+      if (commContext.OperationResult is OperationResult.NotFound notFound && notFound.Reason == NotFoundReason.NotMapped)
+        await Next.Invoke(owinContext);
     }
 
-    IOwinContext ProcessRequest(IOwinContext owinContext)
+    void ProcessRequest(OwinCommunicationContext commContext)
     {
-      var context = new OwinCommunicationContext(owinContext, Log);
-
       lock (SyncRoot)
       {
-        Host.RaiseIncomingRequestReceived(context);
-
-        Host.RaiseIncomingRequestProcessed(context);
+        Host.RaiseIncomingRequestReceived(commContext);
+        Host.RaiseIncomingRequestProcessed(commContext);
       }
-
-      return owinContext;
     }
 
 
