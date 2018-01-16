@@ -23,7 +23,7 @@ namespace OpenRasta.Hosting.InMemory
 
     public InMemoryHost(Action configuration, IDependencyResolver dependencyResolver = null,
       StartupProperties startup = null)
-      : this(new DelegateConfigurationSource(configuration), dependencyResolver)
+      : this(new DelegateConfigurationSource(configuration), dependencyResolver, startup)
     {
     }
 
@@ -84,10 +84,10 @@ namespace OpenRasta.Hosting.InMemory
         ServerErrors = new ServerErrorList {Log = Resolver.Resolve<ILogger>()},
       };
       context.PipelineData.Owin.SslLoadClientCertAsync = () =>
-        {
-          context.PipelineData.Owin.SslClientCertificate = ClientCertificate;
-          return Task.CompletedTask;
-        };
+      {
+        context.PipelineData.Owin.SslClientCertificate = ClientCertificate;
+        return Task.CompletedTask;
+      };
       try
       {
         using (new ContextScope(ambientContext))
@@ -126,7 +126,7 @@ namespace OpenRasta.Hosting.InMemory
       CheckNotDisposed();
       resolver.AddDependencyInstance<IContextStore>(new InMemoryContextStore());
       if (_configuration != null)
-        Resolver.AddDependencyInstance<IConfigurationSource>(_configuration, DependencyLifetime.Singleton);
+        Resolver.AddDependencyInstance(_configuration);
       return true;
     }
 
@@ -157,14 +157,14 @@ namespace OpenRasta.Hosting.InMemory
       remove => _start -= value;
     }
 
-    protected internal virtual void RaiseStart(StartupProperties properties)
+    void RaiseStart(StartupProperties properties)
     {
       _legacyStart.Raise(this);
       var start = _start;
       start?.Invoke(this, properties);
     }
 
-    protected virtual void RaiseStop(StartupProperties startupProperties)
+    void RaiseStop(StartupProperties startupProperties)
     {
       Stop.Raise(this, EventArgs.Empty);
     }
