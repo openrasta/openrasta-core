@@ -7,7 +7,7 @@ namespace OpenRasta.Hosting
   {
     public object this[string key]
     {
-      get => AmbientContext.Current[key];
+      get => AmbientContext.Current?[key];
       set => AmbientContext.Current[key] = value;
     }
 
