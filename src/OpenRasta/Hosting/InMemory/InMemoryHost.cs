@@ -88,16 +88,13 @@ namespace OpenRasta.Hosting.InMemory
         context.PipelineData.Owin.SslClientCertificate = ClientCertificate;
         return Task.CompletedTask;
       };
-      try
+      using (new ContextScope(ambientContext))
       {
-        using (new ContextScope(ambientContext))
+        try
         {
           await RaiseIncomingRequestReceived(context);
         }
-      }
-      finally
-      {
-        using (new ContextScope(ambientContext))
+        finally
         {
           RaiseIncomingRequestProcessed(context);
         }
@@ -124,7 +121,7 @@ namespace OpenRasta.Hosting.InMemory
     bool IHost.ConfigureRootDependencies(IDependencyResolver resolver)
     {
       CheckNotDisposed();
-      resolver.AddDependencyInstance<IContextStore>(new InMemoryContextStore());
+      resolver.AddDependency<IContextStore, AmbientContextStore>();
       if (_configuration != null)
         Resolver.AddDependencyInstance(_configuration);
       return true;
