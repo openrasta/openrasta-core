@@ -20,7 +20,6 @@ namespace OpenRasta.Hosting.Katana
       Request = new OwinRequest(nativeContext.Request);
       Response = new OwinResponse(nativeContext);
       ServerErrors = new ServerErrorList {Log = logger};
-      User = nativeContext.Request.User;
     }
 
     public Uri ApplicationBaseUri
