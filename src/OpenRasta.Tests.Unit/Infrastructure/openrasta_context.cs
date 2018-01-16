@@ -6,12 +6,14 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using NUnit.Framework;
 using OpenRasta.Codecs;
 using OpenRasta.Collections;
 using OpenRasta.Concordia;
 using OpenRasta.Diagnostics;
 using OpenRasta.DI;
 using OpenRasta.Handlers;
+using OpenRasta.Hosting;
 using OpenRasta.Hosting.InMemory;
 using OpenRasta.Pipeline;
 using OpenRasta.Security;
@@ -26,40 +28,28 @@ namespace OpenRasta.Tests.Unit.Infrastructure
   {
     Dictionary<Type, Func<ICommunicationContext, Task<PipelineContinuation>>> _actions;
     InMemoryHost Host;
-    private IDisposable _requestScope;
+    IDisposable _requestScope;
 
-    public openrasta_context()
+    protected openrasta_context()
     {
       TypeSystem = TypeSystems.Default;
     }
 
-    public PipelineContinuation Result { get; set; }
+    protected PipelineContinuation Result { get; set; }
 
-    protected ICodecRepository Codecs
-    {
-      get { return Resolver.Resolve<ICodecRepository>(); }
-    }
+    protected ICodecRepository Codecs => Resolver.Resolve<ICodecRepository>();
 
     protected InMemoryCommunicationContext Context { get; private set; }
     protected bool IsContributorExecuted { get; set; }
     protected IPipeline Pipeline { get; private set; }
 
-    protected InMemoryRequest Request
-    {
-      get { return Context.Request as InMemoryRequest; }
-    }
+    protected InMemoryRequest Request => Context.Request as InMemoryRequest;
 
-    protected IDependencyResolver Resolver
-    {
-      get { return Host.Resolver; }
-    }
+    protected IDependencyResolver Resolver => Host.Resolver;
 
     protected ITypeSystem TypeSystem { get; set; }
 
-    protected IUriResolver UriResolver
-    {
-      get { return Resolver.Resolve<IUriResolver>(); }
-    }
+    protected IUriResolver UriResolver => Resolver.Resolve<IUriResolver>();
 
     public void given_dependency<TInterface>(TInterface instance)
     {
@@ -82,6 +72,7 @@ namespace OpenRasta.Tests.Unit.Infrastructure
     {
       UriResolver.Add(new UriRegistration(uri, typeof(T), uriName, CultureInfo.CurrentCulture));
     }
+
     public void given_uri_registration(object key, string uri, string uriName = null)
     {
       UriResolver.Add(new UriRegistration(uri, key, uriName, CultureInfo.CurrentCulture));
@@ -197,7 +188,7 @@ namespace OpenRasta.Tests.Unit.Infrastructure
       Context.Response.Entity.ContentType = new MediaType(contentType);
 
       Context.PipelineData.ResponseCodec =
-        CodecRegistration.FromResourceType(responseEntity == null ? typeof(object) : responseEntity.GetType(),
+        CodecRegistration.FromResourceType(responseEntity?.GetType() ?? typeof(object),
           codecType,
           TypeSystem,
           new MediaType(contentType),
@@ -220,9 +211,9 @@ namespace OpenRasta.Tests.Unit.Infrastructure
     }
 
 
-    public class InMemAuthenticationProvider : IAuthenticationProvider
+    class InMemAuthenticationProvider : IAuthenticationProvider
     {
-      public Dictionary<string, string> Passwords = new Dictionary<string, string>();
+      public readonly Dictionary<string, string> Passwords = new Dictionary<string, string>();
 
       public Credentials GetByUsername(string username)
       {
@@ -244,25 +235,46 @@ namespace OpenRasta.Tests.Unit.Infrastructure
 
     protected TestErrorCollector Errors { get; private set; }
 
-    protected override void SetUp()
+    [SetUp]
+    protected void setup()
     {
-      base.SetUp();
-      Host = new InMemoryHost();
+      Host = new InMemoryHost(startup: new StartupProperties
+      {
+        OpenRasta =
+        {
+          Errors =
+          {
+            HandleAllExceptions = false,
+            HandleCatastrophicExceptions = false
+          }
+        }
+      });
+
       Pipeline = null;
       _actions = new Dictionary<Type, Func<ICommunicationContext, Task<PipelineContinuation>>>();
       var manager = Host.HostManager;
+
       Resolver.AddDependencyInstance(typeof(IErrorCollector), Errors = new TestErrorCollector());
       Resolver.AddDependency<IPathManager, PathManager>();
+
+      if (AmbientContext.Current != null) throw new InvalidOperationException("FUCK ME");
+      AmbientContext.Current = new AmbientContext();
       _requestScope = Resolver.CreateRequestScope();
       manager.SetupCommunicationContext(Context = new InMemoryCommunicationContext());
-//      DependencyManager.SetResolver(Resolver);
-      
     }
 
-    protected override void TearDown()
+    [TearDown]
+    protected void cleanup()
     {
-        base.TearDown();
+      try
+      {
         _requestScope.Dispose();
+        Host.Close();
+      }
+      finally
+      {
+        AmbientContext.Current = null;
+      }
     }
 
     public class SinglePipeline<T> : IPipeline, IPipelineExecutionOrder, IPipelineExecutionOrderAnd
@@ -285,10 +297,7 @@ namespace OpenRasta.Tests.Unit.Infrastructure
         _actions = actions;
       }
 
-      public IPipelineExecutionOrder And
-      {
-        get { return this; }
-      }
+      public IPipelineExecutionOrder And => this;
 
       public IEnumerable<ContributorCall> CallGraph
       {
@@ -301,10 +310,7 @@ namespace OpenRasta.Tests.Unit.Infrastructure
 
       public PipelineData ContextData { get; private set; }
 
-      public IList<IPipelineContributor> Contributors
-      {
-        get { return _list; }
-      }
+      public IList<IPipelineContributor> Contributors => _list;
 
       public bool IsInitialized { get; private set; }
 
@@ -363,6 +369,7 @@ namespace OpenRasta.Tests.Unit.Infrastructure
       Context.PipelineData.ResourceKey = res.ResourceKey;
       Context.PipelineData.SelectedResource = res;
     }
+
     protected void given_context_applicationBase(string appBasePath)
     {
       Context.ApplicationBaseUri = new Uri(appBasePath, UriKind.Absolute);

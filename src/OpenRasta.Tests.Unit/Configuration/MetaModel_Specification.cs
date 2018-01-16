@@ -48,6 +48,7 @@ namespace Configuration_Specification
     {
       base.TearDown();
       DependencyManager.UnsetResolver();
+      if (DependencyManager.Current != null) throw new InvalidOperationException("FUCK");
     }
   }
 
