@@ -11,8 +11,10 @@ namespace OpenRasta.Hosting.Katana
 {
   public class OwinHost : IHost
   {
-    public OwinHost(IConfigurationSource configuration,
-      IDependencyResolverAccessor resolverAccesor = null, string applicationVirtualPath = "/")
+    public OwinHost(
+      IConfigurationSource configuration,
+      IDependencyResolverAccessor resolverAccesor = null,
+      string applicationVirtualPath = "/")
     {
       ConfigurationSource = configuration;
       ResolverAccessor = resolverAccesor;
@@ -82,6 +84,11 @@ namespace OpenRasta.Hosting.Katana
     internal virtual void RaiseStart()
     {
       Start.Raise(this);
+    }
+
+    public void RaiseStop()
+    {
+      Stop?.Raise(this);
     }
   }
 }

@@ -3,6 +3,10 @@
     <TargetFrameworks>netcoreapp2.0;net461</TargetFrameworks>
   </PropertyGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\OpenRasta.Hosting.AspNetCore\OpenRasta.Hosting.AspNetCore.csproj">
+      <Project>{2D3B6879-67CC-4AF9-B240-761D5E30CC03}</Project>
+      <Name>OpenRasta.Hosting.AspNetCore</Name>
+    </ProjectReference>
     <ProjectReference Include="..\OpenRasta.Codecs.Newtonsoft.Json\OpenRasta.Codecs.Newtonsoft.Json.csproj">
       <Project>{1016D8C7-4F47-4335-8DF1-636EEBBF5A71}</Project>
       <Name>OpenRasta.Codecs.Newtonsoft.Json</Name>
