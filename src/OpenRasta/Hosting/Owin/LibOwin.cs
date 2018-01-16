@@ -1513,7 +1513,7 @@ namespace LibOwin
     /// <summary>
     /// This wraps OWIN environment dictionary and provides strongly typed accessors.
     /// </summary>
-    partial interface IOwinContext
+    internal partial interface IOwinContext
     {
         /// <summary>
         /// Gets a wrapper exposing request specific properties.
