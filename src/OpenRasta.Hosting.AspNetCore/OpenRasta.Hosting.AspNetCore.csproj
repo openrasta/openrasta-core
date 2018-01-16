@@ -1,20 +1,27 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <Authors>Sebastien Lambla</Authors>
+    <PackageProjectUrl>https://github.com/openrasta/openrasta-core</PackageProjectUrl>
+    <PackageLicenseUrl>http://openrasta.org/</PackageLicenseUrl>
+    <PackageIconUrl>http://openrasta.org/openRastaLogo-32x32.png</PackageIconUrl>
+    <Description>Hosting of OpenRasta on asp.net Core</Description>
+    <PackageTags>OpenRasta REST HTTP XML JSON API</PackageTags>
+    <Version>2.6.0</Version>
+    <Copyright>Copyright 2007-2017</Copyright>
+    <PackageId>OpenRasta.Hosting.AspNetCore</PackageId>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <Company>Videndel</Company>
+    <InformationalVersion>2.6.0</InformationalVersion>
+    <FileVersion>2.6.0</FileVersion>
+    <AssemblyVersion>2.6.0</AssemblyVersion>
+    <TargetFrameworks>netstandard2.0</TargetFrameworks>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.AspNetCore.Hosting.Abstractions, Version=2.0.1.0, Culture=neutral, PublicKeyToken=adb9793829ddae60">
-      <HintPath>..\..\..\..\.nuget\packages\microsoft.aspnetcore.hosting.abstractions\2.0.1\lib\netstandard2.0\Microsoft.AspNetCore.Hosting.Abstractions.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.AspNetCore.Http.Abstractions, Version=2.0.1.0, Culture=neutral, PublicKeyToken=adb9793829ddae60">
-      <HintPath>..\..\..\..\.nuget\packages\microsoft.aspnetcore.http.abstractions\2.0.1\lib\netstandard2.0\Microsoft.AspNetCore.Http.Abstractions.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Owin" Version="2.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Hosting.Abstractions" Version="2.0.1" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\src\OpenRasta\OpenRasta.csproj">
+    <ProjectReference Include="..\OpenRasta\OpenRasta.csproj">
       <Project>{3D251617-2581-4D9C-A639-5CFB0BB09420}</Project>
       <Name>OpenRasta</Name>
     </ProjectReference>
