@@ -1,13 +1,18 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using OpenRasta.Configuration.MetaModel;
 using OpenRasta.DI.Internal;
 using OpenRasta.Hosting;
 using OpenRasta.Pipeline;
 
 namespace OpenRasta.DI
 {
-  public class InternalDependencyResolver : DependencyResolverCore, IDependencyResolver, IRequestScopedResolver
+  public class InternalDependencyResolver : 
+    DependencyResolverCore, 
+    IDependencyResolver, 
+    IRequestScopedResolver,
+    IModelDrivenDependencyRegistration
   {
     readonly Dictionary<DependencyLifetime, DependencyLifetimeManager> _lifetimeManagers;
     readonly GlobalRegistrations _globalRegistrations;
@@ -58,6 +63,7 @@ namespace OpenRasta.DI
         {DependencyLifetime.PerRequest, new PerRequestLifetimeManager(this)}
       };
       AddDependencyInstance(typeof(IDependencyResolver),this,DependencyLifetime.Singleton);
+      AddDependencyInstance(typeof(IModelDrivenDependencyRegistration),this,DependencyLifetime.Singleton);
     }
 
     protected override void AddDependencyCore(Type concreteType, DependencyLifetime lifetime)
@@ -141,6 +147,17 @@ namespace OpenRasta.DI
         requestContextRegistrations.Dispose();
         ContextStore[CTX_REGISTRATIONS] = null;
       });
+    }
+
+    public void Register(DependencyFactoryModel registration)
+    {
+      Registrations.Add(new DependencyRegistration(
+        registration.ServiceType,
+        registration.ConcreteType,
+        registration.Lifetime,
+        _lifetimeManagers[registration.Lifetime],
+        ctx=> registration.Invoker(registration.Arguments.Select(ctx.Resolve).ToArray())
+        ));      
     }
   }
 }

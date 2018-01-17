@@ -7,15 +7,16 @@ namespace OpenRasta.Configuration.MetaModel
     {
         public DependencyRegistrationModel(Type serviceType, Type concreteType, DependencyLifetime lifetime)
         {
-            if (serviceType == null) throw new ArgumentNullException("serviceType");
-            if (concreteType == null) throw new ArgumentNullException("concreteType");
+            if (serviceType == null) throw new ArgumentNullException(nameof(serviceType));
+            if (concreteType == null) throw new ArgumentNullException(nameof(concreteType));
             ServiceType = serviceType;
             ConcreteType = concreteType;
             Lifetime = lifetime;
         }
 
-        public Type ConcreteType { get; private set; }
-        public DependencyLifetime Lifetime { get; private set; }
-        public Type ServiceType { get; private set; }
+        public Type ConcreteType { get; }
+        public DependencyLifetime Lifetime { get; }
+        public Type ServiceType { get; }
     }
+
 }
