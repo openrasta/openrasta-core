@@ -31,4 +31,9 @@ namespace Tests.Configuration.Dependencies
       ((IDisposable) host)?.Dispose();
     }
   }
+
+  public interface IClassService
+  {
+    
+  }
 }

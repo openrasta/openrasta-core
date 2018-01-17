@@ -1,6 +1,6 @@
 ﻿namespace Tests.Configuration.Dependencies
 {
-  class ClassWithDefaultConstructor
+  class ClassWithDefaultConstructor : IClassService
   {
   }
 }
