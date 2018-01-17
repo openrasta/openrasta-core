@@ -25,9 +25,6 @@ namespace Tests.Configuration.Dependencies
       host.Resolver.Resolve<ClassWithDefaultConstructor>().ShouldNotBeNull();
     }
 
-    class ClassWithDefaultConstructor
-    {
-    }
 
     public void Dispose()
     {

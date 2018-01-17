@@ -9,6 +9,7 @@ namespace OpenRasta.Configuration.MetaModel
     public IEnumerable<Type> Arguments;
     public Delegate Factory;
     public Func<object[], object> Invoker;
+
     public DependencyFactoryModel(Delegate factory, Type concreteType, params Type[] args)
     {
       Arguments = args;
@@ -20,12 +21,45 @@ namespace OpenRasta.Configuration.MetaModel
     public DependencyLifetime Lifetime { get; set; }
     public Type ConcreteType { get; }
   }
-  public class DependencyFactoryModel<T> : DependencyFactoryModel
+
+  public class DependencyFactoryModel<TConcrete> : DependencyFactoryModel
   {
-    public DependencyFactoryModel(Func<T> factory)
-      : base(factory, typeof(T))
+    public DependencyFactoryModel(Func<TConcrete> factory)
+      : base(factory, typeof(TConcrete))
     {
       Invoker = args => factory();
+    }
+  }
+  public class DependencyFactoryModel<TArg1,TConcrete> : DependencyFactoryModel
+  {
+    public DependencyFactoryModel(Func<TArg1,TConcrete> factory)
+      : base(factory, typeof(TConcrete), typeof(TArg1))
+    {
+      Invoker = args => factory((TArg1)args[0]);
+    }
+  }
+  public class DependencyFactoryModel<TArg1,TArg2,TConcrete> : DependencyFactoryModel
+  {
+    public DependencyFactoryModel(Func<TArg1,TArg2,TConcrete> factory)
+      : base(factory, typeof(TConcrete), typeof(TArg1), typeof(TArg2))
+    {
+      Invoker = args => factory((TArg1)args[0],(TArg2)args[1]);
+    }
+  }
+  public class DependencyFactoryModel<TArg1,TArg2,TArg3,TConcrete> : DependencyFactoryModel
+  {
+    public DependencyFactoryModel(Func<TArg1,TArg2,TArg3,TConcrete> factory)
+      : base(factory, typeof(TConcrete), typeof(TArg1), typeof(TArg2), typeof(TArg3))
+    {
+      Invoker = args => factory((TArg1)args[0], (TArg2)args[1], (TArg3)args[2]);
+    }
+  }
+  public class DependencyFactoryModel<TArg1,TArg2,TArg3,TArg4,TConcrete> : DependencyFactoryModel
+  {
+    public DependencyFactoryModel(Func<TArg1,TArg2,TArg3,TArg4, TConcrete> factory)
+      : base(factory, typeof(TConcrete), typeof(TArg1), typeof(TArg2), typeof(TArg3), typeof(TArg4))
+    {
+      Invoker = args => factory((TArg1)args[0], (TArg2)args[1], (TArg3)args[2], (TArg4)(args[3]));
     }
   }
 }
