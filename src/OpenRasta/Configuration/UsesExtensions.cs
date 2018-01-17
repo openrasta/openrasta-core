@@ -11,15 +11,12 @@ namespace OpenRasta.Configuration
   {
 //    ITypeRegistrationOptions Register<TConcrete>();
     ITypeRegistrationOptions Register<TConcrete>(Func<TConcrete> factory);
-//    ITypeRegistrationOptions Register<TArg1, TConcrete>(Func<TArg1, TConcrete> factory);
-//    ITypeRegistrationOptions Register<TArg1, TArg2, TConcrete>(Func<TArg1, TArg2, TConcrete> factory);
-//    ITypeRegistrationOptions Register<TArg1, TArg2, TArg3, TConcrete>(Func<TArg1, TArg2, TArg3, TConcrete> factory);
-//
-//    ITypeRegistrationOptions Register<TArg1, TArg2, TArg3, TArg4, TConcrete>(
-//      Func<TArg1, TArg2, TArg3, TArg4, TConcrete> factory);
-//
-//    ITypeRegistrationOptions Register<TArg1, TArg2, TArg3, TArg4, TArg5, TConcrete>(
-//      Func<TArg1, TArg2, TArg3, TArg4, TArg5, TConcrete> factory);
+    ITypeRegistrationOptions Register<TArg1, TConcrete>(Func<TArg1, TConcrete> factory);
+    ITypeRegistrationOptions Register<TArg1, TArg2, TConcrete>(Func<TArg1, TArg2, TConcrete> factory);
+    ITypeRegistrationOptions Register<TArg1, TArg2, TArg3, TConcrete>(Func<TArg1, TArg2, TArg3, TConcrete> factory);
+
+    ITypeRegistrationOptions Register<TArg1, TArg2, TArg3, TArg4, TConcrete>(
+      Func<TArg1, TArg2, TArg3, TArg4, TConcrete> factory);
   }
 
   public interface ITypeRegistrationOptions
@@ -36,7 +33,34 @@ namespace OpenRasta.Configuration
       return this;
     }
 
+    public ITypeRegistrationOptions Register<TArg1, TConcrete>(Func<TArg1, TConcrete> factory)
+    {
+      Model = new DependencyFactoryModel<TArg1, TConcrete>(factory);
+      return this;
+    }
+
+    public ITypeRegistrationOptions Register<TArg1, TArg2, TConcrete>(Func<TArg1, TArg2, TConcrete> factory)
+    {
+      Model = new DependencyFactoryModel<TArg1, TArg2, TConcrete>(factory);
+      return this;
+    }
+
+    public ITypeRegistrationOptions Register<TArg1, TArg2, TArg3, TConcrete>(
+      Func<TArg1, TArg2, TArg3, TConcrete> factory)
+    {
+      Model = new DependencyFactoryModel<TArg1, TArg2, TArg3, TConcrete>(factory);
+      return this;
+    }
+
+    public ITypeRegistrationOptions Register<TArg1, TArg2, TArg3, TArg4, TConcrete>(
+      Func<TArg1, TArg2, TArg3, TArg4, TConcrete> factory)
+    {
+      Model = new DependencyFactoryModel<TArg1, TArg2, TArg3, TArg4, TConcrete>(factory);
+      return this;
+    }
+
     public DependencyFactoryModel Model { get; set; }
+
     public ITypeRegistrationOptions As<T>()
     {
       Model.ServiceType = typeof(T);
@@ -49,6 +73,7 @@ namespace OpenRasta.Configuration
       return this;
     }
   }
+
   public static class UsesExtensions
   {
     /// <summary>
@@ -67,7 +92,8 @@ namespace OpenRasta.Configuration
         new DependencyRegistrationModel(typeof(TService), typeof(TConcrete), lifetime));
     }
 
-    public static TAnchor Dependency<TAnchor>(this TAnchor anchor, Action<ITypeRegistrationContext> ctx) where TAnchor : IUses
+    public static TAnchor Dependency<TAnchor>(this TAnchor anchor, Action<ITypeRegistrationContext> ctx)
+      where TAnchor : IUses
     {
       var fluentTarget = (IFluentTarget) anchor;
       var typeRegistration = new TypeRegistrationContext();
@@ -98,7 +124,7 @@ namespace OpenRasta.Configuration
 
       fluentTarget.Repository.CustomRegistrations.Add(
         new DependencyRegistrationModel(typeof(IUriDecorator),
-        typeof(TDecorator), DependencyLifetime.Transient));
+          typeof(TDecorator), DependencyLifetime.Transient));
     }
   }
 }
