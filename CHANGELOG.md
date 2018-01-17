@@ -16,6 +16,12 @@ OpenRasta adheres to [Semantic Versioning](http://semver.org/).
    of typing compared to wiring up the OWIN signatures.   
  - We've added a `OpenRasta.Codecs.Newtonsoft.Json` package, because frankly,
    `DataContract`s are long dead.
+ - Registering custom dependencies was always meant to be done in the configuration
+   phase, but it was a bit on the simple side. So we made it `Func`ky and added
+   factory support. You can now do `ResourceSpace.Uses.Dependency(ctx=>ctx.Register(()=>new MyService())`
+   and a few other funky things. Container integrations have to be updated to
+   support this, and we'll throw an exception if you use factories and the container
+   doesn't support them.
 
 ### Changed
 
