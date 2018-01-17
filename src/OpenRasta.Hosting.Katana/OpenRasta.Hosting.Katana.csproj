@@ -4,7 +4,7 @@
     <PackageProjectUrl>https://github.com/openrasta/openrasta-core</PackageProjectUrl>
     <PackageLicenseUrl>http://openrasta.org/</PackageLicenseUrl>
     <PackageIconUrl>http://openrasta.org/openRastaLogo-32x32.png</PackageIconUrl>
-    <Description>OpenRasta is an open-source .NET framework for building REST APIs</Description>
+    <Description>Hosting of OpenRasta on Microsoft's Katana OWIN implementation</Description>
     <PackageTags>OpenRasta REST HTTP XML JSON API</PackageTags>
     <Version>2.6.0</Version>
     <Copyright>Copyright 2007</Copyright>

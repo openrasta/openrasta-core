@@ -26,4 +26,6 @@ namespace OpenRasta.DI
 
     void HandleIncomingRequestProcessed();
   }
+  
+  
 }
