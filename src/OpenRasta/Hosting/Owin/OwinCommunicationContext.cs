@@ -20,22 +20,17 @@ namespace OpenRasta.Hosting.Katana
       Request = new OwinRequest(nativeContext.Request);
       Response = new OwinResponse(nativeContext);
       ServerErrors = new ServerErrorList {Log = logger};
+      ApplicationBaseUri = ComputeApplicationBaseUri();
     }
 
-    public Uri ApplicationBaseUri
-    {
-      get
-      {
-        var request = _nativeContext.Request;
+    public Uri ApplicationBaseUri { get; }
 
-        var baseUri = "{0}://{1}{2}/".With(request.Uri.Scheme,
-          request.Uri.Host,
-          request.Uri.IsDefaultPort ? string.Empty : ":" + request.Uri.Port);
-        //todo manage the relative path if needed?
-        var appBaseUri =
-          new Uri(baseUri, UriKind.Absolute); //, new Uri(_host.ApplicationVirtualPath, UriKind.Relative));
-        return appBaseUri;
-      }
+    Uri ComputeApplicationBaseUri()
+    {
+      var request = _nativeContext.Request;
+      var uriBuilder = new UriBuilder(request.Uri.Scheme, request.Uri.Host, request.Uri.Port, request.PathBase.ToString());
+
+      return uriBuilder.Uri;
     }
 
     public IRequest Request { get; }
