@@ -12,14 +12,10 @@ namespace OpenRasta.Tests.Unit.Configuration
   public class configuration_context : context
   {
     InMemoryHost _host;
-    private Action _configuration;
-    private bool _resolverSet;
-
-    protected override void SetUp()
-    {
-      base.SetUp();
-    }
-
+    Action _configuration;
+    bool _resolverSet;
+    protected IDependencyResolver Resolver => _host.Resolver;
+    
     protected override void TearDown()
     {
       base.TearDown();
@@ -29,14 +25,14 @@ namespace OpenRasta.Tests.Unit.Configuration
       _resolverSet = false;
     }
 
-    public virtual void WhenTheConfigurationIsFinished()
+    protected void WhenTheConfigurationIsFinished()
     {
       _host = new InMemoryHost(_configuration);
       DependencyManager.SetResolver(_host.Resolver);
       _resolverSet = true;
     }
 
-    public void GivenAResourceRegistrationFor<TResource>(
+    protected void GivenAResourceRegistrationFor<TResource>(
       string uri,
       Action<IUriDefinition<TResource>> config = null)
     {

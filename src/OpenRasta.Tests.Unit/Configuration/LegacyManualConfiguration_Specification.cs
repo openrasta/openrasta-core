@@ -66,7 +66,7 @@ namespace LegacyManualConfiguration_Specification
     CodecRegistration ThenTheCodecFor<TResource, TCodec>(string mediaType)
     {
       return
-        DependencyManager.Codecs
+        Resolver.Resolve<ICodecRepository>()
           .Where(codec => codec.ResourceType.CompareTo(TypeSystems.Default.FromClr(typeof(TResource))) == 0 &&
                           codec.CodecType == typeof(TCodec) && codec.MediaType.MediaType == mediaType)
           .Distinct()
