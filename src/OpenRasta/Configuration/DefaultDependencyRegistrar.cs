@@ -31,6 +31,7 @@ using OpenRasta.OperationModel.Hydrators;
 using OpenRasta.OperationModel.Interceptors;
 using OpenRasta.OperationModel.MethodBased;
 using OpenRasta.Pipeline;
+using OpenRasta.Pipeline.CallGraph;
 using OpenRasta.Pipeline.Contributors;
 using OpenRasta.TypeSystem;
 using OpenRasta.TypeSystem.ReflectionBased;
@@ -225,6 +226,7 @@ namespace OpenRasta.Configuration
         typeof(RequestEntityReaderHydrator),
         DependencyLifetime.Transient);
       resolver.AddDependency<IPipelineInitializer, ThreePhasePipelineInitializer>();
+      resolver.AddDependency<IGenerateCallGraphs, TopologicalSortCallGraphGenerator>();
     }
 
     protected virtual void AddCSharpCodeSnippetModifiers()

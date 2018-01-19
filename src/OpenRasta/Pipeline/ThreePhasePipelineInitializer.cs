@@ -14,13 +14,13 @@ namespace OpenRasta.Pipeline
     readonly IGenerateCallGraphs _callGrapher;
     static ILogger Log { get; } = TraceSourceLogger.Instance;
 
-    public ThreePhasePipelineInitializer(IDependencyResolver resolver)
-      : this(resolver.ResolveAll<IPipelineContributor>(),
-        new CallGraphGeneratorFactory(resolver).GetCallGraphGenerator())
-    {
-    }
+//    public ThreePhasePipelineInitializer(IDependencyResolver resolver)
+//      : this(resolver.ResolveAll<IPipelineContributor>(),
+//             new CallGraphGeneratorFactory(resolver).GetCallGraphGenerator())
+//    {
+//    }
 
-    ThreePhasePipelineInitializer(
+    public ThreePhasePipelineInitializer(
       IEnumerable<IPipelineContributor> contributors,
       IGenerateCallGraphs callGrapher)
     {

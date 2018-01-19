@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using OpenRasta.Concordia;
 using OpenRasta.DI;
 using OpenRasta.Pipeline;
@@ -18,7 +19,9 @@ namespace Tests.Pipeline.Middleware.Diagnostics
       resolver.AddDependency<IGenerateCallGraphs, TopologicalSortCallGraphGenerator>();
       resolver.AddDependency<IPipelineContributor, BootstrapperContributor>();
       resolver.AddDependency<IPipelineContributor, First>();
-      var initialiser = new ThreePhasePipelineInitializer(resolver);
+      var initialiser = new ThreePhasePipelineInitializer(
+        resolver.Resolve<IEnumerable<IPipelineContributor>>(),
+        resolver.Resolve<IGenerateCallGraphs>());
 
       var pipeline = initialiser
         .Initialize(new StartupProperties
