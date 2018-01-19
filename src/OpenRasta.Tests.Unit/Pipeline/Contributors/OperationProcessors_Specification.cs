@@ -30,7 +30,7 @@ namespace OpenRasta.Tests.Unit.Web.Pipeline.Contributors
 
       protected override RequestCodecSelector create_processor()
       {
-        return new RequestCodecSelector(Resolver);
+        return new RequestCodecSelector(Resolver.ResolveAll<IOperationCodecSelector>);
       }
 
       void when_executing_processor()
