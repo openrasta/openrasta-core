@@ -5,6 +5,7 @@ using NUnit.Framework;
 using OpenRasta.Codecs;
 using OpenRasta.Configuration;
 using OpenRasta.DI;
+using OpenRasta.Handlers;
 using OpenRasta.Tests.Unit.Configuration;
 using OpenRasta.TypeSystem;
 using OpenRasta.Web;
@@ -162,7 +163,7 @@ namespace LegacyManualConfiguration_Specification
       var urimatch = DependencyManager.Uris.Match(new Uri(new Uri("http://localhost/", UriKind.Absolute), uri));
       urimatch.ShouldNotBeNull();
 
-      var handlerMatch = DependencyManager.Handlers.GetHandlerTypesFor(urimatch.ResourceKey).FirstOrDefault();
+      var handlerMatch = Resolver.Resolve<IHandlerRepository>().GetHandlerTypesFor(urimatch.ResourceKey).FirstOrDefault();
       handlerMatch.ShouldNotBeNull();
       handlerMatch.ShouldBe(TypeSystems.Default.FromClr(typeof(THandler)));
       return handlerMatch;
