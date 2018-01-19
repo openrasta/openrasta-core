@@ -37,7 +37,7 @@ namespace Tests.Configuration.contexts
       DependencyManager.SetResolver(_host.Resolver);
     }
 
-    protected IMetaModelRepository Config => DependencyManager.GetService<IMetaModelRepository>();
+    protected IMetaModelRepository Config => _host.Resolver.Resolve<IMetaModelRepository>();
 
     public void Dispose()
     {
