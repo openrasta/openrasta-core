@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using OpenRasta.Concordia;
 using OpenRasta.Configuration;
+using OpenRasta.Configuration.MetaModel;
 using OpenRasta.DI;
 using OpenRasta.Diagnostics;
 using OpenRasta.Pipeline;
@@ -18,16 +20,10 @@ namespace OpenRasta.Hosting
     StartupProperties _startupProperties;
     IPipelineAsync _pipeline;
 
-    static HostManager()
-    {
-      Log = DependencyManager.IsAvailable
-        ? DependencyManager.GetService<ILogger>()
-        : TraceSourceLogger.Instance;
-    }
-
     HostManager(IHost host)
     {
       Host = host;
+      AssignResolver();
       if (host is IHostStartWithStartupProperties withStartup)
       {
         withStartup.Start += HandleHostStartWithProps;
@@ -53,13 +49,11 @@ namespace OpenRasta.Hosting
     public bool IsConfigured { get; private set; }
 
     public IDependencyResolver Resolver { get; private set; }
-    static ILogger Log { get; set; }
+    ILogger Log { get; set; }
 
     public static HostManager RegisterHost(IHost host)
     {
       if (host == null) throw new ArgumentNullException(nameof(host));
-
-      Log.WriteInfo("Registering host of type {0}", host.GetType());
 
       var manager = new HostManager(host);
 
@@ -70,7 +64,6 @@ namespace OpenRasta.Hosting
 
     public static void UnregisterHost(IHost host)
     {
-      Log.WriteInfo("Unregistering host of type {0}", host.GetType());
       HostManager managerToDispose = null;
       lock (_registrations)
       {
@@ -104,8 +97,8 @@ namespace OpenRasta.Hosting
     void AssignResolver()
     {
       Resolver = Host.ResolverAccessor?.Resolver ?? new InternalDependencyResolver();
-//      if (!Resolver.HasDependency<IDependencyResolver>())
-//        Resolver.AddDependencyInstance(typeof(IDependencyResolver), Resolver);
+      Log = Resolver.Resolve<IEnumerable<ILogger>>().LastOrDefault() ?? TraceSourceLogger.Instance;
+      
       Log.WriteDebug("Using dependency resolver of type {0}", Resolver.GetType());
     }
 
@@ -113,7 +106,7 @@ namespace OpenRasta.Hosting
     {
       IsConfigured = false;
       _startupProperties = startupProperties;
-      AssignResolver();
+      
       Resolver.AddDependencyInstance(Host);
       CallWithDependencyResolver(() =>
       {
@@ -142,9 +135,15 @@ namespace OpenRasta.Hosting
     {
       if (Resolver.HasDependency<IConfigurationSource>())
       {
-        var configSource = Resolver.Resolve<IConfigurationSource>();
-        Log.WriteDebug("Using configuration source {0}", configSource.GetType());
-        configSource.Configure();
+        var configurationSource = Resolver.Resolve<IConfigurationSource>();
+        Log.WriteDebug("Using configuration source {0}", configurationSource.GetType());
+        
+        var configurer = new ConfigurationSourceAdapter(
+          configurationSource,
+          Resolver,
+          Resolver.Resolve<IMetaModelRepository>());
+        
+        configurer.Process();
       }
       else
       {

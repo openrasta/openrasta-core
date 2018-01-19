@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using NUnit.Framework;
@@ -25,7 +26,7 @@ namespace MetaModelHandler_Specification
         protected override void SetUp()
         {
             Resolver = new InternalDependencyResolver();
-            MetaModel = new MetaModelRepository(Resolver);
+            MetaModel = new MetaModelRepository(Resolver.Resolve<IEnumerable<IMetaModelHandler>>);
         }
         protected void when_executing_the_handler()
         {

@@ -6,49 +6,43 @@ using OpenRasta.Configuration.MetaModel;
 using OpenRasta.DI;
 using OpenRasta.Hosting.InMemory;
 using OpenRasta.Tests.Unit.Infrastructure;
-using OpenRasta.TypeSystem;
 
 namespace Tests.Configuration.contexts
 {
-    public abstract class configuration : context, IDisposable
+  public abstract class configuration : context, IDisposable
+  {
+    InMemoryHost _host;
+    readonly List<Action> _uses = new List<Action>();
+
+    readonly List<Action> _has = new List<Action>();
+
+    protected void given_has<T>(Action<IResourceDefinition<T>> conf)
     {
-        InMemoryHost Host;
-        List<Action> _uses = new List<Action>();
-
-        List<Action> _has = new List<Action>();
-        
-        protected virtual void given_uses(Action<IUses> conf)
-        {
-            _uses.Add(() => conf(ResourceSpace.Uses));
-        }
-        protected virtual void given_has<T>(Action<IResourceDefinition<T>> conf)
-        {
-            _has.Add(() => conf(ResourceSpace.Has.ResourcesOfType<T>()));
-        }
-        protected virtual void given_has(Action<IHas> conf)
-        {
-            _has.Add(() => conf(ResourceSpace.Has));
-        }
-        protected virtual void when_configured()
-        {
-            Host = new InMemoryHost();
-
-            DependencyManager.SetResolver(Host.Resolver);
-            using (OpenRastaConfiguration.Manual) 
-            {
-                _uses.ForEach(_ => _());
-                _has.ForEach(_ => _());
-            }
-        }
-        protected ITypeSystem TypeSystem { get { return DependencyManager.GetService<ITypeSystem>(); } }
-        protected IMetaModelRepository Config { get { return DependencyManager.GetService<IMetaModelRepository>(); } }
-        protected class Customer { }
-        protected class CustomerHandler { }
-
-        public void Dispose()
-        {
-            Host.Close();
-            DependencyManager.UnsetResolver();
-        }
+      _has.Add(() => conf(ResourceSpace.Has.ResourcesOfType<T>()));
     }
+
+    protected void given_has(Action<IHas> conf)
+    {
+      _has.Add(() => conf(ResourceSpace.Has));
+    }
+
+    protected void when_configured()
+    {
+      _host = new InMemoryHost(() =>
+      {
+        _uses.ForEach(_ => _());
+        _has.ForEach(_ => _());
+      });
+
+      DependencyManager.SetResolver(_host.Resolver);
+    }
+
+    protected IMetaModelRepository Config => DependencyManager.GetService<IMetaModelRepository>();
+
+    public void Dispose()
+    {
+      _host.Close();
+      DependencyManager.UnsetResolver();
+    }
+  }
 }

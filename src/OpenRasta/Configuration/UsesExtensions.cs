@@ -110,7 +110,7 @@ namespace OpenRasta.Configuration
     /// <param name="anchor"></param>
     public static void PipelineContributor<TPipeline>(this IUses anchor) where TPipeline : class, IPipelineContributor
     {
-      anchor.Resolver.AddDependency<IPipelineContributor, TPipeline>();
+      anchor.CustomDependency<IPipelineContributor,TPipeline>();
     }
 
     /// <summary>
