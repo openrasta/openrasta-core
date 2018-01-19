@@ -19,7 +19,7 @@ namespace LegacyManualConfiguration_Specification
   {
     void ThenTheUriHasTheResource<TResource>(string uri, CultureInfo language, string name)
     {
-      var match = DependencyManager.Uris.Match(new Uri(new Uri("http://localhost/", UriKind.Absolute), uri));
+      var match = Resolver.Resolve<IUriResolver>().Match(new Uri(new Uri("http://localhost/", UriKind.Absolute), uri));
       match.ShouldNotBeNull();
       match.UriCulture.ShouldBe(language);
       match.ResourceKey.ShouldBe(TypeSystems.Default.FromClr(typeof(TResource)));
@@ -160,7 +160,7 @@ namespace LegacyManualConfiguration_Specification
   {
     IType ThenTheUriHasTheHandler<THandler>(string uri)
     {
-      var urimatch = DependencyManager.Uris.Match(new Uri(new Uri("http://localhost/", UriKind.Absolute), uri));
+      var urimatch = Resolver.Resolve<IUriResolver>().Match(new Uri(new Uri("http://localhost/", UriKind.Absolute), uri));
       urimatch.ShouldNotBeNull();
 
       var handlerMatch = Resolver.Resolve<IHandlerRepository>().GetHandlerTypesFor(urimatch.ResourceKey).FirstOrDefault();
