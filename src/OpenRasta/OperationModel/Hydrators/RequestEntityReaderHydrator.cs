@@ -84,8 +84,9 @@ namespace OpenRasta.OperationModel.Hydrators
 
     static Func<IHttpEntity, IType, string, Task<object>> GetReader(ICodec instance)
     {
-      var readerAsync = instance as IMediaTypeReaderAsync;
-      if (readerAsync != null) return readerAsync.ReadFrom;
+      if (instance is IMediaTypeReaderAsync readerAsync)
+        return readerAsync.ReadFrom;
+      
       return (obj, type, name) => Task.FromResult(
         ((IMediaTypeReader) instance).ReadFrom(obj, type, name));
     }
