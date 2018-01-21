@@ -4,9 +4,8 @@ namespace OpenRasta.DI.Internal
 {
   class SimpleProfile : ResolveProfile
   {
-    private readonly DependencyRegistration _dependency;
+    readonly DependencyRegistration _dependency;
     readonly ResolveContext _ctx;
-    readonly Type _serviceType;
 
     public SimpleProfile(DependencyRegistration dependency, ResolveContext context)
     {
@@ -17,7 +16,7 @@ namespace OpenRasta.DI.Internal
     public override bool TryResolve(out object instance)
     {
       return _ctx.TryResolve(_dependency, out instance);
-      
     }
+    
   }
 }

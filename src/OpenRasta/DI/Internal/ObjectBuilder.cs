@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -37,6 +36,7 @@ namespace OpenRasta.DI.Internal
 
         LogUnresolvedConstructor(unresolvedDependencies, ref unresolvedDependenciesMessage);
       }
+
       throw new DependencyResolutionException(
         $"Could not resolve type {registration.ConcreteType.Name} because its dependencies couldn't be fullfilled\r\n{unresolvedDependenciesMessage}");
     }
@@ -58,6 +58,7 @@ namespace OpenRasta.DI.Internal
       var success = ResolveContext.TryResolve(pi.PropertyType, out var instance);
       return (pi, success, instance);
     }
+
     void LogUnresolvedConstructor(IEnumerable<ParameterInfo> unresolvedDependencies,
       ref StringBuilder unresolvedDependenciesMessage)
     {

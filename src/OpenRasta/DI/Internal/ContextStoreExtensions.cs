@@ -24,7 +24,7 @@ namespace OpenRasta.DI.Internal
   
   public static class ContextStoreExtensions
   {
-    private const string CTX_INSTANCES_KEY_CONCURRENT = nameof(CTX_INSTANCES_KEY_CONCURRENT);
+    const string CTX_INSTANCES_KEY_CONCURRENT = nameof(CTX_INSTANCES_KEY_CONCURRENT);
 
     
     [Obsolete("Internal no longer in use.")]

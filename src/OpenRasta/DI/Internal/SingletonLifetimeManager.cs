@@ -17,7 +17,7 @@ namespace OpenRasta.DI.Internal
       return lazy.Value;
     }
 
-    private static Lazy<object> ThreadSafeLazyFactory(ResolveContext context, DependencyRegistration registration)
+    static Lazy<object> ThreadSafeLazyFactory(ResolveContext context, DependencyRegistration registration)
     {
       return new Lazy<object>(() => registration.Factory(context), LazyThreadSafetyMode.ExecutionAndPublication);
     }

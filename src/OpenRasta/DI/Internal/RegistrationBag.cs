@@ -6,8 +6,8 @@ namespace OpenRasta.DI.Internal
 {
   public class RegistrationBag
   {
-    private ConcurrentStack<DependencyRegistration> _registrations = new ConcurrentStack<DependencyRegistration>();
-    private DependencyRegistration _last;
+    ConcurrentStack<DependencyRegistration> _registrations = new ConcurrentStack<DependencyRegistration>();
+    DependencyRegistration _last;
 
     public void Add(DependencyRegistration registration)
     {

@@ -12,7 +12,6 @@ namespace Tests.Pipeline.Initializer
   public class when_creating_the_pipeline : initializer_context
   {
     [Theory]
-    [InlineData(null)]
     [InlineData(typeof(WeightedCallGraphGenerator))]
     [InlineData(typeof(TopologicalSortCallGraphGenerator))]
     public void a_registered_contributor_gets_initialized_and_is_part_of_the_contributor_collection(
@@ -28,7 +27,6 @@ namespace Tests.Pipeline.Initializer
     }
 
     [Theory]
-    [InlineData(null)]
     [InlineData(typeof(WeightedCallGraphGenerator))]
     [InlineData(typeof(TopologicalSortCallGraphGenerator))]
     public void valid_pipeline_is_required(Type callGraphGeneratorType)

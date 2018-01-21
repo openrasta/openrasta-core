@@ -19,6 +19,7 @@ namespace Tests.Pipeline.Initializer.Infrastructure
       resolver.AddDependencyInstance<IDependencyResolver>(resolver);
       resolver.AddDependency<IPipelineContributor, BootstrapperContributor>();
       resolver.AddDependency<IPipelineInitializer, ThreePhasePipelineInitializer>();
+      resolver.AddDependency(typeof(IGenerateCallGraphs), callGraphGeneratorType,DependencyLifetime.Transient);
 
       if (callGraphGeneratorType != null)
       {

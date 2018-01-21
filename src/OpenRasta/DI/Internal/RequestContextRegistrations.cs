@@ -7,12 +7,12 @@ namespace OpenRasta.DI.Internal
 {
   public class RequestContextRegistrations : IDependencyRegistrationCollection, IDisposable
   {
-    private readonly GlobalRegistrations _globalRegistrations;
+    readonly GlobalRegistrations _globalRegistrations;
 
     readonly ConcurrentDictionary<Type, RegistrationBag> _registrations =
       new ConcurrentDictionary<Type, RegistrationBag>();
 
-    private readonly Dictionary<DependencyLifetime, DependencyLifetimeManager> _lifetimes;
+    readonly Dictionary<DependencyLifetime, DependencyLifetimeManager> _lifetimes;
 
     public RequestContextRegistrations(GlobalRegistrations globalRegistrations)
     {

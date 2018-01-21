@@ -13,7 +13,6 @@ namespace Tests.Pipeline.Initializer
   public class when_executing_the_pipeline : initializer_context
   {
     [Theory]
-    [InlineData(null)]
     [InlineData(typeof(WeightedCallGraphGenerator))]
     [InlineData(typeof(TopologicalSortCallGraphGenerator))]
     public async Task contributors_get_executed(Type callGraphGeneratorType)

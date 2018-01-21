@@ -13,7 +13,7 @@ namespace OpenRasta.DI.Internal
     
     public static bool TryResolve<T>(this ResolveContext ctx, out T instance)
     {
-      instance = default(T);
+      instance = default;
       var success = ctx.TryResolve(typeof(T), out var untyped);
       if (success) instance = (T) untyped;
       return success;

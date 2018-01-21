@@ -12,7 +12,6 @@ namespace Tests.Pipeline.Initializer
   public class when_contributor_throws : initializer_context
   {
     [Theory]
-    [InlineData(null)]
     [InlineData(typeof(WeightedCallGraphGenerator))]
     [InlineData(typeof(TopologicalSortCallGraphGenerator))]
     public async Task error_is_collected_and_500_returned(Type callGraphGeneratorType)

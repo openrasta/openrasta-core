@@ -1,1 +1,1 @@
-(C) Just-Eat 2014, Sebastien Lambla 2018
+(C) Just-Eat 2014, Videndel 2018

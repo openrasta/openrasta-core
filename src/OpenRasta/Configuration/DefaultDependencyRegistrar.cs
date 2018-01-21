@@ -1,18 +1,7 @@
-﻿#region License
-
-/* Authors:
- *      Sebastien Lambla (seb@serialseb.com)
- * Copyright:
- *      (C) 2007-2009 Caffeine IT & naughtyProd Ltd (http://www.caffeine-it.com)
- * License:
- *      This file is distributed under the terms of the MIT License found at the end of this file.
- */
-
-#endregion
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using OpenRasta.Binding;
@@ -43,10 +32,12 @@ using RequestCodecSelector = OpenRasta.Pipeline.Contributors.RequestCodecSelecto
 
 namespace OpenRasta.Configuration
 {
+  [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
   public class DefaultDependencyRegistrar : IDependencyRegistrar
   {
     protected Type PathManagerType;
 
+    [SuppressMessage("ReSharper", "VirtualMemberCallInConstructor")]
     public DefaultDependencyRegistrar()
     {
       CodecTypes = new List<Type>();
@@ -87,16 +78,16 @@ namespace OpenRasta.Configuration
       AddSurrogateBuilders();
     }
 
-    protected IList<Type> CodeSnippetModifierTypes { get; private set; }
+    protected IList<Type> CodeSnippetModifierTypes { get; }
 
     protected Type CodecRepositoryType { get; set; }
-    protected IList<Type> CodecTypes { get; private set; }
+    protected IList<Type> CodecTypes { get; }
     protected Type ErrorCollectorType { get; set; }
     protected Type HandlerRepositoryType { get; set; }
     protected IList<Type> LogSourceTypes { get; set; }
     protected Type LogSourcedLoggerType { get; set; }
     protected Type LoggerType { get; set; }
-    protected IList<Type> MetaModelHandlerTypes { get; private set; }
+    protected IList<Type> MetaModelHandlerTypes { get; }
     protected Type MetaModelRepositoryType { get; set; }
     protected IList<Type> MethodFilterTypes { get; set; }
     protected IList<Type> OperationCodecSelectorTypes { get; set; }
@@ -106,10 +97,10 @@ namespace OpenRasta.Configuration
     protected IList<Type> OperationHydratorTypes { get; set; }
     protected Type OperationInterceptorProviderType { get; set; }
     protected Type ParameterBinderLocatorType { get; set; }
-    protected IList<Type> PipelineContributorTypes { get; private set; }
+    protected IList<Type> PipelineContributorTypes { get; }
     protected Type PipelineType { get; set; }
-    protected IList<Type> SurrogateBuilders { get; private set; }
-    protected IList<Type> TraceSourceListenerTypes { get; private set; }
+    protected IList<Type> SurrogateBuilders { get; }
+    protected IList<Type> TraceSourceListenerTypes { get; }
     protected Type TypeSystemType { get; set; }
     protected Type UriResolverType { get; set; }
 
@@ -359,8 +350,10 @@ namespace OpenRasta.Configuration
     {
       OperationFilterTypes.ForEach(
         x => resolver.AddDependency(typeof(IOperationFilter), x, DependencyLifetime.Transient));
+#pragma warning disable 618 - legacy support
       OperationHydratorTypes.ForEach(
         x => resolver.AddDependency(typeof(IOperationHydrator), x, DependencyLifetime.Transient));
+#pragma warning restore 618
       OperationCodecSelectorTypes.ForEach(
         x => resolver.AddDependency(typeof(IOperationCodecSelector), x, DependencyLifetime.Transient));
     }
@@ -417,24 +410,3 @@ namespace OpenRasta.Configuration
     }
   }
 }
-
-#region Full license
-
-// Permission is hereby granted, free of charge, to any person obtaining
-// a copy of this software and associated documentation files (the
-// "Software"), to deal in the Software without restriction, including
-// without limitation the rights to use, copy, modify, merge, publish,
-// distribute, sublicense, and/or sell copies of the Software, and to
-// permit persons to whom the Software is furnished to do so, subject to
-// the following conditions:
-// The above copyright notice and this permission notice shall be
-// included in all copies or substantial portions of the Software.
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
-// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
-// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-#endregion

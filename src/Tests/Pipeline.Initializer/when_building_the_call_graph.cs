@@ -16,7 +16,6 @@ namespace Tests.Pipeline.Initializer
   public class when_building_the_call_graph : initializer_context
   {
     [Theory]
-    [InlineData(null)]
     [InlineData(typeof(WeightedCallGraphGenerator))]
     [InlineData(typeof(TopologicalSortCallGraphGenerator))]
     public void
@@ -38,7 +37,6 @@ namespace Tests.Pipeline.Initializer
     }
 
     [Theory]
-    [InlineData(null)]
     [InlineData(typeof(WeightedCallGraphGenerator))]
     public void registering_all_the_contributors_results_in_a_correct_call_graph(Type callGraphGeneratorType)
     {
@@ -88,7 +86,6 @@ namespace Tests.Pipeline.Initializer
     }
 
     [Theory]
-    [InlineData(null)]
     [InlineData(typeof(WeightedCallGraphGenerator))]
     [InlineData(typeof(TopologicalSortCallGraphGenerator))]
     public void the_call_graph_cannot_be_recursive(Type callGraphGeneratorType)
@@ -101,7 +98,6 @@ namespace Tests.Pipeline.Initializer
     }
 
     [Theory]
-    [InlineData(null)]
     [InlineData(typeof(WeightedCallGraphGenerator))]
     [InlineData(typeof(TopologicalSortCallGraphGenerator))]
     public void registering_contributors_with_multiple_recursive_notifications_should_be_identified_as_invalid(

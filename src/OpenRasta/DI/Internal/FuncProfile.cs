@@ -2,11 +2,11 @@
 
 namespace OpenRasta.DI.Internal
 {
-  internal class FuncProfile<T> : ResolveProfile
+  class FuncProfile<T> : ResolveProfile
   {
-    readonly ResolveProfile _innerProfile;
+    readonly ProfileResolver _innerProfile;
 
-    public FuncProfile(ResolveProfile innerProfile)
+    public FuncProfile(ProfileResolver innerProfile)
     {
       _innerProfile = innerProfile;
     }
@@ -17,12 +17,9 @@ namespace OpenRasta.DI.Internal
       return true;
     }
 
-    // ReSharper disable once MergeConditionalExpression
-    Func<T> ResolveTyped()
-    {
-      return () => _innerProfile.TryResolve(out var instance)
-        ? (instance is T ? (T) instance : default(T))
-        : default(T);
-    }
+    Func<T> ResolveTyped() =>
+      () => _innerProfile(out var instance)
+        ? (T) instance
+        : throw new DependencyResolutionException($"Could not resolve type {typeof(T)}");
   }
 }

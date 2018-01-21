@@ -29,7 +29,7 @@ namespace OpenRasta.DI
         if (_cached != null) return _cached;
         if (!_changesSinceStoreLookup) return null;
 
-        if (new ResolveContext(_globalRegistrations).TryResolve(out _cached))
+        if (new ResolveContext(()=>_globalRegistrations).TryResolve(out _cached))
           return _cached;
 
         _changesSinceStoreLookup = false;
@@ -100,7 +100,7 @@ namespace OpenRasta.DI
 
     public bool TryResolve<T>(out T instance)
     {
-      var success = new ResolveContext(Registrations).TryResolve(typeof(T), out var untyped);
+      var success = new ResolveContext(()=>Registrations).TryResolve(typeof(T), out var untyped);
       instance = (T) untyped;
       return success;
     }
@@ -109,7 +109,7 @@ namespace OpenRasta.DI
     {
       try
       {
-        return new ResolveContext(Registrations).Resolve(serviceType);
+        return new ResolveContext(()=>Registrations).Resolve(serviceType);
       }
       catch (Exception e)
       {
@@ -160,4 +160,5 @@ namespace OpenRasta.DI
         ));      
     }
   }
+  
 }

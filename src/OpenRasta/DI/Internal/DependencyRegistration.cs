@@ -7,7 +7,7 @@ namespace OpenRasta.DI.Internal
 {
   public class DependencyRegistration : IEquatable<DependencyRegistration>
   {
-    public DependencyLifetimeManager LifetimeManager { get; }
+    DependencyLifetimeManager LifetimeManager { get; }
 
     public bool Equals(DependencyRegistration other)
     {
@@ -66,6 +66,7 @@ namespace OpenRasta.DI.Internal
         manager,
         Factory);
     }
+    
     public Type ConcreteType { get; }
     public DependencyLifetime Lifetime { get; }
     public List<KeyValuePair<ConstructorInfo, ParameterInfo[]>> Constructors { get; }

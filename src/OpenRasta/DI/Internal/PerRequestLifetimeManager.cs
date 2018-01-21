@@ -6,7 +6,7 @@ namespace OpenRasta.DI.Internal
 {
   public class PerRequestLifetimeManager : DependencyLifetimeManager
   {
-    private readonly InternalDependencyResolver _resolver;
+    readonly InternalDependencyResolver _resolver;
     
 
     public PerRequestLifetimeManager(InternalDependencyResolver resolver)

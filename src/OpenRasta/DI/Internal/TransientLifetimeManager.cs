@@ -1,6 +1,6 @@
 namespace OpenRasta.DI.Internal
 {
-  internal class TransientLifetimeManager : DependencyLifetimeManager
+  class TransientLifetimeManager : DependencyLifetimeManager
   {
     public override object Resolve(ResolveContext context, DependencyRegistration registration)
     {
