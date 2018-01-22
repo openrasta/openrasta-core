@@ -3,7 +3,10 @@ using System.Collections.Generic;
 
 namespace OpenRasta.DI.Internal
 {
-  delegate bool ProfileResolver(out object instance);
+  delegate bool ProfileResolver(
+    IDependencyRegistrationCollection registrations, 
+    ResolveContext currentContext,
+    out object instance);
   
   public class ResolveContext
   {
@@ -21,7 +24,7 @@ namespace OpenRasta.DI.Internal
       instance = null;
       var profile = ResolveProfiles.Find(serviceType, this, Registrations);
 
-      return profile != null && profile(out instance);
+      return profile != null && profile(Registrations(), this, out instance);
     }
 
     public bool TryResolve(DependencyRegistration registration, out object instance)

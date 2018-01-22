@@ -9,32 +9,36 @@ namespace OpenRasta.DI.Internal
       ResolveContext context,
       DependencyRegistration reg)
     {
-      return Simple.Find(context, reg)
+      return Simple.Find(reg)
              ?? Func.Find(context, reg);
     }
 
     public static ProfileResolver Find(Type serviceType, ResolveContext context,
       Func<IDependencyRegistrationCollection> registrations, bool delayedParentProfile = false)
     {
-      return Simple.Find(serviceType, context, registrations)
+      return Simple.Find(serviceType, registrations)
              ?? Func.Find(serviceType, context, registrations)
-             ?? Enumerable.Find(serviceType, context, registrations)
+             ?? Enumerable.Find(serviceType)
              ?? (delayedParentProfile
-               ? Delayed.Find(serviceType, context, registrations)
+               ? Delayed.Find(serviceType)
                : null);
     }
 
     static class Simple
     {
-      public static ProfileResolver Find(Type serviceType, ResolveContext context,
+      public static ProfileResolver Find(Type serviceType,
         Func<IDependencyRegistrationCollection> registrations)
       {
-        return Find(context, registrations().DefaultRegistrationFor(serviceType));
+        return Find(registrations().DefaultRegistrationFor(serviceType));
       }
 
-      public static ProfileResolver Find(ResolveContext context, DependencyRegistration reg)
+      public static ProfileResolver Find(DependencyRegistration reg)
       {
-        return reg != null ? new SimpleProfile(reg, context).TryResolve : default(ProfileResolver);
+        bool tryResolve(IDependencyRegistrationCollection registrations, ResolveContext context, out object instance)
+          => context.TryResolve(reg, out instance);
+
+        if (reg != null) return tryResolve;
+        return null;
       }
     }
 
@@ -86,24 +90,22 @@ namespace OpenRasta.DI.Internal
     static class Delayed
     {
       public static ProfileResolver Find(
-        Type serviceType, 
-        ResolveContext context,
-        Func<IDependencyRegistrationCollection> registrations)
+        Type serviceType)
       {
-        return (out object instance) =>
+        bool tryResolveDelayed(IDependencyRegistrationCollection registrations, ResolveContext context,
+          out object instance)
         {
-          var ctx = new ResolveContext(registrations);
-          return ctx.TryResolve(serviceType, out instance);
-        };
+          var newContext = new ResolveContext(() => registrations);
+          return context.TryResolve(serviceType, out instance);
+        }
+
+        return tryResolveDelayed;
       }
     }
 
     static class Enumerable
     {
-      public static ProfileResolver Find(
-        Type serviceType,
-        ResolveContext context,
-        Func<IDependencyRegistrationCollection> registrations)
+      public static ProfileResolver Find(Type serviceType)
       {
         if (!serviceType.IsGenericType ||
             serviceType.IsGenericTypeDefinition ||
@@ -116,7 +118,7 @@ namespace OpenRasta.DI.Internal
         var profile =
           (ResolveProfile) Activator
             .CreateInstance(typeof(EnumerableProfile<>)
-              .MakeGenericType(innerType), context, registrations);
+              .MakeGenericType(innerType));
         return profile.TryResolve;
       }
     }

@@ -1,29 +1,19 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 
 namespace OpenRasta.DI.Internal
 {
   class EnumerableProfile<T> : ResolveProfile
   {
-    readonly Func<IDependencyRegistrationCollection> _registrations;
-    readonly ResolveContext _ctx;
-
-    public EnumerableProfile(ResolveContext ctx, Func<IDependencyRegistrationCollection> registrations)
+    public override bool TryResolve(IDependencyRegistrationCollection registrations, ResolveContext resolveContext, out object instance)
     {
-      _ctx = ctx;
-      _registrations = registrations;
-    }
-
-    public override bool TryResolve(out object instance)
-    {
-      var serviceTypeRegistrations = _registrations()[typeof(T)].ToArray();
+      var serviceTypeRegistrations = registrations[typeof(T)].ToArray();
       instance = null;
       var instances = new T[serviceTypeRegistrations.Length];
       for (var i = 0; i < serviceTypeRegistrations.Length; i++)
       {
-        var profile = ResolveProfiles.Find(_ctx, serviceTypeRegistrations[i]);
-        if (!profile(out var depInstance)) return false;
-        instances[i] = (T) depInstance;
+        var profile = ResolveProfiles.Find(resolveContext, serviceTypeRegistrations[i]);
+        if (!profile(registrations, resolveContext, out instance)) return false;
+        instances[i] = (T) instance;
       }
 
       instance = instances;
