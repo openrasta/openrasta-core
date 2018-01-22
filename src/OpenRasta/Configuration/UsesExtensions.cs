@@ -103,6 +103,16 @@ namespace OpenRasta.Configuration
       return anchor;
     }
 
+    public static TAnchor Dependency<TAnchor, TTarget>(this TAnchor anchor, Func<TTarget> factory, DependencyLifetime lifetime = DependencyLifetime.Transient)
+      where TAnchor : IUses
+    {
+      var fluentTarget = (IFluentTarget) anchor;
+      var typeRegistration = new TypeRegistrationContext();
+        typeRegistration.Register(factory).Lifetime(lifetime);
+      fluentTarget.Repository.CustomRegistrations.Add(typeRegistration.Model);
+
+      return anchor;
+    }
     /// <summary>
     /// Adds a contributor to the pipeline.
     /// </summary>
