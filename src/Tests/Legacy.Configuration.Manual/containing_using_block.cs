@@ -29,7 +29,7 @@ namespace Tests.Scenarios.HandlerSelection.Legacy.Configuration.Manual
 #pragma warning disable 618
         using (OpenRastaConfiguration.Manual)
         {
-          ResourceSpace.Uses.Dependency(context => context.Register(() => new ExampleService()));
+          ResourceSpace.Uses.Dependency(context => context.Singleton(() => new ExampleService()));
         }
 #pragma warning restore 618
       }

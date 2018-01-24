@@ -18,5 +18,4 @@ namespace OpenRasta.Configuration.MetaModel
         public DependencyLifetime Lifetime { get; }
         public Type ServiceType { get; }
     }
-
 }

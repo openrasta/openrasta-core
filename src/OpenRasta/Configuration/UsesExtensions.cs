@@ -10,52 +10,129 @@ namespace OpenRasta.Configuration
   public interface ITypeRegistrationContext
   {
 //    ITypeRegistrationOptions Register<TConcrete>();
-    ITypeRegistrationOptions Register<TConcrete>(Func<TConcrete> factory);
-    ITypeRegistrationOptions Register<TArg1, TConcrete>(Func<TArg1, TConcrete> factory);
-    ITypeRegistrationOptions Register<TArg1, TArg2, TConcrete>(Func<TArg1, TArg2, TConcrete> factory);
-    ITypeRegistrationOptions Register<TArg1, TArg2, TArg3, TConcrete>(Func<TArg1, TArg2, TArg3, TConcrete> factory);
+    ITypeRegistrationOptions Singleton<TConcrete>(Func<TConcrete> factory);
+    ITypeRegistrationOptions Singleton<TArg1, TConcrete>(Func<TArg1, TConcrete> factory);
+    ITypeRegistrationOptions Singleton<TArg1, TArg2, TConcrete>(Func<TArg1, TArg2, TConcrete> factory);
+    ITypeRegistrationOptions Singleton<TArg1, TArg2, TArg3, TConcrete>(Func<TArg1, TArg2, TArg3, TConcrete> factory);
 
-    ITypeRegistrationOptions Register<TArg1, TArg2, TArg3, TArg4, TConcrete>(
+    ITypeRegistrationOptions Singleton<TArg1, TArg2, TArg3, TArg4, TConcrete>(
+      Func<TArg1, TArg2, TArg3, TArg4, TConcrete> factory);
+    
+    
+    ITypeRegistrationOptions Transient<TConcrete>(Func<TConcrete> factory);
+    ITypeRegistrationOptions Transient<TArg1, TConcrete>(Func<TArg1, TConcrete> factory);
+    ITypeRegistrationOptions Transient<TArg1, TArg2, TConcrete>(Func<TArg1, TArg2, TConcrete> factory);
+    ITypeRegistrationOptions Transient<TArg1, TArg2, TArg3, TConcrete>(Func<TArg1, TArg2, TArg3, TConcrete> factory);
+
+    ITypeRegistrationOptions Transient<TArg1, TArg2, TArg3, TArg4, TConcrete>(
+      Func<TArg1, TArg2, TArg3, TArg4, TConcrete> factory);
+    
+    
+    ITypeRegistrationOptions PerRequest<TConcrete>(Func<TConcrete> factory);
+    ITypeRegistrationOptions PerRequest<TArg1, TConcrete>(Func<TArg1, TConcrete> factory);
+    ITypeRegistrationOptions PerRequest<TArg1, TArg2, TConcrete>(Func<TArg1, TArg2, TConcrete> factory);
+    ITypeRegistrationOptions PerRequest<TArg1, TArg2, TArg3, TConcrete>(Func<TArg1, TArg2, TArg3, TConcrete> factory);
+
+    ITypeRegistrationOptions PerRequest<TArg1, TArg2, TArg3, TArg4, TConcrete>(
       Func<TArg1, TArg2, TArg3, TArg4, TConcrete> factory);
   }
 
   public interface ITypeRegistrationOptions
   {
     ITypeRegistrationOptions As<T>();
-    ITypeRegistrationOptions Lifetime(DependencyLifetime lifetime = DependencyLifetime.Transient);
   }
 
   class TypeRegistrationContext : ITypeRegistrationContext, ITypeRegistrationOptions
   {
-    public ITypeRegistrationOptions Register<TConcrete>(Func<TConcrete> factory)
+    public ITypeRegistrationOptions Singleton<TConcrete>(Func<TConcrete> factory)
     {
-      Model = new DependencyFactoryModel<TConcrete>(factory);
+      Model = new DependencyFactoryModel<TConcrete>(factory) { Lifetime = DependencyLifetime.Singleton };
       return this;
     }
 
-    public ITypeRegistrationOptions Register<TArg1, TConcrete>(Func<TArg1, TConcrete> factory)
+    public ITypeRegistrationOptions Singleton<TArg1, TConcrete>(Func<TArg1, TConcrete> factory)
     {
-      Model = new DependencyFactoryModel<TArg1, TConcrete>(factory);
+      Model = new DependencyFactoryModel<TArg1, TConcrete>(factory) { Lifetime = DependencyLifetime.Singleton };
       return this;
     }
 
-    public ITypeRegistrationOptions Register<TArg1, TArg2, TConcrete>(Func<TArg1, TArg2, TConcrete> factory)
+    public ITypeRegistrationOptions Singleton<TArg1, TArg2, TConcrete>(Func<TArg1, TArg2, TConcrete> factory)
     {
-      Model = new DependencyFactoryModel<TArg1, TArg2, TConcrete>(factory);
+      Model = new DependencyFactoryModel<TArg1, TArg2, TConcrete>(factory) { Lifetime = DependencyLifetime.Singleton };
       return this;
     }
 
-    public ITypeRegistrationOptions Register<TArg1, TArg2, TArg3, TConcrete>(
+    public ITypeRegistrationOptions Singleton<TArg1, TArg2, TArg3, TConcrete>(
       Func<TArg1, TArg2, TArg3, TConcrete> factory)
     {
-      Model = new DependencyFactoryModel<TArg1, TArg2, TArg3, TConcrete>(factory);
+      Model = new DependencyFactoryModel<TArg1, TArg2, TArg3, TConcrete>(factory) { Lifetime = DependencyLifetime.Singleton };
       return this;
     }
 
-    public ITypeRegistrationOptions Register<TArg1, TArg2, TArg3, TArg4, TConcrete>(
+    public ITypeRegistrationOptions Singleton<TArg1, TArg2, TArg3, TArg4, TConcrete>(
       Func<TArg1, TArg2, TArg3, TArg4, TConcrete> factory)
     {
-      Model = new DependencyFactoryModel<TArg1, TArg2, TArg3, TArg4, TConcrete>(factory);
+      Model = new DependencyFactoryModel<TArg1, TArg2, TArg3, TArg4, TConcrete>(factory) { Lifetime = DependencyLifetime.Singleton };
+      return this;
+    }
+
+    public ITypeRegistrationOptions Transient<TConcrete>(Func<TConcrete> factory)
+    {
+      Model = new DependencyFactoryModel<TConcrete>(factory) { Lifetime = DependencyLifetime.Transient };
+      return this;
+    }
+
+    public ITypeRegistrationOptions Transient<TArg1, TConcrete>(Func<TArg1, TConcrete> factory)
+    {
+      Model = new DependencyFactoryModel<TArg1,TConcrete>(factory) { Lifetime = DependencyLifetime.Transient };
+      return this;
+    }
+
+    public ITypeRegistrationOptions Transient<TArg1, TArg2, TConcrete>(Func<TArg1, TArg2, TConcrete> factory)
+    {
+      Model = new DependencyFactoryModel<TArg1, TArg2, TConcrete>(factory) { Lifetime = DependencyLifetime.Transient };
+      return this;
+    }
+
+    public ITypeRegistrationOptions Transient<TArg1, TArg2, TArg3, TConcrete>(Func<TArg1, TArg2, TArg3, TConcrete> factory)
+    {
+      Model = new DependencyFactoryModel<TArg1, TArg2, TArg3, TConcrete>(factory) { Lifetime = DependencyLifetime.Transient };
+      return this;
+    }
+
+    public ITypeRegistrationOptions Transient<TArg1, TArg2, TArg3, TArg4, TConcrete>(Func<TArg1, TArg2, TArg3, TArg4, TConcrete> factory)
+    {
+      Model = new DependencyFactoryModel<TArg1, TArg2, TArg3, TArg4, TConcrete>(factory) { Lifetime = DependencyLifetime.Transient };
+      return this;
+    }
+
+    public ITypeRegistrationOptions PerRequest<TConcrete>(Func<TConcrete> factory)
+    {
+      Model = new DependencyFactoryModel<TConcrete>(factory) { Lifetime = DependencyLifetime.PerRequest };
+      return this;
+    }
+
+    public ITypeRegistrationOptions PerRequest<TArg1, TConcrete>(Func<TArg1, TConcrete> factory)
+    {
+      Model = new DependencyFactoryModel<TArg1,TConcrete>(factory) { Lifetime = DependencyLifetime.PerRequest };
+      return this;
+    }
+
+    public ITypeRegistrationOptions PerRequest<TArg1, TArg2, TConcrete>(Func<TArg1, TArg2, TConcrete> factory)
+    {
+      Model = new DependencyFactoryModel<TArg1, TArg2, TConcrete>(factory) { Lifetime = DependencyLifetime.PerRequest };
+      return this;
+    }
+
+    public ITypeRegistrationOptions PerRequest<TArg1, TArg2, TArg3, TConcrete>(Func<TArg1, TArg2, TArg3, TConcrete> factory)
+    {
+      Model = new DependencyFactoryModel<TArg1, TArg2, TArg3, TConcrete>(factory) { Lifetime = DependencyLifetime.PerRequest };
+      return this;
+    }
+
+    public ITypeRegistrationOptions PerRequest<TArg1, TArg2, TArg3, TArg4, TConcrete>(Func<TArg1, TArg2, TArg3, TArg4, TConcrete> factory)
+    {
+      Model = new DependencyFactoryModel<TArg1, TArg2, TArg3, TArg4, TConcrete>(factory) { Lifetime = DependencyLifetime.PerRequest };
       return this;
     }
 
@@ -64,12 +141,6 @@ namespace OpenRasta.Configuration
     public ITypeRegistrationOptions As<T>()
     {
       Model.ServiceType = typeof(T);
-      return this;
-    }
-
-    public ITypeRegistrationOptions Lifetime(DependencyLifetime lifetime)
-    {
-      Model.Lifetime = lifetime;
       return this;
     }
   }
@@ -103,16 +174,6 @@ namespace OpenRasta.Configuration
       return anchor;
     }
 
-    public static TAnchor Dependency<TAnchor, TTarget>(this TAnchor anchor, Func<TTarget> factory, DependencyLifetime lifetime = DependencyLifetime.Transient)
-      where TAnchor : IUses
-    {
-      var fluentTarget = (IFluentTarget) anchor;
-      var typeRegistration = new TypeRegistrationContext();
-        typeRegistration.Register(factory).Lifetime(lifetime);
-      fluentTarget.Repository.CustomRegistrations.Add(typeRegistration.Model);
-
-      return anchor;
-    }
     /// <summary>
     /// Adds a contributor to the pipeline.
     /// </summary>

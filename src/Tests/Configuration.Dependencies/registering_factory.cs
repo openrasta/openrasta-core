@@ -15,7 +15,7 @@ namespace Tests.Configuration.Dependencies
     {
       host = new InMemoryHost(() =>
       {
-        ResourceSpace.Uses.Dependency(context => context.Register(() => new ClassWithDefaultConstructor()));
+        ResourceSpace.Uses.Dependency(context => context.Singleton(() => new ClassWithDefaultConstructor()));
       });
     }
 
@@ -30,34 +30,5 @@ namespace Tests.Configuration.Dependencies
     {
       ((IDisposable) host)?.Dispose();
     }
-  }
-
-  public class registering_factory_simple : IDisposable
-  {
-    InMemoryHost host;
-
-    public registering_factory_simple()
-    {
-      host = new InMemoryHost(() =>
-      {
-        ResourceSpace.Uses.Dependency(()=> new ClassWithDefaultConstructor());
-      });
-    }
-
-    [Fact]
-    public void type_is_resolved()
-    {
-      host.Resolver.Resolve<ClassWithDefaultConstructor>().ShouldNotBeNull();
-    }
-
-
-    public void Dispose()
-    {
-      ((IDisposable) host)?.Dispose();
-    }
-  }
-  public interface IClassService
-  {
-    
   }
 }

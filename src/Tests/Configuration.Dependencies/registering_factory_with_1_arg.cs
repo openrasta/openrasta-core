@@ -15,7 +15,7 @@ namespace Tests.Configuration.Dependencies
       {
         ResourceSpace.Uses.CustomDependency<ClassWithDefaultConstructor, ClassWithDefaultConstructor>();
         ResourceSpace.Uses.Dependency(context =>
-          context.Register(
+          context.Singleton(
             (ClassWithDefaultConstructor first) => new ClassWithArguments(first)));
       }))
       {

@@ -3,4 +3,8 @@
   class ClassWithDefaultConstructor : IClassService
   {
   }
+
+  interface IClassService
+  {
+  }
 }

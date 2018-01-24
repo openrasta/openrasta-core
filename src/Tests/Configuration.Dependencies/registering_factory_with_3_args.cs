@@ -14,7 +14,7 @@ namespace Tests.Configuration.Dependencies
       using (var host = new InMemoryHost(() =>
       {
         ResourceSpace.Uses.CustomDependency<ClassWithDefaultConstructor, ClassWithDefaultConstructor>();
-        ResourceSpace.Uses.Dependency(context => context.Register(
+        ResourceSpace.Uses.Dependency(context => context.Singleton(
           (ClassWithDefaultConstructor first,
             ClassWithDefaultConstructor second,
             ClassWithDefaultConstructor third) => new ClassWithArguments(first, second, third)));

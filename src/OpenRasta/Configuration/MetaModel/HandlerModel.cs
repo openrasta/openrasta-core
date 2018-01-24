@@ -2,13 +2,13 @@
 
 namespace OpenRasta.Configuration.MetaModel
 {
-    public class HandlerModel : ConfigurationModel
+  public class HandlerModel : ConfigurationModel
+  {
+    public HandlerModel(IType type)
     {
-        public HandlerModel(IType type)
-        {
-            Type = type;
-        }
-
-        public IType Type { get; set; }
+      Type = type;
     }
+
+    public IType Type { get; }
+  }
 }

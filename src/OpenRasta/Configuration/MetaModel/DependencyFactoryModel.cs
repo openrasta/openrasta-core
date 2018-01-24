@@ -6,7 +6,7 @@ namespace OpenRasta.Configuration.MetaModel
 {
   public abstract class DependencyFactoryModel
   {
-    public IEnumerable<Type> Arguments;
+    public readonly IEnumerable<Type> Arguments;
     public Delegate Factory;
     public Func<object[], object> Invoker;
 

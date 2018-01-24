@@ -27,7 +27,7 @@ namespace Tests.Scenarios.HandlerSelection.Legacy.Configuration.Manual
     {
       public void Configure()
       {
-        ResourceSpace.Uses.Dependency(context => context.Register(() => new ExampleService()));
+        ResourceSpace.Uses.Dependency(context => context.Singleton(() => new ExampleService()));
       }
     }
   }
