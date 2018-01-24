@@ -8,9 +8,9 @@ using OpenRasta.Pipeline;
 
 namespace OpenRasta.DI
 {
-  public class InternalDependencyResolver : 
-    DependencyResolverCore, 
-    IDependencyResolver, 
+  public class InternalDependencyResolver :
+    DependencyResolverCore,
+    IDependencyResolver,
     IRequestScopedResolver,
     IModelDrivenDependencyRegistration
   {
@@ -29,7 +29,7 @@ namespace OpenRasta.DI
         if (_cached != null) return _cached;
         if (!_changesSinceStoreLookup) return null;
 
-        if (new ResolveContext(()=>_globalRegistrations).TryResolve(out _cached))
+        if (new ResolveContext(() => _globalRegistrations).TryResolve(out _cached))
           return _cached;
 
         _changesSinceStoreLookup = false;
@@ -62,15 +62,15 @@ namespace OpenRasta.DI
         {DependencyLifetime.Singleton, new SingletonLifetimeManager()},
         {DependencyLifetime.PerRequest, new PerRequestLifetimeManager(this)}
       };
-      AddDependencyInstance(typeof(IDependencyResolver),this,DependencyLifetime.Singleton);
-      AddDependencyInstance(typeof(IModelDrivenDependencyRegistration),this,DependencyLifetime.Singleton);
+      AddDependencyInstance(typeof(IDependencyResolver), this, DependencyLifetime.Singleton);
+      AddDependencyInstance(typeof(IModelDrivenDependencyRegistration), this, DependencyLifetime.Singleton);
     }
 
     protected override void AddDependencyCore(Type concreteType, DependencyLifetime lifetime)
     {
       AddDependencyCore(concreteType, concreteType, lifetime);
     }
-    
+
     protected override void AddDependencyCore(Type serviceType, Type concreteType, DependencyLifetime lifetime)
     {
       Registrations.Add(new DependencyRegistration(serviceType, concreteType, lifetime, _lifetimeManagers[lifetime]));
@@ -100,7 +100,7 @@ namespace OpenRasta.DI
 
     public bool TryResolve<T>(out T instance)
     {
-      var success = new ResolveContext(()=>Registrations).TryResolve(typeof(T), out var untyped);
+      var success = new ResolveContext(() => Registrations).TryResolve(typeof(T), out var untyped);
       instance = (T) untyped;
       return success;
     }
@@ -109,7 +109,7 @@ namespace OpenRasta.DI
     {
       try
       {
-        return new ResolveContext(()=>Registrations).Resolve(serviceType);
+        return new ResolveContext(() => Registrations).Resolve(serviceType);
       }
       catch (Exception e)
       {
@@ -140,7 +140,7 @@ namespace OpenRasta.DI
         throw new DependencyResolutionException("Cannot resolve per-request outisde of request scope.");
       var requestContextRegistrations = new RequestContextRegistrations(_globalRegistrations);
       ContextStore[CTX_REGISTRATIONS] = requestContextRegistrations;
-      
+
       return new ActionOnDispose(() =>
       {
         _lifetimeManagers[DependencyLifetime.PerRequest].EndScope();
@@ -151,14 +151,22 @@ namespace OpenRasta.DI
 
     public void Register(DependencyFactoryModel registration)
     {
+      object resolveFromRegistration(ResolveContext ctx)
+      {
+        return registration.Invoker(registration.Arguments.Select(ctx.Resolve).ToArray());
+      }
+
+      Func<ResolveContext, object> factory = null;
+      if (registration.Factory != null)
+        factory = resolveFromRegistration;
+      
       Registrations.Add(new DependencyRegistration(
         registration.ServiceType,
         registration.ConcreteType,
         registration.Lifetime,
         _lifetimeManagers[registration.Lifetime],
-        ctx=> registration.Invoker(registration.Arguments.Select(ctx.Resolve).ToArray())
-        ));      
+        factory
+      ));
     }
   }
-  
 }

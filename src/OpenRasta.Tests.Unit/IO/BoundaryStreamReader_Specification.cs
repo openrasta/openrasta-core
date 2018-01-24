@@ -128,15 +128,15 @@ namespace BoundaryStreamReader_Specification
             GivenANullStream();
             Executing(() => GivenABoundaryStreamReader("b")).ShouldThrow<ArgumentNullException>();
         }
-
-        [Test]
+#if !NETCOREAPP2_0
+        [Test, Platform("Win")]
         public void building_a_boundary_stream_reader_necessitates_a_seekable_stream()
         {
             GivenANonSeekableStream();
 
             Executing(() => GivenABoundaryStreamReader("b")).ShouldThrow<ArgumentException>();
         }
-
+#endif
         [Test]
         public void
             read_line_followed_by_full_read_followed_by_read_line_reads_a_line_the_rest_of_the_part_and_the_line_of_the_next_part

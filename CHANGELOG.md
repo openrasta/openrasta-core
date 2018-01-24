@@ -5,7 +5,7 @@ OpenRasta adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
- - Better late than never, we've moved the code that our friends at Just-Eat
+ - Better late than never, we've moved the code that our friends at Just-Eat Tech
    contributed ages ago, and it now ships in an updated version as part of our
    main package. Any host compatible with OWIN (as in the specification) can
    now use OpenRasta. Ain't life awesome?
@@ -13,12 +13,12 @@ OpenRasta adheres to [Semantic Versioning](http://semver.org/).
    package, `OpenRasta.Hosting.Katana`. It should also work with any host
    implementing `IAppBuilder`. There's also a convenience package for asp.net
    core, `OpenRasta.Hosting.AspNetCore`. It doesn't do much but saves you a bit
-   of typing compared to wiring up the OWIN signatures.   
+   of typing compared to wiring up the OWIN signatures.
  - We've added a `OpenRasta.Codecs.Newtonsoft.Json` package, because frankly,
    `DataContract`s are long dead.
  - Registering custom dependencies was always meant to be done in the configuration
    phase, but it was a bit on the simple side. So we made it `Func`ky and added
-   factory support. You can now do `ResourceSpace.Uses.Dependency(ctx=>ctx.Register(()=>new MyService())`
+   factory support. You can now do `ResourceSpace.Uses.Dependency(ctx=>ctx.Singleton(()=>new MyService())`
    and a few other funky things. Container integrations have to be updated to
    support this, and we'll throw an exception if you use factories and the container
    doesn't support them.

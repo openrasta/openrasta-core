@@ -10,7 +10,7 @@ namespace OpenRasta.Configuration.MetaModel
     public Delegate Factory;
     public Func<object[], object> Invoker;
 
-    public DependencyFactoryModel(Delegate factory, Type concreteType, params Type[] args)
+    public DependencyFactoryModel(Type concreteType, Delegate factory = null, params Type[] args)
     {
       Arguments = args;
       Factory = factory;
@@ -24,8 +24,11 @@ namespace OpenRasta.Configuration.MetaModel
 
   public class DependencyFactoryModel<TConcrete> : DependencyFactoryModel
   {
+    public DependencyFactoryModel() : base(typeof(TConcrete))
+    {
+    }
     public DependencyFactoryModel(Func<TConcrete> factory)
-      : base(factory, typeof(TConcrete))
+      : base(typeof(TConcrete), factory)
     {
       Invoker = args => factory();
     }
@@ -33,7 +36,7 @@ namespace OpenRasta.Configuration.MetaModel
   public class DependencyFactoryModel<TArg1,TConcrete> : DependencyFactoryModel
   {
     public DependencyFactoryModel(Func<TArg1,TConcrete> factory)
-      : base(factory, typeof(TConcrete), typeof(TArg1))
+      : base(typeof(TConcrete), factory, typeof(TArg1))
     {
       Invoker = args => factory((TArg1)args[0]);
     }
@@ -41,7 +44,7 @@ namespace OpenRasta.Configuration.MetaModel
   public class DependencyFactoryModel<TArg1,TArg2,TConcrete> : DependencyFactoryModel
   {
     public DependencyFactoryModel(Func<TArg1,TArg2,TConcrete> factory)
-      : base(factory, typeof(TConcrete), typeof(TArg1), typeof(TArg2))
+      : base(typeof(TConcrete), factory, typeof(TArg1), typeof(TArg2))
     {
       Invoker = args => factory((TArg1)args[0],(TArg2)args[1]);
     }
@@ -49,7 +52,7 @@ namespace OpenRasta.Configuration.MetaModel
   public class DependencyFactoryModel<TArg1,TArg2,TArg3,TConcrete> : DependencyFactoryModel
   {
     public DependencyFactoryModel(Func<TArg1,TArg2,TArg3,TConcrete> factory)
-      : base(factory, typeof(TConcrete), typeof(TArg1), typeof(TArg2), typeof(TArg3))
+      : base(typeof(TConcrete), factory, typeof(TArg1), typeof(TArg2), typeof(TArg3))
     {
       Invoker = args => factory((TArg1)args[0], (TArg2)args[1], (TArg3)args[2]);
     }
@@ -57,7 +60,7 @@ namespace OpenRasta.Configuration.MetaModel
   public class DependencyFactoryModel<TArg1,TArg2,TArg3,TArg4,TConcrete> : DependencyFactoryModel
   {
     public DependencyFactoryModel(Func<TArg1,TArg2,TArg3,TArg4, TConcrete> factory)
-      : base(factory, typeof(TConcrete), typeof(TArg1), typeof(TArg2), typeof(TArg3), typeof(TArg4))
+      : base(typeof(TConcrete), factory, typeof(TArg1), typeof(TArg2), typeof(TArg3), typeof(TArg4))
     {
       Invoker = args => factory((TArg1)args[0], (TArg2)args[1], (TArg3)args[2], (TArg4)(args[3]));
     }

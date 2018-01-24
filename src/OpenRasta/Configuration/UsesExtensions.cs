@@ -10,6 +10,7 @@ namespace OpenRasta.Configuration
   public interface ITypeRegistrationContext
   {
 //    ITypeRegistrationOptions Register<TConcrete>();
+    ITypeRegistrationOptions Singleton<TConcrete>();
     ITypeRegistrationOptions Singleton<TConcrete>(Func<TConcrete> factory);
     ITypeRegistrationOptions Singleton<TArg1, TConcrete>(Func<TArg1, TConcrete> factory);
     ITypeRegistrationOptions Singleton<TArg1, TArg2, TConcrete>(Func<TArg1, TArg2, TConcrete> factory);
@@ -44,6 +45,12 @@ namespace OpenRasta.Configuration
 
   class TypeRegistrationContext : ITypeRegistrationContext, ITypeRegistrationOptions
   {
+    public ITypeRegistrationOptions Singleton<TConcrete>()
+    {
+      Model = new DependencyFactoryModel<TConcrete>() { Lifetime = DependencyLifetime.Singleton };
+      return this;
+    }
+
     public ITypeRegistrationOptions Singleton<TConcrete>(Func<TConcrete> factory)
     {
       Model = new DependencyFactoryModel<TConcrete>(factory) { Lifetime = DependencyLifetime.Singleton };
@@ -76,6 +83,12 @@ namespace OpenRasta.Configuration
       return this;
     }
 
+    public ITypeRegistrationOptions Transient<TConcrete>()
+    {
+      Model = new DependencyFactoryModel<TConcrete>() { Lifetime = DependencyLifetime.Transient };
+      return this;
+    }
+    
     public ITypeRegistrationOptions Transient<TConcrete>(Func<TConcrete> factory)
     {
       Model = new DependencyFactoryModel<TConcrete>(factory) { Lifetime = DependencyLifetime.Transient };
@@ -103,6 +116,12 @@ namespace OpenRasta.Configuration
     public ITypeRegistrationOptions Transient<TArg1, TArg2, TArg3, TArg4, TConcrete>(Func<TArg1, TArg2, TArg3, TArg4, TConcrete> factory)
     {
       Model = new DependencyFactoryModel<TArg1, TArg2, TArg3, TArg4, TConcrete>(factory) { Lifetime = DependencyLifetime.Transient };
+      return this;
+    }
+
+    public ITypeRegistrationOptions PerRequest<TConcrete>()
+    {
+      Model = new DependencyFactoryModel<TConcrete>() { Lifetime = DependencyLifetime.PerRequest };
       return this;
     }
 
