@@ -3,11 +3,6 @@ using System.Collections.Generic;
 
 namespace OpenRasta.DI.Internal
 {
-  delegate bool ProfileResolver(
-    IDependencyRegistrationCollection registrations, 
-    ResolveContext currentContext,
-    out object instance);
-  
   public class ResolveContext
   {
     readonly Stack<DependencyRegistration> _recursionDefender = new Stack<DependencyRegistration>();

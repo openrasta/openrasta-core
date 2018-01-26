@@ -153,7 +153,7 @@ namespace OpenRasta.DI
     {
       object resolveFromRegistration(ResolveContext ctx)
       {
-        return registration.Invoker(registration.Arguments.Select(ctx.Resolve).ToArray());
+        return registration.UntypedFactory(registration.Arguments.Select(ctx.Resolve).ToArray());
       }
 
       Func<ResolveContext, object> factory = null;
