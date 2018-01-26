@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using OpenRasta.DI;
 
 namespace OpenRasta.Configuration.MetaModel
@@ -7,10 +8,10 @@ namespace OpenRasta.Configuration.MetaModel
   public abstract class DependencyFactoryModel
   {
     public readonly IEnumerable<Type> Arguments;
-    public Delegate Factory;
-    public Func<object[], object> Invoker;
+    public Expression Factory;
+    public Func<object[], object> UntypedFactory;
 
-    public DependencyFactoryModel(Type concreteType, Delegate factory = null, params Type[] args)
+    protected DependencyFactoryModel(Type concreteType, Expression factory = null, params Type[] args)
     {
       Arguments = args;
       Factory = factory;
@@ -27,42 +28,47 @@ namespace OpenRasta.Configuration.MetaModel
     public DependencyFactoryModel() : base(typeof(TConcrete))
     {
     }
-    public DependencyFactoryModel(Func<TConcrete> factory)
+    public DependencyFactoryModel(Expression<Func<TConcrete>> factory)
       : base(typeof(TConcrete), factory)
     {
-      Invoker = args => factory();
+      var invoker = factory.Compile();
+      UntypedFactory = args => invoker;
     }
   }
   public class DependencyFactoryModel<TArg1,TConcrete> : DependencyFactoryModel
   {
-    public DependencyFactoryModel(Func<TArg1,TConcrete> factory)
+    public DependencyFactoryModel(Expression<Func<TArg1,TConcrete>> factory)
       : base(typeof(TConcrete), factory, typeof(TArg1))
     {
-      Invoker = args => factory((TArg1)args[0]);
+      var invoker = factory.Compile();
+      UntypedFactory = args => invoker((TArg1)args[0]);
     }
   }
   public class DependencyFactoryModel<TArg1,TArg2,TConcrete> : DependencyFactoryModel
   {
-    public DependencyFactoryModel(Func<TArg1,TArg2,TConcrete> factory)
+    public DependencyFactoryModel(Expression<Func<TArg1,TArg2,TConcrete>> factory)
       : base(typeof(TConcrete), factory, typeof(TArg1), typeof(TArg2))
     {
-      Invoker = args => factory((TArg1)args[0],(TArg2)args[1]);
+      var invoker = factory.Compile();
+      UntypedFactory = args => invoker((TArg1)args[0],(TArg2)args[1]);
     }
   }
   public class DependencyFactoryModel<TArg1,TArg2,TArg3,TConcrete> : DependencyFactoryModel
   {
-    public DependencyFactoryModel(Func<TArg1,TArg2,TArg3,TConcrete> factory)
+    public DependencyFactoryModel(Expression<Func<TArg1,TArg2,TArg3,TConcrete>> factory)
       : base(typeof(TConcrete), factory, typeof(TArg1), typeof(TArg2), typeof(TArg3))
     {
-      Invoker = args => factory((TArg1)args[0], (TArg2)args[1], (TArg3)args[2]);
+      var invoker = factory.Compile();
+      UntypedFactory = args => invoker((TArg1)args[0], (TArg2)args[1], (TArg3)args[2]);
     }
   }
   public class DependencyFactoryModel<TArg1,TArg2,TArg3,TArg4,TConcrete> : DependencyFactoryModel
   {
-    public DependencyFactoryModel(Func<TArg1,TArg2,TArg3,TArg4, TConcrete> factory)
+    public DependencyFactoryModel(Expression<Func<TArg1,TArg2,TArg3,TArg4, TConcrete>> factory)
       : base(typeof(TConcrete), factory, typeof(TArg1), typeof(TArg2), typeof(TArg3), typeof(TArg4))
     {
-      Invoker = args => factory((TArg1)args[0], (TArg2)args[1], (TArg3)args[2], (TArg4)(args[3]));
+      var invoker = factory.Compile();
+      UntypedFactory = args => invoker((TArg1)args[0], (TArg2)args[1], (TArg3)args[2], (TArg4)(args[3]));
     }
   }
 }
