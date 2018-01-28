@@ -13,12 +13,12 @@ namespace OpenRasta.Configuration.MetaModel
       Codecs = new List<CodecModel>();
     }
 
-    public IList<CodecModel> Codecs { get; private set; }
-    public IList<HandlerModel> Handlers { get; private set; }
+    public IList<CodecModel> Codecs { get; }
+    public IList<HandlerModel> Handlers { get; }
 
     public bool IsStrictRegistration { get; set; }
     public object ResourceKey { get; set; }
-    public IList<UriModel> Uris { get; private set; }
+    public IList<UriModel> Uris { get; }
 
 
     public override string ToString()
