@@ -24,6 +24,7 @@ namespace OpenRasta.OperationModel.Filters
     readonly string _conventionalOperationName;
 
     // ReSharper disable once MemberCanBePrivate.Global - IoC
+    // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Global
     public ILogger<OperationModelLogSource> Log { get; set; }
 
     public IEnumerable<IOperationAsync> Process(IEnumerable<IOperationAsync> operations)
@@ -31,16 +32,17 @@ namespace OpenRasta.OperationModel.Filters
       return ProcessOperationsList(operations.ToList());
     }
 
-    private IEnumerable<IOperationAsync> ProcessOperationsList(List<IOperationAsync> operations)
+    IEnumerable<IOperationAsync> ProcessOperationsList(List<IOperationAsync> operations)
     {
-      if (string.IsNullOrEmpty(_commContext.PipelineData.SelectedResource?.UriName))
-      {
-        return OperationsWhenNoUriName(operations);
-      }
+      return string.IsNullOrEmpty(_commContext.PipelineData.SelectedResource?.UriName)
+        ? OperationsWhenNoUriName(operations) 
+        : OperationsWhenUriName(operations);
+    }
 
-
-      return Match(ByAttribute(operations).ToList())
-             ?? Match(ByConvention(operations).ToList())
+    List<IOperationAsync> OperationsWhenUriName(List<IOperationAsync> operations)
+    {
+      return Match(operations.FindByAttributeUriName(_commContext.PipelineData.SelectedResource.UriName).ToList())
+             ?? Match(operations.FindByOperationName(_conventionalOperationName).ToList())
              ?? operations;
     }
 
@@ -52,7 +54,7 @@ namespace OpenRasta.OperationModel.Filters
     List<IOperationAsync> OperationsWhenNoUriName(List<IOperationAsync> operations)
     {
       var filteredOperations = NotConventionalName(
-        NoAttributesOrEmptyUriNameBinding(operations).ToList());
+        NoAttributesOrNoUriName(operations).ToList());
 
       if (filteredOperations.Count == operations.Count())
         Log.NoResourceOrUriName();
@@ -71,11 +73,12 @@ namespace OpenRasta.OperationModel.Filters
       return operations
         .Where(op =>
         op.Name.StartsWith(method, StringComparison.OrdinalIgnoreCase) == false ||
-        _uris.UriNames[key].Contains(op.Name.Substring(method.Length)) == false)
+        _uris.UriNames.TryGetValue(key, out var namesForResourceKey) == false ||
+        namesForResourceKey.Contains(op.Name.Substring(method.Length)) == false)
         .ToList();
     }
 
-    static IEnumerable<IOperationAsync> NoAttributesOrEmptyUriNameBinding(List<IOperationAsync> operations)
+    static IEnumerable<IOperationAsync> NoAttributesOrNoUriName(List<IOperationAsync> operations)
     {
       return from operation in operations
         let attribute = operation.FindAttribute<HttpOperationAttribute>()
@@ -83,19 +86,23 @@ namespace OpenRasta.OperationModel.Filters
         select operation;
     }
 
-    IEnumerable<IOperationAsync> ByConvention(IEnumerable<IOperationAsync> operations)
+  }
+
+  public static class OperationListExtensions
+  {
+    public static IEnumerable<IOperationAsync> FindByOperationName(this IEnumerable<IOperationAsync> operations, string operationName)
     {
       return from operation in operations
-        where string.Compare(operation.Name, _conventionalOperationName, StringComparison.OrdinalIgnoreCase) == 0
+        where string.Compare(operation.Name, operationName, StringComparison.OrdinalIgnoreCase) == 0
         select operation;
     }
 
-    IEnumerable<IOperationAsync> ByAttribute(IEnumerable<IOperationAsync> operations)
+    public static IEnumerable<IOperationAsync> FindByAttributeUriName(this IEnumerable<IOperationAsync> operations, string uriName)
     {
       return from operation in operations
         let attribute = operation.FindAttribute<HttpOperationAttribute>()
         where attribute != null
-              && attribute.MatchesUriName(_commContext.PipelineData.SelectedResource.UriName)
+              && attribute.MatchesUriName(uriName)
         select operation;
     }
   }
