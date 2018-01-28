@@ -6,10 +6,10 @@ using OpenRasta.Pipeline;
 namespace OpenRasta.OperationModel
 {
   [Obsolete]
-    public interface IOperationProcessor<T> : IOperationProcessor
-        where T : IPipelineContributor
-    {
-    }
+  public interface IOperationProcessor<T> : IOperationProcessor
+    where T : IPipelineContributor
+  {
+  }
 }
 
 // ReSharper restore UnusedTypeParameter

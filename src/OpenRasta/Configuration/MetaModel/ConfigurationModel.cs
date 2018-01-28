@@ -10,6 +10,6 @@ namespace OpenRasta.Configuration.MetaModel
             Properties = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
         }
 
-        public IDictionary<string, object> Properties { get; private set; }
+        public IDictionary<string, object> Properties { get; }
     }
 }
