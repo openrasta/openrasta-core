@@ -30,11 +30,12 @@ namespace OpenRasta.Hosting.Katana
     void PopulateHeaders(IOwinRequest ctx)
     {
       var headerCollection = new NameValueCollection();
-      foreach (var header in ctx.Headers) headerCollection.Add(header.Key, header.Value.First());
+      foreach (var header in ctx.Headers)
+      {
+        headerCollection.Add(header.Key, header.Value.First());
+      }
 
       Headers = new HttpHeaderDictionary(headerCollection);
-
-      if (Headers.ContentLength == null) Headers.ContentLength = ctx.Body.Length;
     }
   }
 }
