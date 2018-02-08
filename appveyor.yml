@@ -12,15 +12,15 @@ install:
         $build = $env:APPVEYOR_BUILD_NUMBER
         $branch = $env:APPVEYOR_REPO_BRANCH
         
-        if ($env:APPVEYOR_REPO_TAG) {
-          echo "Version: Using git tag $env:APPVEYOR_REPO_TAG"
+        if ($env:APPVEYOR_REPO_TAG -eq "true") {
+          echo "Version: Using git tag $env:APPVEYOR_REPO_TAG_NAME"
           
           if (-not $env:APPVEYOR_REPO_TAG -match "^(\d+\.\d+\.\d+)") {
             throw "Invalid version in tag name"
           }          
           $version = [version]$Matches[0]
           
-          $semver = $env:APPVEYOR_REPO_TAG
+          $semver = $env:APPVEYOR_REPO_TAG_NAME
           
         } else {
           $semver = (git describe --abbrev=0 2>&1);
