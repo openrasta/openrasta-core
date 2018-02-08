@@ -13,7 +13,8 @@ install:
         $branch = $env:APPVEYOR_REPO_BRANCH
         
         if ($env:APPVEYOR_REPO_TAG) {
-        
+          echo "Version: Using git tag $env:APPVEYOR_REPO_TAG"
+          
           if (-not $env:APPVEYOR_REPO_TAG -match "^(\d+\.\d+\.\d+)") {
             throw "Invalid version in tag name"
           }          
@@ -25,7 +26,9 @@ install:
           $semver = (git describe --abbrev=0 2>&1);
           if ($LASTEXITCODE -ne 0) { $semver = "1.0.0-preview.0" };
           
-          $server -match "^(\d+\.\d+\.\d+)"
+          echo "Version: Using base semver $semver"
+          
+          $semver -match "^(\d+\.\d+\.\d+)"
           $version = [version]$Matches[0]
           
           $semver += ".$build"
