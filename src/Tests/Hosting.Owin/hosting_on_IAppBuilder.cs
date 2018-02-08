@@ -28,6 +28,13 @@ namespace Tests.Hosting.Owin
       response.EnsureSuccessStatusCode();
     }
 
+    [Fact]
+    public async void can_get_silent_ping()
+    {
+      var response = await client.GetAsync("/ping-silently");
+      response.EnsureSuccessStatusCode();
+    }
+
     public void Dispose()
     {
       server?.Dispose();
