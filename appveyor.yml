@@ -9,36 +9,42 @@ install:
   - ps: mkdir c:\ca; iwr https://curl.haxx.se/ca/cacert.pem -outfile C:\ca\cacert.pem
   - set SSL_CERT_FILE=C:\ca\cacert.pem
   - ps: |
-        $version = [version]$(cat VERSION)
         $build = $env:APPVEYOR_BUILD_NUMBER
-        $major = $version.Major
-        
         $branch = $env:APPVEYOR_REPO_BRANCH
-        if ($branch -eq 'master') {
-          $version = "$version-ci-$build"
-        } elseif ($env:APPVEYOR_REPO_TAG) {
-          $version = $env:APPVEYOR_REPO_TAG_NAME
-        } elseif ($env:APPVEYOR_PULL_REQUEST_NUMBER) {
-          $version = "$version-pr-$env:APPVEYOR_PULL_REQUEST_NUMBER-$build"
+        
+        if ($env:APPVEYOR_REPO_TAG) {
+        
+          if (-not $env:APPVEYOR_REPO_TAG -match "^(\d+\.\d+\.\d+)") {
+            throw "Invalid version in tag name"
+          }          
+          $version = [version]$Matches[0]
+          
+          $semver = $env:APPVEYOR_REPO_TAG
+          
+        } else {
+          $semver = (git describe --abbrev=0 2>&1);
+          if ($LASTEXITCODE -ne 0) { $semver = "1.0.0-preview.0" };
+          
+          $server -match "^(\d+\.\d+\.\d+)"
+          $version = [version]$Matches[0]
+          
+          $semver += ".$build"
+          
+          
+          if ($env:APPVEYOR_PULL_REQUEST_NUMBER) {
+            $semver += "+pr.$env:APPVEYOR_PULL_REQUEST_NUMBER"
+          } else {
+            $semver += "+$branch"
+          }
         }
-        else {
-          $version = "$version-br-$branch-$build"
-        }
-        Set-AppveyorBuildVariable -Name "AssemblyMajor" -Value "$major"
-        Update-AppVeyorBuild -Version "$version"
-        Write-Output "$version"
+        
+        Set-AppveyorBuildVariable -Name "AssemblyMajor" -Value $version.Major
+        Update-AppVeyorBuild -Version "$semver"
 
   - gem install chandler --no-ri --no-rdoc
   - ps: set-content ~/.netrc "machine api.github.com login $env:github_username password $env:github_password" -encoding ascii
   - ps: cp ~/.netrc ~/_netrc
-  - ps: if (-not $env:APPVEYOR_PULL_REQUEST_NUMBER) {chandler push }
-
-#assembly_info:
-  #patch: true
-  #file: src\CommonInfo.cs
-  #assembly_version: $(AssemblyMajor).0.0.0
-  #assembly_file_version: '{version}'
-  #assembly_informational_version: '{version}'
+  - ps: if ($branch -eq "master") {chandler push }
 
 before_build:
   - cmd: set PATH=C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\MSBuild\15.0\Bin;C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\MSBuild\15.0\Bin;C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional\MSBuild\15.0\Bin;%PATH%
