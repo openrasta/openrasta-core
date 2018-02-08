@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using OpenRasta.Binding;
@@ -22,19 +21,6 @@ namespace OpenRasta.OperationModel.MethodBased
 
       return ((Task) Method.Invoke(instance, parameters).Single())
         .ContinueWith(task => Enumerable.Empty<OutputMember>());
-    }
-
-    public IEnumerable<OutputMember> Invoke()
-    {
-      throw new NotImplementedException();
-    }
-
-    public static IOperationAsync FromType(Type methodType, IMethod method, IObjectBinderLocator binderLocator = null)
-    {
-      return (IOperationAsync) Activator.CreateInstance(
-        typeof(AsyncMethod<>)
-          .MakeGenericType(method.OutputMembers.Single().StaticType.GenericTypeArguments),
-        method, binderLocator);
     }
   }
 }

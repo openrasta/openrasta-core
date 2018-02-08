@@ -234,6 +234,7 @@ namespace OpenRasta.Configuration
       AddMetaModelHandler<UriRegistrationMetaModelHandler>();
       AddMetaModelHandler<DependencyRegistrationMetaModelHandler>();
       AddMetaModelHandler<DependencyFactoryHandler>();
+      AddMetaModelHandler<OperationModelCreator>();
     }
 
     protected virtual void AddLogSources()

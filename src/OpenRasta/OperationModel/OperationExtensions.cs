@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using OpenRasta.OperationModel.Interceptors;
 using OpenRasta.TypeSystem;
 
@@ -74,6 +75,24 @@ namespace OpenRasta.OperationModel
     public static IOperationAsync Intercept(this IOperationAsync operation, IEnumerable<IOperationInterceptorAsync> systemInterceptors = null)
     {
       return new AsyncOperationWithInterceptors(operation, systemInterceptors ?? Enumerable.Empty<IOperationInterceptorAsync>());
+    }
+
+    public static bool IsTaskOfT(this Type type, out Type returnType)
+    {
+      if (type.IsGenericType &&
+          type.GetGenericTypeDefinition() == typeof(Task<>))
+      {
+        returnType = type.GetGenericArguments()[0];
+        return true;
+      }
+
+      returnType = null;
+      return false;
+    }
+
+    public static bool IsTask(this Type type)
+    {
+      return type == typeof(Task);
     }
   }
 }

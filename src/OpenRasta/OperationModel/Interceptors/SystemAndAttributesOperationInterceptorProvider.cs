@@ -10,11 +10,6 @@ namespace OpenRasta.OperationModel.Interceptors
   {
     readonly Func<IEnumerable<IOperationInterceptor>> _systemInterceptors;
 
-    public SystemAndAttributesOperationInterceptorProvider(IDependencyResolver resolver)
-      : this(resolver.ResolveAll<IOperationInterceptor>)
-    {
-    }
-
     public SystemAndAttributesOperationInterceptorProvider(Func<IEnumerable<IOperationInterceptor>> systemInterceptors)
     {
       _systemInterceptors = systemInterceptors;

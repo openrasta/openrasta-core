@@ -58,8 +58,7 @@ namespace OpenRasta.OperationModel.MethodBased
     /// <returns></returns>
     protected static object CreateInstance(IType type, IDependencyResolver resolver)
     {
-      var typeForResolver = type as IResolverAwareType;
-      return resolver == null || typeForResolver == null
+      return resolver == null || !(type is IResolverAwareType typeForResolver)
         ? type.CreateInstance()
         : typeForResolver.CreateInstance(resolver);
     }
