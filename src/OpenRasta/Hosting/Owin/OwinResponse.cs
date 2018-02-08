@@ -15,8 +15,8 @@ namespace OpenRasta.Hosting.Katana
 
       NativeContext = response;
       Headers = new HttpHeaderDictionary();
-      var delayedStream = new DelayedStream(context.Response.Body);
-      Entity = new HttpEntity(Headers, delayedStream);
+      //var delayedStream = new DelayedStream(context.Response.Body);
+      Entity = new HttpEntity(Headers, context.Response.Body);
     }
 
     IOwinResponse NativeContext { get; }
@@ -30,7 +30,7 @@ namespace OpenRasta.Hosting.Katana
       set => NativeContext.StatusCode = value;
     }
 
-    public void WriteHeaders()
+    public void WriteHeaders() 
     {
       if (HeadersSent)
         throw new InvalidOperationException("The headers have already been sent.");
@@ -42,7 +42,6 @@ namespace OpenRasta.Hosting.Katana
       }
 
       HeadersSent = true;
-      Entity.Stream.Flush();
     }
   }
 }

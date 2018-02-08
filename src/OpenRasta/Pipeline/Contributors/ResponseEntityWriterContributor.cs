@@ -22,6 +22,7 @@ namespace OpenRasta.Pipeline.Contributors
     {
       _resolver = resolver;
     }
+
     public void Initialize(IPipeline pipeline)
     {
       pipeline.NotifyAsync(WriteResponseBuffered).After<KnownStages.ICodecResponseSelection>();
@@ -32,6 +33,8 @@ namespace OpenRasta.Pipeline.Contributors
       if (context.Response.Entity.Instance == null)
       {
         Log.WriteDebug("There was no response entity, not rendering.");
+        if (ShouldSendEmptyResponseBody(context))
+        
         await SendEmptyResponse(context);
         return PipelineContinuation.Continue;
       }
@@ -40,19 +43,44 @@ namespace OpenRasta.Pipeline.Contributors
       var writer = CreateWriter(codecInstance);
       using (Log.Operation(this, "Generating response entity."))
       {
-        await writer(
-          context.Response.Entity.Instance,
-          context.Response.Entity,
-          context.Request.CodecParameters.ToArray());
-        
         if (context.Response.Entity.Stream.CanSeek)
-          context.Response.Entity.ContentLength = context.Response.Entity.Stream.Length;
-        await PadErrorMessageForIE(context);
-
-        context.Response.WriteHeaders();
+          await WriteBufferedContent(context, writer);
+        else
+          await WriteChunkedContent(context, writer);
       }
 
       return PipelineContinuation.Continue;
+    }
+
+    bool ShouldSendEmptyResponseBody(ICommunicationContext context)
+    {
+      if (!(context.OperationResult is OperationResult.NotFound notFound))
+        return true;
+      return notFound.Reason != NotFoundReason.NotMapped;
+    }
+
+    async Task WriteChunkedContent(ICommunicationContext context, Func<object, IHttpEntity, IEnumerable<string>, Task> writer)
+    {
+      context.Response.WriteHeaders();
+      await writer(
+        context.Response.Entity.Instance,
+        context.Response.Entity,
+        context.Request.CodecParameters.ToArray());
+    }
+
+    static async Task WriteBufferedContent(ICommunicationContext context,
+      Func<object, IHttpEntity, IEnumerable<string>, Task> writer)
+    {
+      await writer(
+        context.Response.Entity.Instance,
+        context.Response.Entity,
+        context.Request.CodecParameters.ToArray());
+
+      if (context.Response.Entity.Stream.CanSeek)
+        context.Response.Entity.ContentLength = context.Response.Entity.Stream.Length;
+      await PadErrorMessageForIE(context);
+
+      context.Response.WriteHeaders();
     }
 
     ICodec ResolveCodec(ICommunicationContext context)
@@ -104,7 +132,10 @@ namespace OpenRasta.Pipeline.Contributors
 
     Task SendEmptyResponse(ICommunicationContext context)
     {
+      
       Log.WriteDebug("Writing http headers.");
+      context.Response.Headers.ContentLength = 0;
+
       context.Response.WriteHeaders();
       return context.Response.Entity.Stream.FlushAsync();
     }
@@ -116,8 +147,10 @@ namespace OpenRasta.Pipeline.Contributors
           && context.Response.Entity.ContentType == MediaType.Html
           && context.Response.Entity.Stream.Length <= 512)
       {
-        return context.Response.Entity.Stream.WriteAsync(PADDING, 0, (int) (512 - context.Response.Entity.Stream.Length));
+        return context.Response.Entity.Stream.WriteAsync(PADDING, 0,
+          (int) (512 - context.Response.Entity.Stream.Length));
       }
+
       return Task.CompletedTask;
     }
   }
