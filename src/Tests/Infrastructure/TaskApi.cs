@@ -23,6 +23,6 @@ namespace Tests.Infrastructure
 
   public class TaskApiHealthHandler
   {
-    public void GetSlient(){}
+    public void GetSilent(){}
   }
 }

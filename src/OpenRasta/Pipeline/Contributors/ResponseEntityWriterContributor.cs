@@ -34,8 +34,7 @@ namespace OpenRasta.Pipeline.Contributors
       {
         Log.WriteDebug("There was no response entity, not rendering.");
         if (ShouldSendEmptyResponseBody(context))
-        
-        await SendEmptyResponse(context);
+          await SendEmptyResponse(context);
         return PipelineContinuation.Continue;
       }
 
@@ -59,7 +58,8 @@ namespace OpenRasta.Pipeline.Contributors
       return notFound.Reason != NotFoundReason.NotMapped;
     }
 
-    async Task WriteChunkedContent(ICommunicationContext context, Func<object, IHttpEntity, IEnumerable<string>, Task> writer)
+    async Task WriteChunkedContent(ICommunicationContext context,
+      Func<object, IHttpEntity, IEnumerable<string>, Task> writer)
     {
       context.Response.WriteHeaders();
       await writer(
@@ -132,9 +132,9 @@ namespace OpenRasta.Pipeline.Contributors
 
     Task SendEmptyResponse(ICommunicationContext context)
     {
-      
       Log.WriteDebug("Writing http headers.");
-      context.Response.Headers.ContentLength = 0;
+      if (context.Response.StatusCode != 204)
+        context.Response.Headers.ContentLength = 0;
 
       context.Response.WriteHeaders();
       return context.Response.Entity.Stream.FlushAsync();

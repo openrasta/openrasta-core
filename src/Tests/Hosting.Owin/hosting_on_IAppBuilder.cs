@@ -3,6 +3,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using Microsoft.Owin.Testing;
 using OpenRasta.Hosting.Katana;
+using Shouldly;
 using Tests.Infrastructure;
 using Xunit;
 
@@ -33,6 +34,8 @@ namespace Tests.Hosting.Owin
     {
       var response = await client.GetAsync("/ping-silently");
       response.EnsureSuccessStatusCode();
+      response.Content.Headers.TryGetValues("Content-Length", out _).ShouldBeFalse();
+
     }
 
     public void Dispose()
