@@ -22,7 +22,6 @@ namespace Tests.Plugins.ReverseProxy
       response = server
           .CreateRequest("/proxy")
           .AddHeader("Accept", "*/*")
-          
           .PostAsync()
           .Result;
     }
@@ -32,18 +31,45 @@ namespace Tests.Plugins.ReverseProxy
     }
   }
 
-  public class get : IDisposable
+  public class get_returning_406 : IDisposable
   {
     readonly HttpResponseMessage response;
     readonly TestServer server;
 
-    public get()
+    public get_returning_406()
     {
       server = ProxyTestServer.Create();
 
       response = server
           .CreateRequest("/proxy")
-          .AddHeader("Accept", "*/*")
+          .AddHeader("Accept", "application/vnd.example")
+          .GetAsync()
+          .Result;
+    }
+
+    [Fact]
+    public void response_status_code_is_correct()
+    {
+      response.StatusCode.ShouldBe(HttpStatusCode.NotAcceptable);
+    }
+
+    public void Dispose()
+    {
+      server.Dispose();
+    }
+  }
+
+  public class get_returning_200 : IDisposable
+  {
+    readonly HttpResponseMessage response;
+    readonly TestServer server;
+
+    public get_returning_200()
+    {
+      server = ProxyTestServer.Create();
+
+      response = server
+          .CreateRequest("/proxy")
           .GetAsync()
           .Result;
     }

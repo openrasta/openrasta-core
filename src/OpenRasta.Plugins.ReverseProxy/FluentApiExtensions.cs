@@ -13,7 +13,7 @@ namespace OpenRasta.Plugins.ReverseProxy
     {
       uriConfiguration
           .HandledBy<ReverseProxyHandler>();
-      
+
       var target = (IResourceTarget)uriConfiguration;
       target.Resource.ReverseProxyTarget(uri);
     }
@@ -21,10 +21,11 @@ namespace OpenRasta.Plugins.ReverseProxy
     public static T ReverseProxy<T>(this T uses, ReverseProxyOptions options) where T : IUses
     {
       uses.Dependency(d => d.Singleton((IMetaModelRepository repository) => new ReverseProxy(options, repository)));
-            ((IHas)uses)
-              .ResourcesOfType<HttpResponseMessage>()
-              .WithoutUri
-                .TranscodedBy<ReverseProxyCodec>().ForMediaType("*/*");
+      ((IHas)uses)
+          .ResourcesOfType<HttpResponseMessage>()
+          .WithoutUri
+          .TranscodedBy<ReverseProxyCodec>()
+          .ForMediaType("*/*");
 
       return uses;
     }
