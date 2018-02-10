@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using LibOwin;
+using OpenRasta.Concordia;
 using OpenRasta.Configuration;
 using OpenRasta.Diagnostics;
 using OpenRasta.DI;
@@ -9,7 +10,7 @@ using OpenRasta.Web;
 
 namespace OpenRasta.Hosting.Katana
 {
-  public class OwinHost : IHost
+  public class OwinHost : IHost, IHostStartWithStartupProperties
   {
     public OwinHost(
       IConfigurationSource configuration,
@@ -42,7 +43,13 @@ namespace OpenRasta.Hosting.Katana
 
     public string ApplicationVirtualPath { get; }
     public IDependencyResolverAccessor ResolverAccessor { get; }
-    public event EventHandler Start;
+    event EventHandler LegacyStart;
+    event EventHandler IHost.Start
+    {
+      add => LegacyStart += value;
+      remove => LegacyStart -= value;
+    }
+
     public event EventHandler Stop;
     public event EventHandler<IncomingRequestReceivedEventArgs> IncomingRequestReceived;
 
@@ -83,12 +90,20 @@ namespace OpenRasta.Hosting.Katana
 
     internal virtual void RaiseStart()
     {
-      Start.Raise(this);
+      LegacyStart.Raise(this);
     }
 
     public void RaiseStop()
     {
       Stop?.Raise(this);
+    }
+
+    public event EventHandler<StartupProperties> Start;
+
+    internal virtual void RaiseStart(StartupProperties e)
+    {
+      LegacyStart?.Invoke(this, EventArgs.Empty);
+      Start?.Invoke(this, e);
     }
   }
 }
