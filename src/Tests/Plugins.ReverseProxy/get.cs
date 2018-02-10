@@ -21,7 +21,6 @@ namespace Tests.Plugins.ReverseProxy
 
       response = server
           .CreateRequest("/proxy")
-          .AddHeader("Accept", "*/*")
           .PostAsync()
           .Result;
     }
