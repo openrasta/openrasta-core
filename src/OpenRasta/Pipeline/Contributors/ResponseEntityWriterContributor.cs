@@ -42,10 +42,10 @@ namespace OpenRasta.Pipeline.Contributors
       var writer = CreateWriter(codecInstance);
       using (Log.Operation(this, "Generating response entity."))
       {
-        if (context.Response.Entity.Stream.CanSeek)
-          await WriteBufferedContent(context, writer);
-        else
-          await WriteChunkedContent(context, writer);
+          await (context.Response.Entity.Stream.CanSeek
+              ? WriteBufferedContent(context, writer) 
+              : WriteUnbufferedContent(context,writer));
+        
       }
 
       return PipelineContinuation.Continue;
@@ -58,7 +58,7 @@ namespace OpenRasta.Pipeline.Contributors
       return notFound.Reason != NotFoundReason.NotMapped;
     }
 
-    async Task WriteChunkedContent(ICommunicationContext context,
+    async Task WriteUnbufferedContent(ICommunicationContext context,
       Func<object, IHttpEntity, IEnumerable<string>, Task> writer)
     {
       context.Response.WriteHeaders();
@@ -66,6 +66,8 @@ namespace OpenRasta.Pipeline.Contributors
         context.Response.Entity.Instance,
         context.Response.Entity,
         context.Request.CodecParameters.ToArray());
+      
+      await context.Response.Entity.Stream.FlushAsync();
     }
 
     static async Task WriteBufferedContent(ICommunicationContext context,
@@ -81,6 +83,8 @@ namespace OpenRasta.Pipeline.Contributors
       await PadErrorMessageForIE(context);
 
       context.Response.WriteHeaders();
+      
+      await context.Response.Entity.Stream.FlushAsync();
     }
 
     ICodec ResolveCodec(ICommunicationContext context)
@@ -130,14 +134,14 @@ namespace OpenRasta.Pipeline.Contributors
       };
     }
 
-    Task SendEmptyResponse(ICommunicationContext context)
+    async Task SendEmptyResponse(ICommunicationContext context)
     {
       Log.WriteDebug("Writing http headers.");
       if (context.Response.StatusCode != 204)
         context.Response.Headers.ContentLength = 0;
 
       context.Response.WriteHeaders();
-      return context.Response.Entity.Stream.FlushAsync();
+      await context.Response.Entity.Stream.FlushAsync();
     }
 
     static Task PadErrorMessageForIE(ICommunicationContext context)
