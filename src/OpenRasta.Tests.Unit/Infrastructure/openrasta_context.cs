@@ -29,6 +29,7 @@ namespace OpenRasta.Tests.Unit.Infrastructure
     Dictionary<Type, Func<ICommunicationContext, Task<PipelineContinuation>>> _actions;
     InMemoryHost Host;
     IDisposable _requestScope;
+    ContextScope _ambientContext;
 
     protected openrasta_context()
     {
@@ -65,7 +66,7 @@ namespace OpenRasta.Tests.Unit.Infrastructure
     {
       Pipeline = new SinglePipeline<T>(constructor, Resolver, _actions);
       Pipeline.Contributors[0].Initialize(Pipeline);
-      return (T) Pipeline.Contributors[0];
+      return (T)Pipeline.Contributors[0];
     }
 
     public void given_uri_registration<T>(string uri, string uriName = null)
@@ -131,33 +132,33 @@ namespace OpenRasta.Tests.Unit.Infrastructure
     {
       foreach (var contentType in MediaType.Parse(mediaTypes))
         Codecs.Add(CodecRegistration.FromResourceType(typeof(TResource),
-          typeof(TCodec),
-          TypeSystem,
-          contentType,
-          null,
-          null,
-          false));
+            typeof(TCodec),
+            TypeSystem,
+            contentType,
+            null,
+            null,
+            false));
     }
 
     protected void given_registration_handler<TResource, THandler>()
     {
       Resolver.Resolve<IHandlerRepository>().AddResourceHandler(typeof(TResource).AssemblyQualifiedName,
-        TypeSystem.FromClr
-          (typeof(THandler)));
+          TypeSystem.FromClr
+              (typeof(THandler)));
     }
 
     protected void given_request_entity_body(byte[] bytes)
     {
       Request.Entity = new HttpEntity(new HttpHeaderDictionary(), new MemoryStream(bytes))
       {
-        ContentLength = bytes.Length
+          ContentLength = bytes.Length
       };
     }
 
     protected void given_request_entity_body(string content)
     {
       var bytes = Encoding.UTF8.GetBytes(content);
-      Request.Entity = new HttpEntity(Request.Entity.Headers, new MemoryStream(bytes)) {ContentLength = bytes.Length};
+      Request.Entity = new HttpEntity(Request.Entity.Headers, new MemoryStream(bytes)) { ContentLength = bytes.Length };
     }
 
     protected void given_request_header_accept(string p)
@@ -188,20 +189,20 @@ namespace OpenRasta.Tests.Unit.Infrastructure
       Context.Response.Entity.ContentType = new MediaType(contentType);
 
       Context.PipelineData.ResponseCodec =
-        CodecRegistration.FromResourceType(responseEntity?.GetType() ?? typeof(object),
-          codecType,
-          TypeSystem,
-          new MediaType(contentType),
-          null,
-          null,
-          false);
+          CodecRegistration.FromResourceType(responseEntity?.GetType() ?? typeof(object),
+              codecType,
+              TypeSystem,
+              new MediaType(contentType),
+              null,
+              null,
+              false);
       given_response_entity(responseEntity);
     }
 
     protected void given_response_entity(object responseEntity)
     {
       Context.Response.Entity.Instance = responseEntity;
-      Context.OperationResult = new OperationResult.OK {ResponseResource = responseEntity};
+      Context.OperationResult = new OperationResult.OK { ResponseResource = responseEntity };
     }
 
     protected void GivenAUser(string username, string password)
@@ -221,9 +222,9 @@ namespace OpenRasta.Tests.Unit.Infrastructure
           return null;
         return new Credentials
         {
-          Username = username,
-          Password = Passwords[username],
-          Roles = new string[0]
+            Username = username,
+            Password = Passwords[username],
+            Roles = new string[0]
         };
       }
 
@@ -240,14 +241,14 @@ namespace OpenRasta.Tests.Unit.Infrastructure
     {
       Host = new InMemoryHost(startup: new StartupProperties
       {
-        OpenRasta =
-        {
-          Errors =
+          OpenRasta =
           {
-            HandleAllExceptions = false,
-            HandleCatastrophicExceptions = false
+              Errors =
+              {
+                  HandleAllExceptions = false,
+                  HandleCatastrophicExceptions = false
+              }
           }
-        }
       });
 
       Pipeline = null;
@@ -257,8 +258,7 @@ namespace OpenRasta.Tests.Unit.Infrastructure
       Resolver.AddDependencyInstance(typeof(IErrorCollector), Errors = new TestErrorCollector());
       Resolver.AddDependency<IPathManager, PathManager>();
 
-      if (AmbientContext.Current != null) throw new InvalidOperationException("FUCK ME");
-      AmbientContext.Current = new AmbientContext();
+      _ambientContext = new ContextScope(new AmbientContext());
       _requestScope = Resolver.CreateRequestScope();
       manager.SetupCommunicationContext(Context = new InMemoryCommunicationContext());
     }
@@ -266,19 +266,13 @@ namespace OpenRasta.Tests.Unit.Infrastructure
     [TearDown]
     protected void cleanup()
     {
-      try
-      {
-        _requestScope.Dispose();
-        Host.Close();
-      }
-      finally
-      {
-        AmbientContext.Current = null;
-      }
+      _requestScope.Dispose();
+      _ambientContext.Dispose();
+      Host.Close();
     }
 
     public class SinglePipeline<T> : IPipeline, IPipelineExecutionOrder, IPipelineExecutionOrderAnd
-      where T : class, IPipelineContributor
+        where T : class, IPipelineContributor
     {
       internal Dictionary<Type, Func<ICommunicationContext, Task<PipelineContinuation>>> _actions;
       internal List<IPipelineContributor> _list;
@@ -286,14 +280,14 @@ namespace OpenRasta.Tests.Unit.Infrastructure
       Func<ICommunicationContext, Task<PipelineContinuation>> _lastNotification;
 
       public SinglePipeline(Func<T> creator,
-        IDependencyResolver resolver,
-        Dictionary<Type, Func<ICommunicationContext, Task<PipelineContinuation>>> actions)
+          IDependencyResolver resolver,
+          Dictionary<Type, Func<ICommunicationContext, Task<PipelineContinuation>>> actions)
       {
         ContextData = new PipelineData();
         _resolver = resolver;
         if (!_resolver.HasDependency(typeof(T)))
           _resolver.AddDependency<T>();
-        _list = new List<IPipelineContributor> {creator != null ? creator() : resolver.Resolve<T>()};
+        _list = new List<IPipelineContributor> { creator != null ? creator() : resolver.Resolve<T>() };
         _actions = actions;
       }
 
@@ -304,7 +298,7 @@ namespace OpenRasta.Tests.Unit.Infrastructure
         get
         {
           foreach (var kv in _actions)
-            yield return new ContributorCall {Action = kv.Value, Target = _list[0]};
+            yield return new ContributorCall { Action = kv.Value, Target = _list[0] };
         }
       }
 

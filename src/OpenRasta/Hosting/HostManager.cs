@@ -222,4 +222,5 @@ namespace OpenRasta.Hosting
       using (DependencyManager.ScopedResolver(Resolver))
         ((IDisposable)e.Context.PipelineData[Keys.Request.ResolverRequestScope]).Dispose();
     }
+  }
 }

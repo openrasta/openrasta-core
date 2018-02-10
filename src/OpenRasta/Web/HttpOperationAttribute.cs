@@ -7,60 +7,61 @@
  *      This file is distributed under the terms of the MIT License found at the end of this file.
  */
 #endregion
+
 using System;
 using System.Reflection;
 
 namespace OpenRasta.Web
 {
-    [AttributeUsage(AttributeTargets.Method)]
-    public class HttpOperationAttribute : Attribute
+  [AttributeUsage(AttributeTargets.Method)]
+  public class HttpOperationAttribute : Attribute
+  {
+    public HttpOperationAttribute()
     {
-        public HttpOperationAttribute()
-        {
-            ContentType = new MediaType("*/*");
-        }
-
-        public HttpOperationAttribute(HttpMethod method) : this()
-        {
-            Method = method.ToString();
-        }
-
-        public HttpOperationAttribute(string method) : this()
-        {
-            Method = method;
-        }
-
-        public string ForUriName { get; set; }
-        public string Method { get; set; }
-        public MediaType ContentType { get; set; }
-
-        /// <summary>
-        /// Tries to find an HttpOperation attribute on a method. 
-        /// </summary>
-        /// <param name="mi"></param>
-        /// <returns>The instance of the HttpOperation attribute, or null if none were defined.</returns>
-        public static HttpOperationAttribute Find(MethodInfo mi)
-        {
-            try
-            {
-                return GetCustomAttribute(mi, typeof (HttpOperationAttribute)) as HttpOperationAttribute;
-            }
-            catch
-            {
-                return null;
-            }
-        }
-
-        public bool MatchesUriName(string uriName)
-        {
-            return string.Compare(ForUriName, uriName, StringComparison.OrdinalIgnoreCase) == 0;
-        }
-
-        public bool MatchesHttpMethod(string httpMethod)
-        {
-            return string.CompareOrdinal(Method, httpMethod) == 0;
-        }
+      ContentType = new MediaType("*/*");
     }
+
+    public HttpOperationAttribute(HttpMethod method) : this()
+    {
+      Method = method.ToString();
+    }
+
+    public HttpOperationAttribute(string method) : this()
+    {
+      Method = method;
+    }
+
+    public string ForUriName { get; set; }
+    public string Method { get; }
+    public MediaType ContentType { get; }
+
+    /// <summary>
+    /// Tries to find an HttpOperation attribute on a method. 
+    /// </summary>
+    /// <param name="mi"></param>
+    /// <returns>The instance of the HttpOperation attribute, or null if none were defined.</returns>
+    public static HttpOperationAttribute Find(MethodInfo mi)
+    {
+      try
+      {
+        return GetCustomAttribute(mi, typeof(HttpOperationAttribute)) as HttpOperationAttribute;
+      }
+      catch
+      {
+        return null;
+      }
+    }
+
+    public bool MatchesUriName(string uriName)
+    {
+      return string.Compare(ForUriName, uriName, StringComparison.OrdinalIgnoreCase) == 0;
+    }
+
+    public bool MatchesHttpMethod(string httpMethod)
+    {
+      return Method == "*" || string.CompareOrdinal(Method, httpMethod) == 0;
+    }
+  }
 }
 
 #region Full license
