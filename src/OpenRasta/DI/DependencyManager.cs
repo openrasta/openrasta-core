@@ -82,5 +82,24 @@ namespace OpenRasta.DI
     {
       if (Current != null) Current = null;
     }
+
+    public static IDisposable ScopedResolver(IDependencyResolver resolver)
+    {
+      return new Restorer(resolver);
+    }
+    class Restorer : IDisposable
+    {
+      readonly IDependencyResolver _previous;
+
+      public Restorer(IDependencyResolver instance)
+      {
+        _previous = _current.Value;
+        _current.Value = instance;
+      }
+      public void Dispose()
+      {
+        _current.Value = _previous;
+      }
+    }
   }
 }

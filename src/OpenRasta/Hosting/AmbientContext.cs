@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Threading;
 
 namespace OpenRasta.Hosting
@@ -7,8 +8,7 @@ namespace OpenRasta.Hosting
   public class AmbientContext
   {
     readonly Hashtable _items = new Hashtable();
-
-    private static readonly AsyncLocal<AmbientContext> _current = new AsyncLocal<AmbientContext>();
+    static readonly AsyncLocal<AmbientContext> _current = new AsyncLocal<AmbientContext>();
 
     public static AmbientContext Current
     {
@@ -26,7 +26,7 @@ namespace OpenRasta.Hosting
     {
       T result;
       if (_items.ContainsKey(key))
-        result = (T) _items[key];
+        result = (T)_items[key];
       else
         _items[key] = result = factory();
       return result;

@@ -4,18 +4,17 @@ namespace OpenRasta.Hosting
 {
   public class ContextScope : IDisposable
   {
+    readonly AmbientContext _previous;
+
     public ContextScope(AmbientContext context)
     {
-      if (AmbientContext.Current != null)
-        throw new InvalidOperationException("An ambient context already exists");
+      _previous = AmbientContext.Current;
       AmbientContext.Current = context;
     }
 
     public void Dispose()
     {
-      if (AmbientContext.Current == null)
-        throw new InvalidOperationException("An ambient context does not exists");
-      AmbientContext.Current = null;
+      AmbientContext.Current = _previous;
     }
   }
 }

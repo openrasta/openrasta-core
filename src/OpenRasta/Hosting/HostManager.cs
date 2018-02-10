@@ -98,7 +98,7 @@ namespace OpenRasta.Hosting
     {
       Resolver = Host.ResolverAccessor?.Resolver ?? new InternalDependencyResolver();
       Log = Resolver.Resolve<IEnumerable<ILogger>>().LastOrDefault() ?? TraceSourceLogger.Instance;
-      
+
       Log.WriteDebug("Using dependency resolver of type {0}", Resolver.GetType());
     }
 
@@ -106,9 +106,9 @@ namespace OpenRasta.Hosting
     {
       IsConfigured = false;
       _startupProperties = startupProperties;
-      
+
       Resolver.AddDependencyInstance(Host);
-      CallWithDependencyResolver(() =>
+      using (DependencyManager.ScopedResolver(Resolver))
       {
         RegisterRootDependencies();
 
@@ -123,7 +123,7 @@ namespace OpenRasta.Hosting
         BuildPipeline();
 
         IsConfigured = true;
-      });
+      }
     }
 
     void BuildPipeline()
@@ -137,12 +137,12 @@ namespace OpenRasta.Hosting
       {
         var configurationSource = Resolver.Resolve<IConfigurationSource>();
         Log.WriteDebug("Using configuration source {0}", configurationSource.GetType());
-        
+
         var configurer = new ConfigurationSourceAdapter(
-          configurationSource,
-          Resolver,
-          Resolver.Resolve<IMetaModelRepository>());
-        
+            configurationSource,
+            Resolver,
+            Resolver.Resolve<IMetaModelRepository>());
+
         configurer.Process();
       }
       else
@@ -154,7 +154,7 @@ namespace OpenRasta.Hosting
     void RegisterCoreDependencies()
     {
       var registrar =
-        Resolver.ResolveWithDefault<IDependencyRegistrar>(() => new DefaultDependencyRegistrar());
+          Resolver.ResolveWithDefault<IDependencyRegistrar>(() => new DefaultDependencyRegistrar());
       Log.WriteInfo("Using dependency registrar of type {0}.", registrar.GetType());
       registrar.Register(Resolver);
     }
@@ -171,32 +171,6 @@ namespace OpenRasta.Hosting
       Log.WriteDebug("Registering host's root dependencies.");
       if (!Host.ConfigureRootDependencies(Resolver))
         throw new OpenRastaConfigurationException("Root dependencies configuration by host has failed.");
-    }
-
-    async Task CallWithDependencyResolver(Func<Task> action)
-    {
-      DependencyManager.SetResolver(Resolver);
-      try
-      {
-        await action();
-      }
-      finally
-      {
-        DependencyManager.UnsetResolver();
-      }
-    }
-
-    void CallWithDependencyResolver(Action action)
-    {
-      DependencyManager.SetResolver(Resolver);
-      try
-      {
-        action();
-      }
-      finally
-      {
-        DependencyManager.UnsetResolver();
-      }
     }
 
     void VerifyConfiguration(StartupProperties startupProperties)
@@ -216,7 +190,12 @@ namespace OpenRasta.Hosting
     protected virtual void HandleHostIncomingRequestReceived(object sender, IncomingRequestEventArgs e)
     {
       Log.WriteDebug("Incoming host request for " + e.Context.Request.Uri);
-      var task = CallWithDependencyResolver(async () =>
+      e.Context.PipelineData[Keys.Request.PipelineTask] = e.RunTask = HandleHostIncompingRequestReceivedAsync(e);
+    }
+
+    async Task HandleHostIncompingRequestReceivedAsync(IncomingRequestEventArgs e)
+    {
+      using (DependencyManager.ScopedResolver(Resolver))
       {
         e.Context.PipelineData[Keys.Request.ResolverRequestScope] = Resolver.CreateRequestScope();
 
@@ -225,8 +204,7 @@ namespace OpenRasta.Hosting
         SetupCommunicationContext(context);
 
         await _pipeline.RunAsync(context);
-      });
-      e.Context.PipelineData[Keys.Request.PipelineTask] = e.RunTask = task;
+      }
     }
 
     void HandleHostStartWithProps(object sender, StartupProperties e)
@@ -241,10 +219,7 @@ namespace OpenRasta.Hosting
 
     protected virtual void HandleIncomingRequestProcessed(object sender, IncomingRequestProcessedEventArgs e)
     {
-      CallWithDependencyResolver(() =>
-      {
-        ((IDisposable) e.Context.PipelineData[Keys.Request.ResolverRequestScope]).Dispose();
-      });
+      using (DependencyManager.ScopedResolver(Resolver))
+        ((IDisposable)e.Context.PipelineData[Keys.Request.ResolverRequestScope]).Dispose();
     }
-  }
 }
