@@ -4,13 +4,13 @@ using OpenRasta.Collections;
 
 namespace OpenRasta.Web
 {
-  public abstract class OperationResult
+  public class OperationResult
   {
     protected OperationResult()
     {
     }
 
-    protected OperationResult(int httpStatus)
+    public OperationResult(int httpStatus)
     {
       StatusCode = httpStatus;
       Title = httpStatus + " " + this.GetType().Name;
