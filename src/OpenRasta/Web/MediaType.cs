@@ -11,8 +11,8 @@ namespace OpenRasta.Web
   /// </summary>
   public class MediaType : ContentType, IComparable<MediaType>, IEquatable<MediaType>
   {
-    private const int MOVE_DOWN = -1;
-    private const int MOVE_UP = 1;
+    const int MOVE_DOWN = -1;
+    const int MOVE_UP = 1;
 
     public bool Equals(MediaType other)
     {
@@ -26,10 +26,9 @@ namespace OpenRasta.Web
     bool ParametersAreEqual(MediaType other)
     {
       if (other.Parameters.Count != Parameters.Count) return false;
-      foreach (string parameter in other.Parameters.Keys)
-        if (!Parameters.ContainsKey(parameter) || Parameters[parameter] != other.Parameters[parameter])
-          return false;
-      return true;
+      return other.Parameters.Keys
+          .Cast<string>()
+          .All(parameter => Parameters.ContainsKey(parameter) && Parameters[parameter] == other.Parameters[parameter]);
     }
 
     public override bool Equals(object obj)
@@ -73,7 +72,7 @@ namespace OpenRasta.Web
     public static readonly MediaType Xml = new MediaType("application/xml");
     public static readonly MediaType Javascript = new MediaType("text/javascript");
 
-    private float _quality;
+    float _quality;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MediaType"/> class.
@@ -89,34 +88,35 @@ namespace OpenRasta.Web
     /// 	<paramref name="contentType"/> is in a form that cannot be parsed.
     /// </exception>
     public MediaType(string contentType)
-      : base(contentType)
+        : base(contentType)
     {
       if (Parameters.ContainsKey("q"))
       {
-        float floatResult;
-        _quality = float.TryParse(Parameters["q"], NumberStyles.Float, CultureInfo.InvariantCulture, out floatResult)
-          ? Math.Min(1, Math.Max(0, floatResult))
-          : 0F;
+        _quality = float.TryParse(Parameters["q"], NumberStyles.Float, CultureInfo.InvariantCulture, out var floatResult)
+            ? Math.Min(1, Math.Max(0, floatResult))
+            : 0F;
       }
       else
       {
         _quality = 1.0F;
       }
+
       int slashPos = MediaType.IndexOf('/');
       int semiColumnPos = MediaType.IndexOf(';', slashPos);
 
       TopLevelMediaType = MediaType.Substring(0, slashPos).Trim();
       Subtype =
-        MediaType.Substring(slashPos + 1,
-          (semiColumnPos != -1 ? semiColumnPos : MediaType.Length) - slashPos - 1).Trim();
+          MediaType.Substring(slashPos + 1,
+              (semiColumnPos != -1 ? semiColumnPos : MediaType.Length) - slashPos - 1).Trim();
     }
 
     public float Quality
     {
-      get { return _quality; }
+      get => _quality;
       private set
       {
         _quality = value;
+        // ReSharper disable once CompareOfFloatsByEqualityOperator
         if (value != 1.0f)
           Parameters["q"] = value.ToString("0.###");
         else if (Parameters.ContainsKey("q"))
@@ -127,20 +127,11 @@ namespace OpenRasta.Web
     public string TopLevelMediaType { get; private set; }
     public string Subtype { get; private set; }
 
-    public bool IsWildCard
-    {
-      get { return IsTopLevelWildcard && IsSubtypeWildcard; }
-    }
+    public bool IsWildCard => IsTopLevelWildcard && IsSubtypeWildcard;
 
-    public bool IsTopLevelWildcard
-    {
-      get { return TopLevelMediaType == "*"; }
-    }
+    public bool IsTopLevelWildcard => TopLevelMediaType == "*";
 
-    public bool IsSubtypeWildcard
-    {
-      get { return Subtype == "*"; }
-    }
+    public bool IsSubtypeWildcard => Subtype == "*";
 
     public int CompareTo(MediaType other)
     {
@@ -152,9 +143,7 @@ namespace OpenRasta.Web
       // first, always move down */*
       if (IsWildCard)
       {
-        if (other.IsWildCard)
-          return 0;
-        return MOVE_DOWN;
+        return other.IsWildCard ? 0 : MOVE_DOWN;
       }
 
       // then sort by quality
@@ -171,9 +160,7 @@ namespace OpenRasta.Web
       {
         if (IsTopLevelWildcard)
           return MOVE_DOWN;
-        if (other.IsTopLevelWildcard)
-          return MOVE_UP;
-        return TopLevelMediaType.CompareTo(other.TopLevelMediaType);
+        return other.IsTopLevelWildcard ? MOVE_UP : TopLevelMediaType.CompareTo(other.TopLevelMediaType);
       }
 
       if (Subtype != other.Subtype)
@@ -184,6 +171,7 @@ namespace OpenRasta.Web
           return MOVE_UP;
         return Subtype.CompareTo(other.Subtype);
       }
+
       return 0;
     }
 
@@ -204,7 +192,7 @@ namespace OpenRasta.Web
     public bool Matches(MediaType typeToMatch)
     {
       return (typeToMatch.IsTopLevelWildcard || IsTopLevelWildcard
-              || TopLevelMediaType == typeToMatch.TopLevelMediaType)
+                                             || TopLevelMediaType == typeToMatch.TopLevelMediaType)
              && (typeToMatch.IsSubtypeWildcard || IsSubtypeWildcard || Subtype == typeToMatch.Subtype);
     }
 
