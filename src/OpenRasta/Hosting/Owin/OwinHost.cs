@@ -90,7 +90,7 @@ namespace OpenRasta.Hosting.Katana
 
     internal virtual void RaiseStart()
     {
-      LegacyStart.Raise(this);
+      RaiseStart(new StartupProperties());
     }
 
     public void RaiseStop()
