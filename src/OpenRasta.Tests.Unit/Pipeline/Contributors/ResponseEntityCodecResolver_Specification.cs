@@ -147,6 +147,46 @@ namespace ResponseEntityCodecResolver_Specification
     }
 
     [Test]
+    public void codec_wildcard_and_no_accept_gives_octet_stream()
+    {
+      
+      given_pipeline_contributor<ResponseEntityCodecResolverContributor>();
+      given_response_entity(new Customer());
+      given_registration_codec<CustomerCodec, Customer>("*/*");
+
+      when_running_pipeline();
+
+      Context.PipelineData.ResponseCodec.CodecType.ShouldBe(typeof(CustomerCodec));
+      Context.Response.Entity.ContentType.MediaType.ShouldBe("application/octet-stream");
+    }
+       
+    [Test]
+    public void codec_wildcard_gives_client_with_wildcard_accept_app_octet_stream()
+    {
+      given_pipeline_contributor<ResponseEntityCodecResolverContributor>();
+      given_response_entity(new Customer());
+      given_registration_codec<CustomerCodec, Customer>("*/*");
+      given_request_header_accept("*/*");
+
+      when_running_pipeline();
+
+      Context.PipelineData.ResponseCodec.CodecType.ShouldBe(typeof(CustomerCodec));
+      Context.Response.Entity.ContentType.MediaType.ShouldBe("application/octet-stream");
+    }
+    [Test]
+    public void codec_wildcard_gives_client_any_requested_mediatype()
+    {
+      given_pipeline_contributor<ResponseEntityCodecResolverContributor>();
+      given_response_entity(new Customer());
+      given_registration_codec<CustomerCodec, Customer>("*/*");
+      given_request_header_accept("text/plain");
+
+      when_running_pipeline();
+
+      Context.PipelineData.ResponseCodec.CodecType.ShouldBe(typeof(CustomerCodec));
+      Context.Response.Entity.ContentType.MediaType.ShouldBe("text/plain");
+    }
+    [Test]
     public void the_client_quality_parameter_is_respected()
     {
       given_pipeline_contributor<ResponseEntityCodecResolverContributor>();

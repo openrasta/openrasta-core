@@ -5,7 +5,6 @@ using OpenRasta.Codecs;
 using OpenRasta.Diagnostics;
 using OpenRasta.TypeSystem;
 using OpenRasta.Web;
-using OpenRasta.Pipeline;
 
 namespace OpenRasta.Pipeline.Contributors
 {
@@ -21,9 +20,11 @@ namespace OpenRasta.Pipeline.Contributors
       _typeSystem = typeSystem;
     }
 
+    // ReSharper disable once MemberCanBePrivate.Global - ioc
+    // ReSharper disable once UnusedAutoPropertyAccessor.Global
     public ILogger Log { get; set; }
 
-    public PipelineContinuation FindResponseCodec(ICommunicationContext context)
+    PipelineContinuation FindResponseCodec(ICommunicationContext context)
     {
       if (context.Response.Entity.Instance == null || context.PipelineData.ResponseCodec != null)
       {
@@ -50,14 +51,21 @@ namespace OpenRasta.Pipeline.Contributors
         return PipelineContinuation.RenderNow;
       }
 
-      var sortedCodecs = _codecs.FindMediaTypeWriter(responseEntityType, acceptedContentTypes);
-      int codecsCount = sortedCodecs.Count();
+      var sortedCodecs = _codecs.FindMediaTypeWriter(responseEntityType, acceptedContentTypes).ToList();
+      var codecsCount = sortedCodecs.Count;
       var negotiatedCodec = sortedCodecs.FirstOrDefault();
 
       if (negotiatedCodec != null)
       {
         LogCodecSelected(responseEntityType, negotiatedCodec, codecsCount);
-        context.Response.Entity.ContentType = negotiatedCodec.MediaType.WithoutQuality();
+        context.Response.Entity.ContentType =
+            negotiatedCodec.MediaType.IsWildCard
+                ? acceptedContentTypes
+                    .OrderByDescending(c=>c)
+                    .Where(c=>c.IsWildCard == false)
+                    .DefaultIfEmpty(MediaType.ApplicationOctetStream)
+                    .FirstOrDefault() 
+                : negotiatedCodec.MediaType.WithoutQuality();
         context.PipelineData.ResponseCodec = negotiatedCodec;
         context.Response.Headers.Add("Vary", "Accept");
       }
@@ -67,6 +75,7 @@ namespace OpenRasta.Pipeline.Contributors
         context.OperationResult = ResponseEntityHasNoCodec(acceptHeader, responseEntityType);
         return PipelineContinuation.RenderNow;
       }
+
       return PipelineContinuation.Continue;
     }
 
@@ -76,26 +85,26 @@ namespace OpenRasta.Pipeline.Contributors
     }
 
     static OperationResult.ResponseMediaTypeUnsupported ResponseEntityHasNoCodec(string acceptHeader,
-      IType responseEntityType)
+        IType responseEntityType)
     {
       return new OperationResult.ResponseMediaTypeUnsupported
       {
-        Title = "The response from the server could not be sent in any format understood by the UA.",
-        Description =
-          $"Content-type negotiation failed. Resource {responseEntityType} doesn't have any codec for the content-types in the accept header:\r\n{acceptHeader}"
+          Title = "The response from the server could not be sent in any format understood by the UA.",
+          Description =
+              $"Content-type negotiation failed. Resource {responseEntityType} doesn't have any codec for the content-types in the accept header:\r\n{acceptHeader}"
       };
     }
 
     void LogCodecSelected(IType responseEntityType, CodecRegistration negotiatedCodec, int codecsCount)
     {
       Log.WriteInfo(
-        $"Selected codec {negotiatedCodec.CodecType.Name} out of {codecsCount} codecs for entity of type {responseEntityType.Name} and negotiated media type {negotiatedCodec.MediaType}.");
+          $"Selected codec {negotiatedCodec.CodecType.Name} out of {codecsCount} codecs for entity of type {responseEntityType.Name} and negotiated media type {negotiatedCodec.MediaType}.");
     }
 
     void LogNoResponseEntity()
     {
       Log.WriteInfo(
-        "No response codec was searched for. The response entity is null or a response codec is already set.");
+          "No response codec was searched for. The response entity is null or a response codec is already set.");
     }
   }
 }
