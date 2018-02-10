@@ -20,19 +20,15 @@ namespace OpenRasta.DI
 
 
     IContextStore _cached;
-    bool _changesSinceStoreLookup = true;
 
     IContextStore ContextStore
     {
       get
       {
         if (_cached != null) return _cached;
-        if (!_changesSinceStoreLookup) return null;
-
         if (new ResolveContext(() => _globalRegistrations).TryResolve(out _cached))
           return _cached;
-
-        _changesSinceStoreLookup = false;
+                
         return null;
       }
     }
@@ -74,7 +70,6 @@ namespace OpenRasta.DI
     protected override void AddDependencyCore(Type serviceType, Type concreteType, DependencyLifetime lifetime)
     {
       Registrations.Add(new DependencyRegistration(serviceType, concreteType, lifetime, _lifetimeManagers[lifetime]));
-      _changesSinceStoreLookup = true;
     }
 
 
@@ -89,7 +84,6 @@ namespace OpenRasta.DI
         lifetime,
         _lifetimeManagers[lifetime],
         context => instance));
-      _changesSinceStoreLookup = true;
     }
 
     protected override IEnumerable<TService> ResolveAllCore<TService>()
