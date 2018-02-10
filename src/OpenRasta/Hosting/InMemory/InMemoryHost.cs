@@ -67,7 +67,7 @@ namespace OpenRasta.Hosting.InMemory
     [Obsolete("Please use the async version, this one may and will deadlock")]
     public IResponse ProcessRequest(IRequest request)
     {
-      return ProcessRequestAsync(request).Result;
+      return ProcessRequestAsync(request).GetAwaiter().GetResult();
     }
 
     public async Task<IResponse> ProcessRequestAsync(IRequest request)
