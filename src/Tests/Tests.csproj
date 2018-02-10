@@ -3,6 +3,7 @@
     <TargetFrameworks>netcoreapp2.0;net461</TargetFrameworks>
   </PropertyGroup>
   <ItemGroup>
+    <ProjectReference Include="..\OpenRasta.Plugins.ReverseProxy\OpenRasta.Plugins.ReverseProxy.csproj" />
     <ProjectReference Include="..\OpenRasta.Hosting.AspNetCore\OpenRasta.Hosting.AspNetCore.csproj" />
     <ProjectReference Include="..\OpenRasta.Codecs.Newtonsoft.Json\OpenRasta.Codecs.Newtonsoft.Json.csproj" />
     <ProjectReference Include="..\OpenRasta.Hosting.Katana\OpenRasta.Hosting.Katana.csproj" />

@@ -17,12 +17,9 @@
     <TargetFrameworks>netstandard2.0;net461</TargetFrameworks>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\OpenRasta\OpenRasta.csproj">
-      <Project>{3D251617-2581-4D9C-A639-5CFB0BB09420}</Project>
-      <Name>OpenRasta</Name>
-    </ProjectReference>
+    <PackageReference Include="Owin" Version="1.0.0" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Owin" Version="1.0.0" />
+    <ProjectReference Include="..\OpenRasta\OpenRasta.csproj"/>
   </ItemGroup>
 </Project>

@@ -14,16 +14,13 @@
     <InformationalVersion>2.6.0</InformationalVersion>
     <FileVersion>2.6.0</FileVersion>
     <AssemblyVersion>2.6.0</AssemblyVersion>
-    <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;net461</TargetFrameworks>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Owin" Version="2.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.Hosting.Abstractions" Version="2.0.1" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\OpenRasta\OpenRasta.csproj">
-      <Project>{3D251617-2581-4D9C-A639-5CFB0BB09420}</Project>
-      <Name>OpenRasta</Name>
-    </ProjectReference>
+    <ProjectReference Include="..\OpenRasta\OpenRasta.csproj"/>
   </ItemGroup>
 </Project>

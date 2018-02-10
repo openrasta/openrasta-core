@@ -1,0 +1,9 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0</TargetFrameworks>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\OpenRasta.Codecs.Newtonsoft.Json\OpenRasta.Codecs.Newtonsoft.Json.csproj" />
+    <ProjectReference Include="..\OpenRasta\OpenRasta.csproj" />
+  </ItemGroup>
+</Project>

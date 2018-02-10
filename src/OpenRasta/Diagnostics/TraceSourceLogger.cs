@@ -25,12 +25,10 @@ namespace OpenRasta.Diagnostics
 
     public TraceSourceLogger(TraceSource source)
     {
+      
       _source = source;
-#if CORE
-      if (Debugger.IsLogging())
-#else
+#if !CORE
       if (Debugger.IsLogging() && Debug.Listeners.Count == 0)
-#endif
       {
         var listener = new DebuggerLoggingTraceListener
         {
@@ -45,6 +43,8 @@ namespace OpenRasta.Diagnostics
 
         _source.Listeners.Add(listener);
       }
+#endif
+      
       _source.Switch = new SourceSwitch("OpenRasta", "All");
     }
 
