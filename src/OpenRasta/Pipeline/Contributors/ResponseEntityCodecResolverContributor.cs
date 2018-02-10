@@ -59,6 +59,7 @@ namespace OpenRasta.Pipeline.Contributors
         LogCodecSelected(responseEntityType, negotiatedCodec, codecsCount);
         context.Response.Entity.ContentType = negotiatedCodec.MediaType.WithoutQuality();
         context.PipelineData.ResponseCodec = negotiatedCodec;
+        context.Response.Headers.Add("Vary", "Accept");
       }
       else
       {
