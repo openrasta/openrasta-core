@@ -19,7 +19,7 @@ namespace Tests.Plugins.ReverseProxy
       server = ProxyTestServer.Create();
 
       response = server
-          .CreateRequest("/proxy")
+          .CreateRequest("http://localhost/proxy")
           .GetAsync()
           .Result;
     }
@@ -33,7 +33,7 @@ namespace Tests.Plugins.ReverseProxy
     [Fact]
     public async Task response_status_body_is_proxied()
     {
-      (await response.Content.ReadAsStringAsync()).ShouldBe("OK");
+      (await response.Content.ReadAsStringAsync()).ShouldBe("empty");
     }
 
     public void Dispose()

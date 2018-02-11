@@ -18,7 +18,7 @@ namespace Tests.Plugins.ReverseProxy
       server = ProxyTestServer.Create();
 
       response = server
-          .CreateRequest("/proxy")
+          .CreateRequest("http://localhost/proxy")
           .AddHeader("Accept", "application/vnd.example")
           .GetAsync()
           .Result;

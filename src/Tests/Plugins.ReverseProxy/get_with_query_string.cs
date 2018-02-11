@@ -19,7 +19,7 @@ namespace Tests.Plugins.ReverseProxy
       server = ProxyTestServer.Create();
 
       response = server
-          .CreateRequest("/proxy?q=test")
+          .CreateRequest("http://localhost/proxy?q=test")
           .GetAsync()
           .Result;
     }

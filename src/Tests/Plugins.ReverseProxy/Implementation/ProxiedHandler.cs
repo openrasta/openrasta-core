@@ -4,7 +4,7 @@
   {
     public string Get()
     {
-      return "OK";
+      return "empty";
     }
 
     public string Get(string query)
