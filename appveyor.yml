@@ -79,8 +79,8 @@ environment:
   github_password:
     secure:
       1lXaOJ0GvCAOd0O9DDvVqw2eb7TvP2jve12u3hD2g4J7RVW2c2jC5XuRFyEuduUA
-      
-tests:
+
+test:
   assemblies:
     - src\OpenRasta.Tests.Unit\bin\$(configuration)\net461\OpenRasta.Tests.Unit.dll
     - src\Tests\bin\$(configuration)\net461\Tests.dll
