@@ -18,7 +18,7 @@ namespace Tests.Plugins.ReverseProxy.Implementation
       ResourceSpace.Has
           .ResourcesNamed("proxied")
           .AtUri("/proxied")
-          .And.AtUri("/proxied?q={query}")
+          .And.AtUri("/proxied-with-qs?q={query}")
           .HandledBy<ProxiedHandler>()
           .TranscodedBy<ProxiedCodec>()
           .ForMediaType("text/plain");
@@ -27,6 +27,11 @@ namespace Tests.Plugins.ReverseProxy.Implementation
         .ResourcesNamed("proxy")
         .AtUri("/proxy")
         .ReverseProxyFor("http://localhost/proxied");
+      
+      ResourceSpace.Has
+          .ResourcesNamed("proxy-wth-qs")
+          .AtUri("/proxy-with-qs")
+          .ReverseProxyFor("http://localhost/proxied-with-qs");
 
       ResourceSpace.Uses.ReverseProxy(_options);
     }
