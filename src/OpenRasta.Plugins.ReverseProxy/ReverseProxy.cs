@@ -24,7 +24,9 @@ namespace OpenRasta.Plugins.ReverseProxy
 
     public async Task<HttpResponseMessage> Send(ICommunicationContext context, string target)
     {
-      var targetUriBuilder = new UriBuilder(target) { Query = context.Request.Uri.Query };
+      var targetUriBuilder = new UriBuilder(target);
+      if (context.Request.Uri.Query.StartsWith("?"))
+        targetUriBuilder.Query = context.Request.Uri.Query.Substring(1);
       
       var request = new HttpRequestMessage()
       {
