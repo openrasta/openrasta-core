@@ -86,6 +86,7 @@ tests:
     - src\Tests\bin\$(configuration)\net461\Tests.dll
     - src\OpenRasta.Tests.Unit\bin\$(configuration)\netstandard2.0\OpenRasta.Tests.Unit.dll
     - src\Tests\bin\$(configuration)\netstandard2.0\Tests.dll
+
 artifacts:
 - path: src\openrasta\bin\$(configuration)\net461\*.dll
   name: dlls
