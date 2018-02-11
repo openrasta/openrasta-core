@@ -7,23 +7,12 @@ namespace OpenRasta.Plugins.ReverseProxy
   {
     public const string ProxyTarget = "openrasta.ReverseProxy.Target";
 
-    public static bool TryGetReverseProxyTarget(this ResourceModel resource, out Uri target)
+    public static string GetReverseProxyTarget(this ResourceModel resource)
     {
-      if (resource.Properties.TryGetValue(ProxyTarget, out var entry) && entry is Uri entryUri)
-      {
-        target = entryUri;
-        return true;
-      }
-
-      target = null;
-      return false;
+      return (string)resource.Properties[ProxyTarget];
     }
-
-    public static Uri GetReverseProxyTarget(this ResourceModel resource)
-    {
-      return (Uri)resource.Properties[ProxyTarget];
-    }
-    public static void ReverseProxyTarget(this ResourceModel resource, Uri target)
+    
+    public static void ReverseProxyTarget(this ResourceModel resource, string target)
     {
       resource.Properties[ProxyTarget] = target;
     }

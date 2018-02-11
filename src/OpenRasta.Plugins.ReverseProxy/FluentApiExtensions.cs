@@ -9,7 +9,7 @@ namespace OpenRasta.Plugins.ReverseProxy
 {
   public static class FluentApiExtensions
   {
-    public static void ReverseProxyFor(this IUriDefinition uriConfiguration, Uri uri)
+    public static void ReverseProxyFor(this IUriDefinition uriConfiguration, string uri)
     {
       uriConfiguration
           .HandledBy<ReverseProxyHandler>();

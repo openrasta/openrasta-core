@@ -22,11 +22,13 @@ namespace OpenRasta.Plugins.ReverseProxy
           LazyThreadSafetyMode.ExecutionAndPublication);
     }
 
-    public async Task<HttpResponseMessage> Send(ICommunicationContext context, Uri target)
+    public async Task<HttpResponseMessage> Send(ICommunicationContext context, string target)
     {
+      var targetUriBuilder = new UriBuilder(target) { Query = context.Request.Uri.Query };
+      
       var request = new HttpRequestMessage()
       {
-          RequestUri = target,
+          RequestUri = targetUriBuilder.Uri,
           Method = new HttpMethod(context.Request.HttpMethod),
           Content = { }
       };

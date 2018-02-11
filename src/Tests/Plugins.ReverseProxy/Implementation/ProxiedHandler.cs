@@ -6,5 +6,10 @@
     {
       return "OK";
     }
+
+    public string Get(string query)
+    {
+      return query;
+    }
   }
 }
