@@ -14,33 +14,35 @@ namespace OpenRasta.Codecs.Newtonsoft.Json
   [MediaType("*/*;q=0.5")]
   public class NewtonsoftJsonCodec : IMediaTypeReaderAsync, IMediaTypeWriterAsync
   {
-    private JsonSerializerSettings _settings;
-    public object Configuration { get; set; }
+    JsonSerializerSettings _settings;
 
-    public NewtonsoftJsonCodec()
+    object ICodec.Configuration
     {
-      _settings = new JsonSerializerSettings
-      {
+      get => _settings;
+      set => _settings = value as JsonSerializerSettings;
+    }
+
+    static JsonSerializerSettings DefaultSettings = new JsonSerializerSettings
+    {
         NullValueHandling = NullValueHandling.Ignore,
         MissingMemberHandling = MissingMemberHandling.Ignore,
         ContractResolver = new CamelCasePropertyNamesContractResolver(),
         Converters =
         {
-          new StringEnumConverter()
+            new StringEnumConverter()
         }
-      };
-    }
+    };
 
     public async Task WriteTo(object entity, IHttpEntity response, IEnumerable<string> codecParameters)
     {
-      var content = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(entity, _settings));
+      var content = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(entity, _settings ?? DefaultSettings));
       await response.Stream.WriteAsync(content, 0, content.Length);
     }
 
     public async Task<object> ReadFrom(IHttpEntity request, IType destinationType, string destinationName)
     {
       var content = await new StreamReader(request.Stream, Encoding.UTF8).ReadToEndAsync();
-      return JsonConvert.DeserializeObject(content, _settings);
+      return JsonConvert.DeserializeObject(content, _settings ?? DefaultSettings);
     }
   }
 }
