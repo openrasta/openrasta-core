@@ -7,7 +7,7 @@
     <Description>Hosting of OpenRasta on Microsoft's Katana OWIN implementation</Description>
     <PackageTags>OpenRasta REST HTTP XML JSON API</PackageTags>
     <Version>2.6.0</Version>
-    <Copyright>Copyright 2007</Copyright>
+    <Copyright>Copyright 2007-2018</Copyright>
     <PackageId>OpenRasta.Hosting.Katana</PackageId>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <Company>Caffeine IT - naughtyProd Limited</Company>
@@ -20,6 +20,6 @@
     <PackageReference Include="Owin" Version="1.0.0" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\OpenRasta\OpenRasta.csproj"/>
+    <ProjectReference Include="..\OpenRasta\OpenRasta.csproj" />
   </ItemGroup>
 </Project>

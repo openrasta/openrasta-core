@@ -7,7 +7,7 @@
     <Description>Allows using Newtonsoft.Json to transcode JSON</Description>
     <PackageTags>OpenRasta REST HTTP XML JSON API Newtonsoft</PackageTags>
     <Version>2.6.0</Version>
-    <Copyright>Copyright 20070-2017 Videndel</Copyright>
+    <Copyright>Copyright 2007-2018 Videndel</Copyright>
     <PackageId>OpenRasta.Codecs.Newtonsoft.Json</PackageId>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <Company>Videndel</Company>
@@ -17,7 +17,7 @@
     <TargetFrameworks>netstandard2.0;net461</TargetFrameworks>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\OpenRasta\OpenRasta.csproj"/>
+    <ProjectReference Include="..\OpenRasta\OpenRasta.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />

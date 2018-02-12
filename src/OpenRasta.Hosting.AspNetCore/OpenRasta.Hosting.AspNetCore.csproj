@@ -7,7 +7,7 @@
     <Description>Hosting of OpenRasta on asp.net Core</Description>
     <PackageTags>OpenRasta REST HTTP XML JSON API</PackageTags>
     <Version>2.6.0</Version>
-    <Copyright>Copyright 2007-2017</Copyright>
+    <Copyright>Copyright 2007-2018</Copyright>
     <PackageId>OpenRasta.Hosting.AspNetCore</PackageId>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <Company>Videndel</Company>
@@ -21,6 +21,6 @@
     <PackageReference Include="Microsoft.AspNetCore.Hosting.Abstractions" Version="2.0.1" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\OpenRasta\OpenRasta.csproj"/>
+    <ProjectReference Include="..\OpenRasta\OpenRasta.csproj" />
   </ItemGroup>
 </Project>
