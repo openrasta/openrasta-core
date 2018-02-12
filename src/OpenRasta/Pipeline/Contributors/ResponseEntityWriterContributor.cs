@@ -53,11 +53,13 @@ namespace OpenRasta.Pipeline.Contributors
 
     bool ShouldSendEmptyResponseBody(ICommunicationContext context)
     {
-      if (!(context.OperationResult is OperationResult.NotFound notFound))
-        return true;
-      return notFound.Reason != NotFoundReason.NotMapped;
+      return Is404NotMapped(context) == false;
     }
 
+    bool Is404NotMapped(ICommunicationContext context)
+    {
+      return context.OperationResult is OperationResult.NotFound notFound && notFound.Reason == NotFoundReason.NotMapped;
+    }
     async Task WriteUnbufferedContent(ICommunicationContext context,
       Func<object, IHttpEntity, IEnumerable<string>, Task> writer)
     {

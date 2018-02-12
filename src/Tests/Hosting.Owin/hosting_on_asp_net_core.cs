@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net;
 using System.Net.Http;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -6,6 +7,7 @@ using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using OpenRasta.Hosting.AspNetCore;
+using Shouldly;
 using Tests.Infrastructure;
 using Xunit;
 
@@ -19,8 +21,8 @@ namespace Tests.Hosting.Owin
     public hosting_on_asp_net_core()
     {
       server = new TestServer(
-        new WebHostBuilder()
-          .Configure(app => app.UseOpenRasta(new TaskApi())));
+          new WebHostBuilder()
+              .Configure(app => app.UseOpenRasta(new TaskApi())));
       client = server.CreateClient();
     }
 
@@ -35,7 +37,16 @@ namespace Tests.Hosting.Owin
     public async void can_get_silent_ping()
     {
       var response = await client.GetAsync("/ping-silently");
-      response.EnsureSuccessStatusCode();
+      response.StatusCode.ShouldBe(HttpStatusCode.NoContent);
+      response.Content.Headers.TryGetValues("Content-Length", out _).ShouldBeFalse();
+    }
+
+    [Fact]
+    public async void can_get_no_content_ping()
+    {
+      var response = await client.GetAsync("/ping-empty-content");
+      response.StatusCode.ShouldBe(HttpStatusCode.OK);
+      response.Content.Headers.ContentLength.ShouldBe(0);
     }
 
     public void Dispose()
@@ -43,6 +54,7 @@ namespace Tests.Hosting.Owin
       server?.Dispose();
     }
   }
+
   public class hosting_on_asp_net_core_in_map : IDisposable
   {
     readonly HttpClient client;
@@ -51,8 +63,8 @@ namespace Tests.Hosting.Owin
     public hosting_on_asp_net_core_in_map()
     {
       server = new TestServer(
-        new WebHostBuilder()
-          .Configure(app => app.Map("/api", api=>api.UseOpenRasta(new TaskApi()))));
+          new WebHostBuilder()
+              .Configure(app => app.Map("/api", api => api.UseOpenRasta(new TaskApi()))));
       client = server.CreateClient();
     }
 

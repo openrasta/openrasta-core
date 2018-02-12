@@ -14,15 +14,18 @@ namespace Tests.Infrastructure
         .AtUri("/tasks")
         .HandledBy<TaskHandler>()
         .TranscodedBy<NewtonsoftJsonCodec>();
+      
       ResourceSpace.Has
         .ResourcesNamed("health")
         .AtUri("/ping-silently").Named("Silent")
+        .And.AtUri("/ping-empty-content").Named("NoContent")
         .HandledBy<TaskApiHealthHandler>();
     }
   }
 
   public class TaskApiHealthHandler
   {
-    public void GetSilent(){}
+    public void GetSilent() {}
+    public OperationResult.OK GetNoContent() => new OperationResult.OK();
   }
 }

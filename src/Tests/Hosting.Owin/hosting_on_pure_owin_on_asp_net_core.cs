@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
 using OpenRasta.Hosting.Katana;
+using Shouldly;
 using Tests.Infrastructure;
 using Xunit;
 
@@ -34,6 +35,21 @@ namespace Tests.Hosting.Owin
       response.EnsureSuccessStatusCode();
     }
 
+    [Fact]
+    public async void can_get_silent_ping()
+    {
+      var response = await client.GetAsync("/ping-silently");
+      response.EnsureSuccessStatusCode();
+      response.Content.Headers.TryGetValues("Content-Length", out _).ShouldBeFalse();
+    }
+
+    [Fact]
+    public async void can_get_no_content_ping()
+    {
+      var response = await client.GetAsync("/ping-empty-content");
+      response.EnsureSuccessStatusCode();
+      response.Content.Headers.ContentLength.ShouldBe(0);
+    }
     public void Dispose()
     {
       server?.Dispose();

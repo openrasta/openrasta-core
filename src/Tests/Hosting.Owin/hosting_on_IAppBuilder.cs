@@ -1,9 +1,11 @@
 ﻿
 using System;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using Microsoft.Owin.Testing;
 using OpenRasta.Hosting.Katana;
+using OpenRasta.Web;
 using Shouldly;
 using Tests.Infrastructure;
 using Xunit;
@@ -34,9 +36,16 @@ namespace Tests.Hosting.Owin
     public async void can_get_silent_ping()
     {
       var response = await client.GetAsync("/ping-silently");
-      response.EnsureSuccessStatusCode();
+      response.StatusCode.ShouldBe(HttpStatusCode.NoContent);
       response.Content.Headers.TryGetValues("Content-Length", out _).ShouldBeFalse();
+    }
 
+    [Fact]
+    public async void can_get_no_content_ping()
+    {
+      var response = await client.GetAsync("/ping-empty-content");
+      response.EnsureSuccessStatusCode();
+      response.Content.Headers.ContentLength.ShouldBe(0);
     }
 
     public void Dispose()

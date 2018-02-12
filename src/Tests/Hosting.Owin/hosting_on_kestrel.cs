@@ -41,7 +41,16 @@ namespace Tests.Hosting.Owin
     {
       var response = await client.GetAsync("/ping-silently");
       response.EnsureSuccessStatusCode();
+     
       response.Content.Headers.TryGetValues("Content-Length", out _).ShouldBeFalse();
+    }
+
+    [Fact]
+    public async void can_get_no_content_ping()
+    {
+      var response = await client.GetAsync("/ping-empty-content");
+      response.EnsureSuccessStatusCode();
+      response.Content.Headers.ContentLength.ShouldBe(0);
     }
 
     public void Dispose()
