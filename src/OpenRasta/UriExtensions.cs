@@ -17,11 +17,7 @@ namespace OpenRasta.Web
     {
         public static string[] GetSegments(this Uri uri)
         {
-#if SILVERLIGHT
-            return uri.AbsolutePath.Split('/').Where(s => s != string.Empty).ToArray();
-#else
             return uri.Segments;
-#endif
         }
         public static Uri IgnoreAuthority(this Uri uri)
         {
