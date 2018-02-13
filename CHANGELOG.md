@@ -22,6 +22,8 @@ OpenRasta adheres to [Semantic Versioning](http://semver.org/).
    and a few other funky things. Container integrations have to be updated to
    support this, and we'll throw an exception if you use factories and the container
    doesn't support them.
+ - You can now strongly-type Uri definitions, to get rid of those nasty strings,
+   so .AtUri(r=>$"/resource/{r.Id}") just works.
 
 ### Changed
 

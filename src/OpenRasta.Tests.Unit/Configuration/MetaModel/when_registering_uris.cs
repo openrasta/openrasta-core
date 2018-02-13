@@ -18,6 +18,14 @@ namespace Configuration_Specification
     }
 
     [Test]
+    public void using_resource_func()
+    {
+      ResourceSpaceHas.ResourcesOfType<Customer>().AtUri(c => $"/customer/{c.Address}");
+
+      TheUris[0].Uri.ShouldBe("/customer/{Address}");
+    }
+
+    [Test]
     public void a_null_language_defaults_to_the_inviariant_culture()
     {
       ResourceSpaceHas.ResourcesOfType<Customer>().AtUri("/customer").InLanguage(null);
@@ -37,14 +45,14 @@ namespace Configuration_Specification
       ResourceSpaceHas.ResourcesOfType<Customer>().AtUri("/customer");
 
       TheUris.Count.ShouldBe(1);
-      TheUris[0].Uri.ShouldBe( "/customer");
+      TheUris[0].Uri.ShouldBe("/customer");
     }
 
     [Test]
     public void a_uri_language_is_registered()
     {
       ResourceSpaceHas.ResourcesOfType<Customer>().AtUri("/customer").InLanguage("fr");
-      TheUris[0].Language.Name.ShouldBe( "fr");
+      TheUris[0].Language.Name.ShouldBe("fr");
     }
 
     [Test]
@@ -52,7 +60,7 @@ namespace Configuration_Specification
     {
       ResourceSpaceHas.ResourcesOfType<Customer>().AtUri("/customer").Named("default");
 
-      TheUris[0].Name.ShouldBe( "default");
+      TheUris[0].Name.ShouldBe("default");
     }
 
     [Test]
@@ -64,15 +72,15 @@ namespace Configuration_Specification
           .AtUri("/lothlorien");
 
       TheUris.Count.ShouldBe(2);
-      TheUris[0].Uri.ShouldBe( "/theshire");
-      TheUris[1].Uri.ShouldBe( "/lothlorien");
+      TheUris[0].Uri.ShouldBe("/theshire");
+      TheUris[1].Uri.ShouldBe("/lothlorien");
     }
 
 
     [Test]
     public void lcannot_register_a_null_uri_for_a_resource()
     {
-      Executing(() => ResourceSpaceHas.ResourcesOfType<Customer>().AtUri(null)).ShouldThrow<ArgumentNullException>();
+      Executing(() => ResourceSpaceHas.ResourcesOfType<Customer>().AtUri((string)null)).ShouldThrow<ArgumentNullException>();
     }
   }
 }
