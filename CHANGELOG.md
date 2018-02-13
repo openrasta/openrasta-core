@@ -24,6 +24,8 @@ OpenRasta adheres to [Semantic Versioning](http://semver.org/).
    doesn't support them.
  - You can now strongly-type Uri definitions, to get rid of those nasty strings,
    so .AtUri(r=>$"/resource/{r.Id}") just works.
+ - A new package, `OpenRasta.Plugins.ReverseProxy`, allows you to, well, reverse
+   proxy other resoures, even those that weren't, god forbid, using OpenRasta.
 
 ### Changed
 
