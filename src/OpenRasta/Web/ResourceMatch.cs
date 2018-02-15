@@ -2,49 +2,68 @@ using System.Globalization;
 using System.Collections.Specialized;
 using System.Collections.Generic;
 using System;
+using System.Linq;
 using OpenRasta.Configuration.MetaModel;
 
 namespace OpenRasta.Web
 {
   public class UriRegistration
   {
+    IList<NameValueCollection> _uriTemplateParameters;
     public ResourceModel ResourceModel { get; }
     public UriModel UriModel { get; }
 
     public UriRegistration(ResourceModel resourceModel, UriModel uriModel)
-      : this(uriModel.Uri, resourceModel.ResourceKey, uriModel.Name, uriModel.Language)
     {
       ResourceModel = resourceModel;
       UriModel = uriModel;
     }
 
-    public UriRegistration(string uriTemplate, object resourceKey, string uriName = null, CultureInfo uriCulture = null)
+    public UriRegistration(string uri, object resourceKey, string uriName = null, CultureInfo ci = null)
     {
-      UriTemplate = uriTemplate ?? throw new ArgumentNullException(nameof(uriTemplate));
-      ResourceKey = resourceKey ?? throw new ArgumentNullException(nameof(resourceKey));
-      UriTemplateParameters = new List<NameValueCollection>();
-      UriName = uriName;
-      UriCulture = uriCulture;
+      UriModel = new UriModel
+      {
+          Language = ci,
+          Name = uriName,
+          Uri = uri ?? throw new ArgumentNullException(nameof(uri))
+      };
+      ResourceModel = new ResourceModel
+      {
+          ResourceKey = resourceKey ?? throw new ArgumentNullException(nameof(resourceKey)),
+          Uris = { UriModel }
+      };
     }
 
-    public IList<NameValueCollection> UriTemplateParameters { get; }
-    public object ResourceKey { get; }
-    public string UriName { get; }
-    public CultureInfo UriCulture { get; }
-    public string UriTemplate { get; }
+    [Obsolete("Use the Results property, as this is inaccurate.")]
+    public IList<NameValueCollection> UriTemplateParameters => 
+        _uriTemplateParameters ?? (_uriTemplateParameters = GenerateLegacyResults());
+
+    List<NameValueCollection> GenerateLegacyResults()
+    {
+      return Results == null
+          ? new List<NameValueCollection>(0)
+          : Results.Select(r => new NameValueCollection
+          {
+              r.Match.QueryStringVariables,
+              r.Match.PathSegmentVariables
+          }).ToList();
+    }
+
+    public object ResourceKey => ResourceModel.ResourceKey;
+    public string UriName => UriModel.Name;
+    public CultureInfo UriCulture => UriModel.Language;
+    public string UriTemplate => UriModel.Uri;
+    public IEnumerable<TemplatedUriMatch> Results { get; set; }
   }
 
-  [Obsolete("Please use UriRegistration")]
+  [Obsolete("Please use UriRegistration (2.0 beta 2)", error: true)]
   public class ResourceMatch : UriRegistration
   {
     public ResourceMatch(object resourceKey, string uriName, CultureInfo uriCulture, string uriTemplate)
-      : base(uriTemplate, resourceKey, uriName, uriCulture)
+        : base(uriTemplate, resourceKey, uriName, uriCulture)
     {
     }
 
-    public CultureInfo ResourcePathCulture
-    {
-      get { return base.UriCulture; }
-    }
+    public CultureInfo ResourcePathCulture => UriCulture;
   }
 }

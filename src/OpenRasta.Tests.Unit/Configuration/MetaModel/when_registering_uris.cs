@@ -78,7 +78,7 @@ namespace Configuration_Specification
 
 
     [Test]
-    public void lcannot_register_a_null_uri_for_a_resource()
+    public void cannot_register_a_null_uri_for_a_resource()
     {
       Executing(() => ResourceSpaceHas.ResourcesOfType<Customer>().AtUri((string)null)).ShouldThrow<ArgumentNullException>();
     }

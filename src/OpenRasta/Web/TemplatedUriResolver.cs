@@ -5,6 +5,7 @@ using System.Collections.Specialized;
 using System.Globalization;
 using System.Linq;
 using OpenRasta.Collections;
+using OpenRasta.Configuration.MetaModel;
 using OpenRasta.TypeSystem;
 
 namespace OpenRasta.Web
@@ -32,16 +33,17 @@ namespace OpenRasta.Web
       var resourceKey = EnsureIsNotType(registration.ResourceKey);
       var descriptor = new UrlDescriptor
       {
-        Uri = new UriTemplate(registration.UriTemplate),
-        Culture = registration.UriCulture,
-        ResourceKey = resourceKey,
-        UriName = registration.UriName,
-        Registration = registration
+          Uri = new UriTemplate(registration.UriTemplate),
+
+          Culture = registration.UriCulture,
+          ResourceKey = resourceKey,
+          UriName = registration.UriName,
+          Registration = registration
       };
       _templates.KeyValuePairs.Add(new KeyValuePair<UriTemplate, object>(descriptor.Uri, descriptor));
       _templates.BaseAddress = new Uri("http://localhost/").IgnoreAuthority();
       var keys = UriNamesForKey(resourceKey);
-      
+
       if (registration.UriName != null)
       {
         keys.Add(registration.UriName);
@@ -74,8 +76,8 @@ namespace OpenRasta.Web
     public bool Remove(UriRegistration registration)
     {
       var pairToRemove = _templates.KeyValuePairs
-        .Where(x => ((UrlDescriptor) x.Value).Registration == registration)
-        .ToList();
+          .Where(x => ((UrlDescriptor)x.Value).Registration == registration)
+          .ToList();
 
       if (pairToRemove.Count <= 0) return false;
 
@@ -92,7 +94,7 @@ namespace OpenRasta.Web
 
     public IEnumerator<UriRegistration> GetEnumerator()
     {
-      return _templates.KeyValuePairs.Select(x => ((UrlDescriptor) x.Value).Registration).GetEnumerator();
+      return _templates.KeyValuePairs.Select(x => ((UrlDescriptor)x.Value).Registration).GetEnumerator();
     }
 
     /// <exception cref="InvalidOperationException"><c>InvalidOperationException</c>.</exception>
@@ -104,7 +106,7 @@ namespace OpenRasta.Web
       if (template == null)
       {
         throw new InvalidOperationException(
-          $"No suitable Uri could be found for resource with key {resourceKey} with values {keyValues.ToHtmlFormEncoding()}.");
+            $"No suitable Uri could be found for resource with key {resourceKey} with values {keyValues.ToHtmlFormEncoding()}.");
       }
 
       return template.BindByName(baseAddress, keyValues);
@@ -117,21 +119,24 @@ namespace OpenRasta.Web
       var tableMatches = _templates.Match(uriToMatch.IgnoreSchemePortAndAuthority());
       if (tableMatches == null || tableMatches.Count == 0)
         return null;
-      var urlDescriptor = (UrlDescriptor) tableMatches[0].Data;
+      var urlDescriptor = (UrlDescriptor)tableMatches[0].Data;
 
-      var result = new UriRegistration(urlDescriptor.Uri.ToString(), urlDescriptor.ResourceKey, urlDescriptor.UriName,
-        urlDescriptor.Culture);
-      foreach (var tableMatch in tableMatches)
+
+      var allResults = tableMatches.Select(m =>
       {
-        var allVariables = new NameValueCollection
-        {
-          tableMatch.PathSegmentVariables,
-          tableMatch.QueryStringVariables
-        };
-        result.UriTemplateParameters.Add(allVariables);
-      }
+        var descriptor = (UrlDescriptor)m.Data;
+        return new TemplatedUriMatch(
+            descriptor.Registration.ResourceModel,
+            descriptor.Registration.UriModel,
+            m);
+      }).ToList();
 
-      return result;
+      return new UriRegistration(
+          urlDescriptor.Registration.ResourceModel,
+          urlDescriptor.Registration.UriModel)
+      {
+          Results = allResults
+      };
     }
 
     public IEnumerable<string> GetQueryParameterNamesFor(string uriTemplate)
@@ -163,25 +168,25 @@ namespace OpenRasta.Web
     }
 
     UriTemplate FindBestMatchingTemplate(UriTemplateTable templates,
-      object resourceKey,
-      string uriName,
-      NameValueCollection keyValues)
+        object resourceKey,
+        string uriName,
+        NameValueCollection keyValues)
     {
       resourceKey = EnsureIsNotType(resourceKey);
       var matchingTemplates =
-        from template in templates.KeyValuePairs
-        let descriptor = (UrlDescriptor) template.Value
-        where CompatibleKeys(resourceKey, descriptor.ResourceKey)
-        where UriNameMatches(uriName, descriptor.UriName)
-        let templateParameters =
-        template.Key.PathSegmentVariableNames.Concat(template.Key.QueryStringVariableNames).ToList()
-        let hasKeys = keyValues != null && keyValues.HasKeys()
-        where (templateParameters.Count == 0) ||
-              (templateParameters.Count > 0
-               && hasKeys
-               && templateParameters.All(x => keyValues.AllKeys.Contains(x, StringComparison.OrdinalIgnoreCase)))
-        orderby templateParameters.Count descending
-        select template.Key;
+          from template in templates.KeyValuePairs
+          let descriptor = (UrlDescriptor)template.Value
+          where CompatibleKeys(resourceKey, descriptor.ResourceKey)
+          where UriNameMatches(uriName, descriptor.UriName)
+          let templateParameters =
+              template.Key.PathSegmentVariableNames.Concat(template.Key.QueryStringVariableNames).ToList()
+          let hasKeys = keyValues != null && keyValues.HasKeys()
+          where (templateParameters.Count == 0) ||
+                (templateParameters.Count > 0
+                 && hasKeys
+                 && templateParameters.All(x => keyValues.AllKeys.Contains(x, StringComparison.OrdinalIgnoreCase)))
+          orderby templateParameters.Count descending
+          select template.Key;
 
       return matchingTemplates.FirstOrDefault();
     }
@@ -201,6 +206,20 @@ namespace OpenRasta.Web
       public object ResourceKey { get; set; }
       public UriTemplate Uri { get; set; }
       public string UriName { get; set; }
+    }
+  }
+
+  public class TemplatedUriMatch
+  {
+    public ResourceModel ResourceModel { get; }
+    public UriModel UriModel { get; }
+    public UriTemplateMatch Match { get; }
+
+    public TemplatedUriMatch(ResourceModel resourceModel, UriModel uriModel, UriTemplateMatch match)
+    {
+      ResourceModel = resourceModel;
+      UriModel = uriModel;
+      Match = match;
     }
   }
 }

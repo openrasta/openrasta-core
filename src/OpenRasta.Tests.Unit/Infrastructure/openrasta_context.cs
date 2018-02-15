@@ -71,7 +71,7 @@ namespace OpenRasta.Tests.Unit.Infrastructure
 
     public void given_uri_registration<T>(string uri, string uriName = null)
     {
-      UriResolver.Add(new UriRegistration(uri, typeof(T), uriName, CultureInfo.CurrentCulture));
+      UriResolver.Add(new UriRegistration(uri, TypeSystem.FromClr(typeof(T)), uriName, CultureInfo.CurrentCulture));
     }
 
     public void given_uri_registration(object key, string uri, string uriName = null)

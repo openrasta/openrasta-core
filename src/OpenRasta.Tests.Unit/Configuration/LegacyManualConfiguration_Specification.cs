@@ -19,11 +19,16 @@ namespace LegacyManualConfiguration_Specification
   {
     void ThenTheUriHasTheResource<TResource>(string uri, CultureInfo language, string name)
     {
-      var match = Resolver.Resolve<IUriResolver>().Match(new Uri(new Uri("http://localhost/", UriKind.Absolute), uri));
+      var match = Match(uri);
       match.ShouldNotBeNull();
       match.UriCulture.ShouldBe(language);
       match.ResourceKey.ShouldBe(TypeSystems.Default.FromClr(typeof(TResource)));
       match.UriName.ShouldBe( name);
+    }
+
+    UriRegistration Match(string uri)
+    {
+      return Resolver.Resolve<IUriResolver>().Match(new Uri(new Uri("http://localhost/", UriKind.Absolute), uri));
     }
 
     [Test]
@@ -37,6 +42,24 @@ namespace LegacyManualConfiguration_Specification
       ThenTheUriHasTheResource<Customer>("/customer", CultureInfo.GetCultureInfo("fr"), "French");
     }
 
+    [Test]
+    public void equivalent_uris_are_parsed()
+    {
+      GivenAResourceRegistrationFor<Customer>("/customer/{id}",uri=>
+          uri.And.AtUri("/customer/3"));
+
+      WhenTheConfigurationIsFinished();
+
+      Match("/customer/1").UriTemplateParameters.Count().ShouldBe(1);
+
+      var equivalent = Match("/customer/3");
+      equivalent.UriTemplate.ShouldBe("/customer/3");
+      
+      // legacy implementation
+      equivalent.UriTemplateParameters.Count().ShouldBe(2);
+      
+      equivalent.Results.Count().ShouldBe(2);
+    }
     [Test]
     public void registering_two_urls_works()
     {

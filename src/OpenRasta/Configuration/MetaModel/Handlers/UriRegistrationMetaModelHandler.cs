@@ -15,10 +15,7 @@ namespace OpenRasta.Configuration.MetaModel.Handlers
         {
             foreach (var resource in repository.ResourceRegistrations)
                 foreach (var uriRegistration in resource.Uris)
-                    _uriResolver.Add( new UriRegistration(uriRegistration.Uri,
-                                               resource.ResourceKey,  
-                                               uriRegistration.Name,
-                                               uriRegistration.Language));
+                    _uriResolver.Add(new UriRegistration(resource, uriRegistration));
         }
     }
 }
