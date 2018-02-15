@@ -25,7 +25,8 @@ namespace Tests.Hosting.Owin
           .UseUrls($"http://localhost:{port}")
           .Configure(app => app.UseOpenRasta(new TaskApi()))
           .Build();
-      server.RunAsync();
+      server.Start();
+      
       client = new HttpClient {BaseAddress = new Uri($"http://localhost:{port}")};
     }
 
