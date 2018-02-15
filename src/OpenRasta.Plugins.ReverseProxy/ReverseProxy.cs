@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Net.Http;
 using System.Threading;
@@ -24,16 +25,44 @@ namespace OpenRasta.Plugins.ReverseProxy
 
     public async Task<HttpResponseMessage> Send(ICommunicationContext context, string target)
     {
-      var targetUriBuilder = new UriBuilder(target);
-      if (context.Request.Uri.Query.StartsWith("?"))
-        targetUriBuilder.Query = context.Request.Uri.Query.Substring(1);
+      var sourceBaseUri = new Uri(context.Request.Uri, "/");
+      var targetTemplate = new UriTemplate(target);
+      var requestQs = context.PipelineData.SelectedResource.Results.Single();
+
+      //var requestQueryStrings = context.Request.Uri.
+      var targetUri = targetTemplate.BindByName(sourceBaseUri,
+          new NameValueCollection
+          {
+              requestQs.Match.PathSegmentVariables,
+              requestQs.Match.QueryStringVariables
+          });
+
+      var targetUriBuilder = new UriBuilder(targetUri);
+
+      var sourceTemplateQsKeysWithVars = requestQs.Match.Template.QueryString
+          .Where(qs => qs.Type == UriTemplate.SegmentType.Variable)
+          .Select(qs => qs.Key)
+          .ToList();
       
-      var request = new HttpRequestMessage()
+      var requestQueryNotMappedToSourceTemplateVars = 
+          string.Join("&", requestQs.Match.QueryString
+          .Where(qs=>!sourceTemplateQsKeysWithVars.Contains(qs.Key, StringComparer.OrdinalIgnoreCase))
+          .Select(qs=>qs.ToString()));
+
+      if (requestQueryNotMappedToSourceTemplateVars.Length > 0)
+      {
+        targetUriBuilder.Query += !targetUriBuilder.Query.StartsWith("?") ? "?" : "&";
+        
+        targetUriBuilder.Query += requestQueryNotMappedToSourceTemplateVars;
+      }
+
+      var request = new HttpRequestMessage
       {
           RequestUri = targetUriBuilder.Uri,
           Method = new HttpMethod(context.Request.HttpMethod),
           Content = { }
       };
+
       foreach (var header in context.Request.Headers)
         request.Headers.Add(header.Key, header.Value);
 

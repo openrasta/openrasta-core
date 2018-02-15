@@ -1,39 +1,46 @@
 ﻿using System;
 using OpenRasta.Configuration;
 using OpenRasta.Plugins.ReverseProxy;
+using OpenRasta.Web;
 
 namespace Tests.Plugins.ReverseProxy.Implementation
 {
   public class ReverseProxyApi : IConfigurationSource
   {
-    readonly ReverseProxyOptions _options;
+    readonly string from;
+    readonly string to;
+    readonly ReverseProxyOptions options;
+    readonly Func<ICommunicationContext, string> operation;
 
-    public ReverseProxyApi(ReverseProxyOptions options)
+    public ReverseProxyApi(
+        string from,
+        string to,
+        ReverseProxyOptions options,
+        Func<ICommunicationContext,string> operation = null)
     {
-      _options = options;
+      this.from = from;
+      this.to = to;
+      this.options = options;
+      this.operation = operation ?? (ctx=>ctx.Request.Uri.ToString());
     }
 
     public void Configure()
     {
       ResourceSpace.Has
-          .ResourcesNamed("proxied")
-          .AtUri("/proxied")
-          .And.AtUri("/proxied-with-qs?q={query}")
+          .ResourcesNamed("to")
+          .AtUri(to)
           .HandledBy<ProxiedHandler>()
           .TranscodedBy<ProxiedCodec>()
           .ForMediaType("text/plain");
-      
-      ResourceSpace.Has
-        .ResourcesNamed("proxy")
-        .AtUri("/proxy")
-        .ReverseProxyFor("http://localhost/proxied");
-      
-      ResourceSpace.Has
-          .ResourcesNamed("proxy-wth-qs")
-          .AtUri("/proxy-with-qs")
-          .ReverseProxyFor("http://localhost/proxied-with-qs");
 
-      ResourceSpace.Uses.ReverseProxy(_options);
+      ResourceSpace.Has
+          .ResourcesNamed("from")
+          .AtUri(from)
+          .ReverseProxyFor($"http://localhost{to}");
+
+      ResourceSpace.Uses.Dependency(d => d.Transient((ICommunicationContext context) => new ProxiedHandler(context, operation)));
+      
+      ResourceSpace.Uses.ReverseProxy(options);
     }
   }
 }

@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
+using OpenRasta.Binding;
 using OpenRasta.Configuration.MetaModel;
 using OpenRasta.Pipeline;
 using OpenRasta.Web;
@@ -25,7 +27,7 @@ namespace OpenRasta.Plugins.ReverseProxy
     }
 
     [HttpOperation("*")]
-    public async Task<HttpResponseMessage> Any()
+    public async Task<HttpResponseMessage> Any(AnyParameters _)
     {
       return await _proxy.Send(_context, CurrentResourceModel.GetReverseProxyTarget());
     }
@@ -33,5 +35,15 @@ namespace OpenRasta.Plugins.ReverseProxy
     ResourceModel CurrentResourceModel => _metamodelRepository
         .ResourceRegistrations
         .Single(reg => reg.ResourceKey == _context.PipelineData.SelectedResource.ResourceKey);
+  }
+
+  [Binder(Type = typeof(AnyParameters))]
+  public class AnyParameters : IObjectBinder
+  {
+    public bool IsEmpty { get; } = false;
+    public ICollection<string> Prefixes { get; } = Array.Empty<string>();
+    public bool SetProperty<TValue>(string key, IEnumerable<TValue> values, ValueConverter<TValue> converter) => true;
+    public bool SetInstance(object builtInstance) => false;
+    public BindingResult BuildObject() => BindingResult.Success(null);
   }
 }

@@ -1,15 +1,22 @@
-﻿namespace Tests.Plugins.ReverseProxy.Implementation
+﻿using System;
+using OpenRasta.Plugins.ReverseProxy;
+using OpenRasta.Web;
+
+namespace Tests.Plugins.ReverseProxy.Implementation
 {
   public class ProxiedHandler
   {
-    public string Get()
-    {
-      return "empty";
-    }
+    readonly ICommunicationContext context;
+    readonly Func<ICommunicationContext, string> operation;
 
-    public string Get(string query)
+    public ProxiedHandler(ICommunicationContext context, Func<ICommunicationContext, string> operation)
     {
-      return query;
+      this.context = context;
+      this.operation = operation;
+    }
+    public string Get(AnyParameters _)
+    {
+      return operation(context);
     }
   }
 }

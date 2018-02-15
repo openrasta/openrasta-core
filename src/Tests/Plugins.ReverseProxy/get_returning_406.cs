@@ -15,7 +15,7 @@ namespace Tests.Plugins.ReverseProxy
 
     public get_returning_406()
     {
-      server = ProxyTestServer.Create();
+      server = ProxyTestServer.Create("/proxy", "/proxied");
 
       response = server
           .CreateRequest("http://localhost/proxy")

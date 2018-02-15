@@ -9,6 +9,62 @@ using Xunit;
 
 namespace Tests.Plugins.ReverseProxy
 {
+  public class get_with_segmemt_qs_vars_and_unmapped_vars : IDisposable
+  {
+    readonly HttpResponseMessage response;
+    readonly TestServer server;
+
+    public get_with_segmemt_qs_vars_and_unmapped_vars()
+    {
+      server = ProxyTestServer.Create(
+          "/proxy/{first}/{second}/?q={third}",
+          "/proxied/{first}/{second}/?query={third}");
+
+      response = server
+          .CreateRequest("http://localhost/proxy/one/two/?q=three&another=fourth")
+          .GetAsync()
+          .Result;
+    }
+    
+    [Fact]
+    public async Task response_status_body_is_proxied()
+    {
+      (await response.Content.ReadAsStringAsync()).ShouldBe("http://localhost/proxied/one/two/?query=three&another=fourth");
+    }
+
+    public void Dispose()
+    {
+      server?.Dispose();
+    }
+  }
+  public class get_with_segmemt_and_qs_vars : IDisposable
+  {
+    readonly HttpResponseMessage response;
+    readonly TestServer server;
+
+    public get_with_segmemt_and_qs_vars()
+    {
+      server = ProxyTestServer.Create(
+          "/proxy/{first}/{second}/?q={third}",
+          "/proxied/{first}/{second}/?query={third}");
+
+      response = server
+          .CreateRequest("http://localhost/proxy/one/two/?q=three")
+          .GetAsync()
+          .Result;
+    }
+    
+    [Fact]
+    public async Task response_status_body_is_proxied()
+    {
+      (await response.Content.ReadAsStringAsync()).ShouldBe("http://localhost/proxied/one/two/?query=three");
+    }
+
+    public void Dispose()
+    {
+      server?.Dispose();
+    }
+  }
   public class get_with_uri_template_vars : IDisposable
   {
     readonly HttpResponseMessage response;
@@ -16,25 +72,20 @@ namespace Tests.Plugins.ReverseProxy
 
     public get_with_uri_template_vars()
     {
-      server = ProxyTestServer.Create();
+      server = ProxyTestServer.Create(
+          "/proxy/{first}/{second}/",
+          "/proxied/{first}/{second}/");
 
       response = server
-          .CreateRequest("http://localhost/proxy/test/")
+          .CreateRequest("http://localhost/proxy/one/two/")
           .GetAsync()
           .Result;
     }
-
-
-    [Fact(Skip="Not implemented yet")]
-    public void response_status_code_is_correct()
-    {
-      response.StatusCode.ShouldBe(HttpStatusCode.OK);
-    }
-
-    [Fact(Skip="Not implemented yet")]
+    
+    [Fact]
     public async Task response_status_body_is_proxied()
     {
-      (await response.Content.ReadAsStringAsync()).ShouldBe("test");
+      (await response.Content.ReadAsStringAsync()).ShouldBe("http://localhost/proxied/one/two/");
     }
 
     public void Dispose()
