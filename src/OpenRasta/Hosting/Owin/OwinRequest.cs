@@ -29,13 +29,13 @@ namespace OpenRasta.Hosting.Katana
 
     void PopulateHeaders(IOwinRequest ctx)
     {
-      var headerCollection = new NameValueCollection();
+      var headerCollection = new HttpHeaderDictionary();
       foreach (var header in ctx.Headers)
       {
-        headerCollection.Add(header.Key, header.Value.First());
+        headerCollection.Add(header.Key, string.Join(",",header.Value));
       }
 
-      Headers = new HttpHeaderDictionary(headerCollection);
+      Headers = headerCollection;
     }
   }
 }

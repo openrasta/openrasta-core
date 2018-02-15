@@ -2,25 +2,22 @@
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.TestHost;
 using OpenRasta.Plugins.ReverseProxy;
 using Shouldly;
 using Xunit;
 
 namespace Tests.Plugins.ReverseProxy
 {
-  public class get_returning_200 : IDisposable
+  public class get_returning_200
   {
     readonly HttpResponseMessage response;
-    readonly TestServer server;
-
+    
     public get_returning_200()
     {
-      server = ProxyTestServer.Create("/proxy", "/proxied");
-
-      response = server
-          .CreateRequest("http://localhost/proxy")
-          .GetAsync()
+      response = new ProxyServer()
+          .FromServer("/proxy")
+          .ToServer("/proxied")
+          .GetAsync("http://localhost/proxy")
           .Result;
     }
 
@@ -34,11 +31,6 @@ namespace Tests.Plugins.ReverseProxy
     public async Task response_status_body_is_proxied()
     {
       (await response.Content.ReadAsStringAsync()).ShouldBe("http://localhost/proxied");
-    }
-
-    public void Dispose()
-    {
-      server.Dispose();
     }
   }
 }
