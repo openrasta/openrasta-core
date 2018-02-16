@@ -47,7 +47,7 @@ namespace OpenRasta.Plugins.ReverseProxy
       }
       catch (Exception e)
       {
-        throw new ReverseProxyFailedRequest(request, e);
+        throw new ReverseProxyFailedRequestException(request, e);
       }
     }
 
@@ -138,17 +138,6 @@ namespace OpenRasta.Plugins.ReverseProxy
     static string CurrentForwarded(ICommunicationContext context)
     {
       return $"proto={context.Request.Uri.Scheme};host={context.Request.Uri.Host}";
-    }
-  }
-
-  public class ReverseProxyFailedRequest : Exception
-  {
-    public HttpRequestMessage Request { get; }
-
-    public ReverseProxyFailedRequest(HttpRequestMessage request, Exception innerException)
-    : base("A proxied request failed.", innerException)
-    {
-      Request = request;
     }
   }
 }
