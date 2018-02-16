@@ -21,8 +21,10 @@ namespace OpenRasta.Plugins.ReverseProxy
     {
       _options = options;
       _modelRepository = modelRepository;
-      _httpClient = new Lazy<HttpClient>(
-          () => new HttpClient(_options.HttpMessageHandler()),
+      _httpClient = new Lazy<HttpClient>(() => new HttpClient(_options.HttpMessageHandler())
+          {
+              Timeout = options.Timeout
+          },
           LazyThreadSafetyMode.ExecutionAndPublication);
     }
 

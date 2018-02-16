@@ -7,6 +7,7 @@ namespace OpenRasta.Plugins.ReverseProxy
   {
     public Func<HttpMessageHandler> HttpMessageHandler { get; set; } = () => new HttpClientHandler();
     public ForwardedHeaders FrowardedHeaders { get; set; } = new ForwardedHeaders();
+    public TimeSpan Timeout { get; set; } = TimeSpan.FromSeconds(30);
 
     public class ForwardedHeaders
     {

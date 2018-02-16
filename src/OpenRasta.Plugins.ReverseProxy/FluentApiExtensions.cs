@@ -20,6 +20,7 @@ namespace OpenRasta.Plugins.ReverseProxy
 
     public static T ReverseProxy<T>(this T uses, ReverseProxyOptions options = null) where T : IUses
     {
+      options = options ?? new ReverseProxyOptions();
       uses.Dependency(d => d.Singleton((IMetaModelRepository repository) => new ReverseProxy(options, repository)));
       ((IHas)uses)
           .ResourcesOfType<HttpResponseMessage>()
