@@ -31,16 +31,17 @@ namespace OpenRasta.Plugins.ReverseProxy
 
     public async Task<HttpResponseMessage> Send(ICommunicationContext context, string target)
     {
-      var proxyTargetUri = GetProxyTargetUri(context, target);
+      var proxyTargetUri = GetProxyTargetUri(context.Request.Uri, context.PipelineData.SelectedResource.Results.Single(), target);
       var request = new HttpRequestMessage
       {
-          RequestUri = proxyTargetUri,
           Method = new HttpMethod(context.Request.HttpMethod),
           Content = { }
       };
 
       CopyHeaders(context, request, _options.FrowardedHeaders.ConvertLegacyHeaders);
 
+
+      request.RequestUri = proxyTargetUri;
       try
       {
         return await _httpClient.Value.SendAsync(request, HttpCompletionOption.ResponseContentRead);
@@ -85,6 +86,7 @@ namespace OpenRasta.Plugins.ReverseProxy
           }
         }
 
+        if (header.Key.Equals("host", StringComparison.OrdinalIgnoreCase)) continue;
         request.Headers.Add(header.Key, header.Value);
       }
 
@@ -96,13 +98,15 @@ namespace OpenRasta.Plugins.ReverseProxy
       request.Headers.Add("forwarded", CurrentForwarded(context));
     }
 
-    static Uri GetProxyTargetUri(ICommunicationContext context, string target)
+    public static Uri GetProxyTargetUri(Uri requestUri, TemplatedUriMatch requestUriMatch, string target)
     {
-      var sourceBaseUri = new Uri(context.Request.Uri, "/");
+      var sourceBaseUri = new Uri(requestUri, "/");
+      var destinationBaseUri = new Uri(new Uri(target), "/");
       var targetTemplate = new UriTemplate(target);
-      var requestQs = context.PipelineData.SelectedResource.Results.Single();
+      var requestQs = requestUriMatch;
 
-      var targetUri = targetTemplate.BindByName(sourceBaseUri,
+      var targetUri = targetTemplate.BindByName(
+          destinationBaseUri,
           new NameValueCollection
           {
               requestQs.Match.PathSegmentVariables,
