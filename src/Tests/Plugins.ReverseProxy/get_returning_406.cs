@@ -1,33 +1,24 @@
 ﻿using System;
 using System.Net;
 using System.Net.Http;
+using System.Threading.Tasks;
 using OpenRasta.Plugins.ReverseProxy;
 using Shouldly;
 using Xunit;
 
 namespace Tests.Plugins.ReverseProxy
 {
-  public class get_returning_406 : IDisposable
+  public class get_returning_406
   {
-    readonly (HttpResponseMessage response, string content, Action dispose) response;
-
-    public get_returning_406()
+    [Fact]
+    public async Task response_status_code_is_correct()
     {
-      response = new ProxyServer()
+      var response = await new ProxyServer()
           .FromServer("/proxy")
           .ToServer("/proxied")
           .AddHeader("Accept", "application/vnd.example")
-          .GetAsync("http://localhost/proxy")
-          .Result;
-    }
-
-    [Fact]
-    public void response_status_code_is_correct()
-    {
+          .GetAsync("http://localhost/proxy");
       response.response.StatusCode.ShouldBe(HttpStatusCode.NotAcceptable);
-    }
-    public void Dispose()
-    {
       response.dispose();
     }
   }

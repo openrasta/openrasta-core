@@ -8,34 +8,29 @@ using Xunit;
 
 namespace Tests.Plugins.ReverseProxy
 {
-  public class get_with_query_string : IDisposable
+  public class get_with_query_string
   {
-    readonly (HttpResponseMessage response, string content, Action dispose) response;
-
-    public get_with_query_string()
+    [Fact]
+    public async Task response_status_code_is_correct()
     {
-      response = new ProxyServer()
+      var response = await new ProxyServer()
           .FromServer("/proxy-with-qs")
           .ToServer("/proxied")
-          .GetAsync("http://localhost/proxy-with-qs?q=test")
-          .Result;
-    }
+          .GetAsync("http://localhost/proxy-with-qs?q=test");
 
-
-    [Fact]
-    public void response_status_code_is_correct()
-    {
       response.response.StatusCode.ShouldBe(HttpStatusCode.OK);
+      response.dispose();
     }
 
     [Fact]
     public async Task response_status_body_is_proxied()
     {
-     response.content.ShouldBe("http://localhost/proxied?q=test");
-    }
+      var response = await new ProxyServer()
+          .FromServer("/proxy-with-qs")
+          .ToServer("/proxied")
+          .GetAsync("http://localhost/proxy-with-qs?q=test");
 
-    public void Dispose()
-    {
+      response.content.ShouldBe("http://localhost/proxied?q=test");
       response.dispose();
     }
   }
