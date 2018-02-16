@@ -80,13 +80,6 @@ environment:
     secure:
       1lXaOJ0GvCAOd0O9DDvVqw2eb7TvP2jve12u3hD2g4J7RVW2c2jC5XuRFyEuduUA
 
-test:
-  assemblies:
-    - src\OpenRasta.Tests.Unit\bin\$(configuration)\netcoreapp2.0\OpenRasta.Tests.Unit.dll
-    - src\Tests\bin\$(configuration)\netcoreapp2.0\Tests.dll
-    - src\OpenRasta.Tests.Unit\bin\$(configuration)\net461\OpenRasta.Tests.Unit.dll
-    - src\Tests\bin\$(configuration)\net461\Tests.dll
-
 artifacts:
 - path: src\openrasta\bin\$(configuration)\net461\*.dll
   name: dlls
