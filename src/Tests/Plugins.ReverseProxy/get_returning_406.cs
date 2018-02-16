@@ -7,9 +7,9 @@ using Xunit;
 
 namespace Tests.Plugins.ReverseProxy
 {
-  public class get_returning_406
+  public class get_returning_406 : IDisposable
   {
-    readonly HttpResponseMessage response;
+    readonly (HttpResponseMessage response, string content, Action dispose) response;
 
     public get_returning_406()
     {
@@ -24,7 +24,11 @@ namespace Tests.Plugins.ReverseProxy
     [Fact]
     public void response_status_code_is_correct()
     {
-      response.StatusCode.ShouldBe(HttpStatusCode.NotAcceptable);
+      response.response.StatusCode.ShouldBe(HttpStatusCode.NotAcceptable);
+    }
+    public void Dispose()
+    {
+      response.dispose();
     }
   }
 }

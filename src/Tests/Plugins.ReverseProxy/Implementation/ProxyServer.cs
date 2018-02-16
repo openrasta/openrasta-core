@@ -41,15 +41,17 @@ namespace OpenRasta.Plugins.ReverseProxy
       return this;
     }
 
-    public async Task<HttpResponseMessage> GetAsync(string uri)
+    public async Task<(HttpResponseMessage response, string content, Action dispose)> GetAsync(string uri)
     {
-      using (var fromServer = CreateFromServer())
-      using (var toServer = CreateToServer())
-      {
-        var request = fromServer.CreateRequest(uri);
-        _requests.ForEach(req => request = req(request));
-        return await request.GetAsync();
-      }
+      var fromServer = CreateFromServer();
+      var toServer = CreateToServer();
+      var request = fromServer.CreateRequest(uri);
+      _requests.ForEach(req => request = req(request));
+      var response = await request.GetAsync();
+      return (response, await response.Content.ReadAsStringAsync(), () => { 
+        fromServer.Dispose();
+        toServer.Dispose();
+      });
     }
 
     TestServer CreateToServer()

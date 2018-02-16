@@ -8,9 +8,9 @@ using Xunit;
 
 namespace Tests.Plugins.ReverseProxy
 {
-  public class get_with_query_string
+  public class get_with_query_string : IDisposable
   {
-    readonly HttpResponseMessage response;
+    readonly (HttpResponseMessage response, string content, Action dispose) response;
 
     public get_with_query_string()
     {
@@ -25,13 +25,18 @@ namespace Tests.Plugins.ReverseProxy
     [Fact]
     public void response_status_code_is_correct()
     {
-      response.StatusCode.ShouldBe(HttpStatusCode.OK);
+      response.response.StatusCode.ShouldBe(HttpStatusCode.OK);
     }
 
     [Fact]
     public async Task response_status_body_is_proxied()
     {
-      (await response.Content.ReadAsStringAsync()).ShouldBe("http://localhost/proxied?q=test");
+     response.content.ShouldBe("http://localhost/proxied?q=test");
+    }
+
+    public void Dispose()
+    {
+      response.dispose();
     }
   }
 }
