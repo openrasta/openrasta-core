@@ -263,6 +263,28 @@ namespace UriTemplate_Specification
       template.QueryStringVariableNames.Contains("test").ShouldBeTrue();
       template.QueryStringVariableNames.Contains("test2").ShouldBeTrue();
     }
+    [Test]
+    public void query_string_segments_are_filled()
+    {
+      var template = new UriTemplate("/test?query1={test}&query2={test2}&query3=val");
+      var query1 = template.QueryString.ElementAt(0);
+      query1.Key.ShouldBe("query1");
+      query1.Value.ShouldBe("test");
+      query1.Type.ShouldBe(UriTemplate.SegmentType.Variable);
+      
+      var query2 = template.QueryString.ElementAt(1);
+      query2.Key.ShouldBe("query2");
+      query2.Value.ShouldBe("test2");
+      query2.Type.ShouldBe(UriTemplate.SegmentType.Variable);
+      
+      var query3 = template.QueryString.ElementAt(2);
+      query3.Key.ShouldBe("query3");
+      query3.Value.ShouldBe("val");
+      query3.Type.ShouldBe(UriTemplate.SegmentType.Literal);
+      
+      template.QueryStringVariableNames.Contains("test").ShouldBeTrue();
+      template.QueryStringVariableNames.Contains("test2").ShouldBeTrue();
+    }
 
     [Test]
     public void a_url_matching_multiple_query_parameters_should_match()

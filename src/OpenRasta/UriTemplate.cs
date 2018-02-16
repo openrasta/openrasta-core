@@ -60,9 +60,7 @@ namespace OpenRasta
 
     public static IEnumerable<QuerySegment> ParseQueryStringSegments(string query)
     {
-        
-      var queries = query;
-      var pairs = queries.Split('&');
+      var pairs = query.Split('&');
 
       for (var pairIndex = 0; pairIndex < pairs.Length; pairIndex++)
       {

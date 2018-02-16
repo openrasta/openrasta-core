@@ -32,7 +32,6 @@ namespace OpenRasta.Plugins.ReverseProxy
       var targetTemplate = new UriTemplate(target);
       var requestQs = context.PipelineData.SelectedResource.Results.Single();
 
-      //var requestQueryStrings = context.Request.Uri.
       var targetUri = targetTemplate.BindByName(sourceBaseUri,
           new NameValueCollection
           {
@@ -55,9 +54,11 @@ namespace OpenRasta.Plugins.ReverseProxy
 
       if (requestQueryNotMappedToSourceTemplateVars.Length > 0)
       {
-        targetUriBuilder.Query += !targetUriBuilder.Query.StartsWith("?") ? "?" : "&";
-
-        targetUriBuilder.Query += requestQueryNotMappedToSourceTemplateVars;
+        var query = targetUriBuilder.Query;
+        if (query.StartsWith("?")) query = query.Substring(1);
+        if (query.Length > 0) query += "&";
+        query += requestQueryNotMappedToSourceTemplateVars;
+        targetUriBuilder.Query = query;
       }
 
       var request = new HttpRequestMessage
