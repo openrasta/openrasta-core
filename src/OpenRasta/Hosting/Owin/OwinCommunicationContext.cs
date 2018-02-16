@@ -12,6 +12,7 @@ namespace OpenRasta.Hosting.Katana
   class OwinCommunicationContext : ICommunicationContext
   {
     readonly IOwinContext _nativeContext;
+    PathString _appBaseRelative;
 
     public OwinCommunicationContext(IOwinContext nativeContext, ILogger logger)
     {
@@ -19,19 +20,16 @@ namespace OpenRasta.Hosting.Katana
       _nativeContext = nativeContext;
       Request = new OwinRequest(nativeContext.Request);
       Response = new OwinResponse(nativeContext);
-      ServerErrors = new ServerErrorList {Log = logger};
-      ApplicationBaseUri = ComputeApplicationBaseUri();
+      ServerErrors = new ServerErrorList { Log = logger };
+      _appBaseRelative = nativeContext.Request.PathBase;
     }
 
-    public Uri ApplicationBaseUri { get; }
-
-    Uri ComputeApplicationBaseUri()
-    {
-      var request = _nativeContext.Request;
-      var uriBuilder = new UriBuilder(request.Uri.Scheme, request.Uri.Host, request.Uri.Port, request.PathBase.ToString());
-
-      return uriBuilder.Uri;
-    }
+    public Uri ApplicationBaseUri => new UriBuilder(
+        Request.Uri.Scheme, 
+        Request.Uri.Host,
+        Request.Uri.Port,
+        _nativeContext.Request.PathBase.ToString())
+        .Uri;
 
     public IRequest Request { get; }
     public IResponse Response { get; }
