@@ -27,6 +27,8 @@ namespace OpenRasta.Plugins.ReverseProxy
           .TranscodedBy<ReverseProxyCodec>()
           .ForMediaType("*/*");
 
+      if (options.FrowardedHeaders.RunAsForwardedHost)
+        uses.PipelineContributor<RewriteAppBaseUsingForwardedHeaders>();
       return uses;
     }
   }

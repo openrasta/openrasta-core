@@ -15,6 +15,7 @@
     <FileVersion>2.6.0</FileVersion>
     <AssemblyVersion>2.6.0</AssemblyVersion>
     <TargetFrameworks>netstandard2.0;net461</TargetFrameworks>
+    <LangVersion>7.1</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\OpenRasta.Codecs.Newtonsoft.Json\OpenRasta.Codecs.Newtonsoft.Json.csproj" />
