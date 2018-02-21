@@ -41,7 +41,7 @@ namespace Tests.Plugins.ReverseProxy.forwarded_headers
           .AddHeader("Forwarded", "host=openrasta.example;proto=https")
           .GetAsync("/proxy");
 
-      response.content.ShouldBe("https://destination.example/");
+      response.content.ShouldBe("http://destination.example/");
       response.dispose();
     }
   }
