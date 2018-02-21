@@ -19,7 +19,7 @@ namespace OpenRasta.Pipeline.Contributors
 
     public void Initialize(IPipeline pipelineRunner)
     {
-      pipelineRunner.Notify(ResolveHandler).After<KnownStages.IUriMatching>();
+      pipelineRunner.Notify(ResolveHandler);
     }
 
     PipelineContinuation ResolveHandler(ICommunicationContext context)

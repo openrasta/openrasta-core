@@ -91,14 +91,18 @@ namespace OpenRasta.Tests.Unit.Infrastructure
 
     public PipelineContinuation when_sending_notification<TTrigger>()
     {
-      IsContributorExecuted = _actions.ContainsKey(typeof(TTrigger));
-      if (IsContributorExecuted == false)
+      var actionFound = _actions.ContainsKey(typeof(TTrigger));
+      if (actionFound == false && _actions.Count > 0)
+      {
         throw new InvalidOperationException("No action for trigger");
-      var action = _actions[typeof(TTrigger)];
+      }
+
+      var action = _actions.Count == 0 ? Pipeline.CallGraph.FirstOrDefault()?.Action : _actions[typeof(TTrigger)];
       if (action == null)
         throw new InvalidOperationException($"Could not find operation of type '{nameof(TTrigger)}'.");
 
       Result = action(Context).GetAwaiter().GetResult();
+      IsContributorExecuted = true;
       return Result;
     }
 
@@ -271,23 +275,25 @@ namespace OpenRasta.Tests.Unit.Infrastructure
       Host.Close();
     }
 
-    public class SinglePipeline<T> : IPipeline, IPipelineExecutionOrder, IPipelineExecutionOrderAnd
+    class SinglePipeline<T> : IPipeline, IPipelineExecutionOrder, IPipelineExecutionOrderAnd
         where T : class, IPipelineContributor
     {
-      internal Dictionary<Type, Func<ICommunicationContext, Task<PipelineContinuation>>> _actions;
-      internal List<IPipelineContributor> _list;
-      internal IDependencyResolver _resolver;
-      Func<ICommunicationContext, Task<PipelineContinuation>> _lastNotification;
+      readonly Dictionary<Type, Func<ICommunicationContext, Task<PipelineContinuation>>> _actions;
 
-      public SinglePipeline(Func<T> creator,
+      Func<ICommunicationContext, Task<PipelineContinuation>> _lastNotification;
+      readonly List<Func<ICommunicationContext, Task<PipelineContinuation>>> _notifications = new List<Func<ICommunicationContext, Task<PipelineContinuation>>>();
+      readonly T _contributor;
+
+      public SinglePipeline(
+          Func<T> creator,
           IDependencyResolver resolver,
           Dictionary<Type, Func<ICommunicationContext, Task<PipelineContinuation>>> actions)
       {
         ContextData = new PipelineData();
-        _resolver = resolver;
-        if (!_resolver.HasDependency(typeof(T)))
-          _resolver.AddDependency<T>();
-        _list = new List<IPipelineContributor> { creator != null ? creator() : resolver.Resolve<T>() };
+        var resolver1 = resolver;
+        if (!resolver1.HasDependency(typeof(T)))
+          resolver1.AddDependency<T>();
+        _contributor = creator != null ? creator() : resolver.Resolve<T>();
         _actions = actions;
       }
 
@@ -295,16 +301,12 @@ namespace OpenRasta.Tests.Unit.Infrastructure
 
       public IEnumerable<ContributorCall> CallGraph
       {
-        get
-        {
-          foreach (var kv in _actions)
-            yield return new ContributorCall { Action = kv.Value, Target = _list[0] };
-        }
+        get => _notifications.Select(n => new ContributorCall(_contributor, n, ""));
       }
 
-      public PipelineData ContextData { get; private set; }
+      public PipelineData ContextData { get; }
 
-      public IList<IPipelineContributor> Contributors => _list;
+      public IList<IPipelineContributor> Contributors => new[] { _contributor };
 
       public bool IsInitialized { get; private set; }
 
@@ -314,21 +316,15 @@ namespace OpenRasta.Tests.Unit.Infrastructure
         IsInitialized = true;
       }
 
+
       public IPipelineExecutionOrder Notify(Func<ICommunicationContext, PipelineContinuation> notification)
       {
-        _lastNotification = env => Task.FromResult(notification(env));
+        _notifications.Add(_lastNotification = env => Task.FromResult(notification(env)));
+
         return this;
       }
 
-      public void RegisterAsRenderStage(IPipelineContributor renderContributor)
-      {
-      }
-
       public void Run(ICommunicationContext context)
-      {
-      }
-
-      public void RunCallGraph(ICommunicationContext context, bool renderNow)
       {
       }
 
@@ -346,13 +342,8 @@ namespace OpenRasta.Tests.Unit.Infrastructure
 
       public IPipelineExecutionOrder NotifyAsync(Func<ICommunicationContext, Task<PipelineContinuation>> action)
       {
-        _lastNotification = action;
+        _notifications.Add(_lastNotification = action);
         return this;
-      }
-
-      public void Initialize(StartupProperties validate)
-      {
-        Initialize();
       }
     }
 

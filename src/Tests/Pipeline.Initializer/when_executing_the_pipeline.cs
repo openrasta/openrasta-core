@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using OpenRasta.Hosting.InMemory;
 using OpenRasta.Pipeline;
 using OpenRasta.Pipeline.CallGraph;
+using OpenRasta.Pipeline.Contributors;
 using OpenRasta.Web;
 using Shouldly;
 using Tests.Pipeline.Initializer.Infrastructure;
@@ -18,10 +19,13 @@ namespace Tests.Pipeline.Initializer
     public async Task contributors_get_executed(Type callGraphGeneratorType)
     {
       System.Diagnostics.Debug.WriteLine("yo");
-      var pipeline = CreatePipeline(callGraphGeneratorType, new[]
-      {
-        typeof(WasCalledContributor)
-      }, false);
+      var pipeline = CreatePipeline(callGraphGeneratorType,
+          new[]
+          {
+              typeof(BootstrapperContributor),
+              typeof(WasCalledContributor)
+          },
+          false);
 
       await pipeline.RunAsync(new InMemoryCommunicationContext());
       WasCalledContributor.WasCalled.ShouldBeTrue();

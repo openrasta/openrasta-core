@@ -34,7 +34,7 @@ namespace ResourceTypeResolver_Specification
 
       var theOriginalMatch = Context.PipelineData.SelectedResource = new UriRegistration("/", "int");
 
-      when_sending_notification<BootstrapperContributor>()
+      when_sending_notification<KnownStages.IAuthentication>()
         .ShouldBe(PipelineContinuation.Continue);
 
       Context.PipelineData.SelectedResource.ShouldBeSameAs(theOriginalMatch);
@@ -51,7 +51,7 @@ namespace ResourceTypeResolver_Specification
       given_request_uri("http://localhost/fake");
       given_uri_registration<Fake>("/somewhere");
 
-      when_sending_notification<BootstrapperContributor>()
+      when_sending_notification<KnownStages.IAuthentication>()
         .ShouldBe(PipelineContinuation.RenderNow);
 
       Context.PipelineData.SelectedResource.ShouldBeNull();
@@ -66,7 +66,7 @@ namespace ResourceTypeResolver_Specification
       given_request_uri("http://localhost/fake");
       given_uri_registration<Fake>("/fake");
 
-      when_sending_notification<BootstrapperContributor>();
+      when_sending_notification<KnownStages.IAuthentication>();
 
       Context.PipelineData.SelectedResource.ResourceKey.ShouldBe(TypeSystem.FromClr<Fake>());
     }
@@ -79,7 +79,7 @@ namespace ResourceTypeResolver_Specification
       given_request_uri("http://localhost/root/fake");
       given_uri_registration<Fake>("/fake");
 
-      when_sending_notification<BootstrapperContributor>();
+      when_sending_notification<KnownStages.IAuthentication>();
 
       Context.PipelineData.SelectedResource.ShouldNotBeNull();
       Context.PipelineData.SelectedResource
@@ -88,7 +88,7 @@ namespace ResourceTypeResolver_Specification
 
     void given_app_base_uri(string appBaseUri)
     {
-      ((InMemoryCommunicationContext) base.Context).ApplicationBaseUri = new Uri(appBaseUri);
+      Context.ApplicationBaseUri = new Uri(appBaseUri);
     }
   }
 

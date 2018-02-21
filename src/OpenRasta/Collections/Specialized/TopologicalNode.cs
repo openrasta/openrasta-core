@@ -4,47 +4,40 @@ using System.Linq;
 
 namespace OpenRasta.Collections.Specialized
 {
-    internal sealed class TopologicalNode<T> : IEquatable<TopologicalNode<T>>
+  internal sealed class TopologicalNode<T> : IEquatable<TopologicalNode<T>>
+  {
+    public T Item { get; }
+    public IList<TopologicalNode<T>> DependsOn { get; }
+
+    public TopologicalNode(T value)
     {
-        public T Item { get; set; }
-        public IList<TopologicalNode<T>> Dependencies { get; private set; }
-
-        public TopologicalNode(T value)
-        {
-            Item = value;
-            Dependencies = new List<TopologicalNode<T>>();
-        }
-
-        public bool Equals(TopologicalNode<T> other)
-        {
-            if (ReferenceEquals(null, other))
-                return false;
-            if (ReferenceEquals(this, other))
-                return true;
-
-            return Item.Equals(other.Item);
-        }
-
-        public override bool Equals(object obj)
-        {
-            if (ReferenceEquals(null, obj))
-                return false;
-            if (ReferenceEquals(this, obj))
-                return true;
-            if (obj.GetType() != GetType())
-                return false;
-
-            return Equals((TopologicalNode<T>)obj);
-        }
-
-        public override int GetHashCode()
-        {
-            return Item.GetHashCode();
-        }
-
-        public override string ToString()
-        {
-            return $"Item: {Item}, Dependencies: {string.Join(", ", Dependencies.Select(d => d.Item))}";
-        }
+      Item = value;
+      DependsOn = new List<TopologicalNode<T>>();
     }
+
+
+    public override string ToString()
+    {
+      return $"Item: {Item}, Dependencies: {string.Join(", ", DependsOn.Select(d => d.Item))}";
+    }
+
+    public bool Equals(TopologicalNode<T> other)
+    {
+      if (ReferenceEquals(null, other)) return false;
+      if (ReferenceEquals(this, other)) return true;
+      return EqualityComparer<T>.Default.Equals(Item, other.Item);
+    }
+
+    public override bool Equals(object obj)
+    {
+      if (ReferenceEquals(null, obj)) return false;
+      if (ReferenceEquals(this, obj)) return true;
+      return obj is TopologicalNode<T> node && Equals(node);
+    }
+
+    public override int GetHashCode()
+    {
+      return EqualityComparer<T>.Default.GetHashCode(Item);
+    }
+  }
 }

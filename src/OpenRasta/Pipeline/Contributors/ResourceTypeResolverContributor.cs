@@ -19,7 +19,7 @@ namespace OpenRasta.Pipeline.Contributors
 
     public void Initialize(IPipeline pipelineRunner)
     {
-      pipelineRunner.Notify(ResolveResource).After<BootstrapperContributor>();
+      pipelineRunner.Notify(ResolveResource);
     }
 
     PipelineContinuation ResolveResource(ICommunicationContext context)

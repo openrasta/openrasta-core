@@ -38,7 +38,7 @@ namespace OpenRasta.Pipeline.Contributors
 
     public void Initialize(IPipeline pipelineRunner)
     {
-      pipelineRunner.Notify(ProcessOperations).After<KnownStages.IOperationFiltering>();
+      pipelineRunner.Notify(ProcessOperations);
     }
   }
 }

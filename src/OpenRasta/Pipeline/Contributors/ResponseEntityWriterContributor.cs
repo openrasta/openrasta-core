@@ -25,7 +25,7 @@ namespace OpenRasta.Pipeline.Contributors
 
     public void Initialize(IPipeline pipeline)
     {
-      pipeline.NotifyAsync(WriteResponseBuffered).After<KnownStages.ICodecResponseSelection>();
+      pipeline.NotifyAsync(WriteResponseBuffered);
     }
 
     async Task<PipelineContinuation> WriteResponseBuffered(ICommunicationContext context)

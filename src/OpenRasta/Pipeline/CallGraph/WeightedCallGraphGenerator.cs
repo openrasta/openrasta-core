@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using OpenRasta.Collections.Specialized;
+using OpenRasta.Pipeline.Contributors;
 
 namespace OpenRasta.Pipeline.CallGraph
 {
@@ -9,55 +10,57 @@ namespace OpenRasta.Pipeline.CallGraph
   {
     public IEnumerable<ContributorCall> GenerateCallGraph(IEnumerable<IPipelineContributor> contributors)
     {
-      contributors = contributors.ToList();
+      var contribList = contributors.ToList();
 
-      var bootstrapper = contributors.OfType<KnownStages.IBegin>().Single();
-      var tree = new DependencyTree<ContributorNotification>(
-        new ContributorNotification(bootstrapper, new Notification(Middleware.IdentitySingleTap, contributors)));
-
-      foreach (var contrib in contributors.Where(x => x != bootstrapper))
+      var bootstrapper = contribList.OfType<KnownStages.IBegin>().SingleOrDefault();
+      bool isSyntheticBootstrap = false;
+      if (bootstrapper == null)
       {
-        var contributorBuilder = new ContributorInitializer(contributors);
-        var builder = new CompatibilityContributorInitializer(contributorBuilder);
-
-        contrib.Initialize(builder);
-
-        var contributorRegistrations =
-          contributorBuilder.ContributorRegistrations.DefaultIfEmpty(new Notification(Middleware.IdentitySingleTap, contributors)).ToList();
-        foreach (var registration in contributorRegistrations)
-        {
-          tree.CreateNode(new ContributorNotification(contrib, registration));
-        }
+        bootstrapper = new BootstrapperContributor();
+        contribList.Add(bootstrapper);
+        isSyntheticBootstrap = true;
       }
 
+      contributors = contribList;
+
+      var tree = new DependencyTree<ContributorInvocation>();
+
+      foreach (var node in new ContributorBuilder().Build(contributors))
+        tree.CreateNode(node);
+      
+      var rootNode = tree.Nodes.First(n => n.Value.Owner is KnownStages.IBegin);
+      
       foreach (var notificationNode in tree.Nodes)
       {
         foreach (var parentNode in GetCompatibleTypes(tree,
-          notificationNode,
-          notificationNode.Value.Notification.AfterTypes))
+            notificationNode,
+            notificationNode.Value.AfterTypes))
           parentNode.ChildNodes.Add(notificationNode);
         foreach (var childNode in GetCompatibleTypes(tree,
-          notificationNode,
-          notificationNode.Value.Notification.BeforeTypes))
+            notificationNode,
+            notificationNode.Value.BeforeTypes))
           childNode.ParentNodes.Add(notificationNode);
       }
 
-      return
-        tree.GetCallGraph()
-          .Select(
-            x => new ContributorCall(x.Value.Contributor, x.Value.Notification.Target, x.Value.Notification.Description));
+      return tree
+          .GetCallGraph(rootNode)
+          .Where(n => !isSyntheticBootstrap || n.Value.Owner != bootstrapper)
+          .Select(x => new ContributorCall(
+              x.Value.Owner,
+              x.Value.Target,
+              x.Value.Description));
     }
 
-    static IEnumerable<DependencyNode<ContributorNotification>> GetCompatibleTypes(
-      DependencyTree<ContributorNotification> tree,
-      DependencyNode<ContributorNotification> notificationNode,
-      IEnumerable<Type> beforeTypes)
+    static IEnumerable<DependencyNode<ContributorInvocation>> GetCompatibleTypes(
+        DependencyTree<ContributorInvocation> tree,
+        DependencyNode<ContributorInvocation> notificationNode,
+        IEnumerable<Type> beforeTypes)
     {
       return from childType in beforeTypes
-        from compatibleNode in tree.Nodes
-        where compatibleNode != notificationNode
-              && childType.IsInstanceOfType(compatibleNode.Value.Contributor)
-        select compatibleNode;
+          from compatibleNode in tree.Nodes
+          where compatibleNode != notificationNode
+                && childType.IsInstanceOfType(compatibleNode.Value.Owner)
+          select compatibleNode;
     }
   }
 }

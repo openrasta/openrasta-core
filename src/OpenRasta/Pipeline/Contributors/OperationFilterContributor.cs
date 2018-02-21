@@ -37,7 +37,7 @@ namespace OpenRasta.Pipeline.Contributors
 
     public void Initialize(IPipeline pipelineRunner)
     {
-      pipelineRunner.Notify(ProcessOperations).After<KnownStages.IOperationCreation>();
+      pipelineRunner.Notify(ProcessOperations);
     }
 
     protected virtual PipelineContinuation OnOperationsEmpty(ICommunicationContext context)

@@ -8,66 +8,67 @@ namespace OpenRasta.Pipeline.CallGraph
 {
   public sealed class TopologicalSortCallGraphGenerator : IGenerateCallGraphs
   {
-      public IEnumerable<ContributorCall> GenerateCallGraph(IEnumerable<IPipelineContributor> contributors)
+    public IEnumerable<ContributorCall> GenerateCallGraph(IEnumerable<IPipelineContributor> contributors)
     {
-      contributors = contributors.ToList();
+      var nodes = new ContributorBuilder()
+          .Build(contributors)
+          .Select(c => new TopologicalNode<ContributorInvocation>(c))
+          .ToList();
 
-      var bootstrapper =
-        contributors
-          .OfType<KnownStages.IBegin>()
-          .SingleOrDefault() ?? throw new InvalidOperationException("No IBegin contributor found.");
 
-      var nodes = new List<TopologicalNode<ContributorNotification>>();
-
-      foreach (var contributor in contributors.Where(x => x != bootstrapper))
+      foreach (var currentNode in nodes)
       {
-        var contributorBuilder = new ContributorInitializer(contributors);
-        var builder = new CompatibilityContributorInitializer(contributorBuilder);
-
-        contributor.Initialize(builder);
-
-        nodes.AddRange(
-          contributorBuilder.ContributorRegistrations
-              .DefaultIfEmpty(new Notification(
-                  Middleware.IdentitySingleTap,
-                  contributorBuilder.Contributors))
-              .Select(reg => new TopologicalNode<ContributorNotification>(
-                  new ContributorNotification(contributor, reg))));
-      }
-
-      foreach (var notificationNode in nodes)
-      {
-        foreach (var afterType in notificationNode.Item.Notification.AfterTypes)
+        foreach (var afterType in currentNode.Item.AfterTypes)
         {
-          var parents = GetCompatibleNodes(nodes, notificationNode, afterType);
-          notificationNode.Dependencies.AddRange(parents);
+          currentNode.DependsOn.AddRange(GetCompatibleNodes(nodes, currentNode, afterType));
         }
 
-        foreach (var beforeType in notificationNode.Item.Notification.BeforeTypes)
+        foreach (var beforeType in currentNode.Item.BeforeTypes)
         {
-          var children = GetCompatibleNodes(nodes, notificationNode, beforeType);
-          foreach (var child in children)
+          foreach (var child in GetCompatibleNodes(nodes, currentNode, beforeType))
           {
-            child.Dependencies.Add(notificationNode);
+            child.DependsOn.Add(currentNode);
           }
         }
       }
 
-      var rootItem = new ContributorNotification(bootstrapper,
-          new Notification(Middleware.IdentitySingleTap, contributors));
+      var rootNodes = nodes.Where(n => !n.DependsOn.Any());
+      var leafNodes = nodes.Where(dependent => nodes.All(n => n.DependsOn.Contains(dependent) == false));
+      
+     
+      var syntheticRootNode = new TopologicalNode<ContributorInvocation>(
+          new ContributorInvocation(new SyntheticFirstContributor(), Middleware.IdentitySingleTap));
 
-      return new TopologicalTree<ContributorNotification>(rootItem, nodes).Nodes
-        .Select(
-          n => new ContributorCall(n.Item.Contributor, n.Item.Notification.Target, n.Item.Notification.Description));
+//      foreach (var node in rootNodes)
+//        node.DependsOn.Add(syntheticRootNode);
+//
+//      var syntheticEndNode = new TopologicalNode<ContributorInvocation>(
+//          new ContributorInvocation(new SyntheticLastContributor(), Middleware.IdentitySingleTap));
+//
+//      foreach (var leafNode in leafNodes)
+//        syntheticEndNode.DependsOn.Add(leafNode);
+
+      return TopologicalSort
+          .Sort(nodes)
+          .Except(new[]{syntheticRootNode})
+          .Select(ToContributorCall)
+          .ToList();
     }
 
-    static IEnumerable<TopologicalNode<ContributorNotification>> GetCompatibleNodes(
-      IEnumerable<TopologicalNode<ContributorNotification>> nodes,
-      TopologicalNode<ContributorNotification> notificationNode, Type type)
+    ContributorCall ToContributorCall(TopologicalNode<ContributorInvocation> node)
+    {
+      return new ContributorCall(node.Item.Owner, node.Item.Target, node.Item.Description);
+    }
+
+
+    static IEnumerable<TopologicalNode<ContributorInvocation>> GetCompatibleNodes(
+        List<TopologicalNode<ContributorInvocation>> nodes,
+        TopologicalNode<ContributorInvocation> notificationNode,
+        Type type)
     {
       return from compatibleNode in nodes
-        where !compatibleNode.Equals(notificationNode) && type.IsInstanceOfType(compatibleNode.Item.Contributor)
-        select compatibleNode;
+          where !compatibleNode.Equals(notificationNode) && type.IsInstanceOfType(compatibleNode.Item.Owner)
+          select compatibleNode;
     }
   }
 }

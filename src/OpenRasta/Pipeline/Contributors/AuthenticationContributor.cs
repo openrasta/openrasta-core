@@ -22,10 +22,7 @@ namespace OpenRasta.Pipeline.Contributors
 
         public void Initialize(IPipeline pipelineRunner)
         {
-            pipelineRunner.Notify(AuthoriseRequest)
-                .After<KnownStages.IBegin>()
-                .And
-                .Before<KnownStages.IHandlerSelection>();
+            pipelineRunner.Notify(AuthoriseRequest);
         }
 
         private PipelineContinuation AuthoriseRequest(ICommunicationContext context)

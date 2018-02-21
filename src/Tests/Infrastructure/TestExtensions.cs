@@ -6,24 +6,27 @@ namespace Tests.Infrastructure
 {
   public static class TestExtensions
   {
-    public static void ShouldHaveSameElementsAs<T, V>(this IEnumerable<T> r1,
-      IEnumerable<V> r2,
+    public static void ShouldHaveSameElementsAs<T, V>(this IEnumerable<T> actual,
+      IEnumerable<V> expected,
       Func<T, V, bool> comparer)
     {
-      using (var enumerator1 = r1.GetEnumerator())
-      using (var enumerator2 = r2.GetEnumerator())
+      int index = 0;
+      using (var actualEnumerator = actual.GetEnumerator())
+      using (var expectedEnumerator = expected.GetEnumerator())
       {
         while (true)
         {
-          var enum1HasMoved = enumerator1.MoveNext();
-          var enum2HasMoved = enumerator2.MoveNext();
+          var enum1HasMoved = actualEnumerator.MoveNext();
+          var enum2HasMoved = expectedEnumerator.MoveNext();
           if (!enum1HasMoved && !enum2HasMoved)
             return;
           if (enum1HasMoved != enum2HasMoved)
             return;
-          comparer(enumerator1.Current, enumerator2.Current)
+          
+          comparer(actualEnumerator.Current, expectedEnumerator.Current)
             .ShouldBeTrue(
-              $"Two elements didnt match:\na:\n{enumerator1.Current}\nb:\n{enumerator2.Current}");
+              $"Two elements didnt match at index {index}:\nactual:\n{actualEnumerator.Current}\nexpected:\n{expectedEnumerator.Current}");
+          index++;
         }
       }
     }

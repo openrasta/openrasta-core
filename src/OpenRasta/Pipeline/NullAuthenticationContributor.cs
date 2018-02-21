@@ -1,8 +1,10 @@
 ﻿namespace OpenRasta.Pipeline
 {
-  class NullAuthenticationContributor : NullOrderedPipelineContributor<
-      KnownStages.IBegin,
-      KnownStages.IHandlerSelection>,
-    KnownStages.IAuthentication
-  {}
+  class NullAuthenticationContributor : KnownStages.IAuthentication
+  {
+    public void Initialize(IPipeline pipelineRunner)
+    {
+      pipelineRunner.Notify(context => PipelineContinuation.Continue).After<KnownStages.IBegin>();
+    }
+  }
 }

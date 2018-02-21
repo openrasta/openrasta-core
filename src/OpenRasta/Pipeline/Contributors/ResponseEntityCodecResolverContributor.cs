@@ -81,7 +81,7 @@ namespace OpenRasta.Pipeline.Contributors
 
     public void Initialize(IPipeline pipeline)
     {
-      pipeline.Notify(FindResponseCodec).After<KnownStages.IOperationResultInvocation>();
+      pipeline.Notify(FindResponseCodec);
     }
 
     static OperationResult.ResponseMediaTypeUnsupported ResponseEntityHasNoCodec(string acceptHeader,

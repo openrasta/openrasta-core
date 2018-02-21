@@ -11,24 +11,7 @@ namespace OpenRasta.Pipeline.Contributors
     {
         public void Initialize(IPipeline pipelineRunner)
         {
-            var notification = pipelineRunner.Notify(ReturnFinished);
-            IPipelineExecutionOrderAnd and = null;
-            foreach(var contributor in pipelineRunner.Contributors.Where(x=>x != this))
-            {
-                if (and == null)
-                {
-                    and = notification.After(contributor.GetType());
-                }
-                else
-                {
-                    and = and.And.After(contributor.GetType());
-                }
-            }
-        }
-
-        PipelineContinuation ReturnFinished(ICommunicationContext arg)
-        {
-            return PipelineContinuation.Finished;
+          pipelineRunner.Notify(context => PipelineContinuation.Finished);
         }
     }
 }

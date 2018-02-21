@@ -22,39 +22,38 @@ using Shouldly;
 
 namespace HandlerResolver_Specification
 {
-    public class when_no_handler_is_found : openrasta_context
+  public class when_no_handler_is_found : openrasta_context
+  {
+    [Test]
+    public void the_resource_handler_is_not_defined_and_the_pipeline_continues()
     {
-        [Test]
-        public void the_resource_handler_is_not_defined_and_the_pipeline_continues()
-        {
-            given_pipeline_contributor<HandlerResolverContributor>();
-            given_pipeline_resourceKey<Fake>();
-            when_sending_notification<KnownStages.IUriMatching>();
+      given_pipeline_contributor<HandlerResolverContributor>();
+      given_pipeline_resourceKey<Fake>();
+      when_sending_notification<KnownStages.IUriMatching>();
 
-          Context.PipelineData.SelectedHandlers.ShouldBeNull();
-        }
+      Context.PipelineData.SelectedHandlers.ShouldBeNull();
+    }
+  }
+
+  public class when_a_handler_is_found : openrasta_context
+  {
+    class FakeHandler
+    {
     }
 
-    public class when_a_handler_is_found : openrasta_context
+    [Test]
+    public void the_handler_types_are_assigned_to_the_correct_collection()
     {
-        class FakeHandler
-        {
-        }
+      given_pipeline_contributor<HandlerResolverContributor>();
+      given_pipeline_resourceKey<Fake>();
+      given_registration_handler<Fake, FakeHandler>();
 
-        [Test]
-        public void the_handler_types_are_assigned_to_the_correct_collection()
-        {
-            given_pipeline_contributor<HandlerResolverContributor>();
-            given_pipeline_resourceKey<Fake>();
-            given_registration_handler<Fake, FakeHandler>();
+      when_sending_notification<KnownStages.IUriMatching>().ShouldBe(PipelineContinuation.Continue);
 
-          when_sending_notification<KnownStages.IUriMatching>().ShouldBe(PipelineContinuation.Continue);
-
-          Context.PipelineData.SelectedHandlers.Count().ShouldBe(1);
-          Context.PipelineData.SelectedHandlers.First().Equals<Fake>();
-            
-        }
+      Context.PipelineData.SelectedHandlers.Count().ShouldBe(1);
+      Context.PipelineData.SelectedHandlers.First().Equals<Fake>();
     }
+  }
 }
 
 #region Full license

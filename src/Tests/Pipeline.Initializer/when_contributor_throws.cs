@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using OpenRasta.Hosting.InMemory;
 using OpenRasta.Pipeline;
 using OpenRasta.Pipeline.CallGraph;
+using OpenRasta.Pipeline.Contributors;
 using Shouldly;
 using Tests.Pipeline.Initializer.Infrastructure;
 using Xunit;
@@ -18,6 +19,7 @@ namespace Tests.Pipeline.Initializer
     {
       var pipeline = CreatePipeline(callGraphGeneratorType, new[]
       {
+        typeof(BootstrapperContributor),
         typeof(FakeUriMatcher),
         typeof(ContributorThatThrows),
         typeof(FakeOperationResultInvoker)

@@ -21,7 +21,7 @@ namespace OpenRasta.Pipeline.Contributors
 
     public void Initialize(IPipeline pipelineRunner)
     {
-      pipelineRunner.Notify(CreateOperations).After<KnownStages.IHandlerSelection>();
+      pipelineRunner.Notify(CreateOperations);
     }
 
     PipelineContinuation CreateOperations(ICommunicationContext context)
