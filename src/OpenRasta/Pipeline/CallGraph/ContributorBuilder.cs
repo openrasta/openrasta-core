@@ -6,9 +6,9 @@ using OpenRasta.Web;
 
 namespace OpenRasta.Pipeline.CallGraph
 {
-  internal class ContributorBuilder : IPipeline
+  class ContributorBuilder : IPipeline
   {
-    static Type[] _knownStages =
+    static readonly Type[] _knownStages =
     {
         typeof(KnownStages.IBegin),
         typeof(KnownStages.IAuthentication),

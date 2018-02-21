@@ -55,7 +55,7 @@ namespace OpenRasta.Pipeline.CallGraph
           .ToList();
     }
 
-    ContributorCall ToContributorCall(TopologicalNode<ContributorInvocation> node)
+    static ContributorCall ToContributorCall(TopologicalNode<ContributorInvocation> node)
     {
       return new ContributorCall(node.Item.Owner, node.Item.Target, node.Item.Description);
     }
