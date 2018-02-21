@@ -53,7 +53,7 @@ namespace OpenRasta.Pipeline.CallGraph
 
 
       var rootNodes = nodes.Where(n => !n.DependsOn.Any());
-      
+
       var visitor = new DependedOnVisitor(nodes);
 
       foreach (var rootNode in rootNodes)
@@ -79,7 +79,8 @@ namespace OpenRasta.Pipeline.CallGraph
         .ToList();
     }
 
-    static IEnumerable<TopologicalNode<ContributorInvocation>> GetNodesImplementingKnownStages(List<TopologicalNode<ContributorInvocation>> nodes)
+    static IEnumerable<TopologicalNode<ContributorInvocation>> GetNodesImplementingKnownStages(
+      List<TopologicalNode<ContributorInvocation>> nodes)
     {
       return from knownStageType in _knownStages
         let index = Array.IndexOf(_knownStages, knownStageType)
@@ -92,21 +93,20 @@ namespace OpenRasta.Pipeline.CallGraph
     class DependedOnVisitor
     {
       readonly List<TopologicalNode<ContributorInvocation>> _nodes;
-      List<TopologicalNode<ContributorInvocation>> _visited;
+      Dictionary<TopologicalNode<ContributorInvocation>, bool> _visited;
       Func<TopologicalNode<ContributorInvocation>, bool> _isSelected;
       List<TopologicalNode<ContributorInvocation>> _selectedNodes;
 
       public DependedOnVisitor(List<TopologicalNode<ContributorInvocation>> nodes)
       {
         _nodes = nodes;
-        _visited = new List<TopologicalNode<ContributorInvocation>>();
       }
 
       public IEnumerable<TopologicalNode<ContributorInvocation>> Visit(
         TopologicalNode<ContributorInvocation> currentNode,
         Func<TopologicalNode<ContributorInvocation>, bool> isSelected)
       {
-        _visited = new List<TopologicalNode<ContributorInvocation>>();
+        _visited = new Dictionary<TopologicalNode<ContributorInvocation>, bool>();
         _selectedNodes = new List<TopologicalNode<ContributorInvocation>>();
         _isSelected = isSelected;
 
@@ -116,20 +116,22 @@ namespace OpenRasta.Pipeline.CallGraph
 
       void VisitNode(TopologicalNode<ContributorInvocation> currentNode)
       {
-        if (_visited.Contains(currentNode))
+        if (_visited.TryGetValue(currentNode, out bool inProcess))
+        {
+          if (inProcess) throw new RecursionException();
           return;
+        }
+
+        _visited[currentNode] = true;
         foreach (var dependent in _nodes.Where(node => node.DependsOn.Contains(currentNode)))
         {
-          _visited.Add(dependent);
           if (_isSelected(dependent))
-          {
             _selectedNodes.Add(dependent);
-          }
           else
-          {
             VisitNode(dependent);
-          }
         }
+
+        _visited[currentNode] = false;
       }
     }
 

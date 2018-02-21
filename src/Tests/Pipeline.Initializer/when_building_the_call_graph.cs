@@ -89,6 +89,32 @@ namespace Tests.Pipeline.Initializer
     [Theory]
     [InlineData(typeof(WeightedCallGraphGenerator))]
     [InlineData(typeof(TopologicalSortCallGraphGenerator))]
+    public void multiple_root_nodes_with_one_removed_known_type_dependency(Type callGraphGeneratorType)
+    {
+      var pipeline = CreatePipeline(callGraphGeneratorType,
+        new[]
+        {
+          typeof(BootstrapperContributor),
+          typeof(OperationInvokerContributor),
+          typeof(BeforeContributor<BeforeContributor<KnownStages.IOperationExecution>>),
+          typeof(BeforeContributor<KnownStages.IBegin>),
+          typeof(BeforeContributor<KnownStages.IOperationExecution>)
+        },
+        false);
+
+      pipeline.Contributors.ShouldHaveSameElementsAs(new[]
+        {
+          typeof(BeforeContributor<KnownStages.IBegin>),
+          typeof(BootstrapperContributor),
+          typeof(BeforeContributor<BeforeContributor<KnownStages.IOperationExecution>>),
+          typeof(BeforeContributor<KnownStages.IOperationExecution>),
+          typeof(OperationInvokerContributor),
+        },
+        (a, b) => b.IsInstanceOfType(a));
+    }
+    [Theory]
+    [InlineData(typeof(WeightedCallGraphGenerator))]
+    [InlineData(typeof(TopologicalSortCallGraphGenerator))]
     public void can_register_after_iend(Type callGraphGeneratorType)
     {
       var pipeline = CreatePipeline(callGraphGeneratorType,
