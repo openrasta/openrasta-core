@@ -61,6 +61,30 @@ namespace Tests.Pipeline.Initializer
           },
           (a, b) => b.IsInstanceOfType(a));
     }
+    [Theory]
+    [InlineData(typeof(WeightedCallGraphGenerator))]
+    [InlineData(typeof(TopologicalSortCallGraphGenerator))]
+    public void multiple_root_nodes_with_known_type_dependency(Type callGraphGeneratorType)
+    {
+      var pipeline = CreatePipeline(callGraphGeneratorType,
+        new[]
+        {
+          typeof(BootstrapperContributor),
+          typeof(OperationInvokerContributor),
+          typeof(BeforeContributor<KnownStages.IBegin>),
+          typeof(BeforeContributor<KnownStages.IOperationExecution>),
+        },
+        false);
+
+      pipeline.Contributors.ShouldHaveSameElementsAs(new[]
+        {
+          typeof(BeforeContributor<KnownStages.IBegin>),
+          typeof(BootstrapperContributor),
+          typeof(BeforeContributor<KnownStages.IOperationExecution>),
+          typeof(OperationInvokerContributor),
+        },
+        (a, b) => b.IsInstanceOfType(a));
+    }
 
     [Theory]
     [InlineData(typeof(WeightedCallGraphGenerator))]
@@ -178,6 +202,7 @@ namespace Tests.Pipeline.Initializer
           .ShouldThrow<RecursionException>();
     }
 
+    
     static PipelineContinuation DoNothing(ICommunicationContext c)
     {
       return PipelineContinuation.Continue;
