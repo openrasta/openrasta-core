@@ -8,7 +8,7 @@ namespace Tests.Plugins.ReverseProxy.forwarded_headers
   public class rewritting_app_base
   {
     [Fact]
-    public async Task when_enabled_app_base_is_rewritten()
+    public async Task enabled_header()
     {
       var response = await new ProxyServer()
           .FromServer("/proxy")
@@ -21,7 +21,7 @@ namespace Tests.Plugins.ReverseProxy.forwarded_headers
     }
 
     [Fact]
-    public async Task no_header()
+    public async Task enabled_no_header()
     {
       var response = await new ProxyServer()
           .FromServer("/proxy")
@@ -33,7 +33,7 @@ namespace Tests.Plugins.ReverseProxy.forwarded_headers
       response.dispose();
     }
     [Fact]
-    public async Task when_disabled_app_base_is_rewritten()
+    public async Task disabled()
     {
       var response = await new ProxyServer()
           .FromServer("/proxy")
@@ -41,7 +41,7 @@ namespace Tests.Plugins.ReverseProxy.forwarded_headers
           .AddHeader("Forwarded", "host=openrasta.example;proto=https")
           .GetAsync("/proxy");
 
-      response.content.ShouldBe("http://localhost/");
+      response.content.ShouldBe("https://destination.example/");
       response.dispose();
     }
   }

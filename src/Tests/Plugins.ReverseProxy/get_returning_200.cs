@@ -20,7 +20,7 @@ namespace Tests.Plugins.ReverseProxy
           .ToServer("/proxied")
           .GetAsync("http://localhost/proxy");
       response.response.StatusCode.ShouldBe(HttpStatusCode.OK);
-      response.content.ShouldBe("http://localhost/proxied");
+      response.content.ShouldBe("http://destination.example/proxied");
       response.dispose();
     }
   }

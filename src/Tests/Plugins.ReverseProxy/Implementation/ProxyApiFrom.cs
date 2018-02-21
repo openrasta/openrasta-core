@@ -24,7 +24,7 @@ namespace Tests.Plugins.ReverseProxy.Implementation
       ResourceSpace.Has
           .ResourcesNamed("from")
           .AtUri(from)
-          .ReverseProxyFor($"http://localhost{to}");
+          .ReverseProxyFor($"http://destination.example{to}");
 
       ResourceSpace.Uses.ReverseProxy(options);
     }

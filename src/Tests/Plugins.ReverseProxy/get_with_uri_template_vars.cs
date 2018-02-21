@@ -16,7 +16,7 @@ namespace Tests.Plugins.ReverseProxy
           .FromServer("/proxy/{first}/{second}/")
           .ToServer("/proxied/{first}/{second}/")
           .GetAsync("http://localhost/proxy/one/two/");
-      response.content.ShouldBe("http://localhost/proxied/one/two/");
+      response.content.ShouldBe("http://destination.example/proxied/one/two/");
       response.dispose();
     }
   }

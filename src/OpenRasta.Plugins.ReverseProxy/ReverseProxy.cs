@@ -15,13 +15,11 @@ namespace OpenRasta.Plugins.ReverseProxy
   public class ReverseProxy
   {
     readonly ReverseProxyOptions _options;
-    readonly IMetaModelRepository _modelRepository;
     Lazy<HttpClient> _httpClient;
 
     public ReverseProxy(ReverseProxyOptions options, IMetaModelRepository modelRepository)
     {
       _options = options;
-      _modelRepository = modelRepository;
       _httpClient = new Lazy<HttpClient>(() => new HttpClient(_options.HttpMessageHandler())
           {
               Timeout = options.Timeout
