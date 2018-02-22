@@ -7,12 +7,12 @@ namespace OpenRasta.Collections.Specialized
   internal sealed class TopologicalNode<T> : IEquatable<TopologicalNode<T>>
   {
     public T Item { get; }
-    public IList<TopologicalNode<T>> DependsOn { get; }
+    public HashSet<TopologicalNode<T>> DependsOn { get; }
 
     public TopologicalNode(T value)
     {
       Item = value;
-      DependsOn = new List<TopologicalNode<T>>();
+      DependsOn = new HashSet<TopologicalNode<T>>();
     }
 
 

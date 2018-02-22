@@ -73,6 +73,7 @@ namespace Tests.Pipeline.Initializer
           typeof(EndContributor),
           typeof(AfterContributor<KnownStages.IBegin>),
           typeof(AfterContributor<AfterContributor<KnownStages.IBegin>>),
+          typeof(AfterContributor<KnownStages.IEnd>),
           typeof(BootstrapperContributor),
           typeof(OperationInvokerContributor),
         },
@@ -84,7 +85,8 @@ namespace Tests.Pipeline.Initializer
           typeof(AfterContributor<KnownStages.IBegin>),
           typeof(AfterContributor<AfterContributor<KnownStages.IBegin>>),
           typeof(OperationInvokerContributor),
-          typeof(EndContributor)
+          typeof(EndContributor),
+          typeof(AfterContributor<KnownStages.IEnd>)
         },
         (a, b) => b.IsInstanceOfType(a));
     }

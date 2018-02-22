@@ -6,6 +6,21 @@ using OpenRasta.Collections.Specialized;
 
 namespace OpenRasta.Pipeline.CallGraph
 {
+  static class TopologicalNodeExtensions
+  {
+    public static IEnumerable<TopologicalNode<ContributorInvocation>> LeafNodes(
+      this List<TopologicalNode<ContributorInvocation>> nodes)
+    {
+      return nodes.Where(dependent => nodes.All(n => n.DependsOn.Contains(dependent) == false));
+    }
+
+    public static IEnumerable<TopologicalNode<ContributorInvocation>> RootNodes(
+      this List<TopologicalNode<ContributorInvocation>> nodes)
+    {
+      return nodes.Where(n => !n.DependsOn.Any());
+    }
+  }
+
   public sealed class TopologicalSortCallGraphGenerator : IGenerateCallGraphs
   {
     static readonly Type[] _knownStages =
@@ -37,7 +52,8 @@ namespace OpenRasta.Pipeline.CallGraph
       {
         foreach (var afterType in currentNode.Item.AfterTypes)
         {
-          currentNode.DependsOn.AddRange(GetCompatibleNodes(nodes, currentNode, afterType));
+          foreach (var node in GetCompatibleNodes(nodes, currentNode, afterType))
+            currentNode.DependsOn.Add(node);
         }
 
         foreach (var beforeType in currentNode.Item.BeforeTypes)
@@ -54,40 +70,40 @@ namespace OpenRasta.Pipeline.CallGraph
 
       var visitor = new TopologicalTreeVisitor(nodes);
 
-      foreach (var rootNode in nodes.Where(n => !n.DependsOn.Any()))
+      foreach (var rootNode in nodes.RootNodes())
       {
         var earliestNodesAfterRoot =
-          (from node in visitor.VisitDescending(rootNode, node => nodesImplementingKnownStages.Contains(node))
+          (from node in visitor.SelectDescending(node => nodesImplementingKnownStages.Contains(node), rootNode)
             let index = nodesImplementingKnownStages.IndexOf(node)
-            where index > 0
             orderby index
             select (node, index)).ToList();
 
         if (earliestNodesAfterRoot.Any() == false) continue;
-        rootNode.DependsOn.Add(nodesImplementingKnownStages[earliestNodesAfterRoot.First().index - 1]);
+
+        var earliestNodeIndex = earliestNodesAfterRoot.First().index;
+        if (earliestNodeIndex > 0)
+          rootNode.DependsOn.Add(nodesImplementingKnownStages[earliestNodeIndex - 1]);
       }
 
-      var leafNodes = nodes.Where(dependent => nodes.All(n => n.DependsOn.Contains(dependent) == false));
-      foreach (var leaf in leafNodes)
+      foreach (var leaf in nodes.LeafNodes())
       {
         var latestNodesBeforeLeaf =
-          (from node in visitor.VisitUp(leaf, node => nodesImplementingKnownStages.Contains(node))
+          (from node in visitor.SelectAscending(node => nodesImplementingKnownStages.Contains(node), leaf)
             let index = nodesImplementingKnownStages.IndexOf(node)
-            where index >= 0 && index < nodesImplementingKnownStages.Count -1
             orderby index descending
             select (node, index)).ToList();
-        
+
         if (latestNodesBeforeLeaf.Any() == false) continue;
-        var latestNode = latestNodesBeforeLeaf.First();
-        nodesImplementingKnownStages[latestNodesBeforeLeaf.First().index + 1].DependsOn.Add(leaf);
+
+        var latestNodeIndex = latestNodesBeforeLeaf.First().index;
+        if (latestNodeIndex < nodesImplementingKnownStages.Count - 1)
+          nodesImplementingKnownStages[latestNodeIndex + 1].DependsOn.Add(leaf);
       }
 
 
-      return TopologicalSort
-        .Sort(nodes)
-        .Select(ToContributorCall)
-        .ToList();
+      return visitor.SelectAscending().Select(ToContributorCall).ToList();
     }
+
 
     static IEnumerable<TopologicalNode<ContributorInvocation>> GetNodesImplementingKnownStages(
       List<TopologicalNode<ContributorInvocation>> nodes)
@@ -112,48 +128,60 @@ namespace OpenRasta.Pipeline.CallGraph
         _nodes = nodes;
       }
 
-      public IEnumerable<TopologicalNode<ContributorInvocation>> VisitDescending(
-        TopologicalNode<ContributorInvocation> currentNode,
-        Func<TopologicalNode<ContributorInvocation>, bool> isSelected)
+      public IEnumerable<TopologicalNode<ContributorInvocation>> SelectDescending(
+        Func<TopologicalNode<ContributorInvocation>, bool> selector = null,
+        TopologicalNode<ContributorInvocation> currentNode = null)
+      {
+        return Visit(selector, currentNode, node => _nodes.Where(n => n.DependsOn.Contains(node)));
+      }
+
+      public IEnumerable<TopologicalNode<ContributorInvocation>> SelectAscending(
+        Func<TopologicalNode<ContributorInvocation>, bool> selector = null,
+        TopologicalNode<ContributorInvocation> currentNode = null)
+      {
+        return Visit(selector, currentNode, node => node.DependsOn);
+      }
+
+      IEnumerable<TopologicalNode<ContributorInvocation>> Visit(
+        Func<TopologicalNode<ContributorInvocation>, bool> selector, TopologicalNode<ContributorInvocation> currentNode,
+        Func<TopologicalNode<ContributorInvocation>, IEnumerable<TopologicalNode<ContributorInvocation>>> nextSelector)
       {
         _visited = new Dictionary<TopologicalNode<ContributorInvocation>, bool>();
         _selectedNodes = new List<TopologicalNode<ContributorInvocation>>();
-        _isSelected = isSelected;
+        _isSelected = selector ?? (node => true);
 
-        VisitNode(currentNode, node=>_nodes.Where(n => n.DependsOn.Contains(node)));
+        if (currentNode != null)
+          VisitNode(currentNode, nextSelector);
+        else
+          VisitNodes(_nodes, nextSelector);
         return _selectedNodes;
       }
 
-      public IEnumerable<TopologicalNode<ContributorInvocation>> VisitUp(
-        TopologicalNode<ContributorInvocation> currentNode,
-        Func<TopologicalNode<ContributorInvocation>, bool> isSelected)
-      {
-        _visited = new Dictionary<TopologicalNode<ContributorInvocation>, bool>();
-        _selectedNodes = new List<TopologicalNode<ContributorInvocation>>();
-        _isSelected = isSelected;
-
-        VisitNode(currentNode, node=>node.DependsOn);
-        return _selectedNodes;
-      }
-      void VisitNode(TopologicalNode<ContributorInvocation> currentNode, 
+      void VisitNode(TopologicalNode<ContributorInvocation> currentNode,
         Func<TopologicalNode<ContributorInvocation>, IEnumerable<TopologicalNode<ContributorInvocation>>> nextSelector)
       {
         if (_visited.TryGetValue(currentNode, out bool inProcess))
         {
-          if (inProcess) throw new RecursionException();
+          if (inProcess) throw new RecursionException($"Node contains a circular dependency: {currentNode}");
           return;
         }
 
         _visited[currentNode] = true;
-        foreach (var dependent in nextSelector(currentNode))
-        {
-          if (_isSelected(dependent))
-            _selectedNodes.Add(dependent);
-          else
-            VisitNode(dependent, nextSelector);
-        }
+
+        VisitNodes(nextSelector(currentNode).Where(n => !n.Equals(currentNode)).ToList(), nextSelector);
 
         _visited[currentNode] = false;
+        if (_isSelected(currentNode))
+          _selectedNodes.Add(currentNode);
+      }
+
+      void VisitNodes(List<TopologicalNode<ContributorInvocation>> nextNodes,
+        Func<TopologicalNode<ContributorInvocation>, IEnumerable<TopologicalNode<ContributorInvocation>>> nextSelector)
+      {
+        foreach (var dependent in nextNodes)
+        {
+          VisitNode(dependent, nextSelector);
+        }
       }
     }
 

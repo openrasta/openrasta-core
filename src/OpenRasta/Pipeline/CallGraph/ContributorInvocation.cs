@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using OpenRasta.Web;
 
@@ -19,5 +20,9 @@ namespace OpenRasta.Pipeline.CallGraph
     
     public ICollection<Type> BeforeTypes { get; } = new List<Type>();
     public ICollection<Type> AfterTypes { get; } = new List<Type>();
+    public override string ToString()
+    {
+      return Owner.GetType().ToString();
+    }
   }
 }
