@@ -52,25 +52,35 @@ namespace OpenRasta.Pipeline.CallGraph
       var nodesImplementingKnownStages = GetNodesImplementingKnownStages(nodes).ToList();
 
 
-      var rootNodes = nodes.Where(n => !n.DependsOn.Any());
+      var visitor = new TopologicalTreeVisitor(nodes);
 
-      var visitor = new DependedOnVisitor(nodes);
-
-      foreach (var rootNode in rootNodes)
+      foreach (var rootNode in nodes.Where(n => !n.DependsOn.Any()))
       {
-        var earliestNodes =
-          (from node in visitor.Visit(rootNode, node => nodesImplementingKnownStages.Contains(node))
+        var earliestNodesAfterRoot =
+          (from node in visitor.VisitDescending(rootNode, node => nodesImplementingKnownStages.Contains(node))
             let index = nodesImplementingKnownStages.IndexOf(node)
             where index > 0
             orderby index
             select (node, index)).ToList();
 
-        if (earliestNodes.Any() == false) continue;
-
-        rootNode.DependsOn.Add(nodesImplementingKnownStages[earliestNodes.First().index - 1]);
+        if (earliestNodesAfterRoot.Any() == false) continue;
+        rootNode.DependsOn.Add(nodesImplementingKnownStages[earliestNodesAfterRoot.First().index - 1]);
       }
 
-//      var leafNodes = nodes.Where(dependent => nodes.All(n => n.DependsOn.Contains(dependent) == false));
+      var leafNodes = nodes.Where(dependent => nodes.All(n => n.DependsOn.Contains(dependent) == false));
+      foreach (var leaf in leafNodes)
+      {
+        var latestNodesBeforeLeaf =
+          (from node in visitor.VisitUp(leaf, node => nodesImplementingKnownStages.Contains(node))
+            let index = nodesImplementingKnownStages.IndexOf(node)
+            where index >= 0 && index < nodesImplementingKnownStages.Count -1
+            orderby index descending
+            select (node, index)).ToList();
+        
+        if (latestNodesBeforeLeaf.Any() == false) continue;
+        var latestNode = latestNodesBeforeLeaf.First();
+        nodesImplementingKnownStages[latestNodesBeforeLeaf.First().index + 1].DependsOn.Add(leaf);
+      }
 
 
       return TopologicalSort
@@ -90,19 +100,19 @@ namespace OpenRasta.Pipeline.CallGraph
         select node;
     }
 
-    class DependedOnVisitor
+    class TopologicalTreeVisitor
     {
       readonly List<TopologicalNode<ContributorInvocation>> _nodes;
       Dictionary<TopologicalNode<ContributorInvocation>, bool> _visited;
       Func<TopologicalNode<ContributorInvocation>, bool> _isSelected;
       List<TopologicalNode<ContributorInvocation>> _selectedNodes;
 
-      public DependedOnVisitor(List<TopologicalNode<ContributorInvocation>> nodes)
+      public TopologicalTreeVisitor(List<TopologicalNode<ContributorInvocation>> nodes)
       {
         _nodes = nodes;
       }
 
-      public IEnumerable<TopologicalNode<ContributorInvocation>> Visit(
+      public IEnumerable<TopologicalNode<ContributorInvocation>> VisitDescending(
         TopologicalNode<ContributorInvocation> currentNode,
         Func<TopologicalNode<ContributorInvocation>, bool> isSelected)
       {
@@ -110,11 +120,23 @@ namespace OpenRasta.Pipeline.CallGraph
         _selectedNodes = new List<TopologicalNode<ContributorInvocation>>();
         _isSelected = isSelected;
 
-        VisitNode(currentNode);
+        VisitNode(currentNode, node=>_nodes.Where(n => n.DependsOn.Contains(node)));
         return _selectedNodes;
       }
 
-      void VisitNode(TopologicalNode<ContributorInvocation> currentNode)
+      public IEnumerable<TopologicalNode<ContributorInvocation>> VisitUp(
+        TopologicalNode<ContributorInvocation> currentNode,
+        Func<TopologicalNode<ContributorInvocation>, bool> isSelected)
+      {
+        _visited = new Dictionary<TopologicalNode<ContributorInvocation>, bool>();
+        _selectedNodes = new List<TopologicalNode<ContributorInvocation>>();
+        _isSelected = isSelected;
+
+        VisitNode(currentNode, node=>node.DependsOn);
+        return _selectedNodes;
+      }
+      void VisitNode(TopologicalNode<ContributorInvocation> currentNode, 
+        Func<TopologicalNode<ContributorInvocation>, IEnumerable<TopologicalNode<ContributorInvocation>>> nextSelector)
       {
         if (_visited.TryGetValue(currentNode, out bool inProcess))
         {
@@ -123,12 +145,12 @@ namespace OpenRasta.Pipeline.CallGraph
         }
 
         _visited[currentNode] = true;
-        foreach (var dependent in _nodes.Where(node => node.DependsOn.Contains(currentNode)))
+        foreach (var dependent in nextSelector(currentNode))
         {
           if (_isSelected(dependent))
             _selectedNodes.Add(dependent);
           else
-            VisitNode(dependent);
+            VisitNode(dependent, nextSelector);
         }
 
         _visited[currentNode] = false;

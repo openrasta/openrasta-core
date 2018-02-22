@@ -61,6 +61,34 @@ namespace Tests.Pipeline.Initializer
           },
           (a, b) => b.IsInstanceOfType(a));
     }
+
+    [Theory]
+    [InlineData(typeof(WeightedCallGraphGenerator),Skip="That never worked with the old one, we're not touching it")]
+    [InlineData(typeof(TopologicalSortCallGraphGenerator))]
+    public void multiple_leaf_nodes(Type callGraphGeneratorType)
+    {
+      var pipeline = CreatePipeline(callGraphGeneratorType,
+        new[]
+        {
+          typeof(EndContributor),
+          typeof(AfterContributor<KnownStages.IBegin>),
+          typeof(AfterContributor<AfterContributor<KnownStages.IBegin>>),
+          typeof(BootstrapperContributor),
+          typeof(OperationInvokerContributor),
+        },
+        false);
+
+      pipeline.Contributors.ShouldHaveSameElementsAs(new[]
+        {
+          typeof(BootstrapperContributor),
+          typeof(AfterContributor<KnownStages.IBegin>),
+          typeof(AfterContributor<AfterContributor<KnownStages.IBegin>>),
+          typeof(OperationInvokerContributor),
+          typeof(EndContributor)
+        },
+        (a, b) => b.IsInstanceOfType(a));
+    }
+    
     [Theory]
     [InlineData(typeof(WeightedCallGraphGenerator))]
     [InlineData(typeof(TopologicalSortCallGraphGenerator))]
@@ -160,38 +188,6 @@ namespace Tests.Pipeline.Initializer
               typeof(SecondIsAfterFirstContributor)
           },
           (a, b) => a.GetType() == b);
-    }
-
-    [Theory]
-    [InlineData(typeof(WeightedCallGraphGenerator))]
-    [InlineData(typeof(TopologicalSortCallGraphGenerator))]
-    public void registering_all_the_contributors_results_in_a_correct_call_graph_topological(Type callGraphGeneratorType)
-    {
-      var pipeline = CreatePipeline(typeof(TopologicalSortCallGraphGenerator),
-          new[]
-          {
-              typeof(FirstIsAfterBootstrapContributor),
-              typeof(SecondIsAfterFirstContributor),
-              typeof(ThirdIsBeforeFirstContributor),
-              typeof(FourthIsAfterThirdContributor),
-              typeof(BootstrapperContributor)
-          },
-          false);
-
-      var contribs = pipeline.Contributors.Select(c => c.GetType()).ToList();
-      int idx<T>() => contribs.IndexOf(typeof(T));
-
-
-      idx<FirstIsAfterBootstrapContributor>().ShouldBeGreaterThan(
-          idx<BootstrapperContributor>());
-
-      idx<SecondIsAfterFirstContributor>().ShouldBeGreaterThan(
-          idx<FirstIsAfterBootstrapContributor>());
-
-      idx<ThirdIsBeforeFirstContributor>().ShouldBeLessThan(
-          idx<FirstIsAfterBootstrapContributor>());
-      idx<FourthIsAfterThirdContributor>().ShouldBeGreaterThan(
-          idx<ThirdIsBeforeFirstContributor>());
     }
 
     [Theory]
