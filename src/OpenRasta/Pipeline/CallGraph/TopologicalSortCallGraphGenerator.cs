@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using OpenRasta.Collections;
 using OpenRasta.Collections.Specialized;
 
 namespace OpenRasta.Pipeline.CallGraph
