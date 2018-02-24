@@ -1,4 +1,5 @@
 ﻿using System;
+using OpenRasta.Data;
 using OpenRasta.Plugins.ReverseProxy;
 using OpenRasta.Web;
 
@@ -14,7 +15,7 @@ namespace Tests.Plugins.ReverseProxy.Implementation
       this.context = context;
       this.operation = operation;
     }
-    public string Get(AnyParameters _)
+    public string Get(Any _)
     {
       return operation(context);
     }

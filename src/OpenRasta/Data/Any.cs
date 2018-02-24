@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using OpenRasta.Binding;
 
-namespace OpenRasta.Plugins.ReverseProxy
+namespace OpenRasta.Data
 {
-  [Binder(Type = typeof(AnyParameters))]
-  public class AnyParameters : IObjectBinder
+  [Binder(Type = typeof(Any))]
+  public class Any : IObjectBinder
   {
     public bool IsEmpty { get; } = false;
     public ICollection<string> Prefixes { get; } = Array.Empty<string>();

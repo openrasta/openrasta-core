@@ -19,15 +19,9 @@ namespace OpenRasta.Web
 
     public virtual string Description { get; set; }
 
-    public bool IsClientError
-    {
-      get { return StatusCode >= 400 && StatusCode < 500; }
-    }
+    public bool IsClientError => StatusCode >= 400 && StatusCode < 500;
 
-    public bool IsServerError
-    {
-      get { return StatusCode >= 500; }
-    }
+    public bool IsServerError => StatusCode >= 500;
 
     public Uri RedirectLocation { get; set; }
 
@@ -52,13 +46,12 @@ namespace OpenRasta.Web
           var locationWithoutPrecedingSlash = RedirectLocation.ToString().Substring(1);
           context.Response.Headers["Location"] = new Uri(
             context.ApplicationBaseUri,
-            new Uri(locationWithoutPrecedingSlash,UriKind.Relative)).AbsoluteUri;
+            new Uri(locationWithoutPrecedingSlash, UriKind.Relative)).AbsoluteUri;
           break;
         case false when RedirectLocation.ToString().StartsWith("/") == false:
           context.Response.Headers["Location"] = new Uri(context.Request.Uri, RedirectLocation).AbsoluteUri;
           break;
       }
-
 
       OnExecute(context);
     }

@@ -11,13 +11,12 @@ namespace OpenRasta.OperationModel.MethodBased
 {
   public class MethodBasedOperationCreator : IOperationCreator
   {
-    readonly IObjectBinderLocator _binderLocator;
 #pragma warning disable 618
-
     readonly Func<IOperation, IEnumerable<IOperationInterceptor>> _syncInterceptorProvider =
       op => Enumerable.Empty<IOperationInterceptor>();
-
 #pragma warning restore 618
+
+    readonly IObjectBinderLocator _binderLocator;
     readonly Func<IEnumerable<IMethod>, IEnumerable<IMethod>> _filterMethod = method => method;
     readonly IDependencyResolver _resolver;
     readonly IEnumerable<IOperationInterceptorAsync> _asyncInterceptors;
@@ -84,7 +83,7 @@ namespace OpenRasta.OperationModel.MethodBased
       IEnumerable<IOperationInterceptorAsync> systemInterceptors)
     {
       return new SyncOperationDescriptor(method, () =>
-      {
+    {
         var syncMethod = new SyncMethod(method, binderLocator, resolver);
         return syncMethod.Intercept(syncInterceptorProvider).AsAsync().Intercept(systemInterceptors);
       });
