@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using OpenRasta.DI;
 using OpenRasta.OperationModel;
@@ -21,8 +22,14 @@ namespace Tests.OperationModel.Interceptors.Support
       Func<IOperation, IEnumerable<IOperationInterceptor>> syncInterceptorProvider = null;
       if (provider != null)
         syncInterceptorProvider = provider.GetInterceptors;
+      var asyncInterceptors = resolver == null
+        ? Enumerable.Empty<IOperationInterceptorAsync>()
+        : resolver.Resolve<IEnumerable<IOperationInterceptorAsync>>();
+      
       Operation = MethodBasedOperationCreator
-        .CreateOperationDescriptor(TypeSystems.Default.From(mi),
+        .CreateOperationDescriptor(
+          TypeSystems.Default.From(mi),
+          asyncInterceptors,
           syncInterceptorProvider, binderLocator: null, resolver: resolver).Create();
     }
 
