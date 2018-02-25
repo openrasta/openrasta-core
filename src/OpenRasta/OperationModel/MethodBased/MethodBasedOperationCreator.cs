@@ -5,6 +5,7 @@ using OpenRasta.Binding;
 using OpenRasta.DI;
 using OpenRasta.OperationModel.Interceptors;
 using OpenRasta.TypeSystem;
+using OpenRasta.Web;
 
 namespace OpenRasta.OperationModel.MethodBased
 {
@@ -21,7 +22,9 @@ namespace OpenRasta.OperationModel.MethodBased
     readonly IDependencyResolver _resolver;
     readonly IEnumerable<IOperationInterceptorAsync> _asyncInterceptors;
 
-    public MethodBasedOperationCreator(IObjectBinderLocator binderLocator = null, IDependencyResolver resolver = null,
+    public MethodBasedOperationCreator(
+      IObjectBinderLocator binderLocator = null,
+      IDependencyResolver resolver = null,
       IEnumerable<IMethodFilter> filters = null,
       IOperationInterceptorProvider syncInterceptorProvider = null,
       IEnumerable<IOperationInterceptorAsync> asyncInterceptors = null)
@@ -53,7 +56,7 @@ namespace OpenRasta.OperationModel.MethodBased
       IObjectBinderLocator binderLocator = null,
       IDependencyResolver resolver = null)
     {
-      filters = filters ?? (m => m);
+      filters = filters ?? new TypeExclusionMethodFilter<object>().Filter;
 
       return from handler in handlers
         from method in filters(handler.GetMethods())
@@ -141,6 +144,9 @@ namespace OpenRasta.OperationModel.MethodBased
       _method = method;
       _factory = factory;
     }
+
+    public string Name => _method.Name;
+    public HttpOperationAttribute HttpOperationAttribute => _method.FindAttribute<HttpOperationAttribute>();
 
     public IOperationAsync Create()
     {
