@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using OpenRasta.Binding;
 using OpenRasta.Collections;
+using OpenRasta.DI;
 using OpenRasta.TypeSystem;
 
 namespace OpenRasta.OperationModel.MethodBased
@@ -13,8 +14,8 @@ namespace OpenRasta.OperationModel.MethodBased
   {
     public IDictionary ExtendedProperties { get; } = new NullBehaviorDictionary<object, object>();
 
-    public SyncMethod(IMethod method, IObjectBinderLocator binderLocator = null)
-      : base(method, binderLocator)
+    public SyncMethod(IMethod method, IObjectBinderLocator binderLocator = null, IDependencyResolver resolver = null)
+      : base(method, binderLocator, resolver)
     {
     }
 

@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using OpenRasta.Binding;
 using OpenRasta.DI;
 using OpenRasta.OperationModel.Interceptors;
@@ -31,6 +30,8 @@ namespace OpenRasta.OperationModel.MethodBased
       _binderLocator = binderLocator ?? new DefaultObjectBinderLocator();
       if (syncInterceptorProvider != null)
         _syncInterceptorProvider = syncInterceptorProvider.GetInterceptors;
+      else
+        _syncInterceptorProvider = op => Enumerable.Empty<IOperationInterceptor>();
 
       if (filters != null)
         _filterMethod = FilterMethods(filters.ToArray()).Chain();
@@ -38,70 +39,70 @@ namespace OpenRasta.OperationModel.MethodBased
 
     public IEnumerable<IOperationAsync> CreateOperations(IEnumerable<IType> handlers)
     {
-      return from handler in handlers
-        let sourceMethods = handler.GetMethods()
-        let filteredMethods = _filterMethod(sourceMethods)
-        from method in filteredMethods
-        select CreateOperation(method);
+      return CreateOperationDescriptors(handlers, _filterMethod, _syncInterceptorProvider, _binderLocator, _resolver)
+        .Select(o => o.Create())
+        .ToArray();
     }
 
-    
-    public IOperationAsync CreateOperation(IMethod method)
+
+    public static IEnumerable<OperationDescriptor> CreateOperationDescriptors(IEnumerable<IType> handlers,
+      Func<IEnumerable<IMethod>, IEnumerable<IMethod>> filters = null,
+      Func<IOperation, IEnumerable<IOperationInterceptor>> syncInterceptors = null,
+      IObjectBinderLocator binderLocator = null,
+      IDependencyResolver resolver = null)
     {
-      return CreateOperationCore(method)
-        .Intercept(_resolver?.ResolveAll<IOperationInterceptorAsync>());
-    }
-
-    IOperationAsync CreateOperationCore(IMethod method)
-    {
-      var output = method.OutputMembers.Single();
-      var type = output.StaticType;
-
-      if (type.IsTask())
-        return new AsyncMethod(method, _binderLocator) {Resolver = _resolver};
-      if (type.IsTaskOfT(out var returnType))
-      {
-        return (IOperationAsync) Activator.CreateInstance(
-          typeof(AsyncMethod<>)
-            .MakeGenericType(returnType),
-          method, _binderLocator, _resolver);
-      }
-
-      var syncMethod = new SyncMethod(method, _binderLocator) {Resolver = _resolver};
-      return syncMethod.Intercept(_syncInterceptorProvider).AsAsync();
-    }
-
-    public static IEnumerable<OperationDescriptor> CreateOperationDescriptors(
-      IEnumerable<IType> handlers,
-      Func<IEnumerable<IMethod>, IEnumerable<IMethod>> filters)
-    {
+      filters = filters ?? (m => m);
+      
       return from handler in handlers
         from method in filters(handler.GetMethods())
-        select CreateOperationDescriptor(method, TODO, TODO, TODO);
-
-
+        select CreateOperationDescriptor(method, syncInterceptors, binderLocator, resolver);
     }
 
-    static OperationDescriptor CreateOperationDescriptor(IMethod method,
-      Func<IOperation, IEnumerable<IOperationInterceptor>> syncInterceptorProvider, IObjectBinderLocator binderLocator,
+    public static OperationDescriptor CreateOperationDescriptor(
+      IMethod method,
+      Func<IOperation, IEnumerable<IOperationInterceptor>> syncInterceptorProvider = null,
+      IObjectBinderLocator binderLocator = null,
+      IDependencyResolver resolver = null)
+    {
+      return CreateTaskDescriptor(method, binderLocator, resolver)
+             ?? CreateTaskOfTDescriptor(method, binderLocator, resolver)
+             ?? CreateSyncDescriptor(method, syncInterceptorProvider ?? (op => Enumerable.Empty<IOperationInterceptor>()), binderLocator, resolver);
+    }
+
+    static SyncOperationDescriptor CreateSyncDescriptor(IMethod method,
+      Func<IOperation, IEnumerable<IOperationInterceptor>> syncInterceptorProvider,
+      IObjectBinderLocator binderLocator,
       IDependencyResolver resolver)
     {
-      var type = method.OutputMembers.Single().StaticType;
-      if (type.IsTask())
-        return new OperationDescriptor(method.Name, AsyncMethod(method, _binderLocator) {Resolver = _resolver};
-      if (type.IsTaskOfT(out var returnType))
-      {
-        return (IOperationAsync) Activator.CreateInstance(
-          typeof(AsyncMethod<>)
-            .MakeGenericType(returnType),
-          method, _binderLocator, _resolver);
-      }
-
       return new SyncOperationDescriptor(method, () =>
       {
-        var syncMethod = new SyncMethod(method, binderLocator) {Resolver = resolver};
+        var syncMethod = new SyncMethod(method, binderLocator, resolver);
         return syncMethod.Intercept(syncInterceptorProvider).AsAsync();
       });
+    }
+
+    static OperationDescriptor CreateTaskDescriptor(IMethod method, IObjectBinderLocator binderLocator,
+      IDependencyResolver resolver)
+    {
+      if (!method.OutputMembers.Single().StaticType.IsTask())
+        return null;
+      
+      return new AsyncOperationDescriptor(method, () => new AsyncMethod(method, binderLocator, resolver));
+    }
+
+    static OperationDescriptor CreateTaskOfTDescriptor(
+      IMethod method,
+      IObjectBinderLocator binderLocator,
+      IDependencyResolver resolver)
+    {
+      if (!method.OutputMembers.Single().StaticType.IsTaskOfT(out var returnType))
+        return null;
+      
+      return new AsyncOperationDescriptor(method
+        , () => (IOperationAsync) Activator.CreateInstance(
+          typeof(AsyncMethod<>).MakeGenericType(returnType),
+          method, binderLocator, resolver));
+
     }
 
     static IEnumerable<Func<IEnumerable<IMethod>, IEnumerable<IMethod>>> FilterMethods(IMethodFilter[] filters)
@@ -115,6 +116,11 @@ namespace OpenRasta.OperationModel.MethodBased
       foreach (var filter in filters)
         yield return filter.Filter;
     }
+
+    public IOperationAsync CreateOperation(IMethod method)
+    {
+      return CreateOperationDescriptor(method,_syncInterceptorProvider, _binderLocator, _resolver).Create();
+    }
   }
 
   public abstract class OperationDescriptor
@@ -122,12 +128,16 @@ namespace OpenRasta.OperationModel.MethodBased
     readonly IMethod _method;
     readonly Func<IOperationAsync> _factory;
 
-    public OperationDescriptor(IMethod method, Func<IOperationAsync> factory)
+    protected OperationDescriptor(IMethod method, Func<IOperationAsync> factory)
     {
       _method = method;
-      _factory = factory; 
+      _factory = factory;
     }
-    
+
+    public IOperationAsync Create()
+    {
+      return _factory();
+    }
   }
 
   public class AsyncOperationDescriptor : OperationDescriptor
@@ -136,21 +146,13 @@ namespace OpenRasta.OperationModel.MethodBased
     {
     }
   }
+
   public class SyncOperationDescriptor : OperationDescriptor
   {
     public SyncOperationDescriptor(
       IMethod method, Func<IOperationAsync> factory)
-    :base(method, factory)
+      : base(method, factory)
     {
-//      this.interceptors = 
-//        systemInterceptors
-//          .Concat(method.Owner.Type.FindAttributes<IOperationInterceptor>())
-//          .Concat(method.FindAttributes<IOperationInterceptor>())
-//          .Concat(
-//            method.Owner.Type.FindAttributes<IOperationInterceptorProvider>()
-//            .Concat(method.FindAttributes<IOperationInterceptorProvider>())
-//            .SelectMany(provider => provider.GetInterceptors())
-//          method.FindAttributes<IOperationInterceptor>())      
     }
   }
 }

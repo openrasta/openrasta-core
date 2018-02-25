@@ -12,19 +12,20 @@ namespace OpenRasta.OperationModel.MethodBased
     protected IType OwnerType { get; }
     protected IMethod Method { get; }
 
-    protected AbstractMethodOperation(IMethod method, IObjectBinderLocator binderLocator)
+    protected AbstractMethodOperation(IMethod method, IObjectBinderLocator binderLocator, IDependencyResolver resolver)
     {
       binderLocator = binderLocator ?? new DefaultObjectBinderLocator();
       OwnerType = (IType) method.Owner;
       Method = method;
       Binders = method.InputMembers.ToDictionary(x => x, binderLocator.GetBinder);
       Inputs = Binders.Select(x => new InputMember(x.Key, x.Value, x.Key.IsOptional));
+      Resolver = resolver;
     }
 
     public IEnumerable<InputMember> Inputs { get; }
     IDictionary<IParameter, IObjectBinder> Binders { get; }
     public string Name => Method.Name;
-    public IDependencyResolver Resolver { protected get; set; }
+    protected IDependencyResolver Resolver { get; set; }
 
     public IEnumerable<T> FindAttributes<T>()
       where T : class => OwnerType.FindAttributes<T>().Concat(Method.FindAttributes<T>());

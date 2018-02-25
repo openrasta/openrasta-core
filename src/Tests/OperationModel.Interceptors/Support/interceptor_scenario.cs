@@ -15,13 +15,15 @@ namespace Tests.OperationModel.Interceptors.Support
       IDependencyResolver resolver = null) where T : new()
     {
       var mi = HandlerMethodVisitor.FindMethodInfo(method);
-      Operation = new MethodBasedOperationCreator(
-          resolver: resolver,
-          syncInterceptorProvider:
-          resolver == null
-            ? null
-            : new SystemAndAttributesOperationInterceptorProvider(resolver))
-        .CreateOperation(TypeSystems.Default.From(mi));
+      var provider = resolver == null
+        ? null
+        : new SystemAndAttributesOperationInterceptorProvider(resolver.Resolve<IEnumerable<IOperationInterceptor>>);
+      Func<IOperation, IEnumerable<IOperationInterceptor>> syncInterceptorProvider = null;
+      if (provider != null)
+        syncInterceptorProvider = provider.GetInterceptors;
+      Operation = MethodBasedOperationCreator
+        .CreateOperationDescriptor(TypeSystems.Default.From(mi),
+          syncInterceptorProvider, binderLocator: null, resolver: resolver).Create();
     }
 
     protected IEnumerable<OutputMember> Result { get; set; }

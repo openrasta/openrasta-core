@@ -1,5 +1,5 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Linq;
 using OpenRasta.DI;
 using OpenRasta.Hosting.InMemory;
 using OpenRasta.OperationModel.Interceptors;
@@ -26,7 +26,7 @@ namespace Tests.OperationModel.Interceptors.sync_system
       var creator = new MethodBasedOperationCreator(
         resolver: Resolver,
         syncInterceptorProvider:
-        new SystemAndAttributesOperationInterceptorProvider(Resolver));
+        new SystemAndAttributesOperationInterceptorProvider(Resolver.Resolve<IEnumerable<IOperationInterceptor>>));
 
       Resolver.AddDependency<IMyService, Service>(DependencyLifetime.PerRequest);
 

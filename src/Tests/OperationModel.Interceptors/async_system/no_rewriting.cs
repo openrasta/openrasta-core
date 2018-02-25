@@ -17,7 +17,7 @@ namespace Tests.OperationModel.Interceptors.async_system
       Resolver = new InternalDependencyResolver()
         .Singleton<IOperationInterceptorAsync, SystemAttribute>()
         .Singleton<IMyService, Service>();
-      given_operation<Handler>(h=>h.Get(), Resolver);
+      given_operation<Handler>(h => h.Get(), Resolver);
       when_invoking_operation();
     }
 
@@ -35,8 +35,8 @@ namespace Tests.OperationModel.Interceptors.async_system
 
     public class Service : IMyService
     {
-      
     }
+
     public class SystemAttribute : IOperationInterceptorAsync
     {
       public IMyService Service { get; }
@@ -45,7 +45,9 @@ namespace Tests.OperationModel.Interceptors.async_system
       {
         Service = service;
       }
-      public Func<IOperationAsync, Task<IEnumerable<OutputMember>>> Compose(Func<IOperationAsync, Task<IEnumerable<OutputMember>>> next)
+
+      public Func<IOperationAsync, Task<IEnumerable<OutputMember>>> Compose(
+        Func<IOperationAsync, Task<IEnumerable<OutputMember>>> next)
       {
         Called = true;
         return next;
@@ -53,6 +55,7 @@ namespace Tests.OperationModel.Interceptors.async_system
 
       public bool Called { get; set; }
     }
+
     public class Handler
     {
       public Task Get()
