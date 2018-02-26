@@ -15,6 +15,8 @@ namespace Tests.Plugins.ReverseProxy.Implementation
       this.context = context;
       this.operation = operation;
     }
+
+    [HttpOperation("*")]
     public string Get(Any _)
     {
       return operation(context);

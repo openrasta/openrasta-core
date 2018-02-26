@@ -34,7 +34,7 @@ namespace OpenRasta.Plugins.ReverseProxy
       var request = new HttpRequestMessage
       {
         Method = new HttpMethod(context.Request.HttpMethod),
-        Content = { }
+        Content = new StreamContent(context.Request.Entity.Stream)
       };
 
       CopyHeaders(context, request, _options.FrowardedHeaders.ConvertLegacyHeaders);
@@ -91,7 +91,10 @@ namespace OpenRasta.Plugins.ReverseProxy
         }
 
         if (header.Key.Equals("host", StringComparison.OrdinalIgnoreCase)) continue;
-        request.Headers.Add(header.Key, header.Value);
+        if (header.Key.StartsWith("Content-"))
+          request.Content.Headers.Add(header.Key, header.Value);
+        else
+          request.Headers.Add(header.Key, header.Value);
       }
 
       if (convertLegacyHeaders && legacyForward?.Length > 0)

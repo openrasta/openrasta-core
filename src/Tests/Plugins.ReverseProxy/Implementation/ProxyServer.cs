@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
@@ -41,14 +42,27 @@ namespace Tests.Plugins.ReverseProxy.Implementation
       return this;
     }
 
+    public async Task<(HttpResponseMessage response, string content, Action dispose)> PostAsync(string uri, string body)
+    {
+      _requests.Add(builder => builder.And(h=>h.Content = new StringContent(body)));
+      return await SendAsync("POST", uri);
+    }
+    
     public async Task<(HttpResponseMessage response, string content, Action dispose)> GetAsync(string uri)
+    {
+      return await SendAsync("GET", uri);
+    }
+
+    async Task<(HttpResponseMessage response, string content, Action dispose)> SendAsync(string method, string uri)
     {
       var fromServer = CreateFromServer();
       var toServer = CreateToServer();
       var request = fromServer.CreateRequest(uri);
       _requests.ForEach(req => request = req(request));
-      var response = await request.GetAsync();
-      return (response, await response.Content.ReadAsStringAsync(), () => { 
+
+      var response = await request.SendAsync(method);
+      return (response, await response.Content.ReadAsStringAsync(), () =>
+      {
         fromServer.Dispose();
         toServer.Dispose();
       });
