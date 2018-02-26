@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using OpenRasta.Plugins.ReverseProxy;
 using Shouldly;
+using Tests.Plugins.ReverseProxy.Implementation;
 using Xunit;
 
 namespace Tests.Plugins.ReverseProxy.forwarded_headers

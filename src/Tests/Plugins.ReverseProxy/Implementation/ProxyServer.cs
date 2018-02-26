@@ -5,10 +5,10 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
 using OpenRasta.Hosting.AspNetCore;
+using OpenRasta.Plugins.ReverseProxy;
 using OpenRasta.Web;
-using Tests.Plugins.ReverseProxy.Implementation;
 
-namespace OpenRasta.Plugins.ReverseProxy
+namespace Tests.Plugins.ReverseProxy.Implementation
 {
   public class ProxyServer
   {
