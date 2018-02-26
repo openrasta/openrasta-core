@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using OpenRasta.Configuration.MetaModel;
 using OpenRasta.Web;
 using HttpMethod = System.Net.Http.HttpMethod;
 
@@ -17,32 +17,38 @@ namespace OpenRasta.Plugins.ReverseProxy
     readonly ReverseProxyOptions _options;
     Lazy<HttpClient> _httpClient;
 
-    public ReverseProxy(ReverseProxyOptions options, IMetaModelRepository modelRepository)
+    public ReverseProxy(ReverseProxyOptions options)
     {
       _options = options;
       _httpClient = new Lazy<HttpClient>(() => new HttpClient(_options.HttpMessageHandler())
-          {
-              Timeout = options.Timeout
-          },
-          LazyThreadSafetyMode.ExecutionAndPublication);
+        {
+          Timeout = options.Timeout
+        },
+        LazyThreadSafetyMode.ExecutionAndPublication);
     }
 
     public async Task<HttpResponseMessage> Send(ICommunicationContext context, string target)
     {
-      var proxyTargetUri = GetProxyTargetUri(context.Request.Uri, context.PipelineData.SelectedResource.Results.Single(), target);
+      var proxyTargetUri = GetProxyTargetUri(context.Request.Uri,
+        context.PipelineData.SelectedResource.Results.Single(), target);
       var request = new HttpRequestMessage
       {
-          Method = new HttpMethod(context.Request.HttpMethod),
-          Content = { }
+        Method = new HttpMethod(context.Request.HttpMethod),
+        Content = { }
       };
 
       CopyHeaders(context, request, _options.FrowardedHeaders.ConvertLegacyHeaders);
 
+      var headers = request.Headers;
+      var identifier = _options.Via.Pseudonym ?? $"{context.Request.Uri.Host}:{context.Request.Uri.Port}";
+      headers.Add("via", $"1.1 {identifier}");
 
       request.RequestUri = proxyTargetUri;
       try
       {
-        return await _httpClient.Value.SendAsync(request, HttpCompletionOption.ResponseContentRead);
+        var httpResponseMessage = await _httpClient.Value.SendAsync(request, HttpCompletionOption.ResponseContentRead);
+        httpResponseMessage.Headers.Via.Add(new ViaHeaderValue("1.1", identifier));
+        return httpResponseMessage;
       }
       catch (Exception e)
       {
@@ -104,25 +110,25 @@ namespace OpenRasta.Plugins.ReverseProxy
       var requestQs = requestUriMatch;
 
       var targetUri = targetTemplate.BindByName(
-          destinationBaseUri,
-          new NameValueCollection
-          {
-              requestQs.Match.PathSegmentVariables,
-              requestQs.Match.QueryStringVariables
-          });
+        destinationBaseUri,
+        new NameValueCollection
+        {
+          requestQs.Match.PathSegmentVariables,
+          requestQs.Match.QueryStringVariables
+        });
 
       var targetUriBuilder = new UriBuilder(targetUri);
 
       var sourceTemplateQsKeysWithVars = requestQs.Match.Template.QueryString
-          .Where(qs => qs.Type == UriTemplate.SegmentType.Variable)
-          .Select(qs => qs.Key)
-          .ToList();
+        .Where(qs => qs.Type == UriTemplate.SegmentType.Variable)
+        .Select(qs => qs.Key)
+        .ToList();
 
       var requestQueryNotMappedToSourceTemplateVars =
-          string.Join("&",
-              requestQs.Match.QueryString
-                  .Where(qs => !sourceTemplateQsKeysWithVars.Contains(qs.Key, StringComparer.OrdinalIgnoreCase))
-                  .Select(qs => qs.ToString()));
+        string.Join("&",
+          requestQs.Match.QueryString
+            .Where(qs => !sourceTemplateQsKeysWithVars.Contains(qs.Key, StringComparer.OrdinalIgnoreCase))
+            .Select(qs => qs.ToString()));
 
       if (requestQueryNotMappedToSourceTemplateVars.Length > 0)
       {

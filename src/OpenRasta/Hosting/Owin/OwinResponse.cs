@@ -32,9 +32,6 @@ namespace OpenRasta.Hosting.Katana
 
     public void WriteHeaders() 
     {
-      if (HeadersSent)
-        throw new InvalidOperationException("The headers have already been sent.");
-      
       foreach (var header in Headers)
       {
         NativeContext.Headers.Remove(header.Key);

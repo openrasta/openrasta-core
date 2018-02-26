@@ -10,7 +10,6 @@ namespace OpenRasta.Plugins.ReverseProxy
   public class ReverseProxyCodec : IMediaTypeWriterAsync
   {
     readonly IResponse _response;
-    readonly IRequest _request;
     public object Configuration { get; set; }
 
     public ReverseProxyCodec(IResponse response)
@@ -25,7 +24,8 @@ namespace OpenRasta.Plugins.ReverseProxy
       foreach (var header in proxyResponse.Headers)
         response.Headers[header.Key] = string.Join(", ", header.Value);
       
-      
+      // Temporary, see #135
+      _response.WriteHeaders();
       await proxyResponse.Content.CopyToAsync(response.Stream);
     }
   }
