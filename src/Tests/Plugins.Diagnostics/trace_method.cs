@@ -20,7 +20,7 @@ namespace Tests.Scenarios.HandlerSelection.Plugins.Diagnostics
       {
         ResourceSpace.Has.ResourcesNamed("resource")
           .AtUri("/{id}").HandledBy<Handler>();
-        ResourceSpace.Uses.Diagnostics();
+        ResourceSpace.Uses.Diagnostics(new DiagnosticsOptions { TraceMethod = true });
       }))
       {
         var response = await server.ProcessRequestAsync(new InMemoryRequest()
@@ -33,6 +33,8 @@ namespace Tests.Scenarios.HandlerSelection.Plugins.Diagnostics
             {"User-Agent", "stuff"}
           }
         });
+
+        response.StatusCode.ShouldBe(200);
         response.Entity.ContentType?.MediaType.ShouldBe("message/http");
         using (var reader = new StreamReader(response.Entity.Stream, Encoding.UTF8))
           reader.ReadToEnd().ShouldBe(
