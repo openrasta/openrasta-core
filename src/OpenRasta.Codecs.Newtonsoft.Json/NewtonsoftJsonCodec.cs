@@ -14,6 +14,7 @@ namespace OpenRasta.Codecs.Newtonsoft.Json
   [MediaType("*/*;q=0.5")]
   public class NewtonsoftJsonCodec : IMediaTypeReaderAsync, IMediaTypeWriterAsync
   {
+    readonly ICommunicationContext _context;
     JsonSerializerSettings _settings;
 
     object ICodec.Configuration
@@ -22,6 +23,10 @@ namespace OpenRasta.Codecs.Newtonsoft.Json
       set => _settings = value as JsonSerializerSettings;
     }
 
+    public NewtonsoftJsonCodec(ICommunicationContext context)
+    {
+      _context = context;
+    }
     static JsonSerializerSettings DefaultSettings = new JsonSerializerSettings
     {
         NullValueHandling = NullValueHandling.Ignore,
@@ -36,6 +41,8 @@ namespace OpenRasta.Codecs.Newtonsoft.Json
     public async Task WriteTo(object entity, IHttpEntity response, IEnumerable<string> codecParameters)
     {
       var content = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(entity, _settings ?? DefaultSettings));
+      response.ContentLength = content.Length;
+      
       await response.Stream.WriteAsync(content, 0, content.Length);
     }
 
