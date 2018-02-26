@@ -21,7 +21,7 @@ namespace OpenRasta.Hosting.HttpListener
 
             Headers = new HttpHeaderDictionary(_nativeRequest.Headers);
 
-            Entity = new HttpEntity(Headers, new HistoryStream(_nativeRequest.InputStream));
+            Entity = new HttpEntity(Headers,_nativeRequest.InputStream);
 
             if (!string.IsNullOrEmpty(_nativeRequest.ContentType))
                 Entity.ContentType = new MediaType(_nativeRequest.ContentType);
