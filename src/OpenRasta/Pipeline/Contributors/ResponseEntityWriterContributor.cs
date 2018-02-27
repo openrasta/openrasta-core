@@ -25,10 +25,10 @@ namespace OpenRasta.Pipeline.Contributors
 
     public void Initialize(IPipeline pipeline)
     {
-      pipeline.NotifyAsync(WriteResponseBuffered);
+      pipeline.NotifyAsync(WriteResponseEntity);
     }
 
-    async Task<PipelineContinuation> WriteResponseBuffered(ICommunicationContext context)
+    async Task<PipelineContinuation> WriteResponseEntity(ICommunicationContext context)
     {
       if (context.Response.Entity.Instance == null)
       {
@@ -42,13 +42,28 @@ namespace OpenRasta.Pipeline.Contributors
       var writer = CreateWriter(codecInstance);
       using (Log.Operation(this, "Generating response entity."))
       {
-          await (context.Response.Entity.Stream.CanSeek
-              ? WriteBufferedContent(context, writer) 
-              : WriteUnbufferedContent(context,writer));
         
+        await writer(
+          context.Response.Entity.Instance,
+          context.Response.Entity,
+          context.Request.CodecParameters.ToArray());
+
+        await TryPadAndOverrideContentLength(context);
+        
+        await context.Response.Entity.Stream.FlushAsync();
       }
 
       return PipelineContinuation.Continue;
+    }
+
+    static async Task TryPadAndOverrideContentLength(ICommunicationContext context)
+    {
+      if (context.Response.Entity.Stream.CanSeek)
+      {
+        // we assume the host is buffering stuff, it may be unreliable but it's compatible...
+        await PadHtmlToDisableSmartPages(context);
+        context.Response.Entity.ContentLength = context.Response.Entity.Stream.Length;
+      }
     }
 
     bool ShouldSendEmptyResponseBody(ICommunicationContext context)
@@ -58,35 +73,8 @@ namespace OpenRasta.Pipeline.Contributors
 
     bool Is404NotMapped(ICommunicationContext context)
     {
-      return context.OperationResult is OperationResult.NotFound notFound && notFound.Reason == NotFoundReason.NotMapped;
-    }
-    async Task WriteUnbufferedContent(ICommunicationContext context,
-      Func<object, IHttpEntity, IEnumerable<string>, Task> writer)
-    {
-      context.Response.WriteHeaders();
-      await writer(
-        context.Response.Entity.Instance,
-        context.Response.Entity,
-        context.Request.CodecParameters.ToArray());
-      
-      await context.Response.Entity.Stream.FlushAsync();
-    }
-
-    static async Task WriteBufferedContent(ICommunicationContext context,
-      Func<object, IHttpEntity, IEnumerable<string>, Task> writer)
-    {
-      await writer(
-        context.Response.Entity.Instance,
-        context.Response.Entity,
-        context.Request.CodecParameters.ToArray());
-
-      if (context.Response.Entity.Stream.CanSeek)
-        context.Response.Entity.ContentLength = context.Response.Entity.Stream.Length;
-      await PadErrorMessageForIE(context);
-
-      context.Response.WriteHeaders();
-      
-      await context.Response.Entity.Stream.FlushAsync();
+      return context.OperationResult is OperationResult.NotFound notFound &&
+             notFound.Reason == NotFoundReason.NotMapped;
     }
 
     ICodec ResolveCodec(ICommunicationContext context)
@@ -142,11 +130,10 @@ namespace OpenRasta.Pipeline.Contributors
       if (context.Response.StatusCode != 204)
         context.Response.Headers.ContentLength = 0;
 
-      context.Response.WriteHeaders();
       await context.Response.Entity.Stream.FlushAsync();
     }
 
-    static Task PadErrorMessageForIE(ICommunicationContext context)
+    static Task PadHtmlToDisableSmartPages(ICommunicationContext context)
     {
       if ((context.OperationResult.IsClientError || context.OperationResult.IsServerError)
           && context.Response.Entity.Stream.CanSeek

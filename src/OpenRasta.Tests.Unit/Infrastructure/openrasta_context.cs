@@ -14,6 +14,7 @@ using OpenRasta.Diagnostics;
 using OpenRasta.DI;
 using OpenRasta.Handlers;
 using OpenRasta.Hosting;
+using OpenRasta.Hosting.Compatibility;
 using OpenRasta.Hosting.InMemory;
 using OpenRasta.Pipeline;
 using OpenRasta.Security;
@@ -40,7 +41,7 @@ namespace OpenRasta.Tests.Unit.Infrastructure
 
     protected ICodecRepository Codecs => Resolver.Resolve<ICodecRepository>();
 
-    protected InMemoryCommunicationContext Context { get; private set; }
+    protected WriteTrackingResponseCommunicationContext Context { get; private set; }
     protected bool IsContributorExecuted { get; set; }
     protected IPipeline Pipeline { get; private set; }
 
@@ -264,8 +265,10 @@ namespace OpenRasta.Tests.Unit.Infrastructure
 
       _ambientContext = new ContextScope(new AmbientContext());
       _requestScope = Resolver.CreateRequestScope();
-      manager.SetupCommunicationContext(Context = new InMemoryCommunicationContext());
+      manager.SetupCommunicationContext(Context = new WriteTrackingResponseCommunicationContext(InnerContext = new InMemoryCommunicationContext()));
     }
+
+    public InMemoryCommunicationContext InnerContext { get; set; }
 
     [TearDown]
     protected void cleanup()
@@ -357,7 +360,7 @@ namespace OpenRasta.Tests.Unit.Infrastructure
 
     protected void given_context_applicationBase(string appBasePath)
     {
-      Context.ApplicationBaseUri = new Uri(appBasePath, UriKind.Absolute);
+      InnerContext.ApplicationBaseUri = new Uri(appBasePath, UriKind.Absolute);
     }
   }
 }

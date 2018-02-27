@@ -88,7 +88,7 @@ namespace ResourceTypeResolver_Specification
 
     void given_app_base_uri(string appBaseUri)
     {
-      Context.ApplicationBaseUri = new Uri(appBaseUri);
+      InnerContext.ApplicationBaseUri = new Uri(appBaseUri);
     }
   }
 

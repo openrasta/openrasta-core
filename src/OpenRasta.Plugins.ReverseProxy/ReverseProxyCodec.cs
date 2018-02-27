@@ -24,10 +24,6 @@ namespace OpenRasta.Plugins.ReverseProxy
       foreach (var header in proxyResponse.Headers)
         response.Headers[header.Key] = string.Join(", ", header.Value);
       
-      // Temporary hack, see #135
-      if (_response.GetType().Name.Contains("Owin"))
-        _response.WriteHeaders();
-      
       await proxyResponse.Content.CopyToAsync(response.Stream);
     }
   }

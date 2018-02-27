@@ -20,7 +20,6 @@ namespace OpenRasta.Pipeline
         env.Response.StatusCode = 500;
         env.Response.Entity.ContentLength = FatalError.Length;
         await env.Response.Entity.Stream.WriteAsync(FormatMessage(e), 0, FatalError.Length);
-        env.Response.WriteHeaders();
       }
     }
 

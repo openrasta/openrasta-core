@@ -39,11 +39,6 @@ namespace OpenRasta.Plugins.Diagnostics.Trace
       await request.Entity.Stream.CopyToAsync(responseMessage);
       response.ContentLength = responseMessage.Length;
       
-      
-      // Temporary hack, see #135
-      if (_response.GetType().Name.Contains("Owin"))
-        _response.WriteHeaders();
-      
       responseMessage.Position = 0;
       await responseMessage.CopyToAsync(response.Stream);
     }

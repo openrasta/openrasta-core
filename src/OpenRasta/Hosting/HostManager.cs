@@ -7,6 +7,7 @@ using OpenRasta.Configuration;
 using OpenRasta.Configuration.MetaModel;
 using OpenRasta.DI;
 using OpenRasta.Diagnostics;
+using OpenRasta.Hosting.Compatibility;
 using OpenRasta.Pipeline;
 using OpenRasta.Web;
 
@@ -197,10 +198,10 @@ namespace OpenRasta.Hosting
     {
       using (DependencyManager.ScopedResolver(Resolver))
       {
-        e.Context.PipelineData[Keys.Request.ResolverRequestScope] = Resolver.CreateRequestScope();
+        var context = new WriteTrackingResponseCommunicationContext(e.Context);
+        context.PipelineData[Keys.Request.ResolverRequestScope] = Resolver.CreateRequestScope();
 
         // register the required dependency in the web context
-        var context = e.Context;
         SetupCommunicationContext(context);
 
         await _pipeline.RunAsync(context);
