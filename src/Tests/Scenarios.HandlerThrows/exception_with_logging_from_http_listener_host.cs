@@ -96,8 +96,7 @@ namespace Tests.Scenarios.HandlerThrows
 
     public void Dispose()
     {
-      ((IDisposable) _httpListenerHost).Dispose();
-      _response.Dispose();
+      _httpListenerHost.Close();
     }
   }
 }
