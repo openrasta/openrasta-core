@@ -7,6 +7,7 @@ using Xunit;
 
 namespace Tests.Plugins.ReverseProxy.errors
 {
+  #if NETCOREAPP2_0
   public class proxied_timeout
   {
     [Fact]
@@ -25,4 +26,5 @@ namespace Tests.Plugins.ReverseProxy.errors
       response.Message.StatusCode.ShouldBe(HttpStatusCode.GatewayTimeout);
     }
   }
+  #endif
 }
