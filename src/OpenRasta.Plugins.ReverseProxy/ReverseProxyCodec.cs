@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using OpenRasta.Codecs;
@@ -20,11 +19,18 @@ namespace OpenRasta.Plugins.ReverseProxy
     public async Task WriteTo(object entity, IHttpEntity response, IEnumerable<string> codecParameters)
     {
       var proxyResponse = (HttpResponseMessage) entity;
-      _response.StatusCode = (int)proxyResponse.StatusCode;
-      foreach (var header in proxyResponse.Headers)
-        response.Headers[header.Key] = string.Join(", ", header.Value);
-      
-      await proxyResponse.Content.CopyToAsync(response.Stream);
+      try
+      {
+        _response.StatusCode = (int) proxyResponse.StatusCode;
+        foreach (var header in proxyResponse.Headers)
+          response.Headers[header.Key] = string.Join(", ", header.Value);
+
+        await proxyResponse.Content.CopyToAsync(response.Stream);
+      }
+      catch
+      {
+        proxyResponse.Dispose();
+      }
     }
   }
 }

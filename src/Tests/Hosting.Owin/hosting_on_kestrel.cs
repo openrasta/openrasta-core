@@ -6,27 +6,26 @@ using Shouldly;
 using Tests.Infrastructure;
 using Xunit;
 
+
 namespace Tests.Hosting.Owin
 {
-  #if NETCOREAPP2_0
+#if NETCOREAPP2_0
   public class hosting_on_kestrel : IDisposable
   {
-    
     readonly HttpClient client;
     readonly IWebHost server;
-    static Random randomPort = new Random();
 
     public hosting_on_kestrel()
     {
-      var port = randomPort.Next(2048,4096);
       server =
         new WebHostBuilder()
           .UseKestrel()
-          .UseUrls($"http://localhost:{port}")
+          .UseUrls($"http://127.0.0.1:0")
           .Configure(app => app.UseOpenRasta(new TaskApi()))
           .Build();
+
       server.Start();
-      
+      var port = server.Port();
       client = new HttpClient {BaseAddress = new Uri($"http://localhost:{port}")};
     }
 
@@ -42,7 +41,7 @@ namespace Tests.Hosting.Owin
     {
       var response = await client.GetAsync("/ping-silently");
       response.EnsureSuccessStatusCode();
-     
+
       response.Content.Headers.TryGetValues("Content-Length", out _).ShouldBeFalse();
     }
 
@@ -59,5 +58,5 @@ namespace Tests.Hosting.Owin
       server?.Dispose();
     }
   }
-  #endif
+#endif
 }

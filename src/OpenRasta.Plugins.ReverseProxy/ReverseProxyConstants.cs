@@ -1,5 +1,4 @@
-﻿using System;
-using OpenRasta.Configuration.MetaModel;
+﻿using OpenRasta.Configuration.MetaModel;
 
 namespace OpenRasta.Plugins.ReverseProxy
 {

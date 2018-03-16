@@ -1,5 +1,4 @@
 ﻿using System.Threading.Tasks;
-using OpenRasta.Plugins.ReverseProxy;
 using Shouldly;
 using Tests.Plugins.ReverseProxy.Implementation;
 using Xunit;
@@ -11,39 +10,42 @@ namespace Tests.Plugins.ReverseProxy.forwarded_headers
     [Fact]
     public async Task enabled_header()
     {
-      var response = await new ProxyServer()
-          .FromServer("/proxy")
-          .ToServer("/proxied", ctx => ctx.ApplicationBaseUri.ToString(), options => options.FrowardedHeaders.RunAsForwardedHost = true)
-          .AddHeader("Forwarded", "host=openrasta.example;proto=https")
-          .GetAsync("/proxy");
-
-      response.content.ShouldBe("https://openrasta.example/");
-      response.dispose();
+      using (var response = await new ProxyServer()
+        .FromServer("/proxy")
+        .ToServer("/proxied", async ctx => ctx.ApplicationBaseUri.ToString(),
+          options => options.FrowardedHeaders.RunAsForwardedHost = true)
+        .AddHeader("Forwarded", "host=openrasta.example;proto=https")
+        .GetAsync("/proxy"))
+      {
+        response.Content.ShouldBe("https://openrasta.example/");
+      }
     }
 
     [Fact]
     public async Task enabled_no_header()
     {
-      var response = await new ProxyServer()
-          .FromServer("/proxy")
-          .ToServer("/proxied", ctx => ctx.ApplicationBaseUri.ToString(), options => options.FrowardedHeaders.RunAsForwardedHost = true)
-          
-          .GetAsync("/proxy");
-
-      response.content.ShouldBe("http://localhost/");
-      response.dispose();
+      using (var response = await new ProxyServer()
+        .FromServer("/proxy")
+        .ToServer("/proxied", async ctx => ctx.ApplicationBaseUri.ToString(),
+          options => options.FrowardedHeaders.RunAsForwardedHost = true)
+        .GetAsync("/proxy"))
+      {
+        response.Content.ShouldBe("http://localhost/");
+      }
     }
+
     [Fact]
     public async Task disabled()
     {
-      var response = await new ProxyServer()
-          .FromServer("/proxy")
-          .ToServer("/proxied", ctx => ctx.ApplicationBaseUri.ToString(), options => options.FrowardedHeaders.RunAsForwardedHost = false)
-          .AddHeader("Forwarded", "host=openrasta.example;proto=https")
-          .GetAsync("/proxy");
-
-      response.content.ShouldBe("http://destination.example/");
-      response.dispose();
+      using (var response = await new ProxyServer()
+        .FromServer("/proxy")
+        .ToServer("/proxied", async ctx => ctx.ApplicationBaseUri.ToString(),
+          options => options.FrowardedHeaders.RunAsForwardedHost = false)
+        .AddHeader("Forwarded", "host=openrasta.example;proto=https")
+        .GetAsync("/proxy"))
+      {
+        response.Content.ShouldBe("http://destination.example/");
+      }
     }
   }
 }

@@ -1,4 +1,5 @@
-﻿using OpenRasta.Configuration;
+﻿using System;
+using OpenRasta.Configuration;
 using OpenRasta.Plugins.ReverseProxy;
 
 namespace Tests.Plugins.ReverseProxy.Implementation
@@ -24,7 +25,7 @@ namespace Tests.Plugins.ReverseProxy.Implementation
       ResourceSpace.Has
           .ResourcesNamed("from")
           .AtUri(from)
-          .ReverseProxyFor($"http://destination.example{to}");
+          .ReverseProxyFor(new Uri(new Uri("http://destination.example", UriKind.Absolute),to).ToString());
 
       ResourceSpace.Uses.ReverseProxy(options);
     }

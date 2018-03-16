@@ -1,10 +1,8 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using OpenRasta.Configuration.MetaModel;
 using OpenRasta.Data;
-using OpenRasta.Pipeline;
 using OpenRasta.Web;
 
 namespace OpenRasta.Plugins.ReverseProxy

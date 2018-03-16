@@ -1,7 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
@@ -15,22 +15,23 @@ namespace OpenRasta.Plugins.ReverseProxy
   public class ReverseProxy
   {
     readonly ReverseProxyOptions _options;
-    Lazy<HttpClient> _httpClient;
+    readonly Lazy<HttpClient> _httpClient;
+    readonly TimeSpan _timeout;
 
     public ReverseProxy(ReverseProxyOptions options)
     {
       _options = options;
+      _timeout = options.Timeout;
       _httpClient = new Lazy<HttpClient>(() => new HttpClient(_options.HttpMessageHandler())
         {
-          Timeout = options.Timeout
+          Timeout = Timeout.InfiniteTimeSpan
         },
         LazyThreadSafetyMode.ExecutionAndPublication);
     }
 
     public async Task<HttpResponseMessage> Send(ICommunicationContext context, string target)
     {
-      var proxyTargetUri = GetProxyTargetUri(context.Request.Uri,
-        context.PipelineData.SelectedResource.Results.Single(), target);
+      var proxyTargetUri = GetProxyTargetUri(context.PipelineData.SelectedResource.Results.Single(), target);
       var request = new HttpRequestMessage
       {
         Method = new HttpMethod(context.Request.HttpMethod),
@@ -44,15 +45,33 @@ namespace OpenRasta.Plugins.ReverseProxy
       headers.Add("via", $"1.1 {identifier}");
 
       request.RequestUri = proxyTargetUri;
+      var cts = new CancellationTokenSource();
+      cts.CancelAfter(_timeout);
+      var token = cts.Token;
       try
       {
-        var httpResponseMessage = await _httpClient.Value.SendAsync(request, HttpCompletionOption.ResponseContentRead);
+        var httpResponseMessage = await _httpClient.Value.SendAsync(
+          request,
+          HttpCompletionOption.ResponseHeadersRead,
+          token
+        );
         httpResponseMessage.Headers.Via.Add(new ViaHeaderValue("1.1", identifier));
         return httpResponseMessage;
+      }
+      catch (TaskCanceledException) when (token.IsCancellationRequested)
+      {
+        return new HttpResponseMessage
+        {
+          StatusCode = HttpStatusCode.GatewayTimeout
+        };
       }
       catch (Exception e)
       {
         throw new ReverseProxyFailedRequestException(request, e);
+      }
+      finally
+      {
+        request.Dispose();
       }
     }
 
@@ -105,9 +124,8 @@ namespace OpenRasta.Plugins.ReverseProxy
       request.Headers.Add("forwarded", CurrentForwarded(context));
     }
 
-    public static Uri GetProxyTargetUri(Uri requestUri, TemplatedUriMatch requestUriMatch, string target)
+    static Uri GetProxyTargetUri(TemplatedUriMatch requestUriMatch, string target)
     {
-      var sourceBaseUri = new Uri(requestUri, "/");
       var destinationBaseUri = new Uri(new Uri(target), "/");
       var targetTemplate = new UriTemplate(target);
       var requestQs = requestUriMatch;

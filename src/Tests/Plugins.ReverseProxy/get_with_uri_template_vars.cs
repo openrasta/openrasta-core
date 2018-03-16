@@ -1,7 +1,4 @@
-﻿using System;
-using System.Net.Http;
-using System.Threading.Tasks;
-using OpenRasta.Plugins.ReverseProxy;
+﻿using System.Threading.Tasks;
 using Shouldly;
 using Tests.Plugins.ReverseProxy.Implementation;
 using Xunit;
@@ -13,12 +10,13 @@ namespace Tests.Plugins.ReverseProxy
     [Fact]
     public async Task response_status_body_is_proxied()
     {
-      var response = await new ProxyServer()
-          .FromServer("/proxy/{first}/{second}/")
-          .ToServer("/proxied/{first}/{second}/")
-          .GetAsync("http://localhost/proxy/one/two/");
-      response.content.ShouldBe("http://destination.example/proxied/one/two/");
-      response.dispose();
+      using (var response = await new ProxyServer()
+        .FromServer("/proxy/{first}/{second}/")
+        .ToServer("/proxied/{first}/{second}/")
+        .GetAsync("http://localhost/proxy/one/two/"))
+      {
+        response.Content.ShouldBe("http://destination.example/proxied/one/two/");
+      }
     }
   }
 }

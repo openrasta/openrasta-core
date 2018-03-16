@@ -1,5 +1,4 @@
 ﻿using System.Threading.Tasks;
-using OpenRasta.Plugins.ReverseProxy;
 using Shouldly;
 using Tests.Plugins.ReverseProxy.Implementation;
 using Xunit;
@@ -13,11 +12,11 @@ namespace Tests.Plugins.ReverseProxy.via_headers
     {
       var response = await new ProxyServer()
         .FromServer("/proxy")
-        .ToServer("/proxied", ctx => ctx.Request.Headers["Via"])
+        .ToServer("/proxied", async ctx => ctx.Request.Headers["Via"])
         .GetAsync("http://source.example/proxy");
-      response.content.ShouldBe("1.1 source.example:80");
+      response.Content.ShouldBe("1.1 source.example:80");
 
-      var via = response.response.Headers.Via.ShouldHaveSingleItem();
+      var via = response.Message.Headers.Via.ShouldHaveSingleItem();
       via.ReceivedBy.ShouldBe("source.example:80");
     }
   }

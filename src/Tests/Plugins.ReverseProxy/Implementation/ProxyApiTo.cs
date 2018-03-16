@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using OpenRasta.Configuration;
 using OpenRasta.Plugins.ReverseProxy;
 using OpenRasta.Web;
@@ -9,15 +10,15 @@ namespace Tests.Plugins.ReverseProxy.Implementation
   {
     readonly string to;
     readonly ReverseProxyOptions options;
-    readonly Func<ICommunicationContext, string> operation;
+    readonly Func<ICommunicationContext, Task<string>> operation;
 
     public ProxyApiTo(string to,
         ReverseProxyOptions options,
-        Func<ICommunicationContext,string> operation = null)
+        Func<ICommunicationContext,Task<string>> operation = null)
     {
       this.to = to;
       this.options = options;
-      this.operation = operation ?? (ctx=>ctx.Request.Uri.ToString());
+      this.operation = operation ?? (async ctx=>ctx.Request.Uri.ToString());
     }
 
     public void Configure()

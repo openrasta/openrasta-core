@@ -1,6 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
-using OpenRasta.Plugins.ReverseProxy;
+﻿using System.Threading.Tasks;
 using Shouldly;
 using Tests.Plugins.ReverseProxy.Implementation;
 using Xunit;
@@ -12,28 +10,30 @@ namespace Tests.Plugins.ReverseProxy.forwarded_headers
     [Fact]
     public async Task legacy_is_rewritten()
     {
-      var (_, content, dispose) = await new ProxyServer()
-          .FromServer("/proxy", options => options.FrowardedHeaders.ConvertLegacyHeaders = true)
-          .ToServer("/proxied", ctx => ctx.Request.Headers["X-Forwarded-Host"] + "|" + ctx.Request.Headers["Forwarded"])
-          .AddHeader("X-Forwarded-Host", "openrasta.example")
-          .AddHeader("X-Forwarded-Proto", "https")
-          .GetAsync("/proxy");
+      using (var response = await new ProxyServer()
+        .FromServer("/proxy", options => options.FrowardedHeaders.ConvertLegacyHeaders = true)
+        .ToServer("/proxied",
+          async ctx => ctx.Request.Headers["X-Forwarded-Host"] + "|" + ctx.Request.Headers["Forwarded"])
+        .AddHeader("X-Forwarded-Host", "openrasta.example")
+        .AddHeader("X-Forwarded-Proto", "https")
+        .GetAsync("/proxy"))
 
-      content.ShouldBe("|host=openrasta.example;proto=https,proto=http;host=localhost");
-      dispose();
+      {
+        response.Content.ShouldBe("|host=openrasta.example;proto=https,proto=http;host=localhost");
+      }
     }
 
     [Fact]
     public async Task forwarded_chain_is_preserved()
     {
-      var (_, content, dispose) = await new ProxyServer()
-          .FromServer("/proxy")
-          .ToServer("/proxied", ctx => ctx.Request.Headers["Forwarded"])
-          .AddHeader("Forwarded", "host=openrasta.example")
-          .GetAsync("/proxy");
-
-      content.ShouldBe("host=openrasta.example,proto=http;host=localhost");
-      dispose();
+      using (var response = await new ProxyServer()
+        .FromServer("/proxy")
+        .ToServer("/proxied", async ctx => ctx.Request.Headers["Forwarded"])
+        .AddHeader("Forwarded", "host=openrasta.example")
+        .GetAsync("/proxy"))
+      {
+        response.Content.ShouldBe("host=openrasta.example,proto=http;host=localhost");
+      }
     }
   }
 }
