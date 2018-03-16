@@ -58,7 +58,7 @@ namespace OpenRasta.Plugins.ReverseProxy
         httpResponseMessage.Headers.Via.Add(new ViaHeaderValue("1.1", identifier));
         return httpResponseMessage;
       }
-      catch (TaskCanceledException) when (token.IsCancellationRequested)
+      catch (TaskCanceledException e) when (token.IsCancellationRequested || e.CancellationToken == token)
       {
         return new HttpResponseMessage
         {
