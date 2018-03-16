@@ -16,7 +16,7 @@ namespace Tests.Plugins.ReverseProxy.forwarded_headers
           async ctx => ctx.Request.Headers["X-Forwarded-Host"] + "|" + ctx.Request.Headers["Forwarded"])
         .AddHeader("X-Forwarded-Host", "openrasta.example")
         .AddHeader("X-Forwarded-Proto", "https")
-        .GetAsync("/proxy"))
+        .GetAsync("proxy"))
 
       {
         response.Content.ShouldBe("|host=openrasta.example;proto=https,proto=http;host=localhost");
@@ -30,7 +30,7 @@ namespace Tests.Plugins.ReverseProxy.forwarded_headers
         .FromServer("/proxy")
         .ToServer("/proxied", async ctx => ctx.Request.Headers["Forwarded"])
         .AddHeader("Forwarded", "host=openrasta.example")
-        .GetAsync("/proxy"))
+        .GetAsync("proxy"))
       {
         response.Content.ShouldBe("host=openrasta.example,proto=http;host=localhost");
       }

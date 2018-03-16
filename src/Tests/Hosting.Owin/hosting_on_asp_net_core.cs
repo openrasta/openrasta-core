@@ -28,14 +28,14 @@ namespace Tests.Hosting.Owin
     [Fact]
     public async void can_get_list_of_tasks()
     {
-      var response = await client.GetAsync("/tasks");
+      var response = await client.GetAsync("tasks");
       response.EnsureSuccessStatusCode();
     }
 
     [Fact]
     public async void can_get_silent_ping()
     {
-      var response = await client.GetAsync("/ping-silently");
+      var response = await client.GetAsync("ping-silently");
       response.StatusCode.ShouldBe(HttpStatusCode.NoContent);
       response.Content.Headers.TryGetValues("Content-Length", out _).ShouldBeFalse();
     }
@@ -43,7 +43,7 @@ namespace Tests.Hosting.Owin
     [Fact]
     public async void can_get_no_content_ping()
     {
-      var response = await client.GetAsync("/ping-empty-content");
+      var response = await client.GetAsync("ping-empty-content");
       response.StatusCode.ShouldBe(HttpStatusCode.OK);
       response.Content.Headers.ContentLength.ShouldBe(0);
     }

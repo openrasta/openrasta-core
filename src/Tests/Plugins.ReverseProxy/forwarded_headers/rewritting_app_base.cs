@@ -15,7 +15,7 @@ namespace Tests.Plugins.ReverseProxy.forwarded_headers
         .ToServer("/proxied", async ctx => ctx.ApplicationBaseUri.ToString(),
           options => options.FrowardedHeaders.RunAsForwardedHost = true)
         .AddHeader("Forwarded", "host=openrasta.example;proto=https")
-        .GetAsync("/proxy"))
+        .GetAsync("proxy"))
       {
         response.Content.ShouldBe("https://openrasta.example/");
       }
@@ -28,7 +28,7 @@ namespace Tests.Plugins.ReverseProxy.forwarded_headers
         .FromServer("/proxy")
         .ToServer("/proxied", async ctx => ctx.ApplicationBaseUri.ToString(),
           options => options.FrowardedHeaders.RunAsForwardedHost = true)
-        .GetAsync("/proxy"))
+        .GetAsync("proxy"))
       {
         response.Content.ShouldBe("http://localhost/");
       }
@@ -42,7 +42,7 @@ namespace Tests.Plugins.ReverseProxy.forwarded_headers
         .ToServer("/proxied", async ctx => ctx.ApplicationBaseUri.ToString(),
           options => options.FrowardedHeaders.RunAsForwardedHost = false)
         .AddHeader("Forwarded", "host=openrasta.example;proto=https")
-        .GetAsync("/proxy"))
+        .GetAsync("proxy"))
       {
         response.Content.ShouldBe("http://destination.example/");
       }

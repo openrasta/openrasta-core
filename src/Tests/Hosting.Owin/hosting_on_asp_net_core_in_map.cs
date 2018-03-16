@@ -25,7 +25,7 @@ namespace Tests.Hosting.Owin
     [Fact]
     public async void can_get_list_of_tasks()
     {
-      var response = await client.GetAsync("/api/tasks");
+      var response = await client.GetAsync("api/tasks");
       response.EnsureSuccessStatusCode();
     }
 

@@ -13,7 +13,7 @@ namespace Tests.Plugins.ReverseProxy.via_headers
       var response = await new ProxyServer()
         .FromServer("/proxy", options=>options.Via.Pseudonym = "componentName")
         .ToServer("/proxied", async ctx => ctx.Request.Headers["Via"])
-        .GetAsync("/proxy");
+        .GetAsync("proxy");
       response.Content.ShouldBe("1.1 componentName");
     }
   }
