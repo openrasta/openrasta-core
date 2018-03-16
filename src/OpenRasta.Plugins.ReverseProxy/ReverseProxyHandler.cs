@@ -1,5 +1,4 @@
 ﻿using System.Linq;
-using System.Net.Http;
 using System.Threading.Tasks;
 using OpenRasta.Configuration.MetaModel;
 using OpenRasta.Data;
@@ -24,7 +23,7 @@ namespace OpenRasta.Plugins.ReverseProxy
     }
 
     [HttpOperation("*")]
-    public async Task<HttpResponseMessage> Any(Any _)
+    public async Task<ReverseProxyResponse> Any(Any _)
     {
       return await _proxy.Send(_context, CurrentResourceModel.GetReverseProxyTarget());
     }

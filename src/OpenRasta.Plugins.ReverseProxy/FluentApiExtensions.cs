@@ -10,9 +10,9 @@ namespace OpenRasta.Plugins.ReverseProxy
     public static void ReverseProxyFor(this IUriDefinition uriConfiguration, string uri)
     {
       uriConfiguration
-          .HandledBy<ReverseProxyHandler>();
+        .HandledBy<ReverseProxyHandler>();
 
-      var target = (IResourceTarget)uriConfiguration;
+      var target = (IResourceTarget) uriConfiguration;
       target.Resource.ReverseProxyTarget(uri);
     }
 
@@ -20,14 +20,15 @@ namespace OpenRasta.Plugins.ReverseProxy
     {
       options = options ?? new ReverseProxyOptions();
       uses.Dependency(d => d.Singleton(() => new ReverseProxy(options)));
-      ((IHas)uses)
-          .ResourcesOfType<HttpResponseMessage>()
-          .WithoutUri
-          .TranscodedBy<ReverseProxyCodec>()
-          .ForMediaType("*/*");
+      var has = ((IHas) uses);
+      has.ResourcesOfType<ReverseProxyResponse>()
+        .WithoutUri
+        .TranscodedBy<ReverseProxyResponseCodec>()
+        .ForMediaType("*/*");
 
       if (options.FrowardedHeaders.RunAsForwardedHost)
         uses.PipelineContributor<RewriteAppBaseUsingForwardedHeaders>();
+
       return uses;
     }
   }

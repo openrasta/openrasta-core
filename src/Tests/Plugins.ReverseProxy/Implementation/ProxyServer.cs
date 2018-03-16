@@ -134,12 +134,14 @@ namespace Tests.Plugins.ReverseProxy.Implementation
     {
       var toServer = CreateKestrelToServer();
       var fromServer = CreateKestrelFromServer(toServer.port);
+      var client = new HttpClient() {BaseAddress = new Uri($"http://127.0.0.1:{fromServer.port}")};
       var disposer = new ActionOnDispose(() =>
       {
-        toServer.host.Dispose();
+        client.Dispose();
         fromServer.host.Dispose();
+        toServer.host.Dispose();
+        
       });
-      var client = new HttpClient() {BaseAddress = new Uri($"http://127.0.0.1:{fromServer.port}")};
       return (client, disposer);
     }
 
@@ -183,6 +185,7 @@ namespace Tests.Plugins.ReverseProxy.Implementation
           })
           .Build();
       host.Start();
+      
       return (host, host.Port());
     }
 
@@ -221,6 +224,7 @@ namespace Tests.Plugins.ReverseProxy.Implementation
       {
         HttpMessageHandler = httpMessageHandler
       };
+      
       _fromOptions?.Invoke(options);
 
       return new TestServer(

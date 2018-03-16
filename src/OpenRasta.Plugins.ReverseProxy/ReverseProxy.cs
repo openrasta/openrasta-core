@@ -29,49 +29,38 @@ namespace OpenRasta.Plugins.ReverseProxy
         LazyThreadSafetyMode.ExecutionAndPublication);
     }
 
-    public async Task<HttpResponseMessage> Send(ICommunicationContext context, string target)
+    public async Task<ReverseProxyResponse> Send(ICommunicationContext context, string target)
     {
       var proxyTargetUri = GetProxyTargetUri(context.PipelineData.SelectedResource.Results.Single(), target);
-      var request = new HttpRequestMessage
+      var requestMessage = new HttpRequestMessage
       {
         Method = new HttpMethod(context.Request.HttpMethod),
         Content = new StreamContent(context.Request.Entity.Stream)
       };
 
-      CopyHeaders(context, request, _options.FrowardedHeaders.ConvertLegacyHeaders);
+      CopyHeaders(context, requestMessage, _options.FrowardedHeaders.ConvertLegacyHeaders);
 
-      var headers = request.Headers;
+      var headers = requestMessage.Headers;
       var identifier = _options.Via.Pseudonym ?? $"{context.Request.Uri.Host}:{context.Request.Uri.Port}";
       headers.Add("via", $"1.1 {identifier}");
 
-      request.RequestUri = proxyTargetUri;
+      requestMessage.RequestUri = proxyTargetUri;
       var cts = new CancellationTokenSource();
       cts.CancelAfter(_timeout);
       var token = cts.Token;
       try
       {
-        var httpResponseMessage = await _httpClient.Value.SendAsync(
-          request,
+        var responseMessage = await _httpClient.Value.SendAsync(
+          requestMessage,
           HttpCompletionOption.ResponseHeadersRead,
           token
         );
-        httpResponseMessage.Headers.Via.Add(new ViaHeaderValue("1.1", identifier));
-        return httpResponseMessage;
+        responseMessage.Headers.Via.Add(new ViaHeaderValue("1.1", identifier));
+        return new ReverseProxyResponse(requestMessage, responseMessage);
       }
       catch (TaskCanceledException e) when (token.IsCancellationRequested || e.CancellationToken == token)
       {
-        return new HttpResponseMessage
-        {
-          StatusCode = HttpStatusCode.GatewayTimeout
-        };
-      }
-      catch (Exception e)
-      {
-        throw new ReverseProxyFailedRequestException(request, e);
-      }
-      finally
-      {
-        request.Dispose();
+        return new ReverseProxyResponse(requestMessage, error: e, statusCode: 504);
       }
     }
 
