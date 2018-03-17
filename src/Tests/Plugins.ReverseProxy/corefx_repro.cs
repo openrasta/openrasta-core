@@ -4,10 +4,8 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.AspNetCore.Http;
-using OpenRasta.Plugins.ReverseProxy;
-using Shouldly;
-using Tests.Hosting.Owin;
 using Xunit;
 
 namespace Tests.Plugins.ReverseProxy
@@ -51,13 +49,12 @@ namespace Tests.Plugins.ReverseProxy
       var client = new HttpClient();
       var response = await client.GetAsync($"http://127.0.0.1:{fromServer.Port()}");
       response.EnsureSuccessStatusCode();
-      (await response.Content.ReadAsStringAsync()).ShouldBe("hello");
     }
   }
 
   public class ReproCodec
   {
-    public static async Task Write(HttpContext context, ReverseProxyResponse proxyResponse)
+    public static async Task Write(HttpContext context, ReproReverseProxyResponse proxyResponse)
     {
       context.Response.StatusCode = proxyResponse.StatusCode;
 
@@ -72,7 +69,7 @@ namespace Tests.Plugins.ReverseProxy
 
   public class ReproReverseProxy
   {
-    public async Task<ReverseProxyResponse> Send(HttpContext context, string target)
+    public async Task<ReproReverseProxyResponse> Send(HttpContext context, string target)
     {
       var httpClient = new HttpClient(new HttpClientHandler());
       var requestMessage = new HttpRequestMessage
@@ -90,11 +87,11 @@ namespace Tests.Plugins.ReverseProxy
           requestMessage,
           HttpCompletionOption.ResponseHeadersRead
         );
-        return new ReverseProxyResponse(requestMessage, responseMessage);
+        return new ReproReverseProxyResponse(requestMessage, responseMessage);
       }
       catch (TaskCanceledException e)
       {
-        return new ReverseProxyResponse(requestMessage, error: e, statusCode: 504);
+        return new ReproReverseProxyResponse(requestMessage, statusCode: 504);
       }
     }
 
@@ -111,6 +108,34 @@ namespace Tests.Plugins.ReverseProxy
           request.Headers.Add(header.Key, header.Value.ToList());
       }
     }
+  }
+  
+  public class ReproReverseProxyResponse
+  {
+    public HttpRequestMessage RequestMessage { get; }
+    public HttpResponseMessage ResponseMessage { get; }
+    public int StatusCode { get; }
+
+    public ReproReverseProxyResponse(
+      HttpRequestMessage requestMessage,
+      HttpResponseMessage responseMessage = null,
+      int? statusCode = null)
+    {
+      RequestMessage = requestMessage ?? throw new ArgumentNullException(nameof(requestMessage));
+      ResponseMessage = responseMessage;
+      StatusCode = statusCode ?? (responseMessage != null ? (int)responseMessage.StatusCode : 500);
+    }
+  }
+  public static class ReproWebHostExtension
+  {
+    public static int Port(this IWebHost host)
+    {
+      return host.ServerFeatures
+        .Get<IServerAddressesFeature>().Addresses
+        .Select(a=>new Uri(a).Port)
+        .Single();
+    }
+    // ReSharper disable once MemberCanBePrivate.Global
   }
 #endif
 }
