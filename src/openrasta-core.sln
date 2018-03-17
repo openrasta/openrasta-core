@@ -27,6 +27,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenRasta.Plugins.ReversePr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenRasta.Plugins.Diagnostics", "OpenRasta.Plugins.Diagnostics\OpenRasta.Plugins.Diagnostics.csproj", "{C118D585-33E4-4A42-B161-6C73AB5AC64B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenRasta.Plugins.Caching", "OpenRasta.Plugins.Caching\OpenRasta.Plugins.Caching.csproj", "{2730437A-9761-4665-83DD-12F60E5D85F2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -65,6 +67,10 @@ Global
 		{C118D585-33E4-4A42-B161-6C73AB5AC64B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C118D585-33E4-4A42-B161-6C73AB5AC64B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C118D585-33E4-4A42-B161-6C73AB5AC64B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2730437A-9761-4665-83DD-12F60E5D85F2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2730437A-9761-4665-83DD-12F60E5D85F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2730437A-9761-4665-83DD-12F60E5D85F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2730437A-9761-4665-83DD-12F60E5D85F2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

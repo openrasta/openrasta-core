@@ -13,7 +13,7 @@
     <Company>Caffeine IT- naughtyProd Limited</Company>
     <InformationalVersion>2.6.0</InformationalVersion>
     <FileVersion>2.6.0</FileVersion>
-    <AssemblyVersion>2.6.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
     <TargetFrameworks>netstandard2.0;net461</TargetFrameworks>
     <LangVersion>7.1</LangVersion>
   </PropertyGroup>
