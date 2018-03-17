@@ -21,7 +21,14 @@ namespace Tests.Plugins.ReverseProxy
         new WebHostBuilder()
           .UseKestrel()
           .UseUrls("http://127.0.0.1:0")
-          .Configure(app => { app.Run(async context => await context.Response.WriteAsync("hello")); })
+          .Configure(app =>
+          {
+            app.Run(async context =>
+            {
+              context.Response.ContentLength = 5;
+              await context.Response.WriteAsync("hello");
+            });
+          })
           .Build();
       await toServer.StartAsync();
       var toPort = toServer.Port();
