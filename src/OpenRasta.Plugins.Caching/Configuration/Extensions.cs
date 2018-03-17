@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace OpenRasta.Plugins.Caching
+namespace OpenRasta.Plugins.Caching.Configuration
 {
   public static class Extensions
   {

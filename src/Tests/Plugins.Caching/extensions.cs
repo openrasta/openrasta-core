@@ -1,23 +1,24 @@
 using System;
-using OpenRasta.Plugins.Caching;
+using OpenRasta.Plugins.Caching.Configuration;
 using Shouldly;
 using Xunit;
 
 namespace Tests.Plugins.Caching
 {
-    public class extensions
+  public class extensions
+  {
+    [Fact]
+    public void after_date()
     {
-        [Fact]
-        public void before_date()
-        {
-            var now = DateTimeOffset.Now;
-            now.Before(now + 2.Hours()).ShouldBeTrue();
-        }
-        [Fact]
-        public void after_date()
-        {
-            var now = DateTimeOffset.Now;
-            now.After(now - 2.Hours()).ShouldBeTrue();
-        }
+      var now = DateTimeOffset.Now;
+      now.ShouldBeGreaterThan(now - 2.Hours());
     }
+
+    [Fact]
+    public void before_date()
+    {
+      var now = DateTimeOffset.Now;
+      now.ShouldBeLessThan(now + 2.Hours());
+    }
+  }
 }

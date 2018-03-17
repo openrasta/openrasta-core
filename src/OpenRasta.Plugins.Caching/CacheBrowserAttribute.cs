@@ -4,10 +4,4 @@
   {
     public BrowserCacheLevel Level { get; set; }
   }
-
-  public enum BrowserCacheLevel
-  {
-    Default,
-    None
-  }
 }

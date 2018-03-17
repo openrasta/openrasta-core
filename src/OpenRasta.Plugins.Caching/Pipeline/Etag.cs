@@ -20,9 +20,4 @@ namespace OpenRasta.Plugins.Caching.Pipeline
       return Regex.Replace(partialEtag, string.Format(@"[^{0}]", BNF.ETAG_C_SAFE), "_");
     }
   }
-
-  public class StrongEtag
-  {
-    public string UserTag { get; set; }
-  }
 }

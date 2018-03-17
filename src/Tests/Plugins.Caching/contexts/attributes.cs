@@ -1,30 +1,34 @@
 ﻿using System;
 using OpenRasta.Plugins.Caching;
-using Tests.Plugins.Caching.attributes.proxy;
+using OpenRasta.Plugins.Caching.Providers;
 
 namespace Tests.Plugins.Caching.contexts
 {
   public class attributes
   {
-    CacheProxyAttribute _proxy;
-    protected Exception exception;
-    CacheServerAttribute _server;
     CacheBrowserAttribute _browser;
-    protected TempObject cache;
+    CacheProxyAttribute _proxy;
+    protected ResponseCachingState cache;
+    protected Exception exception;
 
     protected void given_attribute(
       CacheBrowserAttribute browser = null,
-      CacheProxyAttribute proxy = null,
-      CacheServerAttribute server = null)
+      CacheProxyAttribute proxy = null)
     {
       _browser = browser;
       _proxy = proxy;
-      _server = server;
     }
 
     protected void when_getting_response_caching()
     {
-      throw new NotImplementedException();
+      try
+      {
+        cache = CacheResponse.GetResponseDirective(_proxy, _browser);
+      }
+      catch (Exception e)
+      {
+        exception = e;
+      }
     }
   }
 }

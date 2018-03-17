@@ -9,11 +9,4 @@
 
     public ProxyCacheLevel Level { get; set; }
   }
-
-  public enum ProxyCacheLevel
-  {
-    Default,
-    Everything,
-    None
-  }
 }
