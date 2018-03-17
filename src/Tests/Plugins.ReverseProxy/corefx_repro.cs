@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using OpenRasta.Plugins.ReverseProxy;
+using Shouldly;
 using Tests.Hosting.Owin;
 using Xunit;
 
@@ -50,6 +51,7 @@ namespace Tests.Plugins.ReverseProxy
       var client = new HttpClient();
       var response = await client.GetAsync($"http://127.0.0.1:{fromServer.Port()}");
       response.EnsureSuccessStatusCode();
+      (await response.Content.ReadAsStringAsync()).ShouldBe("hello");
     }
   }
 
