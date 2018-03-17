@@ -11,7 +11,7 @@ using Xunit;
 
 namespace Tests.Plugins.ReverseProxy
 {
-  #if NETCOREAPP2_0
+#if NETCOREAPP2_0
   public class corefx_repro
   {
     [Fact]
@@ -23,10 +23,10 @@ namespace Tests.Plugins.ReverseProxy
           .UseUrls("http://127.0.0.1:0")
           .Configure(app => { app.Run(async context => await context.Response.WriteAsync("hello")); })
           .Build();
-      toServer.Start();
+      await toServer.StartAsync();
       var toPort = toServer.Port();
       var rpClient = new ReproReverseProxy();
-      var fromServer=new WebHostBuilder()
+      var fromServer = new WebHostBuilder()
         .Configure(app =>
         {
           app.Run(async context =>
@@ -38,38 +38,29 @@ namespace Tests.Plugins.ReverseProxy
         .UseKestrel()
         .UseUrls("http://127.0.0.1:0")
         .Build();
-      fromServer.Start();
+      await fromServer.StartAsync();
 
       var client = new HttpClient();
       var response = await client.GetAsync($"http://127.0.0.1:{fromServer.Port()}");
       response.EnsureSuccessStatusCode();
-      
-      client.Dispose();
-      toServer.Dispose();
-      fromServer.Dispose();
     }
   }
-  
+
   public class ReproCodec
   {
     public static async Task Write(HttpContext context, ReverseProxyResponse proxyResponse)
     {
-      try
-      {
-        context.Response.StatusCode = proxyResponse.StatusCode;
+      context.Response.StatusCode = proxyResponse.StatusCode;
 
-        if (proxyResponse.ResponseMessage != null)
-        {
-          await proxyResponse.ResponseMessage.Content.CopyToAsync(context.Response.Body);
-          context.Response.Body.Flush();
-        }
-      }
-      finally
+      if (proxyResponse.ResponseMessage != null)
       {
-        proxyResponse.Dispose();
+        await proxyResponse.ResponseMessage.Content.CopyToAsync(context.Response.Body);
       }
+
+      await context.Response.Body.FlushAsync();
     }
   }
+
   public class ReproReverseProxy
   {
     public async Task<ReverseProxyResponse> Send(HttpContext context, string target)
@@ -84,7 +75,7 @@ namespace Tests.Plugins.ReverseProxy
       CopyHeaders(context, requestMessage);
 
       var headers = requestMessage.Headers;
-      
+
       requestMessage.RequestUri = new Uri(target);
       try
       {
@@ -114,5 +105,5 @@ namespace Tests.Plugins.ReverseProxy
       }
     }
   }
-  #endif
+#endif
 }
