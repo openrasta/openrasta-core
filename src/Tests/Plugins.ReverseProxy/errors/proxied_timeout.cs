@@ -10,7 +10,7 @@ namespace Tests.Plugins.ReverseProxy.errors
 #if NETCOREAPP2_0
   public class proxied_timeout
   {
-    [Fact/*(Skip = "Disable until https://github.com/dotnet/corefx/issues/28156 is fixed")*/]
+    [Fact(Skip = "#136 – fails, disable until https://github.com/dotnet/corefx/issues/28156 is resolved")]
     public async Task response_is_gateway_timeout()
     {
       using (var response = await new ProxyServer()
