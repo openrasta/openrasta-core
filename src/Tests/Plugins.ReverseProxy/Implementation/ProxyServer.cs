@@ -154,8 +154,6 @@ namespace Tests.Plugins.ReverseProxy.Implementation
         new WebHostBuilder()
           .Configure(app =>
           {
-            app.ServerFeatures.Get<IServerAddressesFeature>();
-
             app.UseOpenRasta(
               new ProxyApiFrom(_fromUri(80), _toUri(toPort), options));
           })
