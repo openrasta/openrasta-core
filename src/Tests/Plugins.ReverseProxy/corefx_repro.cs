@@ -15,7 +15,7 @@ namespace Tests.Plugins.ReverseProxy
 #if NETCOREAPP2_0
   public class corefx_repro
   {
-    [Fact]
+    [Fact(Skip = "#136 – fails, disable until https://github.com/dotnet/corefx/issues/28156 is resolved")]
     public async Task maybe_itll_fail_i_dont_even()
     {
       var toServer =
