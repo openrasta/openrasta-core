@@ -26,13 +26,13 @@ namespace Tests.Plugins.ReverseProxy
           {
             app.Run(async context =>
             {
-              context.Response.ContentLength = 5;
               await context.Response.WriteAsync("hello");
             });
           })
           .Build();
       await toServer.StartAsync();
       var toPort = toServer.Port();
+      
       var rpClient = new ReproReverseProxy();
       var fromServer = new WebHostBuilder()
         .Configure(app =>
@@ -82,8 +82,6 @@ namespace Tests.Plugins.ReverseProxy
       };
 
       CopyHeaders(context, requestMessage);
-
-      var headers = requestMessage.Headers;
 
       requestMessage.RequestUri = new Uri(target);
       try
