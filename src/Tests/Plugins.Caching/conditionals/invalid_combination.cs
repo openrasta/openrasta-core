@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using OpenRasta.Configuration;
 using OpenRasta.Plugins.Caching.Pipeline;
 using Shouldly;
 using Tests.Plugins.Caching.contexts;

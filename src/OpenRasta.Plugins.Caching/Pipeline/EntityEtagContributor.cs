@@ -42,8 +42,8 @@ namespace OpenRasta.Plugins.Caching.Pipeline
 
     static string GenerateEtag(ICommunicationContext context, string partialEtag)
     {
-      // we should only include components for the headers present in the Vary header
-      // can't do it now as Vary is not set by OR, bug to fix in 2.1
+      /* TODO: we should only include components for the headers present in the Vary header
+       can't do it now as Vary is not set by OR, bug to fix in 2.1 */
 
       return Etag.StrongEtag(partialEtag);
     }

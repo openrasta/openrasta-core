@@ -28,14 +28,13 @@ namespace OpenRasta.Plugins.Caching.Pipeline
 
     PipelineContinuation RewriteResult(ICommunicationContext arg)
     {
-      object process;
-      if (arg.PipelineData.TryGetValue(Keys.REWRITE_TO_304, out process) && (bool) process)
-      {
-        arg.OperationResult = new OperationResult.NotModified();
-        arg.Response.Entity.Instance = null;
-        arg.Response.StatusCode = 304;
-        arg.Response.Entity.ContentLength = 0;
-      }
+      if (!arg.PipelineData.TryGetValue(Keys.REWRITE_TO_304, out var process) || !(bool) process)
+        return PipelineContinuation.Continue;
+      
+      arg.OperationResult = new OperationResult.NotModified();
+      arg.Response.Entity.Instance = null;
+      arg.Response.StatusCode = 304;
+      arg.Response.Entity.ContentLength = 0;
 
       return PipelineContinuation.Continue;
     }

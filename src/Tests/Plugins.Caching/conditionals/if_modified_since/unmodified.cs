@@ -1,3 +1,4 @@
+using OpenRasta.Configuration;
 using OpenRasta.Plugins.Caching.Configuration;
 using Shouldly;
 using Tests.Plugins.Caching.contexts;
@@ -12,7 +13,7 @@ namespace Tests.Plugins.Caching.conditionals.if_modified_since
     {
       given_current_time(now);
 
-      given_resource(resource => resource.Map().LastModified(_ => _.LastModified),
+      given_resource(resource => resource.LastModified(_ => _.LastModified),
         "/resource", new ResourceWithLastModified {LastModified = now - 1.Minutes()});
 
       given_request_header("if-modified-since", now);

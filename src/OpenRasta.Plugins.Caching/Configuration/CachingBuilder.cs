@@ -24,7 +24,7 @@ namespace OpenRasta.Plugins.Caching.Configuration
                                                         typeof(CachingInterceptor),
                                                         DependencyLifetime.Transient));
 
-            RegisterContributor<CachingContributor>(uses);
+            RegisterContributor<CacheDirectivesContributor>(uses);
             RegisterContributor<ConditionalEtagContributor>(uses);
             RegisterContributor<ConditionalLastModifiedContributor>(uses);
             RegisterContributor<EntityEtagContributor>(uses);

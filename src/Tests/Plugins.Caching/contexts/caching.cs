@@ -47,14 +47,15 @@ namespace Tests.Plugins.Caching.contexts
       _requestHeaders[header] = value.Value.ToUniversalTime().ToString("R");
     }
 
-    protected void given_resource<T>(Action<IResourceMapper<T>> configuration = null, string uri = null,
+    protected void given_resource<T>(Action<IResourceDefinition<T>> configuration = null, string uri = null,
       T resource = null)
       where T : class, new()
     {
       Action action = () =>
       {
         var res = ResourceSpace.Has.ResourcesOfType<T>();
-        if (configuration != null) configuration(res.Map());
+        configuration?.Invoke(res);
+        
         res.AtUri(uri ?? "/" + typeof(T).Name)
           .HandledBy<ResourceHandler>()
           .TranscodedBy<NullCodec>();

@@ -1,4 +1,5 @@
-﻿using OpenRasta.Plugins.Caching.Configuration;
+﻿using OpenRasta.Configuration;
+using OpenRasta.Plugins.Caching.Configuration;
 using Shouldly;
 using Tests.Plugins.Caching.contexts;
 using Xunit;
