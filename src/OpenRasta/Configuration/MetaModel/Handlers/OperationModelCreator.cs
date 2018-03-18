@@ -11,17 +11,26 @@ using OpenRasta.TypeSystem;
 
 namespace OpenRasta.Configuration.MetaModel.Handlers
 {
+  // WIP
   public class OperationModelCreator : IMetaModelHandler
   {
-    Func<IEnumerable<IOperationInterceptorAsync>> _asyncInterceptors;
-    Func<IEnumerable<IMethod>, IEnumerable<IMethod>> _filters;
-    Func<IOperation, IEnumerable<IOperationInterceptor>> _syncInterceptors;
-    IObjectBinderLocator _binderLocator;
-    IDependencyResolver _resolver;
+    readonly Func<IEnumerable<IOperationInterceptorAsync>> _asyncInterceptors;
+    readonly Func<IEnumerable<IMethod>, IEnumerable<IMethod>> _filters;
+    readonly IObjectBinderLocator _binderLocator;
+    readonly IDependencyResolver _resolver;
+    
+    #pragma warning disable once 618
+    readonly Func<IOperation, IEnumerable<IOperationInterceptor>> _syncInterceptors;
 
-    public OperationModelCreator()
+    public OperationModelCreator(Func<IEnumerable<IOperationInterceptorAsync>> asyncInterceptors, Func<IEnumerable<IMethod>, IEnumerable<IMethod>> filters, Func<IOperation, IEnumerable<IOperationInterceptor>> syncInterceptors, IObjectBinderLocator binderLocator, IDependencyResolver resolver)
     {
+      _asyncInterceptors = asyncInterceptors;
+      _filters = filters;
+      _syncInterceptors = syncInterceptors;
+      _binderLocator = binderLocator;
+      _resolver = resolver;
     }
+    
     public void PreProcess(IMetaModelRepository repository)
     {
       foreach (var resourceModel in repository.ResourceRegistrations)
