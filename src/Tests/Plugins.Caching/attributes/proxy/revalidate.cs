@@ -1,25 +1,33 @@
 using OpenRasta.Plugins.Caching;
+using OpenRasta.Plugins.Caching.Providers;
 using Shouldly;
 using Xunit;
 
 namespace Tests.Plugins.Caching.attributes.proxy
 {
-  public class revalidate : contexts.attributes
+  public class revalidate
   {
-    //  The proxy-revalidate response directive has the same meaning as
-    // the must-revalidate response directive, except that it does not
-    // apply to private caches.
-    public revalidate()
-    {
-      given_attribute(proxy: new CacheProxyAttribute {MustRevalidate = true});
-      when_getting_response_caching();
-    }
-
-
     [Fact]
-    public void response_gets_proxies_to_revalidate()
+    public void on_proxy_only()
     {
-      cache.CacheDirectives.ShouldContain("must-revalidate");
+      CacheResponse.GetResponseDirective(new CacheProxyAttribute {MustRevalidateWhenStale = true})
+        .CacheDirectives.ShouldContain("must-revalidate");
+    }
+    [Fact]
+    public void on_proxy_and_client()
+    {
+      CacheResponse.GetResponseDirective(
+          new CacheProxyAttribute {MustRevalidateWhenStale = true},
+          new CacheClientAttribute { MustRevalidateWhenStale = true})
+        .CacheDirectives.ShouldContain("must-revalidate");
+    }
+    [Fact]
+    public void on_proxy_not_on_client()
+    {
+      CacheResponse.GetResponseDirective(
+          new CacheProxyAttribute {MustRevalidateWhenStale = true},
+          new CacheClientAttribute { MustRevalidateWhenStale = false})
+        .CacheDirectives.ShouldContain("proxy-revalidate");
     }
   }
 }

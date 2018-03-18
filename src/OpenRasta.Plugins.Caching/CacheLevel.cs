@@ -2,8 +2,8 @@
 {
   public enum CacheLevel
   {
+    Cacheable = 0,
     Everything,
-    DoNotCache,
-    Cacheable = 0
+    DoNotCache
   }
 }
