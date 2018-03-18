@@ -43,6 +43,7 @@ namespace OpenRasta.DI
 
     public static IUriResolver Uris => GetService<IUriResolver>();
 
+    [Obsolete]
     public static T GetService<T>() where T : class
     {
       return (T) GetService(typeof(T));
@@ -53,6 +54,7 @@ namespace OpenRasta.DI
     /// </summary>
     /// <param name="dependencyType"></param>
     /// <returns></returns>
+    [Obsolete]
     public static object GetService(Type dependencyType)
     {
       if (dependencyType == null)
