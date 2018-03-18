@@ -29,7 +29,7 @@ namespace Tests.OperationModel.Interceptors.Support
       Operation = MethodBasedOperationCreator
         .CreateOperationDescriptor(
           TypeSystems.Default.From(mi),
-          asyncInterceptors,
+          ()=>asyncInterceptors,
           syncInterceptorProvider, binderLocator: null, resolver: resolver).Create();
     }
 

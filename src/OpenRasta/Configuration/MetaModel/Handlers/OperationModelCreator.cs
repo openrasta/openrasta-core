@@ -13,7 +13,7 @@ namespace OpenRasta.Configuration.MetaModel.Handlers
 {
   public class OperationModelCreator : IMetaModelHandler
   {
-    IEnumerable<IOperationInterceptorAsync> _asyncInterceptors;
+    Func<IEnumerable<IOperationInterceptorAsync>> _asyncInterceptors;
     Func<IEnumerable<IMethod>, IEnumerable<IMethod>> _filters;
     Func<IOperation, IEnumerable<IOperationInterceptor>> _syncInterceptors;
     IObjectBinderLocator _binderLocator;
@@ -40,7 +40,6 @@ namespace OpenRasta.Configuration.MetaModel.Handlers
       foreach(var uri in resourceModel.Uris)
       foreach (var operation in operations)
         uri.Operations.Add(ToOperationModel(operation));
-        
     }
 
     OperationModel ToOperationModel(OperationDescriptor operation)
