@@ -8,13 +8,13 @@ namespace OpenRasta.Plugins.Caching.Providers
     {
         public static ResponseCachingState GetResponseDirective(
             CacheProxyAttribute proxy,
-            CacheBrowserAttribute browser)
+            CacheClientAttribute client)
         {
             ValidateProxyAttribute(proxy);
 
-            var instructions = CacheVisibility(proxy, browser)
-                .Concat(CacheRevalidation(proxy, browser))
-                .Concat(CacheMaxAge(proxy, browser));
+            var instructions = CacheVisibility(proxy, client)
+                .Concat(CacheRevalidation(proxy, client))
+                .Concat(CacheMaxAge(proxy, client));
 
           return new ResponseCachingState(instructions);
         }
@@ -31,15 +31,15 @@ namespace OpenRasta.Plugins.Caching.Providers
 
         static void ValidateProxyAttribute(CacheProxyAttribute proxy)
         {
-            if (proxy != null && proxy.MaxAge != null && proxy.Level == ProxyCacheLevel.None)
+            if (proxy != null && proxy.MaxAge != null && proxy.Level == CacheLevel.DoNotCache)
                 throw new InvalidOperationException("Cannot set MaxAge to a value and have the proxy cache disabled");
         }
 
-        static IEnumerable<string> CacheMaxAge(CacheProxyAttribute proxy, CacheBrowserAttribute browser)
+        static IEnumerable<string> CacheMaxAge(CacheProxyAttribute proxy, CacheClientAttribute client)
         {
             TimeSpan proxyAge = TimeSpan.MinValue, browserAge = TimeSpan.MinValue;
             if (proxy != null && proxy.MaxAge != null) TimeSpan.TryParse(proxy.MaxAge, out proxyAge);
-            if (browser != null && browser.MaxAge != null) TimeSpan.TryParse(browser.MaxAge, out browserAge);
+            if (client != null && client.MaxAge != null) TimeSpan.TryParse(client.MaxAge, out browserAge);
 
             if (proxyAge == TimeSpan.MinValue && browserAge == TimeSpan.MinValue)
                 yield break;
@@ -52,24 +52,24 @@ namespace OpenRasta.Plugins.Caching.Providers
                                            : browserAge.TotalSeconds);
         }
 
-        static IEnumerable<string> CacheRevalidation(CacheProxyAttribute proxy, CacheBrowserAttribute browser)
+        static IEnumerable<string> CacheRevalidation(CacheProxyAttribute proxy, CacheClientAttribute client)
         {
-            if (proxy != null && proxy.MustRevalidate && browser != null && browser.MustRevalidate)
+            if (proxy != null && proxy.MustRevalidate && client != null && client.MustRevalidate)
                 yield return "must-revalidate";
             else if (proxy != null && proxy.MustRevalidate)
                 yield return "proxy-revalidate";
         }
 
-        static IEnumerable<string> CacheVisibility(CacheProxyAttribute proxy, CacheBrowserAttribute browser)
+        static IEnumerable<string> CacheVisibility(CacheProxyAttribute proxy, CacheClientAttribute client)
         {
-            if (proxy == null && browser == null)
+            if (proxy == null && client == null)
                 yield break;
-            if (proxy != null && proxy.Level == ProxyCacheLevel.Everything)
+            if (proxy != null && proxy.Level == CacheLevel.Everything)
                 yield return "public";
-            else if ((proxy == null || proxy.Level == ProxyCacheLevel.None) && 
-                (browser == null || browser.Level == BrowserCacheLevel.Default))
+            else if ((proxy == null || proxy.Level == CacheLevel.DoNotCache) && 
+                (client == null || client.Level == CacheLevel.Cacheable))
                 yield return "private";
-            else if (proxy != null && browser != null && proxy.Level == ProxyCacheLevel.None && browser.Level == BrowserCacheLevel.None)
+            else if (proxy != null && client != null && proxy.Level == CacheLevel.DoNotCache && client.Level == CacheLevel.DoNotCache)
                 yield return "no-cache";
         }
     }

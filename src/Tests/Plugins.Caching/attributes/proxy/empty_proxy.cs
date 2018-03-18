@@ -4,16 +4,16 @@ using Xunit;
 
 namespace Tests.Plugins.Caching.attributes.proxy
 {
-  public class empty : contexts.attributes
+  public class empty_proxy : contexts.attributes
   {
-    public empty()
+    public empty_proxy()
     {
       given_attribute(proxy: new CacheProxyAttribute());
       when_getting_response_caching();
     }
 
     [Fact]
-    public void should_be_private()
+    public void cacheable_by_default()
     {
       cache.CacheDirectives.ShouldBeEmpty();
     }

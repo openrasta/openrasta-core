@@ -21,7 +21,7 @@ namespace Tests.Plugins.Caching.response_cache_control.handler_attribute
     }
 
     [HttpOperation(ForUriName = "CacheBrowser")]
-    [CacheBrowser(MaxAge = "01:00:00")]
+    [CacheClient(MaxAge = "01:00:00")]
     public Resource GetCacheBrowserMaxAge()
     {
       return GetProxyCachedMethod();

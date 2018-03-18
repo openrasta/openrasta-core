@@ -1,9 +1,9 @@
 ﻿namespace OpenRasta.Plugins.Caching
 {
-  public enum ProxyCacheLevel
+  public enum CacheLevel
   {
-    Default,
     Everything,
-    None
+    DoNotCache,
+    Cacheable = 0
   }
 }

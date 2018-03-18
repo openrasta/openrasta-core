@@ -19,7 +19,7 @@ namespace Tests.Plugins.Caching.attributes.proxy
     [Fact]
     public void response_gets_proxies_to_revalidate()
     {
-      cache.CacheDirectives.ShouldContain("proxy-revalidate");
+      cache.CacheDirectives.ShouldContain("must-revalidate");
     }
   }
 }

@@ -13,16 +13,9 @@ namespace Tests.Plugins.Caching.attributes.proxy
     // cache.  A private cache MAY store the response.
     public no_store()
     {
-      given_attribute(proxy: new CacheProxyAttribute {Level = ProxyCacheLevel.None});
+      given_attribute(proxy: new CacheProxyAttribute {Level = CacheLevel.DoNotCache});
       when_getting_response_caching();
     }
-
-    //[Fact]
-    //public void local_store_shoudl_be_false()
-    //{
-    //    cache.LocalCacheEnabled.ShouldBeFalse();
-
-    //}
 
     [Fact]
     public void response_not_cached_by_proxies()

@@ -12,13 +12,13 @@ namespace Tests.Plugins.Caching.attributes.proxy
       given_attribute(proxy: new CacheProxyAttribute
       {
         MaxAge = "00:01:00",
-        Level = ProxyCacheLevel.None
+        Level = CacheLevel.DoNotCache
       });
       when_getting_response_caching();
     }
 
     [Fact]
-    public void error_is_generated()
+    public void max_age_is_ignored()
     {
       exception.ShouldBeOfType<InvalidOperationException>();
     }

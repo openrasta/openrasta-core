@@ -16,7 +16,7 @@ namespace OpenRasta.Plugins.Caching.Pipeline
         readonly IRequest _request;
         IEnumerable<OutputMember> _cachedValue;
         CacheProxyAttribute _proxy;
-        CacheBrowserAttribute _browser;
+        CacheClientAttribute _client;
 
         public CachingInterceptor(ICommunicationContext context, ICacheProvider cache)
         {
@@ -27,7 +27,7 @@ namespace OpenRasta.Plugins.Caching.Pipeline
 
         public bool AfterExecute(IOperation operation, IEnumerable<OutputMember> outputMembers)
         {
-            var responseCache = CacheResponse.GetResponseDirective(_proxy, _browser);
+            var responseCache = CacheResponse.GetResponseDirective(_proxy, _client);
             responseCache.LocalResult = outputMembers.ToList();
 
             _data[Keys.RESPONSE_CACHE] = responseCache;
@@ -37,7 +37,7 @@ namespace OpenRasta.Plugins.Caching.Pipeline
         public bool BeforeExecute(IOperation operation)
         {
             _proxy = operation.FindAttribute<CacheProxyAttribute>();
-            _browser = operation.FindAttribute<CacheBrowserAttribute>();
+            _client = operation.FindAttribute<CacheClientAttribute>();
 
             var cacheEntry = TryGetValidCacheEntry(_request.Uri.AbsolutePath);
 

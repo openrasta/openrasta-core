@@ -4,9 +4,9 @@
   {
     public CacheProxyAttribute()
     {
-      Level = ProxyCacheLevel.Default;
+      Level = CacheLevel.Cacheable;
     }
 
-    public ProxyCacheLevel Level { get; set; }
+    public CacheLevel Level { get; set; }
   }
 }

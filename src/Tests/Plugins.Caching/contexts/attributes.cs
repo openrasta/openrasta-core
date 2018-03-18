@@ -6,16 +6,16 @@ namespace Tests.Plugins.Caching.contexts
 {
   public class attributes
   {
-    CacheBrowserAttribute _browser;
+    CacheClientAttribute client;
     CacheProxyAttribute _proxy;
     protected ResponseCachingState cache;
     protected Exception exception;
 
     protected void given_attribute(
-      CacheBrowserAttribute browser = null,
+      CacheClientAttribute client = null,
       CacheProxyAttribute proxy = null)
     {
-      _browser = browser;
+      this.client = client;
       _proxy = proxy;
     }
 
@@ -23,7 +23,7 @@ namespace Tests.Plugins.Caching.contexts
     {
       try
       {
-        cache = CacheResponse.GetResponseDirective(_proxy, _browser);
+        cache = CacheResponse.GetResponseDirective(_proxy, client);
       }
       catch (Exception e)
       {
