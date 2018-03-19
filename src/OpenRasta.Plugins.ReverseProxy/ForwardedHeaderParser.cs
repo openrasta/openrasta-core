@@ -1,16 +1,12 @@
 ﻿using System.Collections.Generic;
-using System.Text;
+using OpenRasta.Text.Parsers;
 
 namespace OpenRasta.Plugins.ReverseProxy
 {
   public class ForwardedHeaderParser
   {
     readonly string _value;
-    StringBuilder pairKey;
-    StringBuilder pairValue;
     int _pos;
-    int _tokenBeginning;
-    int _tokenLength;
 
     public ForwardedHeaderParser(string value)
     {

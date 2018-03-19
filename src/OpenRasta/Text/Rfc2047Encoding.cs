@@ -11,7 +11,7 @@ namespace OpenRasta.Text
   /// Provides partial implementation for decoding strings according to RFC2047.
   /// </summary>
   /// <remarks>
-  /// This implementation is not yet conformant to rfc2047.
+  /// This implementation is not yet conformant to rfc2047, RFC has been replaced.
   /// </remarks>
   public static class Rfc2047Encoding
   {

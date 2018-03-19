@@ -1,6 +1,6 @@
-﻿namespace OpenRasta.Plugins.ReverseProxy
+﻿namespace OpenRasta.Text.Parsers
 {
-  static class Abnf5234
+  public static class Abnf5234
   {
     public static bool IsAlpha(char c)
     {

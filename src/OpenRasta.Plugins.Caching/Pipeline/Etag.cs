@@ -17,7 +17,7 @@ namespace OpenRasta.Plugins.Caching.Pipeline
 
     static string SanitizeEtag(string partialEtag)
     {
-      return Regex.Replace(partialEtag, string.Format(@"[^{0}]", BNF.ETAG_C_SAFE), "_");
+      return Regex.Replace(partialEtag, string.Format(@"[^{0}]", AbnfRegex.ETAG_C_SAFE), "_");
     }
   }
 }

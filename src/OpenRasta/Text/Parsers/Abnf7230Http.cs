@@ -1,6 +1,6 @@
-﻿namespace OpenRasta.Plugins.ReverseProxy
+﻿namespace OpenRasta.Text.Parsers
 {
-  static class Abnf7230Http
+  public static class Abnf7230Http
   {
     public static bool IsTChar(char c)
     {
