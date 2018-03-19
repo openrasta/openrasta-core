@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Threading.Tasks;
-using OpenRasta.Configuration;
 using OpenRasta.Configuration.Fluent;
 using OpenRasta.Configuration.Fluent.Extensions;
 using OpenRasta.Configuration.MetaModel;
 using OpenRasta.OperationModel.Interceptors;
-using OpenRasta.Pipeline;
 using OpenRasta.Plugins.Caching.Configuration;
 using OpenRasta.Plugins.Caching.Pipeline;
 using OpenRasta.Web;

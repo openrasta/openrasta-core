@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using OpenRasta.Diagnostics;
+﻿using System.Linq;
 using OpenRasta.Pipeline;
 using OpenRasta.Plugins.Caching.Providers;
 using OpenRasta.Web;
