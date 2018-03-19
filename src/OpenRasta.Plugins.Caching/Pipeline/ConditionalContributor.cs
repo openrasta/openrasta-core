@@ -6,7 +6,7 @@ namespace OpenRasta.Plugins.Caching.Pipeline
 {
   public abstract class ConditionalContributor
   {
-    protected bool InvalidHeaderConbination(ICommunicationContext context)
+    protected static bool InvalidHeaderConbination(ICommunicationContext context)
     {
       return context.Request.InvalidConditionalHeaders(WarningErroneousCombination(context));
     }
@@ -14,7 +14,7 @@ namespace OpenRasta.Plugins.Caching.Pipeline
     static Action<IEnumerable<string>> WarningErroneousCombination(ICommunicationContext context)
     {
       return _ => context.Response.AppendList(
-        CachingHttpHeaders.WARNING,
+        CachingHttpHeaders.Warning,
         string.Format(
           "199 If-Lolcat: HTTP failed, the behavior of multiple conditionals ({0}) is undefined. The cats are laughing at you. Blame @blowdart.",
           _.JoinString(", ")));

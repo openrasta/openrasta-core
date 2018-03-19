@@ -14,9 +14,10 @@ namespace OpenRasta.Plugins.Caching.Pipeline
 
       if ((match = _strongEtag.Match(value)).Success)
         return new StrongETagValidator(match.Groups["value"].Value);
-      if ((match = _weakEtag.Match(value)).Success)
-        return new WeakETagValidator(match.Groups["value"].Value);
-      return null;
+      
+      return (match = _weakEtag.Match(value)).Success 
+        ? new WeakETagValidator(match.Groups["value"].Value) 
+        : null;
     }
 
     public abstract bool Matches(string entityTag);

@@ -29,18 +29,18 @@ namespace OpenRasta.Plugins.Caching.Pipeline
       var matchingRegistration =
         _config.ResourceRegistrations.FindAll(context.OperationResult.ResponseResource.GetType());
 
-      Func<object, string> nullReader = resource => null;
+      string nullReader(object resource) => null;
       var reader = matchingRegistration.Select(_ => _.GetEtagMapper())
-        .Aggregate(nullReader, (src, read) => resource => src(resource) ?? read(resource));
+        .Aggregate((Func<object, string>) nullReader, (src, read) => resource => src(resource) ?? read(resource));
 
       var partialEtag = reader(context.OperationResult.ResponseResource);
       if (partialEtag == null) return PipelineContinuation.Continue;
 
-      context.Response.Headers[CachingHttpHeaders.ETAG] = GenerateEtag(context, partialEtag);
+      context.Response.Headers[CachingHttpHeaders.Etag] = GenerateEtag(partialEtag);
       return PipelineContinuation.Continue;
     }
 
-    static string GenerateEtag(ICommunicationContext context, string partialEtag)
+    static string GenerateEtag(string partialEtag)
     {
       /* TODO: we should only include components for the headers present in the Vary header
        can't do it now as Vary is not set by OR, bug to fix in 2.1 */
@@ -48,11 +48,11 @@ namespace OpenRasta.Plugins.Caching.Pipeline
       return Etag.StrongEtag(partialEtag);
     }
 
-    bool ShouldSendETag(ICommunicationContext context)
+    static bool ShouldSendETag(ICommunicationContext context)
     {
       return context.OperationResult.StatusCode == 200 &&
              context.OperationResult.ResponseResource != null &&
-             !context.Response.Headers.ContainsKey(CachingHttpHeaders.ETAG);
+             !context.Response.Headers.ContainsKey(CachingHttpHeaders.Etag);
     }
   }
 }

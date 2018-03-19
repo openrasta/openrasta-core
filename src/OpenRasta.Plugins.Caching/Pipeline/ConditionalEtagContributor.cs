@@ -8,6 +8,7 @@ namespace OpenRasta.Plugins.Caching.Pipeline
 {
   public class ConditionalEtagContributor : ConditionalContributor, IPipelineContributor
   {
+    // TODO: Simplify this class, it's unreadable.
     public void Initialize(IPipeline pipelineRunner)
     {
       pipelineRunner.Notify(ProcessPostConditional)
@@ -16,23 +17,23 @@ namespace OpenRasta.Plugins.Caching.Pipeline
         .Before<KnownStages.IResponseCoding>();
     }
 
-    PipelineContinuation ProcessPostConditional(ICommunicationContext context)
+    static PipelineContinuation ProcessPostConditional(ICommunicationContext context)
     {
       if (!ShouldProcessConditional(context)) return PipelineContinuation.Continue;
 
       if (InvalidHeaderConbination(context)) return PipelineContinuation.Continue;
 
-      ProcessIf(context, CachingHttpHeaders.IF_NONE_MATCH, ProcessIfNoneMatch);
-      ProcessIf(context, CachingHttpHeaders.IF_MATCH, ProcessIfMatch);
+      ProcessIf(context, CachingHttpHeaders.IfNoneMatch, ProcessIfNoneMatch);
+      ProcessIf(context, CachingHttpHeaders.IfMatch, ProcessIfMatch);
       // we ignore if-none-match for now. Yay!
       return PipelineContinuation.Continue;
     }
 
-    void ProcessIf(ICommunicationContext context, string requestHeader,
+    static void ProcessIf(ICommunicationContext context, string requestHeader,
       Action<ICommunicationContext, string, IEnumerable<ETagValidator>> process)
     {
       context.Request.Header(requestHeader, requestIf =>
-        context.Response.Header(CachingHttpHeaders.ETAG, entityTag =>
+        context.Response.Header(CachingHttpHeaders.Etag, entityTag =>
           process(context, entityTag, ParseEtags(requestIf))));
     }
 
@@ -49,17 +50,17 @@ namespace OpenRasta.Plugins.Caching.Pipeline
         NotModified(context);
     }
 
-    IEnumerable<ETagValidator> ParseEtags(string value)
+    static IEnumerable<ETagValidator> ParseEtags(string value)
     {
       return value.Split(',').Select(_ => _.Trim())
         .Select(ETagValidator.TryParse)
         .Where(_ => _ != null);
     }
 
-    bool ShouldProcessConditional(ICommunicationContext context)
+    static bool ShouldProcessConditional(ICommunicationContext context)
     {
       return context.Response.StatusCode == 200 &&
-             !context.Request.Headers.ContainsKey(CachingHttpHeaders.IF_RANGE) &&
+             !context.Request.Headers.ContainsKey(CachingHttpHeaders.IfRange) &&
              (context.Request.HttpMethod == "HEAD" || context.Request.HttpMethod == "GET");
     }
   }

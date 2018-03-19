@@ -20,22 +20,20 @@ namespace OpenRasta.Plugins.Caching.Pipeline
 
     public static void Header(this IHttpMessage message, string header, Action<string> onPresent)
     {
-      string headerValue;
-      if (message.Headers.TryGetValue(header, out headerValue))
+      if (message.Headers.TryGetValue(header, out var headerValue))
         onPresent(headerValue);
     }
 
     public static void HeaderDateTimeOffset(this IHttpMessage message, string header, Action<DateTimeOffset> onParse,
       Action<string> onParseError = null)
     {
-      DateTimeOffset dateTimeValue;
-
-      string headerValue;
-      if (!message.Headers.TryGetValue(header, out headerValue)) return;
-      if (DateTimeOffset.TryParse(headerValue, out dateTimeValue))
+      if (!message.Headers.TryGetValue(header, out var headerValue))
+        return;
+      
+      if (DateTimeOffset.TryParse(headerValue, out var dateTimeValue))
         onParse(dateTimeValue);
-      else if (onParseError != null)
-        onParseError(headerValue);
+      else
+        onParseError?.Invoke(headerValue);
     }
 
     public static void AppendList(this IHttpMessage message, string header, string value)

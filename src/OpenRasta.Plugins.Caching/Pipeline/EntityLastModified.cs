@@ -36,24 +36,25 @@ namespace OpenRasta.Plugins.Caching.Pipeline
       if (lastModified == null) return PipelineContinuation.Continue;
       if (lastModified > now) lastModified = now;
 
-      context.Response.Headers[CachingHttpHeaders.LAST_MODIFIED] = lastModified.Value.ToUniversalTime().ToString("R");
+      context.Response.Headers[CachingHttpHeaders.LastModified] = lastModified.Value.ToUniversalTime().ToString("R");
 
       return PipelineContinuation.Continue;
     }
 
     static Func<object, DateTimeOffset?> GetLastModifiedMapper(IEnumerable<ResourceModel> matchingRegistration)
     {
-      Func<object, DateTimeOffset?> nullReader = resource => null;
+      DateTimeOffset? nullReader(object resource) => null;
       var reader = matchingRegistration.Select(_ => _.GetLastModifiedMapper())
-        .Aggregate(nullReader, (src, read) => resource => src(resource) ?? read(resource));
+        .Aggregate((Func<object, DateTimeOffset?>) nullReader,
+          (src, read) => resource => src(resource) ?? read(resource));
       return reader;
     }
 
-    bool ShouldSendLastModified(ICommunicationContext context)
+    static bool ShouldSendLastModified(ICommunicationContext context)
     {
       return context.OperationResult.StatusCode == 200 &&
              context.OperationResult.ResponseResource != null &&
-             !context.Response.Headers.ContainsKey(CachingHttpHeaders.LAST_MODIFIED);
+             !context.Response.Headers.ContainsKey(CachingHttpHeaders.LastModified);
     }
   }
 }

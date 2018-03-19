@@ -2,12 +2,12 @@
 {
   public static class CachingHttpHeaders
   {
-    public const string WARNING = "warning";
-    public static string IF_NONE_MATCH = "if-none-match";
-    public static string IF_MATCH = "if-match";
-    public static string ETAG = "etag";
-    public static string IF_RANGE = "if-range";
-    public static string IF_MODIFIED_SINCE = "if-modified-since";
-    public static string LAST_MODIFIED = "last-modified";
+    public const string Warning = "warning";
+    public const string IfNoneMatch = "if-none-match";
+    public const string IfMatch = "if-match";
+    public const string Etag = "etag";
+    public const string IfRange = "if-range";
+    public const string IfModifiedSince = "if-modified-since";
+    public const string LastModified = "last-modified";
   }
 }

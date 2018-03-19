@@ -6,6 +6,8 @@ namespace OpenRasta.Plugins.Caching.Providers
 {
   public static class CacheResponse
   {
+    // TODO: Reduce all those horrible enumerator allocations!
+    
     public static ResponseCachingState GetResponseDirective(
       CacheProxyAttribute proxy = null,
       CacheClientAttribute client = null)
@@ -20,6 +22,7 @@ namespace OpenRasta.Plugins.Caching.Providers
       return new ResponseCachingState(instructions);
     }
 
+    // ReSharper disable once ParameterOnlyUsedForPreconditionCheck.Local
     static void ValidateProxyAttribute(CacheProxyAttribute proxy)
     {
       if (proxy?.MaxAge != null && proxy.Level == CacheLevel.DoNotCache)
@@ -57,13 +60,19 @@ namespace OpenRasta.Plugins.Caching.Providers
       if (proxy == null && client == null)
         yield break;
 
-      if (proxy?.Level == CacheLevel.Everything)
-        yield return "public";
-      else if ((proxy == null || proxy.Level == CacheLevel.DoNotCache) &&
-               (client?.Level == CacheLevel.Cacheable))
-        yield return "private";
-      else if (proxy?.Level == CacheLevel.DoNotCache && client?.Level == CacheLevel.DoNotCache)
-        yield return "no-cache";
+      switch (proxy?.Level)
+      {
+        case CacheLevel.Everything:
+          yield return "public";
+          break;
+        case CacheLevel.DoNotCache when client?.Level == CacheLevel.DoNotCache:
+          yield return "no-cache";
+          break;
+        case null when client.Level != CacheLevel.DoNotCache:
+        case CacheLevel.DoNotCache when client?.Level != CacheLevel.DoNotCache:
+          yield return "private";
+          break;
+      }
     }
   }
 }

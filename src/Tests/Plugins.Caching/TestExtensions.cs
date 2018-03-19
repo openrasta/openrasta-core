@@ -8,8 +8,8 @@ namespace Tests.Plugins.Caching
   {
     public static IResponse ShouldHaveVariantEtag(this IResponse response, string etag)
     {
-      response.Headers.ContainsKey(CachingHttpHeaders.ETAG).ShouldBeTrue();
-      response.Headers[CachingHttpHeaders.ETAG].EndsWith(":" + etag + '"').ShouldBeTrue();
+      response.Headers.ContainsKey(CachingHttpHeaders.Etag).ShouldBeTrue();
+      response.Headers[CachingHttpHeaders.Etag].EndsWith(":" + etag + '"').ShouldBeTrue();
       return response;
     }
   }

@@ -7,7 +7,7 @@ namespace OpenRasta.Plugins.Caching.Pipeline
       Value = value;
     }
 
-    public string Value { get; }
+    string Value { get; }
 
     public override bool Matches(string entityTag)
     {

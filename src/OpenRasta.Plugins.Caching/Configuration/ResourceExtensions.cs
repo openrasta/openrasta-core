@@ -11,74 +11,58 @@ namespace OpenRasta.Plugins.Caching.Configuration
   {
     public static Func<object, DateTimeOffset?> GetLastModifiedMapper(this ResourceModel resource)
     {
-      return resource.Properties.ContainsKey(Keys.MAPPERS_LAST_MODIFIED)
-        ? (Func<object, DateTimeOffset?>) resource.Properties[Keys.MAPPERS_LAST_MODIFIED]
+      return resource.Properties.ContainsKey(CacheKeys.MappersLastModified)
+        ? (Func<object, DateTimeOffset?>) resource.Properties[CacheKeys.MappersLastModified]
         : obj => null;
     }
 
     public static void SetLastModifiedMapper(this ResourceModel resource, Func<object, DateTimeOffset?> mapper)
     {
-      resource.Properties[Keys.MAPPERS_LAST_MODIFIED] = mapper;
+      resource.Properties[CacheKeys.MappersLastModified] = mapper;
     }
 
     public static Func<object, string> GetEtagMapper(this ResourceModel resource)
     {
-      return resource.Properties.ContainsKey(Keys.MAPPERS_ETAG)
-        ? (Func<object, string>) resource.Properties[Keys.MAPPERS_ETAG]
+      return resource.Properties.ContainsKey(CacheKeys.MappersEtag)
+        ? (Func<object, string>) resource.Properties[CacheKeys.MappersEtag]
         : obj => null;
     }
 
     public static void SetEtagMapper(this ResourceModel resource, Func<object, string> mapper)
     {
-      resource.Properties[Keys.MAPPERS_ETAG] = mapper;
+      resource.Properties[CacheKeys.MappersEtag] = mapper;
     }
 
     public static Func<object, TimeSpan?> GetExpires(this ResourceModel resource)
     {
-      return resource.Properties.ContainsKey(Keys.MAPPERS_EXPIRES)
-        ? (Func<object, TimeSpan?>) resource.Properties[Keys.MAPPERS_EXPIRES]
+      return resource.Properties.ContainsKey(CacheKeys.MappersExpires)
+        ? (Func<object, TimeSpan?>) resource.Properties[CacheKeys.MappersExpires]
         : obj => null;
     }
 
     public static void SetExpires(this ResourceModel resource, Func<object, TimeSpan?> mapper)
     {
-      resource.Properties[Keys.MAPPERS_EXPIRES] = mapper;
+      resource.Properties[CacheKeys.MappersExpires] = mapper;
     }
 
     public static DateTimeOffset GetCachingTime(this PipelineData data)
     {
       DateTimeOffset now;
-      if (data.ContainsKey(Keys.NOW)) return (DateTimeOffset) data[Keys.NOW];
-      data[Keys.NOW] = now = ServerClock.UtcNow();
+      if (data.ContainsKey(CacheKeys.Now)) return (DateTimeOffset) data[CacheKeys.Now];
+      data[CacheKeys.Now] = now = ServerClock.UtcNow();
       return now;
     }
 
-    public static ResourceModel Find(this IEnumerable<ResourceModel> resources, object resourceKey)
+    public static IEnumerable<ResourceModel> FindAll(this IEnumerable<ResourceModel> resources, Type resourceType)
     {
       if (resources == null) throw new ArgumentNullException(nameof(resources));
+      if (resourceType == null) throw new ArgumentNullException(nameof(resourceType));
 
-      return resources.FirstOrDefault(_ => _.ResourceKey == resourceKey)
-             ?? FindBestMatchByType(resources, resourceKey).FirstOrDefault();
-    }
-
-    public static IEnumerable<ResourceModel> FindAll(this IEnumerable<ResourceModel> resources, object resourceKey)
-    {
-      if (resources == null) throw new ArgumentNullException(nameof(resources));
-
-      var exactmatch = resources.FirstOrDefault(_ => _.ResourceKey == resourceKey);
-      if (exactmatch != null) yield return exactmatch;
-      foreach (var res in FindBestMatchByType(resources, resourceKey)) yield return res;
-    }
-
-    static IEnumerable<ResourceModel> FindBestMatchByType(IEnumerable<ResourceModel> resources, object resourceKey)
-    {
-      var typedResourceKey = resourceKey as Type;
-      if (typedResourceKey == null) return null;
       return from resource in resources
         let typedRegistrationKey = resource.ResourceKey as IType
-        let typeSystem = typedRegistrationKey.TypeSystem
         where typedRegistrationKey != null
-        let distance = typeSystem.FromClr(typedResourceKey).CompareTo(typedRegistrationKey)
+        let typeSystem = typedRegistrationKey.TypeSystem
+        let distance = typeSystem.FromClr(resourceType).CompareTo(typedRegistrationKey)
         where distance >= 0
         orderby distance
         select resource;

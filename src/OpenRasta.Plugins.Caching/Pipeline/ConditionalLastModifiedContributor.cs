@@ -13,6 +13,7 @@ namespace OpenRasta.Plugins.Caching.Pipeline
       Log = NullLogger.Instance;
     }
 
+    // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Global - ioc
     public ILogger Log { get; set; }
 
     public void Initialize(IPipeline pipelineRunner)
@@ -22,18 +23,17 @@ namespace OpenRasta.Plugins.Caching.Pipeline
 
     PipelineContinuation ProcessConditional(ICommunicationContext context)
     {
-      if (!ShouldProcessConditional(context)) return PipelineContinuation.Continue;
-
-
-      return IfModifiedSince(context);
+      return !ShouldProcessConditional(context)
+        ? PipelineContinuation.Continue
+        : IfModifiedSince(context);
     }
 
     PipelineContinuation IfModifiedSince(ICommunicationContext context)
     {
       var now = context.PipelineData.GetCachingTime();
 
-      context.Request.HeaderDateTimeOffset(CachingHttpHeaders.IF_MODIFIED_SINCE,
-        ifModifiedSince => context.Response.HeaderDateTimeOffset(CachingHttpHeaders.LAST_MODIFIED,
+      context.Request.HeaderDateTimeOffset(CachingHttpHeaders.IfModifiedSince,
+        ifModifiedSince => context.Response.HeaderDateTimeOffset(CachingHttpHeaders.LastModified,
           lastModified => ProcessConditional(context, ifModifiedSince, lastModified, now),
           LogIfModifiedSinceWarning));
       return PipelineContinuation.Continue;
@@ -41,7 +41,7 @@ namespace OpenRasta.Plugins.Caching.Pipeline
 
     void LogIfModifiedSinceWarning(string erronousHeader)
     {
-      Log.WriteWarning("Invalid If-Modified-Since value, not RFC1123 compliant: {0}", CachingHttpHeaders.LAST_MODIFIED,
+      Log.WriteWarning("Invalid If-Modified-Since value, not RFC1123 compliant: {0}", CachingHttpHeaders.LastModified,
         erronousHeader);
     }
 
@@ -51,14 +51,15 @@ namespace OpenRasta.Plugins.Caching.Pipeline
       if (lastModified > now) lastModified = now;
 
       // timer resolution has to be one second, operators wont work.
-      if (lastModified - ifModifiedSince < TimeSpan.FromSeconds(value: 1)) NotModified(context);
+      if (lastModified - ifModifiedSince < TimeSpan.FromSeconds(1))
+        NotModified(context);
     }
 
 
-    bool ShouldProcessConditional(ICommunicationContext context)
+    static bool ShouldProcessConditional(ICommunicationContext context)
     {
       return context.Response.StatusCode == 200 &&
-             !context.Request.Headers.ContainsKey(CachingHttpHeaders.IF_RANGE) &&
+             !context.Request.Headers.ContainsKey(CachingHttpHeaders.IfRange) &&
              (context.Request.HttpMethod == "GET" ||
               context.Request.HttpMethod == "HEAD") &&
              !InvalidHeaderConbination(context);

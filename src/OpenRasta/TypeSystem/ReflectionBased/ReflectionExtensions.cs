@@ -292,13 +292,10 @@ namespace OpenRasta.TypeSystem.ReflectionBased
     /// <returns></returns>
     public static int GetInheritanceDistance(this Type type, Type parentType)
     {
-      int distance = 0;
-      if (parentType.IsInterface)
-      {
-        if (parentType.IsAssignableFrom(type))
-          return 0;
-      }
+      if (type == parentType) return 0;
+      if (parentType.IsInterface && parentType.IsAssignableFrom(type)) return 0;
 
+      int distance = 0;
       // For general purpose registrations on object, we want to pretend interfaces inherit from objects
       if (type.IsInterface && parentType == typeof(object))
         return 1;

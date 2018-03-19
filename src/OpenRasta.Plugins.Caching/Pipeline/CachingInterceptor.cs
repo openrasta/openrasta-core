@@ -30,7 +30,7 @@ namespace OpenRasta.Plugins.Caching.Pipeline
         _proxy = operation.FindAttribute<CacheProxyAttribute>();
         _client = operation.FindAttribute<CacheClientAttribute>();
 
-        _data[Keys.RESPONSE_CACHE] = CacheResponse.GetResponseDirective(_proxy, _client);
+        _data[CacheKeys.ResponseCache] = CacheResponse.GetResponseDirective(_proxy, _client);
         return outputMembers;
       };
     }
