@@ -22,15 +22,6 @@ namespace OpenRasta.Configuration.MetaModel.Handlers
     #pragma warning disable once 618
     readonly Func<IOperation, IEnumerable<IOperationInterceptor>> _syncInterceptors;
 
-    public OperationModelCreator(Func<IEnumerable<IOperationInterceptorAsync>> asyncInterceptors, Func<IEnumerable<IMethod>, IEnumerable<IMethod>> filters, Func<IOperation, IEnumerable<IOperationInterceptor>> syncInterceptors, IObjectBinderLocator binderLocator, IDependencyResolver resolver)
-    {
-      _asyncInterceptors = asyncInterceptors;
-      _filters = filters;
-      _syncInterceptors = syncInterceptors;
-      _binderLocator = binderLocator;
-      _resolver = resolver;
-    }
-    
     public void PreProcess(IMetaModelRepository repository)
     {
       foreach (var resourceModel in repository.ResourceRegistrations)
