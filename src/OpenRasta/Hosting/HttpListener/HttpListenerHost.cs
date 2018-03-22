@@ -128,6 +128,8 @@ namespace OpenRasta.Hosting.HttpListener
         {
           _zeroPendingRequests.Set();
         }
+
+        nativeContext.Response.Close();
       }
     }
 

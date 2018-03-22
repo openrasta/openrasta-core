@@ -3,7 +3,6 @@ using OpenRasta.Configuration;
 using OpenRasta.Hosting.InMemory;
 using OpenRasta.Web;
 using Shouldly;
-using Tests.Scenarios.HandlerSelection;
 using Xunit;
 
 namespace Tests.Scenarios.HandlerReturns.Resource

@@ -6,7 +6,6 @@ using OpenRasta.Codecs;
 using OpenRasta.Configuration;
 using OpenRasta.Diagnostics;
 using OpenRasta.DI;
-using OpenRasta.Hosting.HttpListener;
 using Shouldly;
 using Xunit;
 
@@ -15,44 +14,22 @@ namespace Tests.Scenarios.HandlerThrows
   public class exception_with_logging_from_http_listener_host : IDisposable
   {
     readonly FakeLogger _fakeLogger;
-    readonly HttpListenerHost _httpListenerHost;
+    readonly TestHttpListener _httpListener;
     readonly HttpWebResponse _response;
-    static readonly Random _random = new Random();
 
     public exception_with_logging_from_http_listener_host()
     {
       _fakeLogger = new FakeLogger();
 
-      var appPathVDir = $"Temporary_Listen_Addresses/{Guid.NewGuid()}/";
+      _httpListener = new TestHttpListener(new Configuration(_fakeLogger));
 
-      var started = false;
-      int port = -1;
-      do
+      try
       {
-        try
-        {
-          port = _random.Next(2048, 4096);
-
-          _httpListenerHost = new HttpListenerHost(new Configuration(_fakeLogger));
-          _httpListenerHost.Initialize(new[] {$"http://+:{port}/{appPathVDir}"}, appPathVDir, null);
-          _httpListenerHost.StartListening();
-          started = true;
-        }
-        catch
-        {
-        }
-      } while (!started);
-
-      using (var webClient = new WebClient())
+        _httpListener.WebGet("/");
+      }
+      catch (WebException e)
       {
-        try
-        {
-          webClient.DownloadString($"http://localhost:{port}/{appPathVDir}");
-        }
-        catch (WebException e)
-        {
-          _response = (HttpWebResponse) e.Response;
-        }
+        _response = (HttpWebResponse) e.Response;
       }
     }
 
@@ -80,23 +57,20 @@ namespace Tests.Scenarios.HandlerThrows
 
       public void Configure()
       {
-        using (OpenRastaConfiguration.Manual)
-        {
-          ResourceSpace.Uses.Resolver.AddDependencyInstance(
-            typeof(ILogger),
-            _fakeLogger,
-            DependencyLifetime.Singleton);
+        ResourceSpace.Uses.Resolver.AddDependencyInstance(
+          typeof(ILogger),
+          _fakeLogger,
+          DependencyLifetime.Singleton);
 
-          ResourceSpace.Has.ResourcesNamed("root")
-            .AtUri("/")
-            .HandledBy<ThrowingHandler>().TranscodedBy<TextPlainCodec>();
-        }
+        ResourceSpace.Has.ResourcesNamed("root")
+          .AtUri("/")
+          .HandledBy<ThrowingHandler>().TranscodedBy<TextPlainCodec>();
       }
     }
 
     public void Dispose()
     {
-      _httpListenerHost.Close();
+      _httpListener.Host.Close();
     }
   }
 }

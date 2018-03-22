@@ -28,33 +28,41 @@ namespace OpenRasta.Codecs
         throw new InvalidOperationException();
     }
 
-    private static bool TryProcessAs<T>(object target, Action<T> action) where T : class
+    static bool TryProcessAs<T>(object target, Action<T> action) where T : class
     {
-      var typedTarget = target as T;
-      if (typedTarget == null) return false;
-      action(typedTarget);
-      return true;
+      if (target is T typedTarget)
+      {
+        action(typedTarget);
+        return true;
+      }
+
+      return false;
     }
 
-    private static void WriteFileWithFilename(IFile file, string disposition, IHttpEntity response)
+    static void WriteFileWithFilename(IFile file, string disposition, IHttpEntity response)
     {
       var contentDispositionHeader =
         response.Headers.ContentDisposition ?? new ContentDispositionHeader(disposition);
 
       if (!string.IsNullOrEmpty(file.FileName))
         contentDispositionHeader.FileName = file.FileName;
-      if (!string.IsNullOrEmpty(contentDispositionHeader.FileName) ||
-          contentDispositionHeader.Disposition != "inline")
+
+      if (!string.IsNullOrEmpty(contentDispositionHeader.FileName)
+          || contentDispositionHeader.Disposition != "inline")
         response.Headers.ContentDisposition = contentDispositionHeader;
+
       if (file.ContentType != null && file.ContentType != MediaType.ApplicationOctetStream
           || (file.ContentType == MediaType.ApplicationOctetStream && response.ContentType == null))
         response.ContentType = file.ContentType;
-      // TODO: use contentLength from IFile
+
+      if (file.Length > 0 && response.ContentLength == null)
+        response.ContentLength = file.Length;
       using (var stream = file.OpenStream())
+
         stream.CopyTo(response.Stream);
     }
 
-    private IEnumerable<bool> GetWriters(object entity, IHttpEntity response)
+    IEnumerable<bool> GetWriters(object entity, IHttpEntity response)
     {
       yield return TryProcessAs<IDownloadableFile>(entity,
         file => WriteFileWithFilename(file, "attachment", response));
