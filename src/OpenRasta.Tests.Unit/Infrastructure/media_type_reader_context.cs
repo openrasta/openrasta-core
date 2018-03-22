@@ -69,7 +69,6 @@ namespace OpenRasta.Tests.Unit.Infrastructure
         protected async Task when_decoding<T>(string paramName)
         {
             var codecInstance = CreateCodec(Context);
-            var codec = codecInstance as IMediaTypeReader;
             switch (codecInstance)
             {
                 case IMediaTypeReaderAsync async:

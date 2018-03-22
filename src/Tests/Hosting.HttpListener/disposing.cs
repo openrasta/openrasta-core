@@ -2,7 +2,7 @@ using OpenRasta.Hosting.HttpListener;
 using Shouldly;
 using Xunit;
 
-namespace Tests.Scenarios.HandlerSelection.Hosting.HttpListener
+namespace Tests.Hosting.HttpListener
 {
   public class disposing
   {

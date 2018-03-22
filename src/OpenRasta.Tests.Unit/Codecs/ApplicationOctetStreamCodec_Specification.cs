@@ -10,12 +10,8 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using OpenRasta.Codecs;
-using OpenRasta.TypeSystem.ReflectionBased;
 using OpenRasta.Web;
 using NUnit.Framework;
 using OpenRasta.IO;
@@ -29,60 +25,60 @@ namespace ApplicationOctetStreamCodec_Specification
     public class when_converting_a_byte_stream_to_an_ifile : applicationoctetstream_context
     {
         [Test]
-        public void an_ifile_object_is_generated()
+        public async Task an_ifile_object_is_generated()
         {
             given_context();
             given_request_entity_stream();
 
-            when_decoding();
+            await when_decoding();
 
             ThenTheResult
                 .ShouldNotBeNull();
         }
 
         [Test]
-        public void the_length_is_set_to_the_proper_value()
+        public async Task the_length_is_set_to_the_proper_value()
         {
             given_context();
             given_request_entity_stream(1000);
 
-            when_decoding();
+            await when_decoding();
 
             ThenTheResult.Length.ShouldBe(1000);
         }
 
         [Test]
-        public void an_ireceivedfile_object_is_generated()
+        public async Task an_ireceivedfile_object_is_generated()
         {
             given_context();
             given_request_entity_stream();
 
-            when_decoding();
+            await when_decoding();
 
             ThenTheResult
                 .ShouldNotBeNull();
         }
 
         [Test]
-        public void the_file_name_is_null_if_no_content_disposition_header_is_present()
+        public async Task the_file_name_is_null_if_no_content_disposition_header_is_present()
         {
             given_context();
             given_request_entity_stream();
             given_content_disposition_header("attachment");
 
-            when_decoding();
+            await when_decoding();
 
             ThenTheResult.FileName.ShouldBeNull();
         }
 
         [Test]
-        public void the_original_name_is_set_when_present_in_the_content_disposition_header()
+        public async Task the_original_name_is_set_when_present_in_the_content_disposition_header()
         {
             given_context();
             given_request_entity_stream();
             given_content_disposition_header("attachment;filename=\"test.txt\"");
 
-            when_decoding();
+            await when_decoding();
 
             ThenTheResult.FileName.ShouldBe("test.txt");
         }
@@ -167,6 +163,16 @@ namespace ApplicationOctetStreamCodec_Specification
         }
 
         [Test]
+        public async Task a_file_with_a_length_sets_the_response_length()
+        {
+            given_context();
+            given_entity(new InMemoryFile { Length = 1029});
+
+            await when_coding();
+            Response.Headers.ContentLength.ShouldBe(1029);
+        }
+
+        [Test]
         public async Task a_downloadable_file_with_name_generates_a_content_disposition()
         {
             given_context();
@@ -194,7 +200,7 @@ namespace ApplicationOctetStreamCodec_Specification
 
         async Task when_coding()
         {
-            await (CreateCodec(Context)).WriteTo(_entity, Context.Response.Entity, null);
+            await CreateCodec(Context).WriteTo(_entity, Context.Response.Entity, null);
         }
 
         void given_entity(InMemoryFile file)
@@ -213,26 +219,23 @@ namespace ApplicationOctetStreamCodec_Specification
     public class when_converting_a_byte_stream_to_an_instance_of_a_stream : applicationoctetstream_context
     {
         [Test]
-        public void the_stream_length_is_set_to_the_size_of_the_sent_byte_stream()
+        public async Task the_stream_length_is_set_to_the_size_of_the_sent_byte_stream()
         {
             given_context();
             given_request_entity_stream();
             given_content_disposition_header("attachment;filename=\"test.txt\"");
 
-            WhenParsing();
+            await WhenParsing();
 
             ThenTheResult.Length.ShouldBe(1024);
         }
 
-        public void WhenParsing()
+        public async Task WhenParsing()
         {
-            when_decoding<Stream>();
+            await when_decoding<Stream>();
         }
 
-        public Stream ThenTheResult
-        {
-            get { return then_decoding_result<Stream>(); }
-        }
+        public Stream ThenTheResult => then_decoding_result<Stream>();
     }
 
     public class applicationoctetstream_context : media_type_reader_context<ApplicationOctetStreamCodec>

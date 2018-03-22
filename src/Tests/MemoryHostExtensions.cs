@@ -5,7 +5,7 @@ using OpenRasta.Hosting.InMemory;
 using OpenRasta.IO;
 using OpenRasta.Web;
 
-namespace Tests.Scenarios.HandlerSelection
+namespace Tests
 {
   public static class MemoryHostExtensions
   {
