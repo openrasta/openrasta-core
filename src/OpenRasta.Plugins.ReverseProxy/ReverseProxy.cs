@@ -32,39 +32,47 @@ namespace OpenRasta.Plugins.ReverseProxy
     public async Task<ReverseProxyResponse> Send(ICommunicationContext context, string target)
     {
       var proxyTargetUri = GetProxyTargetUri(context.PipelineData.SelectedResource.Results.Single(), target);
-      var requestMessage = new HttpRequestMessage
-      {
-        Method = new HttpMethod(context.Request.HttpMethod),
-        Content = new StreamContent(context.Request.Entity.Stream)
-      };
 
-      CopyHeaders(context, requestMessage, _options.FrowardedHeaders.ConvertLegacyHeaders);
+      var requestMessage = new HttpRequestMessage(new HttpMethod(context.Request.HttpMethod), proxyTargetUri);
+      
 
-      var headers = requestMessage.Headers;
-      var identifier = _options.Via.Pseudonym ?? $"{context.Request.Uri.Host}:{context.Request.Uri.Port}";
-      headers.Add("via", $"1.1 {identifier}");
+      PrepareRequestBody(context, requestMessage);
+      PrepareRequestHeaders(context, requestMessage, _options.FrowardedHeaders.ConvertLegacyHeaders);
 
-      requestMessage.RequestUri = proxyTargetUri;
+      var viaIdentifier = PrepareViaHeader(context, requestMessage);
+
       var cts = new CancellationTokenSource();
       cts.CancelAfter(_timeout);
-      var token = cts.Token;
+      var timeoutToken = cts.Token;
+
       try
       {
         var responseMessage = await _httpClient.Value.SendAsync(
           requestMessage,
           HttpCompletionOption.ResponseHeadersRead,
-          token
+          timeoutToken
         );
-        responseMessage.Headers.Via.Add(new ViaHeaderValue("1.1", identifier));
-        return new ReverseProxyResponse(requestMessage, responseMessage);
+        return new ReverseProxyResponse(requestMessage, responseMessage, viaIdentifier);
       }
-      catch (TaskCanceledException e) when (token.IsCancellationRequested || e.CancellationToken == token)
+      catch (TaskCanceledException e) when (timeoutToken.IsCancellationRequested || e.CancellationToken == timeoutToken)
       {
-        return new ReverseProxyResponse(requestMessage, error: e, statusCode: 504);
+        return new ReverseProxyResponse(requestMessage,  via: viaIdentifier, error: e, statusCode: 504);
       }
     }
 
-    static void CopyHeaders(ICommunicationContext context, HttpRequestMessage request, bool convertLegacyHeaders)
+    string PrepareViaHeader(ICommunicationContext context, HttpRequestMessage requestMessage)
+    {
+      var viaIdentifier = _options.Via.Pseudonym ?? $"{context.Request.Uri.Host}:{context.Request.Uri.Port}";
+      requestMessage.Headers.Add("via", $"1.1 {viaIdentifier}");
+      return viaIdentifier;
+    }
+
+    static void PrepareRequestBody(ICommunicationContext context, HttpRequestMessage requestMessage)
+    {
+      requestMessage.Content = new StreamContent(context.Request.Entity.Stream);
+    }
+
+    static void PrepareRequestHeaders(ICommunicationContext context, HttpRequestMessage request, bool convertLegacyHeaders)
     {
       StringBuilder legacyForward = null;
 
