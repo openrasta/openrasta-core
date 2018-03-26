@@ -9,7 +9,6 @@ namespace Tests.Plugins.ReverseProxy
 #if NETCOREAPP2_0
   public class get_returning_200_on_kestrel
   {
-//    [Fact(Skip = "#136 – fails, disable until https://github.com/dotnet/corefx/issues/28156 is resolved")]
     [Fact]
     public async Task response_status_is_correct()
     {
