@@ -1,4 +1,6 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Shouldly;
 using Tests.Plugins.ReverseProxy.Implementation;
@@ -32,7 +34,19 @@ namespace Tests.Plugins.ReverseProxy
         .GetAsync("http://localhost/proxy"))
       {
         response.Content.ShouldBe("|");
-        
+      }
+    }
+    [Fact]
+    public async Task get_with_0_content_length_is_proxied_is_proxied_without_cl()
+    {
+
+      using (var response = await new ProxyServer()
+        .FromServer("/proxy")
+        .ToServer("/proxied", async context => $"{context.Request.Headers.ContentLength}")
+        .Request(request=>request.Content = new ByteArrayContent(Array.Empty<byte>()) { Headers = { ContentLength = 0}})
+        .GetAsync("http://localhost/proxy"))
+      {
+        response.Content.ShouldBe("");
       }
     }
   }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -111,9 +112,12 @@ namespace OpenRasta.Plugins.ReverseProxy
         }
 
         if (header.Key.Equals("host", StringComparison.OrdinalIgnoreCase)) continue;
-        
+
         if (_contentHeaders.Contains(header.Key))
+        {
+          if (request.Content == null) continue;
           request.Content.Headers.Add(header.Key, header.Value);
+        }
         else
           request.Headers.Add(header.Key, header.Value);
       }
@@ -171,7 +175,7 @@ namespace OpenRasta.Plugins.ReverseProxy
       return $"proto={context.Request.Uri.Scheme};host={context.Request.Uri.Host}";
     }
 
-    static HashSet<string> _contentHeaders = new HashSet<string>
+    static readonly HashSet<string> _contentHeaders = new HashSet<string>
     {
       "Allow",
       "Content-Disposition",

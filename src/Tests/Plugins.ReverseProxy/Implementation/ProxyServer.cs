@@ -84,6 +84,11 @@ namespace Tests.Plugins.ReverseProxy.Implementation
       return await SendAsync("POST", uri);
     }
 
+    public ProxyServer Request(Action<HttpRequestMessage> modifier)
+    {
+      _requests.Add(modifier);
+      return this;
+    }
     public async Task<ProxyResponse> GetAsync(string uri)
     {
       return await SendAsync("GET", uri);
