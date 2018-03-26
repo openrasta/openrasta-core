@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.IO;
 using System.Linq;
-using System.Net;
 using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -35,8 +32,11 @@ namespace OpenRasta.Plugins.ReverseProxy
     {
       var proxyTargetUri = GetProxyTargetUri(context.PipelineData.SelectedResource.Results.Single(), target);
 
-      var requestMessage = new HttpRequestMessage(new HttpMethod(context.Request.HttpMethod), proxyTargetUri);
-      
+      var requestMessage = new HttpRequestMessage(new HttpMethod(context.Request.HttpMethod), proxyTargetUri)
+      {
+        Version = new Version(2, 0)
+      };
+
 
       PrepareRequestBody(context, requestMessage);
       PrepareRequestHeaders(context, requestMessage, _options.FrowardedHeaders.ConvertLegacyHeaders);
@@ -81,7 +81,8 @@ namespace OpenRasta.Plugins.ReverseProxy
         requestMessage.Content = new StreamContent(context.Request.Entity.Stream);
     }
 
-    static void PrepareRequestHeaders(ICommunicationContext context, HttpRequestMessage request, bool convertLegacyHeaders)
+    static void PrepareRequestHeaders(ICommunicationContext context, HttpRequestMessage request,
+      bool convertLegacyHeaders)
     {
       StringBuilder legacyForward = null;
 
