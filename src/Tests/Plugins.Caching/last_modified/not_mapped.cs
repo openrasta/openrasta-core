@@ -1,4 +1,5 @@
-﻿using Shouldly;
+﻿using System;
+using Shouldly;
 using Tests.Plugins.Caching.contexts;
 using Xunit;
 
@@ -8,7 +9,7 @@ namespace Tests.Plugins.Caching.last_modified
   {
     public not_mapped()
     {
-      given_time(now);
+      given_current_time(now);
       given_resource(
         "/resource",
         new ResourceWithLastModified {LastModified = now});

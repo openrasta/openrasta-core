@@ -34,7 +34,7 @@ namespace Tests.Plugins.Caching.conditionals.if_modified_since
     public void last_modified_header_not_overridden()
     {
       DateTimeOffset.Parse(response.Headers["last-modified"])
-        .ShouldNotBe(now.Value);
+        .ShouldNotBe(now);
     }
 
     [Fact]

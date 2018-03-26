@@ -15,7 +15,7 @@ namespace Tests.Plugins.Caching.last_modified
       // 2.2.1
       // An origin server with a clock MUST NOT send a Last-Modified date that
       // is later than the server's time of message origination (Date).
-      given_time(now);
+      given_current_time(now);
       given_uses(_ => _.PipelineContributor<LastModifiedInPast>());
       given_resource<TestResource>(map => map.LastModified(_ => now));
 
@@ -34,7 +34,7 @@ namespace Tests.Plugins.Caching.last_modified
     public void last_modified_header_not_overridden()
     {
       DateTimeOffset.Parse(response.Headers["last-modified"])
-        .ShouldNotBe(now.Value);
+        .ShouldNotBe(now);
     }
 
     [Fact]

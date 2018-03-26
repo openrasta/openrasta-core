@@ -13,7 +13,7 @@ namespace Tests.Plugins.Caching.contexts
 {
   public abstract class caching : IDisposable
   {
-    protected static DateTimeOffset? now = DateTimeOffset.UtcNow;
+    protected static DateTimeOffset now = DateTimeOffset.UtcNow;
     readonly TestConfiguration _configuration = new TestConfiguration();
     readonly IDictionary<string, string> _requestHeaders = new Dictionary<string, string>();
     InMemoryHost _host;
@@ -70,12 +70,6 @@ namespace Tests.Plugins.Caching.contexts
       given_resource(configuration: null, uri: uri, resource: resource);
     }
 
-    protected void given_time(DateTimeOffset? dateTimeOffset)
-    {
-      now = dateTimeOffset;
-      ServerClock.UtcNowDefinition = () => dateTimeOffset.Value;
-    }
-
     protected void given_uses(Action<IUses> use)
     {
       _configuration.Uses.Add(() => use(ResourceSpace.Uses));
@@ -101,9 +95,10 @@ namespace Tests.Plugins.Caching.contexts
       response = _host.ProcessRequest(request);
     }
 
-    protected void given_current_time(DateTimeOffset? dateTimeOffset)
+    protected void given_current_time(DateTimeOffset dateTimeOffset)
     {
       now = dateTimeOffset;
+      ServerClock.UtcNowDefinition = () => dateTimeOffset;
     }
 
     public class ResourceHandler
