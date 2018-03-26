@@ -58,7 +58,11 @@ namespace OpenRasta.Plugins.ReverseProxy
       }
       catch (TaskCanceledException e) when (timeoutToken.IsCancellationRequested || e.CancellationToken == timeoutToken)
       {
-        return new ReverseProxyResponse(requestMessage,  via: viaIdentifier, error: e, statusCode: 504);
+        return new ReverseProxyResponse(requestMessage, via: viaIdentifier, error: e, statusCode: 504);
+      }
+      catch (HttpRequestException e)
+      {
+        return new ReverseProxyResponse(requestMessage, via: viaIdentifier, error: e, statusCode: 502);
       }
     }
 
