@@ -79,7 +79,8 @@ namespace Tests.Plugins.ReverseProxy.Implementation
 
     public async Task<ProxyResponse> PostAsync(string uri, string body)
     {
-      _requests.Add(req => req.Content = new StringContent(body));
+      // Force Content-Length due to httpclient on server not setting the header correctly
+      _requests.Add(req => req.Content = new StringContent(body) { Headers = { ContentLength = body.Length}});
       return await SendAsync("POST", uri);
     }
 

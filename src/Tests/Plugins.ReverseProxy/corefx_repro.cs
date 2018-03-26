@@ -75,7 +75,7 @@ namespace Tests.Plugins.ReverseProxy
       var requestMessage = new HttpRequestMessage
       {
         Method = new HttpMethod(context.Request.Method),
-        Content = new StreamContent(context.Request.Body)
+        Content = null//new StreamContent(context.Request.Body)
       };
 
       CopyHeaders(context, requestMessage);

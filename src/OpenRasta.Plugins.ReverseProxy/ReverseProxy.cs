@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Net;
@@ -69,7 +70,10 @@ namespace OpenRasta.Plugins.ReverseProxy
 
     static void PrepareRequestBody(ICommunicationContext context, HttpRequestMessage requestMessage)
     {
-      requestMessage.Content = new StreamContent(context.Request.Entity.Stream);
+      var hasContentLength = context.Request.Headers.ContentLength > 0;
+      var hasTe = context.Request.Headers.ContainsKey("transfer-encoding");
+      if (hasContentLength || hasTe)
+        requestMessage.Content = new StreamContent(context.Request.Entity.Stream);
     }
 
     static void PrepareRequestHeaders(ICommunicationContext context, HttpRequestMessage request, bool convertLegacyHeaders)
@@ -107,7 +111,8 @@ namespace OpenRasta.Plugins.ReverseProxy
         }
 
         if (header.Key.Equals("host", StringComparison.OrdinalIgnoreCase)) continue;
-        if (header.Key.StartsWith("Content-"))
+        
+        if (_contentHeaders.Contains(header.Key))
           request.Content.Headers.Add(header.Key, header.Value);
         else
           request.Headers.Add(header.Key, header.Value);
@@ -165,5 +170,20 @@ namespace OpenRasta.Plugins.ReverseProxy
     {
       return $"proto={context.Request.Uri.Scheme};host={context.Request.Uri.Host}";
     }
+
+    static HashSet<string> _contentHeaders = new HashSet<string>
+    {
+      "Allow",
+      "Content-Disposition",
+      "Content-Encoding",
+      "Content-Language",
+      "Content-Length",
+      "Content-Location",
+      "Content-MD5",
+      "Content-Range",
+      "Content-Type",
+      "Expires",
+      "Last-Modified"
+    };
   }
 }

@@ -20,5 +20,20 @@ namespace Tests.Plugins.ReverseProxy
         response.Content.ShouldBe("http://destination.example/proxied");
       }
     }
+
+    [Fact]
+    public async Task proxying_request_has_empty_body()
+    {
+
+      using (var response = await new ProxyServer()
+        .FromServer("/proxy")
+        .ToServer("/proxied", async context => 
+          $"{context.Request.Headers.ContentLength}|{context.Request.Headers["transfer-encoding"]}")
+        .GetAsync("http://localhost/proxy"))
+      {
+        response.Content.ShouldBe("|");
+        
+      }
+    }
   }
 }
