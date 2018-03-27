@@ -24,6 +24,17 @@ namespace Tests.Plugins.ReverseProxy
     }
 
     [Fact]
+    public async Task response_media_type_is_correct()
+    {
+      using (var response = await new ProxyServer()
+        .FromServer("/proxy")
+        .ToServer("/proxied")
+        .GetAsync("http://localhost/proxy"))
+      {
+        response.Message.Content.Headers.ContentType.MediaType.ShouldBe("text/plain");
+      }
+    }
+    [Fact]
     public async Task proxying_request_has_empty_body()
     {
 

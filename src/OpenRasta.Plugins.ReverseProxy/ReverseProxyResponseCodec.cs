@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using OpenRasta.Codecs;
@@ -25,7 +26,7 @@ namespace OpenRasta.Plugins.ReverseProxy
 
         if (proxyResponse.ResponseMessage != null)
         {
-          foreach (var header in proxyResponse.ResponseMessage.Headers)
+          foreach (var header in proxyResponse.ResponseMessage.Headers.Concat(proxyResponse.ResponseMessage.Content.Headers))
             response.Headers[header.Key] = string.Join(", ", header.Value);
 
           response.Headers["via"] = string.Join(response.Headers["via"], $"1.1 {proxyResponse.Via}");
