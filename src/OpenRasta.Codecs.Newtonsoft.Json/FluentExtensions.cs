@@ -5,7 +5,7 @@ namespace OpenRasta.Codecs.Newtonsoft.Json
 {
   public static class FluentExtensions
   {
-    public static ICodecDefinition NewtonsoftJson(
+    public static ICodecDefinition AsJsonNewtonsoft(
         this IHandlerForResourceWithUriDefinition root,
         JsonSerializerSettings settings = null)
     {
