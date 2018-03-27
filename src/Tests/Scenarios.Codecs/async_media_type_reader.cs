@@ -23,9 +23,9 @@ namespace Tests.Scenarios.HandlerSelection.Scenarios.Codecs
       var response = await server.Post("/demo", "data");
       response.StatusCode.ShouldBe(204);
     }
+    
     class DemoResource {}
     class DemoResourceHandler { public void Post(DemoResource resource){}}
-
     class DemoResourceReader : IMediaTypeReaderAsync
     {
       public object Configuration { get; set; }

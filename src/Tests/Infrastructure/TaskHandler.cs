@@ -9,5 +9,9 @@ namespace Tests.Infrastructure
     {
       return Enumerable.Empty<TaskItem>();
     }
+    public TaskItem Get(int id)
+    {
+      return new TaskItem();
+    }
   }
 }
