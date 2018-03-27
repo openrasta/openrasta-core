@@ -30,7 +30,7 @@ namespace Tests.Scenarios.ContentNegotiation.Type
       {
         HttpMethod = "GET",
         Headers = {{"Accept", "application/json"}},
-        Uri = new Uri("/1")
+        Uri = new Uri("http://localhost/1")
       });
       response.Headers.ContentType.ShouldBe(MediaType.Json);
     }
