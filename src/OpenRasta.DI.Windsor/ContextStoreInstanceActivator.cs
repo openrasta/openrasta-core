@@ -1,11 +1,9 @@
-using System.Diagnostics;
-
 using Castle.Core;
 using Castle.MicroKernel;
 using Castle.MicroKernel.ComponentActivator;
 using Castle.MicroKernel.Context;
-
 using OpenRasta.Pipeline;
+using System.Diagnostics;
 
 namespace OpenRasta.DI.Windsor
 {
