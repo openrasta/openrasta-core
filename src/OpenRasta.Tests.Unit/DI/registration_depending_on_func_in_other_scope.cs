@@ -28,9 +28,9 @@ namespace OpenRasta.Tests.Unit.DI
         result.ShouldHaveSingleItem();
       }
     }
-    class Request{}
+    public class Request{}
 
-    class ErrorCollector
+    public class ErrorCollector
     {
       public ErrorCollector(Request request)
       {
