@@ -1,27 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
+using InternalDependencyResolver_Specification;
 using NUnit.Framework;
 using OpenRasta.DI;
 using Shouldly;
 
 namespace OpenRasta.Tests.Unit.DI
 {
-  public class registration_profiles
+  public abstract class registration_profiles : dependency_resolver_context
   {
-    InternalDependencyResolver resolver;
-
-    public registration_profiles()
-    {
-      resolver = new InternalDependencyResolver();
-      resolver.AddDependency<Simple>();
-    }
-
     [Test]
     public void resolving_funcs()
     {
+      Resolver.AddDependency<Simple>();
+
       Should.NotThrow(() =>
       {
-        var factory = resolver.Resolve<Func<Simple>>();
+        var factory = Resolver.Resolve<Func<Simple>>();
         return factory();
       });
     }
@@ -29,21 +24,24 @@ namespace OpenRasta.Tests.Unit.DI
     [Test]
     public void resolving_enums()
     {
-      Should.NotThrow(() => resolver.Resolve<IEnumerable<Simple>>().ShouldHaveSingleItem().ShouldNotBeNull());
+      Resolver.AddDependency<Simple>();
+      Should.NotThrow(() => Resolver.Resolve<IEnumerable<Simple>>().ShouldHaveSingleItem().ShouldNotBeNull());
     }
 
     [Test]
     public void resolving_func_of_enums()
     {
-      Should.NotThrow(() => resolver.Resolve<Func<IEnumerable<Simple>>>()().ShouldHaveSingleItem().ShouldNotBeNull());
+      Resolver.AddDependency<Simple>();
+      Should.NotThrow(() => Resolver.Resolve<Func<IEnumerable<Simple>>>()().ShouldHaveSingleItem().ShouldNotBeNull());
     }
     
     [Test, Ignore("This won't work yet, needs refactoring")]
     public void resolving_enum_of_func()
     {
+      Resolver.AddDependency<Simple>();
       Should.NotThrow(() =>
       {
-        var enumerable = resolver.Resolve<IEnumerable<Func<Simple>>>();
+        var enumerable = Resolver.Resolve<IEnumerable<Func<Simple>>>();
         var func = enumerable.ShouldHaveSingleItem();
         func();
       });
