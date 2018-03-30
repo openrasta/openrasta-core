@@ -8,7 +8,7 @@ using OpenRasta.Configuration;
 using OpenRasta.DI;
 using OpenRasta.DI.Windsor;
 using OpenRasta.Hosting.HttpListener;
-using OpenRasta.Testing;
+using OpenRasta.Tests.Unit.Infrastructure;
 using OpenRasta.Web;
 
 namespace WindsorWithHttpListenerHost_Specification
