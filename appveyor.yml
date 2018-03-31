@@ -33,15 +33,15 @@ install:
           chandler push
         }
 
-assembly_info:
-  patch: true
-  file: src\CommonInfo.cs
-  assembly_version: $(AssemblyMajor).0.0.0
-  assembly_file_version: '{version}'
-  assembly_informational_version: '{version}'
 
-before_build:
-  - nuget restore src
+dotnet_csproj:
+  patch: true
+  file: '**\*.csproj;**\*.props'
+  version: '{version}'
+  package_version: '{version}'
+  assembly_version: $(AssemblyMajor).0.0.0
+  file_version: '{version}'
+  informational_version: '{version}'
 
 
 environment:
@@ -57,19 +57,19 @@ nuget:
   disable_publish_on_pr: true
 
 
-build:
-  publish_nuget: true
-  publish_nuget_symbols: true
-  include_nuget_references: true
-  verbosity: minimal
-  
-after_build:
-  - nuget pack src/OpenRasta.Hosting.AspNet/ -Properties "Configuration=Release;Platform=AnyCPU" -Symbols -IncludeReferencedProjects
+before_build:
+  - dotnet restore --verbosity Minimal
 
-test:
-  assemblies: 
-   - src\OpenRasta.Hosting.AspNet.Tests.Integration\bin\$(configuration)\OpenRasta.Hosting.AspNet.Tests.Integration.dll
-   - src\Tests\bin\$(configuration)\Tests.dll
+build_script:
+  - dotnet build --configuration %CONFIGURATION%  
+
+test_script:
+  - dotnet test .\src\OpenRasta.Hosting.AspNet.Tests.Integration\
+  - dotnet test .\src\Test\
+
+after_build:
+  - dotnet pack src\Paramore.Brighter --include-symbols --configuration %CONFIGURATION% --no-build 
+
 
 artifacts:
 - path: src\OpenRasta.Hosting.AspNet\bin\$(configuration)\*.dll
