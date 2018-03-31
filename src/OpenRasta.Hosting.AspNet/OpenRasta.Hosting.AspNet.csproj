@@ -1,97 +1,27 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{288A707D-78B1-464F-87F2-63D6652C3BC8}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>OpenRasta.Hosting.AspNet</RootNamespace>
-    <AssemblyName>OpenRasta.Hosting.AspNet</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
-    <LangVersion>7</LangVersion>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
+    <PackageId>openrasta-hosting-aspnet</PackageId>
+    <Authors>Sebastien Lambla</Authors>
+    <PackageProjectUrl>https://github.com/openrasta/openrasta-hosting-aspnet</PackageProjectUrl>
+    <PackageLicenseUrl>http://openrasta.org/</PackageLicenseUrl>
+    <PackageIconUrl>http://openrasta.org/openRastaLogo-32x32.png</PackageIconUrl>
+    <Description>Support for IIS / asp.net hosting of OpenRasta.</Description>
+    <PackageTags>OpenRasta AspNet Hosting</PackageTags>
+    <Copyright>Copyright 2007-2018</Copyright>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <Company>Caffeine IT- naughtyProd Limited</Company>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <FileVersion>2.6.0</FileVersion>
+    <InformationalVersion>2.6.0</InformationalVersion>
+    <Version>2.6.0</Version>
+    <TargetFramework>net461</TargetFramework>
+    <LangVersion>7.1</LangVersion>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="OpenRasta, Version=2.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\packages\openrasta-core.2.6.0-ci-1186\lib\net461\OpenRasta.dll</HintPath>
-    </Reference>
-    <Reference Include="System" />
+    <PackageReference Include="openrasta-core" Version="2.6.0-preview.1.1332" />
+  </ItemGroup>
+  <ItemGroup>
     <Reference Include="System.Configuration" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.ValueTuple, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51">
-      <HintPath>..\packages\System.ValueTuple.4.4.0\lib\net461\System.ValueTuple.dll</HintPath>
-    </Reference>
     <Reference Include="System.Web" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\CommonInfo.cs">
-      <Link>CommonInfo.cs</Link>
-    </Compile>
-    <Compile Include="AspNetCommunicationContext.cs" />
-    <Compile Include="AspNetContextStore.cs" />
-    <Compile Include="AspNetHost.cs" />
-    <Compile Include="AspNetHttpListener\HttpListenerAspNetHost.cs" />
-    <Compile Include="AspNetHttpListener\HttpListenerController.cs" />
-    <Compile Include="AspNetHttpListener\HttpListenerWorkerRequest.cs" />
-    <Compile Include="AspNetLogSource.cs" />
-    <Compile Include="AspNetRequest.cs" />
-    <Compile Include="AspNetResponse.cs" />
-    <Compile Include="CommContextExtensions.cs" />
-    <Compile Include="HttpHandlerRegistration.cs" />
-    <Compile Include="AspNetPipeline.cs" />
-    <Compile Include="ClassicPipeline.cs" />
-    <Compile Include="IntegratedPipeline.cs" />
-    <Compile Include="OpenRastaHandler.cs" />
-    <Compile Include="OpenRastaHandlerAsync.cs" />
-    <Compile Include="OpenRastaModule.cs" />
-    <Compile Include="OpenRastaModuleAsync.cs" />
-    <Compile Include="OpenRastaModuleLoader.cs" />
-    <Compile Include="PipelineStageAsync.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="YieldBefore.cs" />
-    <Compile Include="YieldBeforeNextMiddleware.cs" />
-    <Compile Include="Yielding.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="OpenRasta.Hosting.AspNet.nuspec" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="web.config.install.xdt" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
 </Project>
