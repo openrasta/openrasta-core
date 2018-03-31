@@ -16,7 +16,11 @@ namespace OpenRasta.Hosting.Katana
 
     public OwinCommunicationContext(IOwinContext nativeContext, ILogger logger)
     {
-      PipelineData = new PipelineData(nativeContext.Environment);
+      PipelineData = new PipelineData();
+      
+      foreach(var kv in nativeContext.Environment)
+        PipelineData.Add(kv.Key,kv.Value);
+      
       _nativeContext = nativeContext;
       Request = new OwinRequest(nativeContext.Request);
       Response = new OwinResponse(nativeContext);
