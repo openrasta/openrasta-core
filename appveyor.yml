@@ -65,7 +65,7 @@ build_script:
 
 test_script:
   - dotnet test .\OpenRasta.Hosting.AspNet.Tests.Integration\
-  - dotnet test .\Test\
+  - dotnet test .\Tests\
 
 after_build:
   - dotnet pack .\OpenRasta.Hosting.AspNet --include-symbols --configuration %CONFIGURATION% --no-build 
