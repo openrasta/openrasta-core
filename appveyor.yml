@@ -58,17 +58,18 @@ nuget:
 
 
 before_build:
+  - cd .\src\  
   - dotnet restore --verbosity Minimal
 
 build_script:
   - dotnet build --configuration %CONFIGURATION%  
 
 test_script:
-  - dotnet test .\src\OpenRasta.Hosting.AspNet.Tests.Integration\
-  - dotnet test .\src\Test\
+  - dotnet test .\OpenRasta.Hosting.AspNet.Tests.Integration\
+  - dotnet test .\Test\
 
 after_build:
-  - dotnet pack src\Paramore.Brighter --include-symbols --configuration %CONFIGURATION% --no-build 
+  - dotnet pack .\OpenRasta.Hosting.AspNet --include-symbols --configuration %CONFIGURATION% --no-build 
 
 
 artifacts:
