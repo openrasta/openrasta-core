@@ -68,13 +68,9 @@ test_script:
   - dotnet test .\Tests\
 
 after_build:
-  - dotnet pack .\OpenRasta.Hosting.AspNet --include-symbols --configuration %CONFIGURATION% --no-build 
+  - dotnet pack .\OpenRasta.Hosting.AspNet --include-symbols --configuration %CONFIGURATION% --no-build --output ..\..\nupkgs
 
 
 artifacts:
-- path: src\OpenRasta.Hosting.AspNet\bin\$(configuration)\*.dll
-  name: dlls
-- path: src\OpenRasta.Hosting.AspNet\bin\$(configuration)\*.pdb
-  name: pdbs
-- path: "*.nupkg"
+- path: nupkgs\*.nupkg
   name: nuget
