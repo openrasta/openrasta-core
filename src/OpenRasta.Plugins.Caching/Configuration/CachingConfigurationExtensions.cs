@@ -28,7 +28,7 @@ namespace OpenRasta.Configuration
       
       return uses;
     }
-    
+
     public static IResourceDefinition<T> LastModified<T>(
       this IResourceDefinition<T> resource, 
      Func<T, DateTimeOffset?> reader)

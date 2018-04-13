@@ -10,7 +10,7 @@ using OpenRasta.Pipeline;
 
 namespace OpenRasta.Hosting.HttpListener
 {
-  public class HttpListenerHost : MarshalByRefObject, IHost, IDisposable
+  public class HttpListenerHost : MarshalByRefObject, IHost, IDisposable, IDependencyResolverAccessor
   {
     readonly IConfigurationSource _configuration;
     bool _isDisposed;
@@ -25,10 +25,19 @@ namespace OpenRasta.Hosting.HttpListener
       Dispose(false);
     }
 
-    public HttpListenerHost() { }
+    public HttpListenerHost()
+    {
+    }
 
     public HttpListenerHost(IConfigurationSource configuration)
     {
+      _configuration = configuration;
+    }
+
+    public HttpListenerHost(IConfigurationSource configuration, IDependencyResolver resolver)
+    {
+      _resolverAccessor = this;
+      Resolver = resolver;
       _configuration = configuration;
     }
 
@@ -59,10 +68,14 @@ namespace OpenRasta.Hosting.HttpListener
       GC.SuppressFinalize(this);
     }
 
-    public void Initialize(IEnumerable<string> prefixes, string appPathVDir, Type dependencyResolverFactory)
+    public void Initialize(IEnumerable<string> prefixes, string appPathVDir, Type dependencyResolverFactory = null)
     {
       CheckNotDisposed();
-      
+
+      if (dependencyResolverFactory != null && _resolverAccessor != null)
+        throw new ArgumentException("Cannot set a resolver factory if a resolver has been provided in the constructor.",
+          nameof(dependencyResolverFactory));
+
       ApplicationVirtualPath = appPathVDir;
 
       _resolverFactory = dependencyResolverFactory;
@@ -140,6 +153,7 @@ namespace OpenRasta.Hosting.HttpListener
       {
         Start(this, EventArgs.Empty);
       }
+
       _listener.Start();
       Task.Run(AcceptRequests);
     }
@@ -152,6 +166,7 @@ namespace OpenRasta.Hosting.HttpListener
       {
         Stop(this, EventArgs.Empty);
       }
+
       _listener.Stop();
     }
 
@@ -167,6 +182,8 @@ namespace OpenRasta.Hosting.HttpListener
 
     public virtual bool ConfigureRootDependencies(IDependencyResolver resolver)
     {
+      if (Resolver != null && Resolver != resolver)
+        throw new InvalidOperationException("Error setting a resovler where one already exists, bug found.");
       Resolver = resolver;
       resolver.AddDependency<IContextStore, AmbientContextStore>(DependencyLifetime.Singleton);
       if (_configuration != null) resolver.AddDependencyInstance(_configuration);
@@ -177,13 +194,14 @@ namespace OpenRasta.Hosting.HttpListener
     protected virtual void Dispose(bool fromDisposeMethod)
     {
       if (_isDisposed || _listener == null) return;
-      
+
       if (fromDisposeMethod)
       {
         if (_listener.IsListening)
           StopListening();
         HostManager.UnregisterHost(this);
       }
+
       _listener.Abort();
       _listener.Close();
       _isDisposed = true;
