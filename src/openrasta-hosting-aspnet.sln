@@ -1,0 +1,46 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27428.2015
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenRasta.Hosting.AspNet.Tests.Integration", "OpenRasta.Hosting.AspNet.Tests.Integration\OpenRasta.Hosting.AspNet.Tests.Integration.csproj", "{A1255B7C-690D-47A3-A2E7-61CF37ED2DFB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenRasta.Hosting.AspNet", "OpenRasta.Hosting.AspNet\OpenRasta.Hosting.AspNet.csproj", "{288A707D-78B1-464F-87F2-63D6652C3BC8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{64C6136A-7C06-4F9B-B01C-3BBF51870756}"
+	ProjectSection(SolutionItems) = preProject
+		..\appveyor.yml = ..\appveyor.yml
+		..\CHANGELOG.md = ..\CHANGELOG.md
+		CommonInfo.cs = CommonInfo.cs
+		NuGet.config = NuGet.config
+		..\VERSION = ..\VERSION
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{AB4D9F9E-E229-439C-89A1-FDA380862203}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A1255B7C-690D-47A3-A2E7-61CF37ED2DFB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A1255B7C-690D-47A3-A2E7-61CF37ED2DFB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A1255B7C-690D-47A3-A2E7-61CF37ED2DFB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A1255B7C-690D-47A3-A2E7-61CF37ED2DFB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{288A707D-78B1-464F-87F2-63D6652C3BC8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{288A707D-78B1-464F-87F2-63D6652C3BC8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{288A707D-78B1-464F-87F2-63D6652C3BC8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{288A707D-78B1-464F-87F2-63D6652C3BC8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AB4D9F9E-E229-439C-89A1-FDA380862203}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AB4D9F9E-E229-439C-89A1-FDA380862203}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AB4D9F9E-E229-439C-89A1-FDA380862203}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AB4D9F9E-E229-439C-89A1-FDA380862203}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {77C4B78B-8C8D-486F-B168-F7C813E2C76B}
+	EndGlobalSection
+EndGlobal

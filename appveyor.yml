@@ -10,6 +10,7 @@ install:
   - set SSL_CERT_FILE=C:\ca\cacert.pem
   - ps: |
         $build = $env:APPVEYOR_BUILD_NUMBER
+        
         $branch = $env:APPVEYOR_REPO_BRANCH
         
         if ($env:APPVEYOR_REPO_TAG -eq "true") {

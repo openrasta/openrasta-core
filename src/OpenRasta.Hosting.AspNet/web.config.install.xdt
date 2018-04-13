@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<configuration xmlns:xdt="http://schemas.microsoft.com/XML-Document-Transform">
+  <system.webServer>
+    <modules>
+      <add xdt:Transform="Remove" xdt:Locator="Condition(contains(@type,'OpenRasta.Hosting.AspNet.OpenRastaModule'))" />
+    </modules>
+    <handlers>
+      <add xdt:Transform="Remove" xdt:Locator="Condition(contains(@type,'OpenRasta.Hosting.AspNet.OpenRastaHandler'))" />
+    </handlers>
+  </system.webServer>
+  <system.web>
+    <httpHandlers>
+        <add xdt:Transform="Remove" xdt:Locator="Condition(contains(@type,'OpenRasta.Hosting.AspNet.OpenRastaHandler'))" />
+    </httpHandlers>
+    <httpModules>
+        <add xdt:Transform="Remove" xdt:Locator="Condition(contains(@type,'OpenRasta.Hosting.AspNet.OpenRastaModule'))" />
+    </httpModules>
+  </system.web>
+</configuration>
