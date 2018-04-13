@@ -34,6 +34,8 @@ namespace OpenRasta.OperationModel.Filters
 
     IEnumerable<IOperationAsync> ProcessOperationsList(List<IOperationAsync> operations)
     {
+      if (operations.Count == 0) return operations;
+      
       return string.IsNullOrEmpty(_commContext.PipelineData.SelectedResource?.UriName)
         ? OperationsWhenNoUriName(operations) 
         : OperationsWhenUriName(operations);
@@ -56,7 +58,7 @@ namespace OpenRasta.OperationModel.Filters
       var filteredOperations = NotConventionalName(
         NoAttributesOrNoUriName(operations).ToList());
 
-      if (filteredOperations.Count == operations.Count())
+      if (filteredOperations.Count == operations.Count)
         Log.NoResourceOrUriName();
       else
         Log.FoundOperations(filteredOperations);
@@ -66,7 +68,7 @@ namespace OpenRasta.OperationModel.Filters
 
     List<IOperationAsync> NotConventionalName(List<IOperationAsync> operations)
     {
-      var key = _commContext.PipelineData.SelectedResource.ResourceKey;
+      var key = _commContext.PipelineData.SelectedResource?.ResourceKey;
       if (key == null) return operations;
       
       var method = _commContext.Request.HttpMethod;

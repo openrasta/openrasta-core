@@ -30,7 +30,7 @@ namespace OpenRasta.OperationModel.Filters
     {
       int acceptedMethods = 0;
 
-      var selectedResourceUriTemplateParameters = _pipelineData.SelectedResource.UriTemplateParameters.Where(p=>p.Count > 0).ToList();
+      var selectedResourceUriTemplateParameters = _pipelineData.SelectedResource.UriTemplateParameters.ToList();
       foreach (var operation in operations)
       {
         if (IsEmpty(selectedResourceUriTemplateParameters))
@@ -45,17 +45,17 @@ namespace OpenRasta.OperationModel.Filters
         {
           var uriParametersCopy = new NameValueCollection(uriParameterMatches);
 
-          var matchedParameters = from member in operation.Inputs
+          var matchedParameters = (
+            from member in operation.Inputs
             from matchedParameterName in uriParametersCopy.AllKeys
             where TrySetPropertyAndRemoveUsedKey(member, matchedParameterName, uriParametersCopy, ConvertFromString)
-            select matchedParameterName;
+            select matchedParameterName).ToList();
 
-          if (matchedParameters.Count() == uriParameterMatches.Count)
-          {
-            LogOperationAccepted(uriParameterMatches, operation);
-            acceptedMethods++;
-            yield return operation;
-          }
+          if (matchedParameters.Count != uriParameterMatches.Count) continue;
+          
+          LogOperationAccepted(uriParameterMatches, operation);
+          acceptedMethods++;
+          yield return operation;
         }
       }
 

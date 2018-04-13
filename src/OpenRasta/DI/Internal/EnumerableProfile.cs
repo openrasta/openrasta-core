@@ -12,7 +12,8 @@ namespace OpenRasta.DI.Internal
       for (var i = 0; i < serviceTypeRegistrations.Length; i++)
       {
         var profile = ResolveProfiles.Find(resolveContext, serviceTypeRegistrations[i]);
-        if (!profile(registrations, resolveContext, out instance)) return false;
+        if (!profile(registrations, resolveContext, out instance))
+          throw new DependencyResolutionException($"Could not resolve an enumerable for {serviceTypeRegistrations[i].ConcreteType}");
         instances[i] = (T) instance;
       }
 

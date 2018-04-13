@@ -194,6 +194,7 @@ namespace OpenRasta.Hosting.HttpListener
     protected virtual void Dispose(bool fromDisposeMethod)
     {
       if (_isDisposed || _listener == null) return;
+      _isDisposed = true;
 
       if (fromDisposeMethod)
       {
@@ -204,7 +205,6 @@ namespace OpenRasta.Hosting.HttpListener
 
       _listener.Abort();
       _listener.Close();
-      _isDisposed = true;
 
       _zeroPendingRequests.WaitOne(TimeSpan.FromSeconds(5));
     }
