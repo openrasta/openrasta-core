@@ -18,7 +18,7 @@
     <LangVersion>7.1</LangVersion>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="openrasta-core" Version="2.6.0-preview.1.1332" />
+    <ProjectReference Include="..\OpenRasta\OpenRasta.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System.Configuration" />

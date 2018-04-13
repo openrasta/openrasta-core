@@ -4,6 +4,7 @@
     <TargetFrameworks>netcoreapp2.0;net461</TargetFrameworks>
   </PropertyGroup>
   <ItemGroup>
+    <ProjectReference Include="..\OpenRasta.Hosting.AspNet\OpenRasta.Hosting.AspNet.csproj" Condition="'$(TargetFramework)' == 'net461'" />
     <ProjectReference Include="..\OpenRasta.Plugins.Caching\OpenRasta.Plugins.Caching.csproj" />
     <ProjectReference Include="..\OpenRasta.Plugins.Diagnostics\OpenRasta.Plugins.Diagnostics.csproj" />
     <ProjectReference Include="..\OpenRasta.Plugins.ReverseProxy\OpenRasta.Plugins.ReverseProxy.csproj" />

@@ -11,15 +11,6 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\OpenRasta.DI.Windsor\OpenRasta.DI.Windsor.csproj" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp2.0' ">
-    <Reference Include="OpenRasta.Tests.Unit">
-      <HintPath>..\..\lib\OpenRasta.Unit.Testing\netcoreapp2.0\OpenRasta.Tests.Unit.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup Condition="'$(TargetFramework)' == 'net461' ">
-    <Reference Include="OpenRasta.Tests.Unit">
-      <HintPath>..\..\lib\OpenRasta.Unit.Testing\net461\OpenRasta.Tests.Unit.dll</HintPath>
-    </Reference>
+    <ProjectReference Include="..\OpenRasta.Tests.Unit\OpenRasta.Tests.Unit.csproj" />
   </ItemGroup>
 </Project>
