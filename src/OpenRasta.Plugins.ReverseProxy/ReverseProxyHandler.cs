@@ -28,6 +28,7 @@ namespace OpenRasta.Plugins.ReverseProxy
     {
       if (_context.PipelineData.SelectedResource == null)
         throw new InvalidOperationException("Null resource, invalid condition detected");
+      
       return await _proxy.Send(_context, CurrentResourceModel.GetReverseProxyTarget());
     }
 

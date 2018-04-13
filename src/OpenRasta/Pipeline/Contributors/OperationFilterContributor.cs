@@ -29,9 +29,10 @@ namespace OpenRasta.Pipeline.Contributors
     {
       var filters = _createFilters();
       return filters
+        .Distinct()
         .Aggregate(
           operations,
-          (ops, filter) => filter.Process(ops).ToList())
+          (ops, filter) => ops.Any() ? filter.Process(ops).ToList() : ops)
         .Distinct()
         .ToList();
     }

@@ -28,16 +28,20 @@ namespace OpenRasta.OperationModel.Filters
 
     public IEnumerable<IOperationAsync> Process(IEnumerable<IOperationAsync> operations)
     {
-      int acceptedMethods = 0;
-
+      operations = operations.ToList();
+      
+      if (operations.Any() && _pipelineData.SelectedResource == null)
+        throw new InvalidOperationException("Null resource detected when there are operations, something is very wrong");
+      
+      var selectedOperations = new List<IOperationAsync>();
+      
       var selectedResourceUriTemplateParameters = _pipelineData.SelectedResource.UriTemplateParameters.ToList();
       foreach (var operation in operations)
       {
         if (IsEmpty(selectedResourceUriTemplateParameters))
         {
           LogAcceptNoUriParameters(operation);
-          acceptedMethods++;
-          yield return operation;
+          selectedOperations.Add(operation);
           continue;
         }
 
@@ -54,15 +58,16 @@ namespace OpenRasta.OperationModel.Filters
           if (matchedParameters.Count != uriParameterMatches.Count) continue;
           
           LogOperationAccepted(uriParameterMatches, operation);
-          acceptedMethods++;
-          yield return operation;
+          selectedOperations.Add(operation);
         }
       }
 
-      LogAcceptedCount(acceptedMethods);
+      LogAcceptedCount(selectedOperations.Count);
 
-      if (acceptedMethods <= 0)
+      if (selectedOperations.Count == 0)
         Errors.AddServerError(CreateErrorNoOperationFound(selectedResourceUriTemplateParameters));
+
+      return selectedOperations;
     }
 
     static BindingResult ConvertFromString(string strings, Type entityType)
