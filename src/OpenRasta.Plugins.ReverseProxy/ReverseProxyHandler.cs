@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using OpenRasta.Configuration.MetaModel;
 using OpenRasta.Data;
@@ -25,6 +26,8 @@ namespace OpenRasta.Plugins.ReverseProxy
     [HttpOperation("*")]
     public async Task<ReverseProxyResponse> Any(Any _)
     {
+      if (_context.PipelineData.SelectedResource == null)
+        throw new InvalidOperationException("Null resource, invalid condition detected");
       return await _proxy.Send(_context, CurrentResourceModel.GetReverseProxyTarget());
     }
 
