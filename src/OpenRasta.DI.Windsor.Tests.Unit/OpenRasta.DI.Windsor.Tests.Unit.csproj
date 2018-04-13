@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>netcoreapp2.0;net461</TargetFrameworks>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.6.2" />
+    <PackageReference Include="Moq" Version="4.8.2" />
+    <PackageReference Include="NUnit" Version="3.10.1" />
+    <PackageReference Include="NUnit3TestAdapter" Version="3.10.0" />
+    <PackageReference Include="Shouldly" Version="3.0.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\OpenRasta.DI.Windsor\OpenRasta.DI.Windsor.csproj" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp2.0' ">
+    <Reference Include="OpenRasta.Tests.Unit">
+      <HintPath>..\..\lib\OpenRasta.Unit.Testing\netcoreapp2.0\OpenRasta.Tests.Unit.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'net461' ">
+    <Reference Include="OpenRasta.Tests.Unit">
+      <HintPath>..\..\lib\OpenRasta.Unit.Testing\net461\OpenRasta.Tests.Unit.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+</Project>
