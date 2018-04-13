@@ -34,11 +34,12 @@ namespace OpenRasta.DI.Internal
 
       public static ProfileResolver Find(DependencyRegistration reg)
       {
+        if (reg == null) return null;
+        
         bool tryResolve(IDependencyRegistrationCollection registrations, ResolveContext context, out object instance)
           => context.TryResolve(reg, out instance);
 
-        if (reg != null) return tryResolve;
-        return null;
+        return tryResolve;
       }
     }
 
@@ -96,7 +97,7 @@ namespace OpenRasta.DI.Internal
           out object instance)
         {
           var newContext = new ResolveContext(() => registrations);
-          return context.TryResolve(serviceType, out instance);
+          return newContext.TryResolve(serviceType, out instance);
         }
 
         return tryResolveDelayed;

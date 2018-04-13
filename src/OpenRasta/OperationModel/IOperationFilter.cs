@@ -7,7 +7,7 @@ using OpenRasta.Web;
 
 namespace OpenRasta.OperationModel
 {
-  public interface IOperationFilter : IOperationProcessor //<KnownStages.IOperationFiltering>
+  public interface IOperationFilter : IOperationProcessor
   {
   }
 

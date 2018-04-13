@@ -27,7 +27,8 @@ namespace OpenRasta.Pipeline.Contributors
 
     List<IOperationAsync> ProcessOperations(List<IOperationAsync> operations)
     {
-      return _createFilters()
+      var filters = _createFilters();
+      return filters
         .Aggregate(
           operations,
           (ops, filter) => filter.Process(ops).ToList())

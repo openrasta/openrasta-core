@@ -351,10 +351,12 @@ namespace OpenRasta.Configuration
     {
       OperationFilterTypes.ForEach(
         x => resolver.AddDependency(typeof(IOperationFilter), x, DependencyLifetime.Transient));
+      
 #pragma warning disable 618 - legacy support
       OperationHydratorTypes.ForEach(
         x => resolver.AddDependency(typeof(IOperationHydrator), x, DependencyLifetime.Transient));
 #pragma warning restore 618
+      
       OperationCodecSelectorTypes.ForEach(
         x => resolver.AddDependency(typeof(IOperationCodecSelector), x, DependencyLifetime.Transient));
     }
