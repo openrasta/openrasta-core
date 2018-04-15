@@ -18,8 +18,9 @@ namespace OpenRasta.Pipeline
       catch (Exception e)
       {
         env.Response.StatusCode = 500;
-        env.Response.Entity.ContentLength = FatalError.Length;
-        await env.Response.Entity.Stream.WriteAsync(FormatMessage(e), 0, FatalError.Length);
+        var message = FormatMessage(e);
+        env.Response.Entity.ContentLength = message.Length;
+        await env.Response.Entity.Stream.WriteAsync(message, 0, message.Length);
       }
     }
 
