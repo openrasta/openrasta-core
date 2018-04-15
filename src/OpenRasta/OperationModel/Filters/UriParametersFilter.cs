@@ -14,10 +14,12 @@ namespace OpenRasta.OperationModel.Filters
 {
   public class UriParametersFilter : IOperationFilter
   {
+    readonly ICommunicationContext _context;
     readonly PipelineData _pipelineData;
 
     public UriParametersFilter(ICommunicationContext context, IErrorCollector collector)
     {
+      _context = context;
       Logger = NullLogger.Instance;
       Errors = collector;
       _pipelineData = context.PipelineData;
@@ -31,7 +33,8 @@ namespace OpenRasta.OperationModel.Filters
       operations = operations.ToList();
       
       if (operations.Any() && _pipelineData.SelectedResource == null)
-        throw new InvalidOperationException("Null resource detected when there are operations, something is very wrong");
+        throw new InvalidOperationException(
+          $"Null resource detected when there are operations for {_context.Request.Uri}");
       
       var selectedOperations = new List<IOperationAsync>();
       

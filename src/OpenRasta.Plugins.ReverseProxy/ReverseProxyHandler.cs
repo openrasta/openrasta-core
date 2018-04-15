@@ -20,7 +20,7 @@ namespace OpenRasta.Plugins.ReverseProxy
     }
 
     [HttpOperation("*")]
-    public async Task<ReverseProxyResponse> Any(Any _)
+    public async Task<ReverseProxyOperationResult> Any(Any _)
     {
       if (_context.PipelineData.SelectedResource == null)
         throw new InvalidOperationException(CreateNullResourceLogMessage());
@@ -45,5 +45,18 @@ namespace OpenRasta.Plugins.ReverseProxy
              $" Result: {_context.OperationResult}{Environment.NewLine}";
     }
 
+  }
+
+  public class ReverseProxyOperationResult : OperationResult
+  {
+    public ReverseProxyOperationResult(ReverseProxyResponse response)
+    :base(response.StatusCode)
+    {
+      ResponseResource = response;
+    }
+    public static implicit operator ReverseProxyOperationResult(ReverseProxyResponse response)
+    {
+      return new ReverseProxyOperationResult(response);
+    }
   }
 }
