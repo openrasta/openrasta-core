@@ -17,5 +17,11 @@ namespace OpenRasta.Pipeline
     {
       Errors = new List<Error>();
     }
+
+    public override string ToString()
+    {
+      return $"{base.ToString()}{Environment.NewLine}" +
+             string.Join(Environment.NewLine, Errors.Select(e => e.ToString()));
+    }
   }
 }
