@@ -34,7 +34,6 @@ namespace OpenRasta.Pipeline.Contributors
 
       var acceptHeader = context.Request.Headers[HEADER_ACCEPT];
 
-
       var responseEntityType = _typeSystem.FromInstance(context.Response.Entity.Instance);
       IEnumerable<MediaType> acceptedContentTypes;
 
@@ -59,15 +58,16 @@ namespace OpenRasta.Pipeline.Contributors
       {
         LogCodecSelected(responseEntityType, negotiatedCodec, codecsCount);
         context.Response.Entity.ContentType =
-            negotiatedCodec.MediaType.IsWildCard
-                ? acceptedContentTypes
-                    .OrderByDescending(c=>c)
-                    .Where(c=>c.IsWildCard == false)
-                    .DefaultIfEmpty(MediaType.ApplicationOctetStream)
-                    .FirstOrDefault() 
-                : negotiatedCodec.MediaType.WithoutQuality();
+          negotiatedCodec.MediaType.IsWildCard
+            ? acceptedContentTypes
+              .OrderByDescending(c => c)
+              .Where(c => c.IsWildCard == false)
+              .DefaultIfEmpty(MediaType.ApplicationOctetStream)
+              .FirstOrDefault()
+            : negotiatedCodec.MediaType.WithoutQuality();
         context.PipelineData.ResponseCodec = negotiatedCodec;
-        context.Response.Headers.Add("Vary", "Accept");
+
+        context.Response.Headers["Vary"] = "Accept";
       }
       else
       {
@@ -85,26 +85,26 @@ namespace OpenRasta.Pipeline.Contributors
     }
 
     static OperationResult.ResponseMediaTypeUnsupported ResponseEntityHasNoCodec(string acceptHeader,
-        IType responseEntityType)
+      IType responseEntityType)
     {
       return new OperationResult.ResponseMediaTypeUnsupported
       {
-          Title = "The response from the server could not be sent in any format understood by the UA.",
-          Description =
-              $"Content-type negotiation failed. Resource {responseEntityType} doesn't have any codec for the content-types in the accept header:\r\n{acceptHeader}"
+        Title = "The response from the server could not be sent in any format understood by the UA.",
+        Description =
+          $"Content-type negotiation failed. Resource {responseEntityType} doesn't have any codec for the content-types in the accept header:\r\n{acceptHeader}"
       };
     }
 
     void LogCodecSelected(IType responseEntityType, CodecRegistration negotiatedCodec, int codecsCount)
     {
       Log.WriteInfo(
-          $"Selected codec {negotiatedCodec.CodecType.Name} out of {codecsCount} codecs for entity of type {responseEntityType.Name} and negotiated media type {negotiatedCodec.MediaType}.");
+        $"Selected codec {negotiatedCodec.CodecType.Name} out of {codecsCount} codecs for entity of type {responseEntityType.Name} and negotiated media type {negotiatedCodec.MediaType}.");
     }
 
     void LogNoResponseEntity()
     {
       Log.WriteInfo(
-          "No response codec was searched for. The response entity is null or a response codec is already set.");
+        "No response codec was searched for. The response entity is null or a response codec is already set.");
     }
   }
 }
