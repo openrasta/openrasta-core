@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -58,6 +59,19 @@ namespace Tests.Plugins.ReverseProxy
         .GetAsync("http://localhost/proxy"))
       {
         response.Content.ShouldBe("");
+      }
+    }
+
+    [Fact]
+    public async Task server_timing_header_is_not_overwritten()
+    {
+      using (var response = await new ProxyServer()
+        .FromServer("/proxy")
+        .ToServer("/proxied")
+        .GetAsync("http://localhost/proxy"))
+      {
+        var timing = response.Message.Headers.GetValues("server-timing");
+        timing.First().ShouldBe("from;dur=1,to;dur=1");
       }
     }
   }

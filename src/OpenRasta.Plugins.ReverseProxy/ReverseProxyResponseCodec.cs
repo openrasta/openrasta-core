@@ -27,7 +27,8 @@ namespace OpenRasta.Plugins.ReverseProxy
 
         if (proxyResponse.ResponseMessage != null)
         {
-          foreach (var header in proxyResponse.ResponseMessage.Headers.Concat(proxyResponse.ResponseMessage.Content.Headers))
+          foreach (var header in proxyResponse.ResponseMessage.Headers.Concat(proxyResponse.ResponseMessage.Content
+            .Headers))
             SetHeader(response, header);
 
           response.Headers["via"] = string.Join(response.Headers["via"], $"1.1 {proxyResponse.Via}");
@@ -43,12 +44,11 @@ namespace OpenRasta.Plugins.ReverseProxy
     static void SetHeader(IHttpEntity response, KeyValuePair<string, IEnumerable<string>> header)
     {
       var values = string.Join(", ", header.Value);
-      
+
       if (AppendHeader(header.Key))
       {
         if (response.Headers.ContainsKey(header.Key))
-        response.Headers[header.Key] += ",";
-        response.Headers[header.Key] += values;
+          values = string.Join(",", response.Headers[header.Key], values);
       }
 
       response.Headers[header.Key] = values;

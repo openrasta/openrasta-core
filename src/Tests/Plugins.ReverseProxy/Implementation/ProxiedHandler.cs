@@ -19,6 +19,7 @@ namespace Tests.Plugins.ReverseProxy.Implementation
     [HttpOperation("*")]
     public async Task<string> Get(Any _)
     {
+      context.Response.Headers["Server-Timing"] = "to;dur=1";
       return await operation(context);
     }
   }
