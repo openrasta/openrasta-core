@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -27,7 +28,7 @@ namespace OpenRasta.Plugins.ReverseProxy
         if (proxyResponse.ResponseMessage != null)
         {
           foreach (var header in proxyResponse.ResponseMessage.Headers.Concat(proxyResponse.ResponseMessage.Content.Headers))
-            response.Headers[header.Key] = string.Join(", ", header.Value);
+            SetHeader(response, header);
 
           response.Headers["via"] = string.Join(response.Headers["via"], $"1.1 {proxyResponse.Via}");
           await proxyResponse.ResponseMessage.Content.CopyToAsync(response.Stream);
@@ -37,6 +38,25 @@ namespace OpenRasta.Plugins.ReverseProxy
       {
         proxyResponse.Dispose();
       }
+    }
+
+    static void SetHeader(IHttpEntity response, KeyValuePair<string, IEnumerable<string>> header)
+    {
+      var values = string.Join(", ", header.Value);
+      
+      if (AppendHeader(header.Key))
+      {
+        if (response.Headers.ContainsKey(header.Key))
+        response.Headers[header.Key] += ",";
+        response.Headers[header.Key] += values;
+      }
+
+      response.Headers[header.Key] = values;
+    }
+
+    static bool AppendHeader(string name)
+    {
+      return string.Equals(name, "server-timing", StringComparison.OrdinalIgnoreCase);
     }
   }
 }
