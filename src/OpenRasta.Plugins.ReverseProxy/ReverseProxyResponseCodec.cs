@@ -38,6 +38,11 @@ namespace OpenRasta.Plugins.ReverseProxy
 
           await proxyResponse.ResponseMessage.Content.CopyToAsync(response.Stream);
         }
+        else if (proxyResponse.Error != null)
+        {
+          var jsonCodec = new NewtonsoftJsonCodec(_context);
+          await jsonCodec.WriteTo(proxyResponse.Error, response, new string[] { });
+        }
       }
       finally
       {
