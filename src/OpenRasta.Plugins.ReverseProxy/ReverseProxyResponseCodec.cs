@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using OpenRasta.Codecs;
+using OpenRasta.Codecs.Newtonsoft.Json;
 using OpenRasta.Web;
 
 namespace OpenRasta.Plugins.ReverseProxy
@@ -11,11 +11,14 @@ namespace OpenRasta.Plugins.ReverseProxy
   public class ReverseProxyResponseCodec : IMediaTypeWriterAsync
   {
     readonly IResponse _response;
+    readonly ICommunicationContext _context;
     public object Configuration { get; set; }
 
-    public ReverseProxyResponseCodec(IResponse response)
+
+    public ReverseProxyResponseCodec(ICommunicationContext context)
     {
-      _response = response;
+      _response = context.Response;
+      _context = context;
     }
 
     public async Task WriteTo(object entity, IHttpEntity response, IEnumerable<string> codecParameters)
@@ -44,20 +47,17 @@ namespace OpenRasta.Plugins.ReverseProxy
 
     static void SetHeader(IHttpEntity response, KeyValuePair<string, IEnumerable<string>> header)
     {
+      if (HttpHeaderClassification.IsHopByHopHeader(header.Key)) return;
+      
       var values = string.Join(", ", header.Value);
 
-      if (AppendHeader(header.Key))
+      if (HttpHeaderClassification.IsAppendedOnForwardHeader(header.Key))
       {
         if (response.Headers.ContainsKey(header.Key))
           values = string.Join(",", response.Headers[header.Key], values);
       }
 
       response.Headers[header.Key] = values;
-    }
-
-    static bool AppendHeader(string name)
-    {
-      return string.Equals(name, "server-timing", StringComparison.OrdinalIgnoreCase);
     }
   }
 }

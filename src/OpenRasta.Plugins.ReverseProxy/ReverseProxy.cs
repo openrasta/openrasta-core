@@ -58,6 +58,7 @@ namespace OpenRasta.Plugins.ReverseProxy
       }
       catch (TaskCanceledException e) when (timeoutToken.IsCancellationRequested || e.CancellationToken == timeoutToken)
       {
+        // Note we check both cancellation token because mono/fullfx/core don't have the same behaviour
         return new ReverseProxyResponse(requestMessage, via: viaIdentifier, error: e, statusCode: 504);
       }
       catch (HttpRequestException e)
@@ -118,12 +119,12 @@ namespace OpenRasta.Plugins.ReverseProxy
 
         if (header.Key.Equals("host", StringComparison.OrdinalIgnoreCase)) continue;
 
-        if (_contentHeaders.Contains(header.Key))
+        if (HttpHeaderClassification.IsMicrosoftHttpContentHeader(header.Key))
         {
           if (request.Content == null) continue;
-          request.Content.Headers.Add(header.Key, header.Value);
+            request.Content.Headers.Add(header.Key, header.Value);
         }
-        else
+        else if (!HttpHeaderClassification.IsHopByHopHeader(header.Key))
           request.Headers.Add(header.Key, header.Value);
       }
 
@@ -179,20 +180,5 @@ namespace OpenRasta.Plugins.ReverseProxy
     {
       return $"proto={context.Request.Uri.Scheme};host={context.Request.Uri.Host}";
     }
-
-    static readonly HashSet<string> _contentHeaders = new HashSet<string>
-    {
-      "Allow",
-      "Content-Disposition",
-      "Content-Encoding",
-      "Content-Language",
-      "Content-Length",
-      "Content-Location",
-      "Content-MD5",
-      "Content-Range",
-      "Content-Type",
-      "Expires",
-      "Last-Modified"
-    };
   }
 }
