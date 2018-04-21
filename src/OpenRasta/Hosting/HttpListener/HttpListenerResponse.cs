@@ -43,7 +43,7 @@ namespace OpenRasta.Hosting.HttpListener
         }
         catch (Exception ex)
         {
-          _context?.ServerErrors.Add(new Error {Message = ex.ToString()});
+          _context?.ServerErrors.Add(new Error {Message = ex.Message, Exception = ex});
         }
       }
 

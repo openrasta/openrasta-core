@@ -63,6 +63,7 @@ namespace OpenRasta.Plugins.ReverseProxy
       }
       catch (HttpRequestException e)
       {
+        context.ServerErrors.Add(new Error {Exception = e, Title = $"Reverse Proxy failed to connect."});
         return new ReverseProxyResponse(requestMessage, via: viaIdentifier, error: e, statusCode: 502);
       }
     }
