@@ -25,13 +25,14 @@ namespace OpenRasta.Plugins.ReverseProxy
       {
         _response.StatusCode = proxyResponse.StatusCode;
 
+        response.Headers["via"] = string.Join(response.Headers["via"], $"1.1 {proxyResponse.Via}");
+
         if (proxyResponse.ResponseMessage != null)
         {
           foreach (var header in proxyResponse.ResponseMessage.Headers.Concat(proxyResponse.ResponseMessage.Content
             .Headers))
             SetHeader(response, header);
 
-          response.Headers["via"] = string.Join(response.Headers["via"], $"1.1 {proxyResponse.Via}");
           await proxyResponse.ResponseMessage.Content.CopyToAsync(response.Stream);
         }
       }
