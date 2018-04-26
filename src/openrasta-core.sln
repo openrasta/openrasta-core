@@ -3,31 +3,39 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27004.2002
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenRasta", "OpenRasta\OpenRasta.csproj", "{3D251617-2581-4D9C-A639-5CFB0BB09420}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenRasta", "OpenRasta\OpenRasta.csproj", "{3D251617-2581-4D9C-A639-5CFB0BB09420}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenRasta.Tests.Unit", "OpenRasta.Tests.Unit\OpenRasta.Tests.Unit.csproj", "{EECBE19A-4725-4F13-AE7E-B68CD98AEB6E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenRasta.Tests.Unit", "OpenRasta.Tests.Unit\OpenRasta.Tests.Unit.csproj", "{EECBE19A-4725-4F13-AE7E-B68CD98AEB6E}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{67F8A154-ADDA-43F5-9DF7-EF9633BEA303}"
 	ProjectSection(SolutionItems) = preProject
 		..\appveyor.yml = ..\appveyor.yml
-		..\VERSION = ..\VERSION
 		..\CHANGELOG.md = ..\CHANGELOG.md
 		..\README.md = ..\README.md
+		..\VERSION = ..\VERSION
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{91366AA2-841F-4593-96A0-3A00A3D44584}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests", "Tests\Tests.csproj", "{91366AA2-841F-4593-96A0-3A00A3D44584}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenRasta.Hosting.Katana", "OpenRasta.Hosting.Katana\OpenRasta.Hosting.Katana.csproj", "{CE4A43AD-FCC6-4BC4-947C-635FEB91CA36}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenRasta.Hosting.Katana", "OpenRasta.Hosting.Katana\OpenRasta.Hosting.Katana.csproj", "{CE4A43AD-FCC6-4BC4-947C-635FEB91CA36}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenRasta.Codecs.Newtonsoft.Json", "OpenRasta.Codecs.Newtonsoft.Json\OpenRasta.Codecs.Newtonsoft.Json.csproj", "{1016D8C7-4F47-4335-8DF1-636EEBBF5A71}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenRasta.Codecs.Newtonsoft.Json", "OpenRasta.Codecs.Newtonsoft.Json\OpenRasta.Codecs.Newtonsoft.Json.csproj", "{1016D8C7-4F47-4335-8DF1-636EEBBF5A71}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenRasta.Hosting.AspNetCore", "OpenRasta.Hosting.AspNetCore\OpenRasta.Hosting.AspNetCore.csproj", "{D51FCC79-E112-4757-8E64-58D46D71F2FA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenRasta.Hosting.AspNetCore", "OpenRasta.Hosting.AspNetCore\OpenRasta.Hosting.AspNetCore.csproj", "{D51FCC79-E112-4757-8E64-58D46D71F2FA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenRasta.Plugins.ReverseProxy", "OpenRasta.Plugins.ReverseProxy\OpenRasta.Plugins.ReverseProxy.csproj", "{3D7479CA-74E2-45EE-9D12-FDC3D6A7F6F4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenRasta.Plugins.ReverseProxy", "OpenRasta.Plugins.ReverseProxy\OpenRasta.Plugins.ReverseProxy.csproj", "{3D7479CA-74E2-45EE-9D12-FDC3D6A7F6F4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenRasta.Plugins.Diagnostics", "OpenRasta.Plugins.Diagnostics\OpenRasta.Plugins.Diagnostics.csproj", "{C118D585-33E4-4A42-B161-6C73AB5AC64B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenRasta.Plugins.Diagnostics", "OpenRasta.Plugins.Diagnostics\OpenRasta.Plugins.Diagnostics.csproj", "{C118D585-33E4-4A42-B161-6C73AB5AC64B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenRasta.Plugins.Caching", "OpenRasta.Plugins.Caching\OpenRasta.Plugins.Caching.csproj", "{2730437A-9761-4665-83DD-12F60E5D85F2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenRasta.Plugins.Caching", "OpenRasta.Plugins.Caching\OpenRasta.Plugins.Caching.csproj", "{2730437A-9761-4665-83DD-12F60E5D85F2}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenRasta.Hosting.AspNet", "OpenRasta.Hosting.AspNet\OpenRasta.Hosting.AspNet.csproj", "{628F23AE-893B-4603-995D-CC24AE545F6A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenRasta.DI.Windsor", "OpenRasta.DI.Windsor\OpenRasta.DI.Windsor.csproj", "{4DDB3A8E-3FE3-4F02-9DC0-E9269EE83767}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenRasta.DI.Windsor.Tests.Unit", "OpenRasta.DI.Windsor.Tests.Unit\OpenRasta.DI.Windsor.Tests.Unit.csproj", "{1A5CC8B6-1FAC-454B-A7F4-4C867623D929}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenRasta.Hosting.AspNet.Tests.Integration", "OpenRasta.Hosting.AspNet.Tests.Integration\OpenRasta.Hosting.AspNet.Tests.Integration.csproj", "{088478E0-A0CB-40E1-88C6-A89B50330C6B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -71,8 +79,27 @@ Global
 		{2730437A-9761-4665-83DD-12F60E5D85F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2730437A-9761-4665-83DD-12F60E5D85F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2730437A-9761-4665-83DD-12F60E5D85F2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{628F23AE-893B-4603-995D-CC24AE545F6A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{628F23AE-893B-4603-995D-CC24AE545F6A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{628F23AE-893B-4603-995D-CC24AE545F6A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{628F23AE-893B-4603-995D-CC24AE545F6A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4DDB3A8E-3FE3-4F02-9DC0-E9269EE83767}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4DDB3A8E-3FE3-4F02-9DC0-E9269EE83767}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4DDB3A8E-3FE3-4F02-9DC0-E9269EE83767}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4DDB3A8E-3FE3-4F02-9DC0-E9269EE83767}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1A5CC8B6-1FAC-454B-A7F4-4C867623D929}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1A5CC8B6-1FAC-454B-A7F4-4C867623D929}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1A5CC8B6-1FAC-454B-A7F4-4C867623D929}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1A5CC8B6-1FAC-454B-A7F4-4C867623D929}.Release|Any CPU.Build.0 = Release|Any CPU
+		{088478E0-A0CB-40E1-88C6-A89B50330C6B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{088478E0-A0CB-40E1-88C6-A89B50330C6B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{088478E0-A0CB-40E1-88C6-A89B50330C6B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{088478E0-A0CB-40E1-88C6-A89B50330C6B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E66BC41B-A020-4673-8A3F-1986A41479AD}
 	EndGlobalSection
 EndGlobal
