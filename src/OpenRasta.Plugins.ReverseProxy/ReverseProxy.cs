@@ -21,9 +21,12 @@ namespace OpenRasta.Plugins.ReverseProxy
     {
       _options = options;
       _timeout = options.Timeout;
-      _httpClient = new Lazy<HttpClient>(() => new HttpClient(_options.HttpMessageHandler())
+      _httpClient = new Lazy<HttpClient>(() =>
         {
-          Timeout = Timeout.InfiniteTimeSpan
+          var client = options.HttpClient.Factory(options.HttpClient.Handler());
+          client.Timeout = Timeout.InfiniteTimeSpan;
+          
+          return client;
         },
         LazyThreadSafetyMode.ExecutionAndPublication);
     }

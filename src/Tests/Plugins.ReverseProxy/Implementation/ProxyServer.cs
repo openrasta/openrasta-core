@@ -79,7 +79,7 @@ namespace Tests.Plugins.ReverseProxy.Implementation
     public async Task<ProxyResponse> PostAsync(string uri, string body)
     {
       // Force Content-Length due to httpclient on server not setting the header correctly
-      _requests.Add(req => req.Content = new StringContent(body) { Headers = { ContentLength = body.Length}});
+      _requests.Add(req => req.Content = new StringContent(body) {Headers = {ContentLength = body.Length}});
       return await SendAsync("POST", uri);
     }
 
@@ -88,6 +88,7 @@ namespace Tests.Plugins.ReverseProxy.Implementation
       _requests.Add(modifier);
       return this;
     }
+
     public async Task<ProxyResponse> GetAsync(string uri)
     {
       return await SendAsync("GET", uri);
@@ -145,7 +146,6 @@ namespace Tests.Plugins.ReverseProxy.Implementation
         client.Dispose();
         fromServer.host.Dispose();
         toServer.host.Dispose();
-        
       });
       return (client, disposer);
     }
@@ -188,7 +188,7 @@ namespace Tests.Plugins.ReverseProxy.Implementation
           })
           .Build();
       host.Start();
-      
+
       return (host, host.Port());
     }
 
@@ -225,9 +225,9 @@ namespace Tests.Plugins.ReverseProxy.Implementation
     {
       var options = new ReverseProxyOptions
       {
-        HttpMessageHandler = httpMessageHandler
+        HttpClient = {Handler = httpMessageHandler}
       };
-      
+
       _fromOptions?.Invoke(options);
 
       return new TestServer(
