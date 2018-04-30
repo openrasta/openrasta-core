@@ -13,22 +13,17 @@ namespace OpenRasta.Plugins.ReverseProxy
 {
   public class ReverseProxy
   {
-    readonly ReverseProxyOptions _options;
     readonly Lazy<HttpClient> _httpClient;
     readonly TimeSpan _timeout;
+    readonly bool _convertForwardedHeaders;
+    readonly string _viaIdentifier;
 
-    public ReverseProxy(ReverseProxyOptions options)
+    public ReverseProxy(TimeSpan requestTimeout, bool convertForwardedHeaders, string viaIdentifier, Func<HttpClient> clientFactory)
     {
-      _options = options;
-      _timeout = options.Timeout;
-      _httpClient = new Lazy<HttpClient>(() =>
-        {
-          var client = options.HttpClient.Factory(options.HttpClient.Handler());
-          client.Timeout = Timeout.InfiniteTimeSpan;
-          
-          return client;
-        },
-        LazyThreadSafetyMode.ExecutionAndPublication);
+      _timeout = requestTimeout;
+      _httpClient = new Lazy<HttpClient>(clientFactory, LazyThreadSafetyMode.ExecutionAndPublication);
+      _convertForwardedHeaders = convertForwardedHeaders;
+      _viaIdentifier = viaIdentifier;
     }
 
     public async Task<ReverseProxyResponse> Send(ICommunicationContext context, string target)
@@ -42,7 +37,7 @@ namespace OpenRasta.Plugins.ReverseProxy
 
 
       PrepareRequestBody(context, requestMessage);
-      PrepareRequestHeaders(context, requestMessage, _options.FrowardedHeaders.ConvertLegacyHeaders);
+      PrepareRequestHeaders(context, requestMessage, _convertForwardedHeaders);
 
       var viaIdentifier = PrepareViaHeader(context, requestMessage);
 
@@ -73,7 +68,7 @@ namespace OpenRasta.Plugins.ReverseProxy
 
     string PrepareViaHeader(ICommunicationContext context, HttpRequestMessage requestMessage)
     {
-      var viaIdentifier = _options.Via.Pseudonym ?? $"{context.Request.Uri.Host}:{context.Request.Uri.Port}";
+      var viaIdentifier = _viaIdentifier ?? $"{context.Request.Uri.Host}:{context.Request.Uri.Port}";
       requestMessage.Headers.Add("via", $"1.1 {viaIdentifier}");
       return viaIdentifier;
     }
