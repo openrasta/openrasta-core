@@ -4,6 +4,8 @@ using System.Threading;
 using OpenRasta.Configuration;
 using OpenRasta.Configuration.Fluent;
 using OpenRasta.Configuration.Fluent.Extensions;
+using OpenRasta.Configuration.MetaModel;
+using OpenRasta.Configuration.MetaModel.Handlers;
 
 namespace OpenRasta.Plugins.ReverseProxy
 {
@@ -22,19 +24,11 @@ namespace OpenRasta.Plugins.ReverseProxy
     {
       options = options ?? new ReverseProxyOptions();
 
-      Func<HttpClient> clientFactory = () =>
-      {
-        var client = options.HttpClient.Factory(options.HttpClient.Handler());
-        client.Timeout = Timeout.InfiniteTimeSpan;
-
-        return client;
-      };
-
       uses.Dependency(d => d.Singleton(() => new ReverseProxy(
         options.Timeout,
         options.FrowardedHeaders.ConvertLegacyHeaders,
         options.Via.Pseudonym, 
-        clientFactory)));
+        options.HttpClient.Factory)));
       
       var has = (IHas) uses;
       has.ResourcesOfType<ReverseProxyResponse>()

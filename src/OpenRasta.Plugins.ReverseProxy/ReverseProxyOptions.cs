@@ -25,8 +25,14 @@ namespace OpenRasta.Plugins.ReverseProxy
 
     public class HttpClientOptions
     {
+      Func<HttpClient> _factory;
       public Func<HttpMessageHandler> Handler { get; set; } = () => new HttpClientHandler();
-      public Func<HttpMessageHandler, HttpClient> Factory { get; set; } = handler => new HttpClient(handler);
+
+      public Func<HttpClient> Factory
+      {
+        get => _factory ?? (()=>new HttpClient(Handler()));
+        set => _factory = value;
+      }
     }
   }
 }
