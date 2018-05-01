@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using OpenRasta.Plugins.ReverseProxy.HttpClientFactory;
 using Shouldly;
 using Xunit;
 
@@ -24,7 +25,7 @@ namespace Tests.Plugins.ReverseProxy.LoadBalancingHttpClientFactory
         return handler;
       }
 
-      var factory = new HttpClientFactory(5, createHandler, Timeout.InfiniteTimeSpan);
+      var factory = new RoundRobinHttpClientFactory(5, createHandler, Timeout.InfiniteTimeSpan);
 
       var clients = Enumerable.Range(0, 10).Select(i => factory.GetClient()).ToList();
       clients.Distinct().Count().ShouldBe(10);
@@ -43,7 +44,7 @@ namespace Tests.Plugins.ReverseProxy.LoadBalancingHttpClientFactory
         return handler;
       }
 
-      var factory = new HttpClientFactory(1, createHandler, TimeSpan.FromSeconds(5));
+      var factory = new RoundRobinHttpClientFactory(1, createHandler, TimeSpan.FromSeconds(5));
 
       var clients = Enumerable.Range(0, 10).Select(i => factory.GetClient()).ToList();;
       createdHandlers.Count.ShouldBe(1);
@@ -61,7 +62,7 @@ namespace Tests.Plugins.ReverseProxy.LoadBalancingHttpClientFactory
         return handler = new NullHandler();
       }
 
-      var factory = new HttpClientFactory(1, createHandler, TimeSpan.FromMilliseconds(1));
+      var factory = new RoundRobinHttpClientFactory(1, createHandler, TimeSpan.FromMilliseconds(1));
 
       CreateAndDisposeClient(factory);
       
@@ -78,7 +79,7 @@ namespace Tests.Plugins.ReverseProxy.LoadBalancingHttpClientFactory
       handler.IsDisposed.ShouldBeTrue();
     }
 
-    void CreateAndDisposeClient(HttpClientFactory factory)
+    void CreateAndDisposeClient(RoundRobinHttpClientFactory factory)
     {
       var client = factory.GetClient();
       client.Dispose();

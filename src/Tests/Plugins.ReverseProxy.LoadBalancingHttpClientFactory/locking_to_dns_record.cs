@@ -2,6 +2,7 @@
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using OpenRasta.Plugins.ReverseProxy.HttpHandlers;
 using Shouldly;
 using Xunit;
 
