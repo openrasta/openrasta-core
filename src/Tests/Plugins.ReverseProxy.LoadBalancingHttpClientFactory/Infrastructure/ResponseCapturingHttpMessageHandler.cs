@@ -13,6 +13,6 @@ namespace Tests.Plugins.ReverseProxy.LoadBalancingHttpClientFactory.Infrastructu
       return Task.FromResult(new HttpResponseMessage());
     }
 
-    public HttpRequestMessage Request { get; set; }
+    public HttpRequestMessage Request { get; private set; }
   }
 }

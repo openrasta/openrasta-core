@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -18,7 +19,8 @@ namespace OpenRasta.Plugins.ReverseProxy.HttpClientFactory
 
     int _index;
 
-    public RoundRobinHttpClientFactory(int count, Func<HttpMessageHandler> handlerFactory, TimeSpan? clientLeaseTime = null)
+    public RoundRobinHttpClientFactory(int count, Func<HttpMessageHandler> handlerFactory,
+      TimeSpan? clientLeaseTime = null)
     {
       _count = count;
       _handlerFactory = handlerFactory;
@@ -30,10 +32,17 @@ namespace OpenRasta.Plugins.ReverseProxy.HttpClientFactory
 
     public HttpClient GetClient()
     {
-      var idx = Interlocked.Increment(ref _index);
-      var clientKey = idx > 0 ? idx % _count : idx * -1 % _count;
+      ActiveHandler handler;
+      int tries = 0;
+      do
+      {
+        if (tries++ > 50) throw new HttpClientFactoryException("All HTTP clients are busy, try again later");
+        var idx = Interlocked.Increment(ref _index);
+        var clientKey = idx > 0 ? idx % _count : idx * -1 % _count;
+        handler = _handlers.GetOrAdd(clientKey, CreateActiveHandler);
+      } while (handler.IsActive == false);
 
-      return new HttpClient(_handlers.GetOrAdd(clientKey, CreateActiveHandler), disposeHandler: false);
+      return new HttpClient(handler, disposeHandler: false);
     }
 
     ActiveHandler CreateActiveHandler(int position)
@@ -79,11 +88,20 @@ namespace OpenRasta.Plugins.ReverseProxy.HttpClientFactory
     }
   }
 
+  public class HttpClientFactoryException : Exception
+  {
+    public HttpClientFactoryException(string message)
+      : base(message)
+    {
+    }
+  }
+
   class ActiveHandler : DelegatingHandler
   {
     Action<ActiveHandler> _evict;
     public int Index { get; }
     Timer _evictionTimer;
+    long _activationTime;
 
     public ActiveHandler(int index, HttpMessageHandler innerHandler, TimeSpan clientLeaseTime,
       Action<ActiveHandler> evict) : base(innerHandler)
@@ -91,13 +109,27 @@ namespace OpenRasta.Plugins.ReverseProxy.HttpClientFactory
       _evict = evict;
       Index = index;
       _evictionTimer = new Timer(Evict, evict, clientLeaseTime, Timeout.InfiniteTimeSpan);
+      
     }
 
-    protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+    public bool IsActive => DateTimeOffset.UtcNow.Ticks >= _activationTime;
+
+    protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request,
+      CancellationToken cancellationToken)
     {
       try
       {
-        return base.SendAsync(request, cancellationToken);
+        var response = await base.SendAsync(request, cancellationToken);
+        if (response.StatusCode == HttpStatusCode.ServiceUnavailable)
+        {
+          var delay =
+            response.Headers.RetryAfter.Delta
+            ?? (response.Headers.RetryAfter.Date - (response.Headers.Date ?? DateTimeOffset.UtcNow))
+            ?? TimeSpan.FromSeconds(5);
+          _activationTime = DateTimeOffset.UtcNow.Ticks + delay.Ticks;
+        }
+
+        return response;
       }
       catch
       {

@@ -2,7 +2,10 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Threading;
 using System.Threading.Tasks;
 using OpenRasta.Plugins.ReverseProxy.HttpClientFactory;
 using OpenRasta.Plugins.ReverseProxy.HttpMessageHandlers;
@@ -14,6 +17,65 @@ namespace Tests.Plugins.ReverseProxy.LoadBalancingHttpClientFactory
 {
   public class evicting_clients
   {
+    [Fact]
+    public async Task evicts_503_handlers_temporarily()
+    {
+      var activeHandler = new DelegateHandler((message, token) => Task.FromResult(new HttpResponseMessage
+      {
+        StatusCode = HttpStatusCode.OK,
+        Content = new StringContent("active")
+      }));
+      int timedOut = 0;
+      var retryHandler = new DelegateHandler((message, token) =>
+      {
+        if (Interlocked.Exchange(ref timedOut, 1) == 0)
+          return Task.FromResult(new HttpResponseMessage()
+          {
+            StatusCode = HttpStatusCode.ServiceUnavailable,
+            Headers = {RetryAfter = new RetryConditionHeaderValue(TimeSpan.FromSeconds(5))}
+          });
+        return Task.FromResult(new HttpResponseMessage()
+        {
+          StatusCode = HttpStatusCode.OK,
+          Content = new StringContent("reactivated")
+        });
+      });
+      var handlerIndex = 0;
+      var factory = new RoundRobinHttpClientFactory(2, () => handlerIndex++ *2 == 0 ? activeHandler : retryHandler);
+
+      var responsesBefore = await execute();
+      await Task.Delay(TimeSpan.FromSeconds(6));
+      var responsesAfter = await execute();
+
+      responsesBefore.Count(r => r.response.StatusCode == HttpStatusCode.ServiceUnavailable).ShouldBe(1);
+      responsesBefore.Any(r => r.content == "reactivated").ShouldBeFalse();
+
+      responsesAfter.All(r => r.response.StatusCode == HttpStatusCode.OK).ShouldBeTrue();
+      responsesAfter.Count(r => r.content == "reactivated").ShouldBe(5);
+      responsesAfter.Count(r => r.content == "active").ShouldBe(5);
+      
+      
+      async Task<List<(HttpResponseMessage response, string content)>> execute()
+      {
+        List<(HttpResponseMessage httpResponseMessage, string content)> response = new List<(HttpResponseMessage httpResponseMessage, string content)>();
+        for (int i = 0; i < 10; i++)
+        {
+          using (var client = factory.GetClient())
+          {
+            var httpResponseMessage = await client.SendAsync(new HttpRequestMessage(HttpMethod.Get, "http://nowhere.example/path"));
+            var content = httpResponseMessage.Content == null
+              ? null
+              : await httpResponseMessage.Content?.ReadAsStringAsync();
+            response.Add((httpResponseMessage,content));
+          }
+        }
+
+        return response;
+      }
+      
+      
+    }
+
     [Fact]
     public async Task evicts_handlers_after_timeout()
     {
