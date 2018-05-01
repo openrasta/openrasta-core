@@ -1,9 +1,9 @@
 ﻿using System.Net;
 using System.Net.Http;
-using System.Threading;
 using System.Threading.Tasks;
 using OpenRasta.Plugins.ReverseProxy.HttpMessageHandlers;
 using Shouldly;
+using Tests.Plugins.ReverseProxy.LoadBalancingHttpClientFactory.Infrastructure;
 using Xunit;
 
 namespace Tests.Plugins.ReverseProxy.LoadBalancingHttpClientFactory
@@ -51,17 +51,5 @@ namespace Tests.Plugins.ReverseProxy.LoadBalancingHttpClientFactory
       simulator.Request.RequestUri.ToString().ShouldBe("http://192.168.0.1/path");
       simulator.Request.Headers.Host.ShouldBe("192.168.0.1");
     }
-  }
-
-  class ResponseCapturingHttpMessageHandler : HttpMessageHandler
-  {
-    protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request,
-      CancellationToken cancellationToken)
-    {
-      Request = request;
-      return Task.FromResult(new HttpResponseMessage());
-    }
-
-    public HttpRequestMessage Request { get; set; }
   }
 }
