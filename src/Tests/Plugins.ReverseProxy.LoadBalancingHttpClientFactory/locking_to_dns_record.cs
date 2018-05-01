@@ -2,7 +2,6 @@
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using OpenRasta.Plugins.ReverseProxy.LoadBalancingHttpClientFactory;
 using Shouldly;
 using Xunit;
 
@@ -18,7 +17,7 @@ namespace Tests.Plugins.ReverseProxy.LoadBalancingHttpClientFactory
       Task<IPAddress> resolver(string domainName) => Task.FromResult(IPAddress.Parse("127.0.0.1"));
 
       simulator = new ResponseCapturingHttpMessageHandler();
-      var delegateHandler = new LockToDnsRecordA(simulator, resolver);
+      var delegateHandler = new LockToIPAddress(simulator, resolver);
       client = new HttpClient(delegateHandler);
     }
     [Fact]

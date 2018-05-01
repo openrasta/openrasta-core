@@ -5,9 +5,9 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading;
 
-namespace OpenRasta.Plugins.ReverseProxy.LoadBalancingHttpClientFactory
+namespace OpenRasta.Plugins.ReverseProxy.HttpClientFactory
 {
-  public class HttpClientFactory
+  public class RoundRobinHttpClientFactory
   {
     readonly int _count;
     readonly Func<HttpMessageHandler> _handlerFactory;
@@ -17,7 +17,7 @@ namespace OpenRasta.Plugins.ReverseProxy.LoadBalancingHttpClientFactory
 
     int _index;
 
-    public HttpClientFactory(int count, Func<HttpMessageHandler> handlerFactory, TimeSpan clientLeaseTime)
+    public RoundRobinHttpClientFactory(int count, Func<HttpMessageHandler> handlerFactory, TimeSpan clientLeaseTime)
     {
       _count = count;
       _handlerFactory = handlerFactory;
