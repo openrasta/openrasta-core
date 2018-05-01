@@ -48,7 +48,8 @@ namespace Tests.Plugins.ReverseProxy.LoadBalancingHttpClientFactory
 
       var clients = Enumerable.Range(0, 10).Select(i => factory.GetClient()).ToList();;
       createdHandlers.Count.ShouldBe(1);
-      await Task.Delay(TimeSpan.FromSeconds(5));
+      
+      await Task.Delay(TimeSpan.FromSeconds(6));
       clients = Enumerable.Range(0, 10).Select(i => factory.GetClient()).ToList();;
       createdHandlers.Count.ShouldBe(2);
     }
@@ -63,8 +64,8 @@ namespace Tests.Plugins.ReverseProxy.LoadBalancingHttpClientFactory
 
       var factory = new HttpClientFactory(1, createHandler, TimeSpan.FromMilliseconds(1));
 
-      using(var client = factory.GetClient()){}
-
+      CreateAndDisposeClient(factory);
+      
       var sw = Stopwatch.StartNew();
 
       TimeSpan timeout = TimeSpan.FromSeconds(15);
@@ -76,6 +77,12 @@ namespace Tests.Plugins.ReverseProxy.LoadBalancingHttpClientFactory
       } while (!handler.IsDisposed && sw.Elapsed < timeout);
       
       handler.IsDisposed.ShouldBeTrue();
+    }
+
+    void CreateAndDisposeClient(HttpClientFactory factory)
+    {
+      var client = factory.GetClient();
+      client.Dispose();
     }
   }
 
