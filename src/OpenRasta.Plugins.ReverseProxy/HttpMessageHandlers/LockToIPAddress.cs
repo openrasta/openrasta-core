@@ -4,7 +4,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace OpenRasta.Plugins.ReverseProxy.HttpHandlers
+namespace OpenRasta.Plugins.ReverseProxy.HttpMessageHandlers
 {
   public class LockToIPAddress : DelegatingHandler
   {

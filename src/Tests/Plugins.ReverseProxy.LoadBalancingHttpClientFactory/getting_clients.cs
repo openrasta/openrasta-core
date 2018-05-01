@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using OpenRasta.Plugins.ReverseProxy.HttpClientFactory;
+using OpenRasta.Plugins.ReverseProxy.HttpMessageHandlers;
 using Shouldly;
 using Xunit;
 
@@ -20,7 +21,8 @@ namespace Tests.Plugins.ReverseProxy.LoadBalancingHttpClientFactory
 
       HttpMessageHandler createHandler()
       {
-        var handler = new NullHandler();
+        var handler =
+          new DelegateHandler((message, token) => Task.FromResult(new HttpResponseMessage()));
         createdHandlers.Add(handler);
         return handler;
       }
@@ -33,64 +35,100 @@ namespace Tests.Plugins.ReverseProxy.LoadBalancingHttpClientFactory
     }
 
     [Fact]
-    public async Task handler_is_evicted()
+    public async Task evicts_handlers_after_timeout()
     {
       var createdHandlers = new List<HttpMessageHandler>();
 
       HttpMessageHandler createHandler()
       {
-        var handler = new NullHandler();
+        var handler =
+          new DelegateHandler((message, token) => Task.FromResult(new HttpResponseMessage()));
         createdHandlers.Add(handler);
         return handler;
       }
 
       var factory = new RoundRobinHttpClientFactory(1, createHandler, TimeSpan.FromSeconds(5));
 
-      var clients = Enumerable.Range(0, 10).Select(i => factory.GetClient()).ToList();;
+      var clients = Enumerable.Range(0, 10).Select(i => factory.GetClient()).ToList();
+      clients.Count.ShouldBe(10);
       createdHandlers.Count.ShouldBe(1);
-      
+
       await Task.Delay(TimeSpan.FromSeconds(6));
-      clients = Enumerable.Range(0, 10).Select(i => factory.GetClient()).ToList();;
+      clients = Enumerable.Range(0, 10).Select(i => factory.GetClient()).ToList();
+      clients.Count.ShouldBe(10);
       createdHandlers.Count.ShouldBe(2);
     }
+
     [Fact]
-    public async Task handler_is_disposed()
+    public async Task throwing_handlers_are_evicted()
     {
-      NullHandler handler = null;
+      var handler = new DisposeTrackingHandler(
+        new DelegateHandler((message, token) => throw new HttpRequestException()));
+      var factory = new RoundRobinHttpClientFactory(1, () => handler);
+
+      await CreateAndDisposeClientWithGarbageCollection(factory, async client =>
+      {
+        try
+        {
+          await client.GetAsync("http://nowhere.example");
+        }
+        catch
+        {
+        }
+      });
+      
+      WaitForDispose(handler);
+
+      handler.IsDisposed.ShouldBeTrue();
+    }
+
+    [Fact]
+    public async Task handlers_are_disposed_when_unused()
+    {
+      DisposeTrackingHandler handler = null;
+
       HttpMessageHandler createHandler()
       {
-        return handler = new NullHandler();
+        return handler =
+          new DisposeTrackingHandler(
+            new DelegateHandler((message, token) => Task.FromResult(new HttpResponseMessage())));
       }
 
       var factory = new RoundRobinHttpClientFactory(1, createHandler, TimeSpan.FromMilliseconds(1));
 
-      CreateAndDisposeClient(factory);
-      
-      var sw = Stopwatch.StartNew();
+      await CreateAndDisposeClientWithGarbageCollection(factory);
 
-      TimeSpan timeout = TimeSpan.FromSeconds(15);
+      WaitForDispose(handler, TimeSpan.FromSeconds(15));
+
+      handler.IsDisposed.ShouldBeTrue();
+    }
+
+    static void WaitForDispose(DisposeTrackingHandler handler, TimeSpan? timeout = null)
+    {
+      timeout = timeout ?? TimeSpan.FromSeconds(20);
+
+      var sw = Stopwatch.StartNew();
       do
       {
         GC.Collect(2, GCCollectionMode.Forced, true, true);
         GC.WaitForPendingFinalizers();
         GC.Collect(2, GCCollectionMode.Forced, true, true);
       } while (!handler.IsDisposed && sw.Elapsed < timeout);
-      
-      handler.IsDisposed.ShouldBeTrue();
     }
 
-    void CreateAndDisposeClient(RoundRobinHttpClientFactory factory)
+    async Task CreateAndDisposeClientWithGarbageCollection(RoundRobinHttpClientFactory factory,
+      Func<HttpClient, Task> clientInvoker = null)
     {
       var client = factory.GetClient();
+      if (clientInvoker != null) await clientInvoker(client);
       client.Dispose();
     }
   }
 
-  class NullHandler : HttpMessageHandler
+  class DisposeTrackingHandler : DelegatingHandler
   {
-    protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+    public DisposeTrackingHandler(HttpMessageHandler inner) : base(inner)
     {
-      return Task.FromResult(new HttpResponseMessage());
     }
 
     protected override void Dispose(bool disposing)
@@ -99,6 +137,6 @@ namespace Tests.Plugins.ReverseProxy.LoadBalancingHttpClientFactory
       IsDisposed = true;
     }
 
-    public bool IsDisposed { get; set; }
+    public bool IsDisposed { get; private set; }
   }
 }

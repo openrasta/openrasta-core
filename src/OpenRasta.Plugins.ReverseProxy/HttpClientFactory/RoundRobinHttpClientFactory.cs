@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace OpenRasta.Plugins.ReverseProxy.HttpClientFactory
 {
@@ -17,11 +18,11 @@ namespace OpenRasta.Plugins.ReverseProxy.HttpClientFactory
 
     int _index;
 
-    public RoundRobinHttpClientFactory(int count, Func<HttpMessageHandler> handlerFactory, TimeSpan clientLeaseTime)
+    public RoundRobinHttpClientFactory(int count, Func<HttpMessageHandler> handlerFactory, TimeSpan? clientLeaseTime = null)
     {
       _count = count;
       _handlerFactory = handlerFactory;
-      _clientLeaseTime = clientLeaseTime;
+      _clientLeaseTime = clientLeaseTime ?? TimeSpan.FromMinutes(2);
       _handlers = new ConcurrentDictionary<int, ActiveHandler>();
       _evictedHandlers = new ConcurrentQueue<EvictedHandler>();
       _cleanupTimer = new Timer(state => Cleanup(), null, Timeout.InfiniteTimeSpan, Timeout.InfiniteTimeSpan);
@@ -92,7 +93,20 @@ namespace OpenRasta.Plugins.ReverseProxy.HttpClientFactory
       _evictionTimer = new Timer(Evict, evict, clientLeaseTime, Timeout.InfiniteTimeSpan);
     }
 
-    void Evict(object state)
+    protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+    {
+      try
+      {
+        return base.SendAsync(request, cancellationToken);
+      }
+      catch
+      {
+        Evict();
+        throw;
+      }
+    }
+
+    void Evict(object state = null)
     {
       _evictionTimer.Dispose();
       _evictionTimer = null;
