@@ -13,15 +13,16 @@ namespace OpenRasta.Plugins.ReverseProxy
 {
   public class ReverseProxy
   {
-    readonly Lazy<HttpClient> _httpClient;
+    readonly Func<HttpClient> _httpClient;
     readonly TimeSpan _timeout;
     readonly bool _convertForwardedHeaders;
     readonly string _viaIdentifier;
 
-    public ReverseProxy(TimeSpan requestTimeout, bool convertForwardedHeaders, string viaIdentifier, Func<HttpClient> clientFactory)
+    public ReverseProxy(TimeSpan requestTimeout, bool convertForwardedHeaders, string viaIdentifier,
+      Func<HttpClient> clientFactory)
     {
       _timeout = requestTimeout;
-      _httpClient = new Lazy<HttpClient>(clientFactory, LazyThreadSafetyMode.ExecutionAndPublication);
+      _httpClient = clientFactory;
       _convertForwardedHeaders = convertForwardedHeaders;
       _viaIdentifier = viaIdentifier;
     }
@@ -41,13 +42,15 @@ namespace OpenRasta.Plugins.ReverseProxy
 
       var viaIdentifier = PrepareViaHeader(context, requestMessage);
 
+      var httpClient = _httpClient();
+      
       var cts = new CancellationTokenSource();
       cts.CancelAfter(_timeout);
       var timeoutToken = cts.Token;
 
       try
       {
-        var responseMessage = await _httpClient.Value.SendAsync(
+        var responseMessage = await httpClient.SendAsync(
           requestMessage,
           HttpCompletionOption.ResponseHeadersRead,
           timeoutToken
@@ -121,7 +124,7 @@ namespace OpenRasta.Plugins.ReverseProxy
         if (HttpHeaderClassification.IsMicrosoftHttpContentHeader(header.Key))
         {
           if (request.Content == null) continue;
-            request.Content.Headers.Add(header.Key, header.Value);
+          request.Content.Headers.Add(header.Key, header.Value);
         }
         else if (!HttpHeaderClassification.IsHopByHopHeader(header.Key))
           request.Headers.Add(header.Key, header.Value);
