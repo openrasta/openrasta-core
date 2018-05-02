@@ -141,7 +141,7 @@ namespace OpenRasta.Plugins.ReverseProxy.HttpClientFactory
 
     void Evict(object state = null)
     {
-      if (Interlocked.Exchange(ref _evicted, 1) == 0) return;
+      if (Interlocked.Exchange(ref _evicted, 1) != 0) return;
       
       _evictionTimer.Dispose();
       _evictionTimer = null;
