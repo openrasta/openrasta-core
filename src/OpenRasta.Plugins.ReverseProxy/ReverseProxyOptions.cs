@@ -33,6 +33,17 @@ namespace OpenRasta.Plugins.ReverseProxy
         get => _factory ?? (()=>new HttpClient(Handler()));
         set => _factory = value;
       }
+
+      public RoundRobinOptions RoundRobin { get; } = new RoundRobinOptions();
+    }
+
+    public class RoundRobinOptions
+    {
+      public bool Enabled { get; set; }
+      public int ClientCount { get; set; }
+      public TimeSpan LeaseTime { get; set; }
+      public bool ClientPerNode { get; set; }
     }
   }
+
 }
