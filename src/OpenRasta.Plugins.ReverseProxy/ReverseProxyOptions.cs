@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Net;
 using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace OpenRasta.Plugins.ReverseProxy
 {
@@ -43,6 +45,7 @@ namespace OpenRasta.Plugins.ReverseProxy
       public int ClientCount { get; set; }
       public TimeSpan LeaseTime { get; set; }
       public bool ClientPerNode { get; set; }
+      public Func<string,Task<IPAddress>> DnsResolver { get; set; }
     }
   }
 

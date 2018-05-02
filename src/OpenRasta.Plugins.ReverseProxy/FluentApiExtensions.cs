@@ -31,7 +31,7 @@ namespace OpenRasta.Plugins.ReverseProxy
       {
         var handler = options.HttpClient.Handler;
         if (options.HttpClient.RoundRobin.ClientPerNode)
-          handler = () => new LockToIPAddress(options.HttpClient.Handler());
+          handler = () => new LockToIPAddress(options.HttpClient.Handler(), options.HttpClient.RoundRobin.DnsResolver);
 
         var factory = new RoundRobinHttpClientFactory(
           options.HttpClient.RoundRobin.ClientCount,

@@ -84,7 +84,7 @@ namespace OpenRasta.Plugins.ReverseProxy.HttpClientFactory
     void ScheduleCleanup()
     {
       if (Interlocked.Exchange(ref _cleanupScheduled, 1) == 0)
-        _cleanupTimer.Change(TimeSpan.FromSeconds(1), Timeout.InfiniteTimeSpan);
+        _cleanupTimer.Change(TimeSpan.FromSeconds(10), Timeout.InfiniteTimeSpan);
     }
   }
 
@@ -102,11 +102,12 @@ namespace OpenRasta.Plugins.ReverseProxy.HttpClientFactory
     public int Index { get; }
     Timer _evictionTimer;
     long _activationTime;
+    int _evicted = 0;
 
     public ActiveHandler(int index, HttpMessageHandler innerHandler, TimeSpan clientLeaseTime,
       Action<ActiveHandler> evict) : base(innerHandler)
     {
-      _evict = evict;
+      _evict = evict ?? throw new ArgumentNullException(nameof(evict));
       Index = index;
       _evictionTimer = new Timer(Evict, evict, clientLeaseTime, Timeout.InfiniteTimeSpan);
       
@@ -140,6 +141,8 @@ namespace OpenRasta.Plugins.ReverseProxy.HttpClientFactory
 
     void Evict(object state = null)
     {
+      if (Interlocked.Exchange(ref _evicted, 1) == 0) return;
+      
       _evictionTimer.Dispose();
       _evictionTimer = null;
       _evict(this);
