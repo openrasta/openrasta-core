@@ -1,32 +1,41 @@
-#region License
-
-/* Authors:
- *      Sebastien Lambla (seb@serialseb.com)
- * Copyright:
- *      (C) 2007-2009 Caffeine IT & naughtyProd Ltd (http://www.caffeine-it.com)
- * License:
- *      This file is distributed under the terms of the MIT License found at the end of this file.
- */
-#endregion
-
-using Castle.Core;
 using Castle.Core.Internal;
 using Castle.Facilities.TypedFactory;
-using Castle.MicroKernel;
 using Castle.MicroKernel.Registration;
 using Castle.MicroKernel.Resolvers.SpecializedResolvers;
 using Castle.Windsor;
 using OpenRasta.Configuration.MetaModel;
-using OpenRasta.Pipeline;
 using System;
-using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
+using Castle.MicroKernel;
+using Castle.MicroKernel.Lifestyle;
 
 namespace OpenRasta.DI.Windsor
 {
-    public class WindsorDependencyResolver : DependencyResolverCore, IDependencyResolver, IModelDrivenDependencyRegistration, IDisposable
+  class ScopedInstanceStore
+  {
+    Dictionary<Type, object> _store = new Dictionary<Type, object>(4);
+
+    public object GetInstance(Type serviceType)
     {
+      return _store.TryGetValue(serviceType, out var service)
+        ? service
+        : throw new ComponentNotFoundException(serviceType);
+    }
+    public void SetInstance(Type serviceType, object instance)
+    {
+      _store[serviceType] = instance;
+    }
+  }
+  public class WindsorDependencyResolver :
+    DependencyResolverCore,
+    IDependencyResolver,
+    IModelDrivenDependencyRegistration,
+    IRequestScopedResolver,
+    IDisposable
+  {
         readonly IWindsorContainer _windsorContainer;
         readonly bool _disposeContainerOnCleanup;
         static readonly object ContainerLock = new object();
@@ -35,6 +44,10 @@ namespace OpenRasta.DI.Windsor
         {
         }
 
+    static string GetComponentName(Type serviceType)
+    {
+      return $"openrasta.{serviceType.FullName}.{Guid.NewGuid()}";
+    }
         public WindsorDependencyResolver(IWindsorContainer container, bool disposeContainerOnCleanup = false)
         {
             _windsorContainer = container;
@@ -47,150 +60,97 @@ namespace OpenRasta.DI.Windsor
                 _windsorContainer.AddFacility<TypedFactoryFacility>();
             }
 
-            _windsorContainer.Register(Component.For<IDependencyResolver, IModelDrivenDependencyRegistration>().Instance(this).OnlyNewServices());
+      _windsorContainer.Register(
+        Component
+          .For<IDependencyResolver, IModelDrivenDependencyRegistration>()
+          .Instance(this)
+          .OnlyNewServices());
+
+      _windsorContainer.Register(Component
+        .For<ScopedInstanceStore>()
+        .Named(GetComponentName(typeof(ScopedInstanceStore)))
+        .ImplementedBy<ScopedInstanceStore>()
+        .LifestyleScoped());
         }
 
         public bool HasDependency(Type serviceType)
         {
-            if (serviceType == null) return false;
-            return AvailableHandlers(_windsorContainer.Kernel.GetHandlers(serviceType)).Any();
+      return serviceType != null && _windsorContainer.Kernel.GetHandlers(serviceType).Any();
         }
 
         public bool HasDependencyImplementation(Type serviceType, Type concreteType)
         {
             return
-                AvailableHandlers(_windsorContainer.Kernel.GetHandlers(serviceType))
+        _windsorContainer.Kernel.GetHandlers(serviceType)
                     .Any(h => h.ComponentModel.Implementation == concreteType);
         }
 
         public void HandleIncomingRequestProcessed()
         {
-            var store = _windsorContainer.Resolve<IContextStore>();
-
-            store.Destruct();
+      throw new NotSupportedException("Unsupported, are you sure you're using OpenRasta 2.6?");
         }
 
+    static readonly ConcurrentDictionary<Type, Type> EnumMappings = new ConcurrentDictionary<Type, Type>();
         protected override object ResolveCore(Type serviceType)
         {
-            try
-            {
-                return _windsorContainer.Resolve(serviceType);
-            }
-            catch (ComponentNotFoundException)
-            {
-                if (typeof(IEnumerable).IsAssignableFrom(serviceType))
-                {
-                    var arrayItemType = serviceType.GetCompatibleArrayItemType();
-                    return _windsorContainer.ResolveAll(arrayItemType);
-                }
+      var enumType = EnumMappings.GetOrAdd(serviceType, type => serviceType.GetCompatibleArrayItemType());
 
-                throw;
-            }
-
+      return enumType != null
+        ? _windsorContainer.ResolveAll(enumType)
+        : _windsorContainer.Resolve(serviceType);
         }
 
         protected override IEnumerable<TService> ResolveAllCore<TService>()
         {
-            return ((IEnumerable<object>) ResolveCore(typeof(IEnumerable<TService>))).Cast<TService>();
+      return _windsorContainer.ResolveAll<TService>();
         }
 
         protected override void AddDependencyCore(Type dependent, Type concrete, DependencyLifetime lifetime)
         {
-            string componentName = Guid.NewGuid().ToString();
+      string componentName = GetComponentName(dependent);
             lock (ContainerLock)
             {
-                if (lifetime != DependencyLifetime.PerRequest)
-                {
-                    _windsorContainer.Register(Component.For(dependent).ImplementedBy(concrete).Named(componentName).LifeStyle.Is(ConvertLifestyles.ToLifestyleType(lifetime)));
-                }
-                else
-                {
-                    _windsorContainer.Register(Component.For(dependent).Named(componentName).ImplementedBy(concrete).LifeStyle.Custom(typeof(ContextStoreLifetime)));
-                }
+        _windsorContainer.Register(Component.For(dependent).ImplementedBy(concrete).Named(componentName).LifeStyle
+          .Is(ConvertLifestyles.ToLifestyleType(lifetime)));
             }
         }
 
         protected override void AddDependencyInstanceCore(Type serviceType, object instance, DependencyLifetime lifetime)
         {
-            string key = Guid.NewGuid().ToString();
-
-            switch (lifetime)
+      var key = GetComponentName(serviceType);
+      lock (ContainerLock)
             {
-                case DependencyLifetime.PerRequest:
+        if (lifetime == DependencyLifetime.PerRequest)
                     {
-                        var store = (IContextStore)Resolve(typeof(IContextStore));
                         // try to see if we have a registration already
-                        if (_windsorContainer.Kernel.HasComponent(serviceType))
-                        {
-                            var handler = _windsorContainer.Kernel.GetHandler(serviceType);
-                            if (handler.ComponentModel.ExtendedProperties[Constants.REG_IS_INSTANCE_KEY] != null)
-                            {
+          if (!_windsorContainer.Kernel.HasComponent(serviceType))
                                 // if there's already an instance registration we update the store with the correct reg.
-                                store[handler.ComponentModel.Name] = instance;
+            _windsorContainer.Register(Component
+              .For(serviceType)
+              .Named(key)
+              .UsingFactoryMethod(kernel => kernel.Resolve<ScopedInstanceStore>().GetInstance(serviceType))
+              .LifestyleScoped());
+
+          _windsorContainer.Resolve<ScopedInstanceStore>().SetInstance(serviceType, instance);
                             }
-                            else
-                            {
-                                throw new DependencyResolutionException("Cannot register an instance for a type already registered");
-                            }
-                        }
                         else
                         {
-                            lock (ContainerLock)
-                            {
-                                if (_windsorContainer.Kernel.HasComponent(serviceType) == false)
-                                {
-                                    _windsorContainer.Register(
-                                        Component.For(serviceType)
-                                                 .Activator<ContextStoreInstanceActivator>()
-                                                 .LifestyleCustom<ContextStoreLifetime>()
-                                                 .ImplementedBy(instance.GetType())
+          _windsorContainer.Register(Component
+            .For(serviceType)
+            .Instance(instance)
                                                  .Named(key)
-                                                 .ExtendedProperties(new Property(Constants.REG_IS_INSTANCE_KEY, true))
-                                                 );
-                                    store[key] = instance;
+            .IsDefault()
+            .LifeStyle.Is(ConvertLifestyles.ToLifestyleType(lifetime)));
                                 }
                             }
                         }
-                    }
-                    break;
-                case DependencyLifetime.Singleton:
-                    lock (ContainerLock)
-                    {
-                        _windsorContainer.Register(Component.For(serviceType).Instance(instance).Named(key).LifeStyle.Singleton);
-                    }
-                    break;
-            }
-        }
 
         protected override void AddDependencyCore(Type handlerType, DependencyLifetime lifetime)
         {
             AddDependencyCore(handlerType, handlerType, lifetime);
-        }
 
-        IEnumerable<IHandler> AvailableHandlers(IEnumerable<IHandler> handlers)
-        {
-            return from handler in handlers
-                   where IsAvailable(handler.ComponentModel)
-                   select handler;
-        }
 
-        bool IsAvailable(ComponentModel component)
-        {
-            bool isWebInstance = IsWebInstance(component);
-            if (isWebInstance)
-            {
-                if (component.Name == null || !HasDependency(typeof (IContextStore))) return false;
-                var store = _windsorContainer.Resolve<IContextStore>();
-                bool isInstanceAvailable = store[component.Name] != null;
-                return isInstanceAvailable;
-            }
-            return true;
-        }
 
-        static bool IsWebInstance(ComponentModel component)
-        {
-            return typeof (ContextStoreLifetime).IsAssignableFrom(component.CustomLifestyle)
-                   && component.ExtendedProperties[Constants.REG_IS_INSTANCE_KEY] != null;
         }
 
         public void Dispose()
@@ -203,41 +163,123 @@ namespace OpenRasta.DI.Windsor
 
         public void Register(DependencyFactoryModel registration)
         {
-            object ResolveFromRegistration(IKernel ctx)
+      var genericTypeDef = registration.GetType().GetGenericTypeDefinition();
+      var args = registration.GetType().GenericTypeArguments;
+      var allArgs = new[] {registration.ServiceType}.Concat(args).ToArray();
+      Type registrarType;
+      if (genericTypeDef == typeof(DependencyFactoryModel<>))
+        registrarType = typeof(FactoryRegistration<,>).MakeGenericType(allArgs);
+      else if (genericTypeDef == typeof(DependencyFactoryModel<,>))
+        registrarType = typeof(FactoryRegistration<,,>).MakeGenericType(allArgs);
+      else if (genericTypeDef == typeof(DependencyFactoryModel<,,>))
+        registrarType = typeof(FactoryRegistration<,,,>).MakeGenericType(allArgs);
+      else if (genericTypeDef == typeof(DependencyFactoryModel<,,,>))
+        registrarType = typeof(FactoryRegistration<,,,,>).MakeGenericType(allArgs);
+      else if (genericTypeDef == typeof(DependencyFactoryModel<,,,,>))
+        registrarType = typeof(FactoryRegistration<,,,,,>).MakeGenericType(allArgs);
+      else
+        throw new NotSupportedException();
+      var registrar = (IRegisterFactories) Activator.CreateInstance(registrarType);
+      registrar.Register(GetComponentName(registration.ServiceType), _windsorContainer, registration);
+    }
+    public IDisposable CreateRequestScope()
+    {
+      return _windsorContainer.BeginScope();
+    }
+    interface IRegisterFactories
             {
-                return registration.UntypedFactory(registration.Arguments.Select(x => ctx.ResolveAll(x)).ToArray<object>());
+      void Register(string componentName, IWindsorContainer container, DependencyFactoryModel model);
             }
 
-            Func<IKernel, object> factory = null;
-            if (registration.Factory != null)
-                factory = ResolveFromRegistration;
-
-            _windsorContainer.Register(
-                Component.For(registration.ServiceType)
-                    .UsingFactoryMethod(factory)
-                    .ImplementedBy(registration.ConcreteType)
+    class FactoryRegistration<TService, TConcrete> : IRegisterFactories
+      where TConcrete : TService where TService : class
+    {
+      public void Register(string componentName, IWindsorContainer container, DependencyFactoryModel registration)
+      {
+        if (registration.Factory == null)
+        {
+          container.Register(Component
+            .For<TService>()
+            .Named(componentName)
+            .ImplementedBy<TConcrete>()
+            .LifeStyle.Is(ConvertLifestyles.ToLifestyleType(registration.Lifetime)));
+        }
+        else
+        {
+          var factoryMethod = ((Expression<Func<TConcrete>>) registration.Factory).Compile();
+          container.Register(
+            Component.For<TService>()
+              .Named(componentName)
+              .UsingFactoryMethod(factoryMethod)
                     .LifeStyle.Is(ConvertLifestyles.ToLifestyleType(registration.Lifetime)));
         }
     }
 }
 
-#region Full license
+    class FactoryRegistration<TService, TArg, TConcrete> : IRegisterFactories
+      where TService : class where TConcrete : TService
+    {
+      public void Register(string componentName, IWindsorContainer container, DependencyFactoryModel registration)
+      {
+        var factoryMethod = ((Expression<Func<TArg, TConcrete>>) registration.Factory).Compile();
+        container.Register(
+          Component.For<TService>()
+            .Named(componentName)
+            .UsingFactoryMethod(kernel => factoryMethod(
+              kernel.Resolve<TArg>()))
+            .LifeStyle.Is(ConvertLifestyles.ToLifestyleType(registration.Lifetime)));
+      }
+    }
 
-// Permission is hereby granted, free of charge, to any person obtaining
-// a copy of this software and associated documentation files (the
-// "Software"), to deal in the Software without restriction, including
-// without limitation the rights to use, copy, modify, merge, publish,
-// distribute, sublicense, and/or sell copies of the Software, and to
-// permit persons to whom the Software is furnished to do so, subject to
-// the following conditions:
-// The above copyright notice and this permission notice shall be
-// included in all copies or substantial portions of the Software.
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
-// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
-// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+    class FactoryRegistration<TService, TArg1, TArg2, TConcrete> : IRegisterFactories
+      where TService : class where TConcrete : TService
+    {
+      public void Register(string componentName, IWindsorContainer container, DependencyFactoryModel registration)
+      {
+        var factoryMethod = ((Expression<Func<TArg1, TArg2, TConcrete>>) registration.Factory).Compile();
+        container.Register(
+          Component.For<TService>()
+            .Named(componentName)
+            .UsingFactoryMethod(kernel => factoryMethod(
+              kernel.Resolve<TArg1>(),
+              kernel.Resolve<TArg2>()))
+            .LifeStyle.Is(ConvertLifestyles.ToLifestyleType(registration.Lifetime)));
+      }
+    }
 
-#endregion
+    class FactoryRegistration<TService, TArg1, TArg2, TArg3, TConcrete> : IRegisterFactories
+      where TService : class where TConcrete : TService
+    {
+      public void Register(string componentName, IWindsorContainer container, DependencyFactoryModel registration)
+      {
+        var factoryMethod = ((Expression<Func<TArg1, TArg2, TArg3, TConcrete>>) registration.Factory).Compile();
+        container.Register(
+          Component.For<TService>()
+            .Named(componentName)
+            .UsingFactoryMethod(kernel => factoryMethod(
+              kernel.Resolve<TArg1>(),
+              kernel.Resolve<TArg2>(),
+              kernel.Resolve<TArg3>()))
+            .LifeStyle.Is(ConvertLifestyles.ToLifestyleType(registration.Lifetime)));
+      }
+    }
+
+    class FactoryRegistration<TService, TArg1, TArg2, TArg3, TArg4, TConcrete> : IRegisterFactories
+      where TService : class where TConcrete : TService
+    {
+      public void Register(string componentName, IWindsorContainer container, DependencyFactoryModel registration)
+      {
+        var factoryMethod = ((Expression<Func<TArg1, TArg2, TArg3, TArg4, TConcrete>>) registration.Factory).Compile();
+        container.Register(
+          Component.For<TService>()
+            .Named(componentName)
+            .UsingFactoryMethod(kernel => factoryMethod(
+              kernel.Resolve<TArg1>(),
+              kernel.Resolve<TArg2>(),
+              kernel.Resolve<TArg3>(),
+              kernel.Resolve<TArg4>()))
+            .LifeStyle.Is(ConvertLifestyles.ToLifestyleType(registration.Lifetime)));
+      }
+    }
+  }
+}
