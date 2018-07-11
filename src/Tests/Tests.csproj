@@ -7,6 +7,7 @@
     <ProjectReference Include="..\OpenRasta.Hosting.AspNet\OpenRasta.Hosting.AspNet.csproj" Condition="'$(TargetFramework)' == 'net461'" />
     <ProjectReference Include="..\OpenRasta.Plugins.Caching\OpenRasta.Plugins.Caching.csproj" />
     <ProjectReference Include="..\OpenRasta.Plugins.Diagnostics\OpenRasta.Plugins.Diagnostics.csproj" />
+    <ProjectReference Include="..\OpenRasta.Plugins.Hydra\OpenRasta.Plugins.Hydra.csproj" />
     <ProjectReference Include="..\OpenRasta.Plugins.ReverseProxy\OpenRasta.Plugins.ReverseProxy.csproj" />
     <ProjectReference Include="..\OpenRasta.Hosting.AspNetCore\OpenRasta.Hosting.AspNetCore.csproj" />
     <ProjectReference Include="..\OpenRasta.Codecs.Newtonsoft.Json\OpenRasta.Codecs.Newtonsoft.Json.csproj" />
@@ -26,5 +27,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Plugins.Caching\attributes\client" />
+    <Folder Include="Plugins.Hydra\Examples" />
   </ItemGroup>
 </Project>
