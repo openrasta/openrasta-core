@@ -35,6 +35,12 @@ namespace OpenRasta.Plugins.Hydra
         .HandledBy<RootContextHandler>();
 
       has
+        .ResourcesOfType<ApiDocumentation>()
+        .Vocabulary(Vocabularies.Hydra)
+        .AtUri("/.hydra/documentation.jsonld")
+        .HandledBy<ApiDocumentationHandler>();
+
+      has
         .ResourcesOfType<Collection>()
         .Vocabulary(Vocabularies.Hydra);
 

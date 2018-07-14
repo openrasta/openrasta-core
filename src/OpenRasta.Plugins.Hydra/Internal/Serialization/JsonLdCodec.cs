@@ -16,16 +16,19 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization
   {
     readonly ICommunicationContext _context;
     readonly IMetaModelRepository _models;
-    readonly Uri _rootContextUri;
+    readonly IResponse _responseMessage;
     readonly IUriResolver _uris;
+    Uri _apiDocumentationLink;
+    static readonly string _apiDocumentationRel = $"{Vocabularies.Hydra.Uri}apiDocumentation";
 
 
-    public JsonLdCodec(IUriResolver uris, ICommunicationContext context, IMetaModelRepository models)
+    public JsonLdCodec(IUriResolver uris, ICommunicationContext context, IMetaModelRepository models, IResponse responseMessage)
     {
       _uris = uris;
       _context = context;
       _models = models;
-      _rootContextUri = _uris.CreateUriFor<Context>();
+      _responseMessage = responseMessage;
+      _apiDocumentationLink = uris.CreateUriFor<ApiDocumentation>();
     }
 
     Uri BaseUri => _context.ApplicationBaseUri;
@@ -34,6 +37,8 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization
 
     public async Task WriteTo(object entity, IHttpEntity response, IEnumerable<string> codecParameters)
     {
+      _responseMessage.Headers.Add("link", $"<{_apiDocumentationLink}>; rel=\"{_apiDocumentationRel}\""); 
+      
       var customConverter = new JsonSerializer
       {
         NullValueHandling = NullValueHandling.Ignore,

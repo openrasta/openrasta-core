@@ -4,6 +4,7 @@ using Newtonsoft.Json.Linq;
 using OpenRasta.Configuration;
 using OpenRasta.Hosting.InMemory;
 using OpenRasta.Plugins.Hydra;
+using OpenRasta.Web;
 using Shouldly;
 using Tests.Plugins.Hydra.Examples;
 using Tests.Plugins.Hydra.Implementation;
@@ -11,9 +12,11 @@ using Xunit;
 
 namespace Tests.Plugins.Hydra
 {
-  public class entryPoint
+  public class entryPoint : IAsyncLifetime
   {
-    InMemoryHost server;
+    readonly InMemoryHost server;
+    IResponse response;
+    JToken body;
 
     public entryPoint()
     {
@@ -34,21 +37,34 @@ namespace Tests.Plugins.Hydra
     }
 
     [Fact]
-    public async Task hydra_identifiers_are_correct()
+    public void hydra_identifiers_are_correct()
     {
-      var response = await server.GetJsonLd("/");
-      response["@context"].ShouldBe("http://localhost/.hydra/context.jsonld");
-      response["@id"].ShouldBe("http://localhost/");
-      response["@type"].ShouldBe("hydra:EntryPoint");
+      body["@context"].ShouldBe("http://localhost/.hydra/context.jsonld");
+      body["@id"].ShouldBe("http://localhost/");
+      body["@type"].ShouldBe("hydra:EntryPoint");
     }
 
     [Fact]
-    public async Task collection_is_linked()
+    public void collection_is_linked()
     {
-      var response = await server.GetJsonLd("/");
-      response["collection"].ShouldBeOfType<JArray>();
-      response["collection"][0]["@type"].ShouldBe("hydra:Collection");
-      response["collection"][0]["@id"].ShouldBe("http://localhost/events");
+      body["collection"].ShouldBeOfType<JArray>();
+      body["collection"][0]["@type"].ShouldBe("hydra:Collection");
+      body["collection"][0]["@id"].ShouldBe("http://localhost/events");
     }
+    
+    
+    [Fact]
+    public void api_document_link_header_is_present()
+    {
+      response.Headers["Link"]
+        .ShouldContain("<http://localhost/.hydra/documentation.jsonld>; rel=\"http://www.w3.org/ns/hydra/core#apiDocumentation\"");
+    }
+
+    public async Task InitializeAsync()
+    {
+      (response, body) = await server.GetJsonLd("/");
+    }
+
+    public Task DisposeAsync() => Task.CompletedTask;
   } 
 }
