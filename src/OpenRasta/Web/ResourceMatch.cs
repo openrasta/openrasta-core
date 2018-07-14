@@ -25,7 +25,8 @@ namespace OpenRasta.Web
       {
           Language = ci,
           Name = uriName,
-          Uri = uri ?? throw new ArgumentNullException(nameof(uri))
+          Uri = uri ?? throw new ArgumentNullException(nameof(uri)),
+        ResourceModel = ResourceModel
       };
       ResourceModel = new ResourceModel
       {

@@ -3,13 +3,13 @@ using System.Collections.Generic;
 
 namespace OpenRasta.Configuration.MetaModel
 {
-    public class ConfigurationModel
+  public class ConfigurationModel
+  {
+    protected ConfigurationModel()
     {
-        public ConfigurationModel()
-        {
-            Properties = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
-        }
-
-        public IDictionary<string, object> Properties { get; }
+      Properties = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
     }
+
+    public IDictionary<string, object> Properties { get; }
+  }
 }

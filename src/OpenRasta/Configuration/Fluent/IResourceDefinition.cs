@@ -1,10 +1,12 @@
 using System;
 using System.Linq.Expressions;
+using OpenRasta.Configuration.MetaModel;
 
 namespace OpenRasta.Configuration.Fluent
 {
   public interface IResourceDefinition : INoIzObject, IResource
   {
+    ResourceModel Resource { get; }
     ICodecParentDefinition WithoutUri { get; }
     IUriDefinition AtUri(string uri);
   }

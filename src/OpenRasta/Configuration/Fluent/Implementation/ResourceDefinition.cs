@@ -20,7 +20,7 @@ namespace OpenRasta.Configuration.Fluent.Implementation
     public new IUriDefinition<T> AtUri(string uri)
     {
       if (uri == null) throw new ArgumentNullException("uri");
-      var uriModel = new UriModel { Uri = uri };
+      var uriModel = new UriModel { Uri = uri, ResourceModel = Resource };
       Resource.Uris.Add(uriModel);
 
       return new UriDefinition<T>(this, uriModel);
@@ -29,7 +29,11 @@ namespace OpenRasta.Configuration.Fluent.Implementation
     public IUriDefinition<T> AtUri(Expression<Func<T, string>> uri)
     {
       if (uri == null) throw new ArgumentNullException(nameof(uri));
-      var uriModel = new UriModel { Uri = new UriExpressionVisitor().GenerateUri(typeof(T), uri) };
+      var uriModel = new UriModel
+      {
+        Uri = new UriExpressionVisitor().GenerateUri(typeof(T), uri),
+        ResourceModel = Resource
+      };
       Resource.Uris.Add(uriModel);
       return new UriDefinition<T>(this, uriModel);
     }
@@ -157,7 +161,7 @@ namespace OpenRasta.Configuration.Fluent.Implementation
     public IUriDefinition AtUri(string uri)
     {
       if (uri == null) throw new ArgumentNullException("uri");
-      UriModel model = new UriModel { Uri = uri };
+      UriModel model = new UriModel { Uri = uri,ResourceModel = this.Resource};
       Resource.Uris.Add(model);
 
       return new UriDefinition(this, model);
@@ -180,32 +184,7 @@ namespace OpenRasta.Configuration.Fluent.Implementation
       get { return _lastHandlerModel; }
     }
 
-    protected abstract class TargetWrapper : IResourceTarget
-    {
-      readonly ResourceDefinition _target;
-
-      public TargetWrapper(ResourceDefinition target)
-      {
-        _target = target;
-      }
-
-      public ResourceModel Resource
-      {
-        get { return _target.Resource; }
-      }
-
-      public ITypeSystem TypeSystem
-      {
-        get { return _target.TypeSystem; }
-      }
-
-      public IMetaModelRepository Repository
-      {
-        get { return _target.Repository; }
-      }
-    }
-
-    protected class UriDefinition : TargetWrapper, IUriDefinition, IUriTarget
+    public class UriDefinition : TargetWrapper, IUriDefinition, IUriTarget
     {
       readonly ResourceDefinition _resourceDefinition;
       readonly UriModel _uriModel;
@@ -250,10 +229,23 @@ namespace OpenRasta.Configuration.Fluent.Implementation
         return this;
       }
 
-      public UriModel Uri
-      {
-        get { return _uriModel; }
-      }
+      public UriModel Uri => _uriModel;
     }
+  }
+
+  public abstract class TargetWrapper : IResourceTarget
+  {
+    readonly ResourceDefinition _target;
+
+    protected TargetWrapper(ResourceDefinition target)
+    {
+      _target = target;
+    }
+
+    public ResourceModel Resource => _target.Resource;
+
+    public ITypeSystem TypeSystem => _target.TypeSystem;
+
+    public IMetaModelRepository Repository => _target.Repository;
   }
 }
