@@ -49,7 +49,8 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization
         {
           new StringEnumConverter(),
           new JsonLdTypeRefConverter(_models),
-          new HydraUriModelConverter(_uris, BaseUri)
+          new HydraUriModelConverter(_uris, BaseUri),
+          new RdfPropertyFromJsonPropertyConverter(_models)
         }
       };
 

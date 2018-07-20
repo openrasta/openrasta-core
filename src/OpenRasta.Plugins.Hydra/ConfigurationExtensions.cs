@@ -7,18 +7,31 @@ using OpenRasta.Configuration.MetaModel;
 using OpenRasta.Plugins.Hydra.Configuration;
 using OpenRasta.Plugins.Hydra.Internal;
 using OpenRasta.Plugins.Hydra.Internal.Serialization;
+using OpenRasta.Plugins.Hydra.Schemas;
 using OpenRasta.Plugins.Hydra.Schemas.Hydra;
 
 namespace OpenRasta.Plugins.Hydra
 {
   public static class ConfigurationExtensions
   {
-    public static IUses Hydra(this IUses uses)
+    public static IUses Hydra(this IUses uses, Action<HydraOptions> hydraOptions = null)
     {
       var fluent = (IFluentTarget) uses;
       var has = (IHas) uses;
 
-      has.ResourcesOfType<IJsonLdDocument>()
+      var opts = new HydraOptions()
+      {
+        SystemVocabularies =
+        {
+          Vocabularies.Hydra,
+          Vocabularies.SchemaDotOrg
+        }
+      };
+      hydraOptions?.Invoke(opts);
+      
+      fluent.Repository.CustomRegistrations.Add(opts);
+
+      has.ResourcesOfType<IIriNode>()
         .WithoutUri
         .TranscodedBy<JsonLdCodec>()
         .ForMediaType("application/ld+json");
@@ -40,16 +53,20 @@ namespace OpenRasta.Plugins.Hydra
         .AtUri("/.hydra/documentation.jsonld")
         .HandledBy<ApiDocumentationHandler>();
 
-      has
-        .ResourcesOfType<Collection>()
-        .Vocabulary(Vocabularies.Hydra);
+      has.ResourcesOfType<Collection>().Vocabulary(Vocabularies.Hydra);
+
+      has.ResourcesOfType<Class>().Vocabulary(Vocabularies.Hydra);
+
+      has.ResourcesOfType<SupportedProperty>().Vocabulary(Vocabularies.Hydra);
+
+//      has.ResourcesOfType<Rdf.Property>().Vocabulary(Vocabularies.Rdf);
+      
 
       return uses;
     }
 
     public static IResourceDefinition<T> Vocabulary<T>(this IResourceDefinition<T> resource, Vocabulary vocab)
     {
-      //var rd = (ResourceDefinition<T>) resource;
       resource.Resource.Hydra().Vocabulary = vocab;
       return resource;
     }
@@ -80,5 +97,10 @@ namespace OpenRasta.Plugins.Hydra
     {
       return model.Properties.GetOrAdd("openrasta.Hydra.UriModel", () => new HydraUriModel(model));
     }
+  }
+
+  public class HydraOptions
+  {
+    public IList<Vocabulary> SystemVocabularies { get; } = new List<Vocabulary>();
   }
 }

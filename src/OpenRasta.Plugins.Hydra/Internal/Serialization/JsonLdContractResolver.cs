@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using OpenRasta.Configuration.MetaModel;
 using OpenRasta.Plugins.Hydra.Configuration;
+using OpenRasta.Plugins.Hydra.Schemas;
 using OpenRasta.Plugins.Hydra.Schemas.Hydra;
 using OpenRasta.Web;
 
@@ -27,13 +29,18 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization
     protected override IList<JsonProperty> CreateProperties(Type type, MemberSerialization memberSerialization)
     {
       var jsonProperties = base.CreateProperties(type, memberSerialization);
-      if (!typeof(IJsonLdDocument).IsAssignableFrom(type)) return jsonProperties;
-      if (_models.TryGetResourceModel(type, out var model))
+
+      var isIriNode = typeof(IIriNode).IsAssignableFrom(type);
+      var isBlankNode = typeof(JsonLd.IBlankNode).IsAssignableFrom(type);
+      if (!isIriNode && !isBlankNode) return jsonProperties;
+      
+      if (_models.TryGetResourceModel(type, out var resourceModel))
       {
-        var hydraModel = model.Hydra();
+        var hydraModel = resourceModel.Hydra();
 
         TryAddType(type, jsonProperties, hydraModel);
-        TryAddId(type, jsonProperties);
+        if (isIriNode) TryAddId(type, jsonProperties);
+        TrySetPropertyInfoConverters(jsonProperties);
       }
 
       if (_isRoot)
@@ -43,6 +50,12 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization
       }
 
       return jsonProperties;
+    }
+
+    void TrySetPropertyInfoConverters(IList<JsonProperty> jsonProperties)
+    {
+      foreach(var prop in jsonProperties.Where(p=>p.PropertyType == typeof(PropertyInfo)))
+        prop.Converter = new RdfPropertyFromJsonPropertyConverter(_models);
     }
 
     void AddContext(Type type, IList<JsonProperty> jsonProperties)

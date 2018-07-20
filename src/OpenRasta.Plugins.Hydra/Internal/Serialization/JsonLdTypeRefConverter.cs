@@ -26,7 +26,7 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization
 
       writer.WriteStartObject();
       writer.WritePropertyName("property");
-      writer.WriteValue("rdf:Type");
+      writer.WriteValue("rdf:type");
       writer.WritePropertyName("object");
       writer.WriteValue($"{vocab.DefaultPrefix}:{type.Name}");
       writer.WriteEndObject();

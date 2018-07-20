@@ -26,12 +26,12 @@ namespace Tests.Plugins.Hydra
 
         ResourceSpace.Has
           .ResourcesOfType<List<Event>>()
-          .Vocabulary(ExampleVocabularies.Events)
+          .Vocabulary(ExampleVocabularies.ExampleApp)
           .AtUri("/events")
           .Collection();
 
         ResourceSpace.Has.ResourcesOfType<Event>()
-          .Vocabulary(ExampleVocabularies.Events)
+          .Vocabulary(Vocabularies.SchemaDotOrg)
           .AtUri("/events/{id}");
       });
     }
@@ -51,7 +51,14 @@ namespace Tests.Plugins.Hydra
       body["collection"][0]["@type"].ShouldBe("hydra:Collection");
       body["collection"][0]["@id"].ShouldBe("http://localhost/events");
     }
-    
+
+    [Fact]
+    public void collection_item_type_is_correct()
+    {
+      var evCollection = body["collection"][0];
+      evCollection["manages"]["property"].Value<string>().ShouldBe("rdf:type");
+      evCollection["manages"]["object"].Value<string>().ShouldBe("schema:Event");
+    }
     
     [Fact]
     public void api_document_link_header_is_present()

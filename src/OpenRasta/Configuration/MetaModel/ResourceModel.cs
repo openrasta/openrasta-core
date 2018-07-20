@@ -1,10 +1,14 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using OpenRasta.TypeSystem;
 
 namespace OpenRasta.Configuration.MetaModel
 {
   public class ResourceModel : ConfigurationModel
   {
+    object _resourceKey;
+
     public ResourceModel()
     {
       Uris = new List<UriModel>();
@@ -16,7 +20,19 @@ namespace OpenRasta.Configuration.MetaModel
     public IList<HandlerModel> Handlers { get; }
 
     public bool IsStrictRegistration { get; set; }
-    public object ResourceKey { get; set; }
+
+    public object ResourceKey
+    {
+      get => _resourceKey;
+      set
+      {
+        _resourceKey = value;
+        ResourceType = (value as IType)?.StaticType;
+      }
+    }
+
+    public Type ResourceType { get; set; }
+
     public IList<UriModel> Uris { get; }
 
 

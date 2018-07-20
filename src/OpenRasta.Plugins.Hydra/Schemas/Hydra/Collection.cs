@@ -4,7 +4,7 @@ using OpenRasta.Plugins.Hydra.Configuration;
 
 namespace OpenRasta.Plugins.Hydra.Schemas.Hydra
 {
-  public class Collection : IJsonLdDocument
+  public class Collection : IIriNode
   {
     public Collection(Type itemType, HydraUriModel id)
     {
