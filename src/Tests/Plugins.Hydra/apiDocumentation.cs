@@ -31,14 +31,14 @@ namespace Tests.Plugins.Hydra
     }
   
     [Fact]
-    public void event_class_is_defined()
+    public void custom_class_is_defined()
     {
       body["supportedClass"][0]["@id"].Value<string>().ShouldBe("ev:Customer");
       body["supportedClass"][0]["@type"].Value<string>().ShouldBe("hydra:Class");
     }
 
     [Fact]
-    public void event_property_is_defined()
+    public void custom_class_properties_are_defined()
     {
       body["supportedClass"][0]["supportedProperty"][0]["property"]["@id"].ShouldBe("ev:Customer/name");
       body["supportedClass"][0]["supportedProperty"][0]["property"]["range"].ShouldBe("xsd:string");

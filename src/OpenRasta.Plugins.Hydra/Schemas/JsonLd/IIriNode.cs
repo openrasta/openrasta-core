@@ -3,4 +3,6 @@
   public interface IIriNode 
   {
   }
+  interface ITypedValue{}
+  
 }
