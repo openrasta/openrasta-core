@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netcoreapp2.1</TargetFramework>
+    </PropertyGroup>
+    
+    <ItemGroup>
+        <PackageReference Include="OpenRasta.Hosting.AspNetCore" Version="2.6.0-preview.1.1360" />
+        <PackageReference Include="OpenRasta.Codecs.Newtonsoft.Json" Version="2.6.0-preview.1.1360" />
+    </ItemGroup>
+
+</Project>

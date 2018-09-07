@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>netcoreapp2.1</TargetFramework>
+        <LangVersion>latest</LangVersion>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="BenchmarkDotNet" Version="0.11.1" />
+      <PackageReference Include="Microsoft.AspNetCore.Hosting" Version="2.1.1" />
+      <PackageReference Include="Microsoft.AspNetCore.TestHost" Version="2.1.1" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\OpenRastaDemo.Shared\OpenRastaDemo.Shared.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Update="large.json">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
+
+</Project>
