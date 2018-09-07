@@ -7,10 +7,11 @@ The following examples use an Event and a Person class.
 ```csharp
 public class Event {
   public string Name { get; set; }
+  public Person Organiser { get;set; }
 }
 
 public class Person {
-  public string Person { get; set; }
+  public string Name { get; set; }
 }
 ```
 
@@ -67,14 +68,12 @@ A typed resource gets mapped to a json-ld resource, aka with both a `@type` and 
 
 ```chsharp
 
-// configuration
-
+// Configuration
 ResourceSpace.Has
   .ResourcesOfType<Event>()
-  .AtUri("/events/anExampleEvent");
+  .AtUri("/memorable-events/stonewall-riots");
   
-// handler pseudocode
-
+// Handler 
 return new Event { Name = "Stonewall Riots" };
 ```
 
@@ -98,9 +97,12 @@ This is rendered as a Json-Ld node object and the @type is a `node type`.
 
 ```chsharp
 
+// Configuration
 ResourceSpace.Has
-  .ResourcesOfType<Event>()
-  .Vocabulary(Vocabularies.SchemaDotOrg);
+  .ResourcesOfType<Event>();
+  
+// Handler
+return new Event { Name = "Stonewall Riots" };
 ```
 
 
@@ -113,3 +115,75 @@ ResourceSpace.Has
 }
 ```
 
+### Embedding
+
+OpenRasta automatically detects the embedding of properties in one-another
+and generates the links correctly.
+
+A blank node can be embeded inside a resource.
+
+```
+// Configuration
+ResourceSpace.Has
+  .ResourcesOfType<Event>()
+  .AtUri("/memorable-events/stonewall-riots");
+
+// Handler
+return new Event {
+  Name = "Stonewall Riots",
+  Organiser = new Person {
+    Name = "Marsha Johnson"
+  }
+```
+
+The rendered json-ld will have a resource with an embedded blank node.
+
+```
+{
+  "@context": "/.hydra/context.jsonld",
+  "@type": "Event",
+  "@id": "/memorable-events/stonewall-riots",
+  "name": "Stonewall Riots",
+  "organiser": {
+    "@type": "Person",
+    "name": "Marsha Johnson"
+  }
+}
+```
+
+Resources can also embed other resources.
+
+```
+// Configuration
+ResourceSpace.Has
+  .ResourcesOfType<Event>()
+  .AtUri("/memorable-events/stonewall-riots");
+  
+ResourceSpace.Has
+  .ResourcesOfType<Person>()
+  .AtUri("/memorable-people/pay-it-no-mind-marsha");
+
+// Handler
+return new Event {
+  Name = "Stonewall Riots",
+  Organiser = new Person {
+    Name = "Marsha Johnson"
+  }
+```
+
+The json-ld document will correctly contain identifiers for resources
+and their embed resources.
+
+```
+{
+  "@context": "/.hydra/context.jsonld",
+  "@type": "Event",
+  "@id": "/memorable-events/stonewall-riots",
+  "name": "Stonewall Riots",
+  "organiser": {
+    "@type": "Person",
+    "@id": "/memorable-people/pay-it-no-mind-marsha",
+    "name": "Marsha Johnson"
+  }
+}
+```
