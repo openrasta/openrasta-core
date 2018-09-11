@@ -28,7 +28,7 @@ namespace Tests.Plugins.Hydra
           .ResourcesOfType<List<Event>>()
           .Vocabulary(ExampleVocabularies.ExampleApp)
           .AtUri("/events")
-          .Collection();
+          .EntryPointCollection();
 
         ResourceSpace.Has.ResourcesOfType<Event>()
           .Vocabulary(Vocabularies.SchemaDotOrg)
@@ -59,12 +59,13 @@ namespace Tests.Plugins.Hydra
       evCollection["manages"]["property"].Value<string>().ShouldBe("rdf:type");
       evCollection["manages"]["object"].Value<string>().ShouldBe("schema:Event");
     }
-    
+
     [Fact]
     public void api_document_link_header_is_present()
     {
       response.Headers["Link"]
-        .ShouldContain("<http://localhost/.hydra/documentation.jsonld>; rel=\"http://www.w3.org/ns/hydra/core#apiDocumentation\"");
+        .ShouldContain(
+          "<http://localhost/.hydra/documentation.jsonld>; rel=\"http://www.w3.org/ns/hydra/core#apiDocumentation\"");
     }
 
     public async Task InitializeAsync()
@@ -73,5 +74,5 @@ namespace Tests.Plugins.Hydra
     }
 
     public Task DisposeAsync() => Task.CompletedTask;
-  } 
+  }
 }

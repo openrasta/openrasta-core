@@ -1,34 +1,27 @@
 ﻿using System;
 using Newtonsoft.Json;
 using OpenRasta.Plugins.Hydra.Configuration;
-using OpenRasta.Web;
 
 namespace OpenRasta.Plugins.Hydra.Internal.Serialization
 {
-  public class HydraUriModelConverter : JsonConverter
+  public class HydraUriModelConverter : JsonConverter<HydraUriModel>
   {
     readonly Uri _baseUri;
-    readonly IUriResolver _uris;
 
-    public HydraUriModelConverter(IUriResolver uris, Uri baseUri)
+    public HydraUriModelConverter(Uri baseUri)
     {
-      _uris = uris;
       _baseUri = baseUri;
     }
 
-    public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+    public override void WriteJson(JsonWriter writer, HydraUriModel value, JsonSerializer serializer)
     {
-      writer.WriteValue(_uris.CreateUriFor(((HydraUriModel) value).ResourceType, _baseUri));
+      writer.WriteValue(new Uri(_baseUri,new Uri(value.EntryPointUri, UriKind.RelativeOrAbsolute)));
     }
 
-    public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+    public override HydraUriModel ReadJson(JsonReader reader, Type objectType, HydraUriModel existingValue, bool hasExistingValue,
+      JsonSerializer serializer)
     {
       throw new NotImplementedException();
-    }
-
-    public override bool CanConvert(Type objectType)
-    {
-      return typeof(HydraUriModel).IsAssignableFrom(objectType);
     }
   }
 }

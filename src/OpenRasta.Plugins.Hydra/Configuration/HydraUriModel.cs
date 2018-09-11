@@ -13,5 +13,6 @@ namespace OpenRasta.Plugins.Hydra.Configuration
     public UriModel Uri { get; }
     public Type CollectionItemType { get; set; }
     public Type ResourceType { get; set; }
+    public string EntryPointUri { get; set; }
   }
 }

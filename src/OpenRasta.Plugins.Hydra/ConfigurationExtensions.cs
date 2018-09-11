@@ -80,7 +80,7 @@ namespace OpenRasta.Plugins.Hydra
       return resource;
     }
 
-    public static IUriDefinition<T> Collection<T>(this IUriDefinition<T> resource)
+    public static IUriDefinition<T> EntryPointCollection<T>(this IUriDefinition<T> resource, string collectionUri = null)
     {
       var ienum = typeof(T).GetInterfaces()
         .Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IEnumerable<>)).ToList();
@@ -94,6 +94,7 @@ namespace OpenRasta.Plugins.Hydra
 
       uriModel.CollectionItemType = itemType;
       uriModel.ResourceType = typeof(T);
+      uriModel.EntryPointUri = collectionUri ?? resource.Uri.Uri;
       return resource;
     }
 

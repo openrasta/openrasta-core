@@ -24,13 +24,13 @@ namespace Tests.Plugins.Hydra
     {
       server = new InMemoryHost(() =>
       {
-        ResourceSpace.Uses.Hydra(options=>options.Vocabulary = "https://schemas.example/schema#");
+        ResourceSpace.Uses.Hydra(options => options.Vocabulary = "https://schemas.example/schema#");
 
         ResourceSpace.Has
           .ResourcesOfType<List<Event>>()
           .Vocabulary("https://schemas.example/schema#")
           .AtUri("/events")
-          .Collection();
+          .EntryPointCollection();
 
         ResourceSpace.Has.ResourcesOfType<Event>()
           .Vocabulary("https://schemas.example/schema#")
@@ -44,7 +44,7 @@ namespace Tests.Plugins.Hydra
       body.Count().ShouldBe(1);
 
       var context = body["@context"];
-      
+
       context["hydra"].ShouldBe("http://www.w3.org/ns/hydra/core#");
       context["rdf"].ShouldBe("http://www.w3.org/1999/02/22-rdf-syntax-ns#");
       context["xsd"].ShouldBe("http://www.w3.org/2001/XMLSchema#");
@@ -62,7 +62,7 @@ namespace Tests.Plugins.Hydra
     {
       body["@context"]["Event"]["@context"]["@vocab"].ShouldBe("https://schemas.example/schema#Event/");
     }
-    
+
     public async Task InitializeAsync()
     {
       (response, body) = await server.GetJsonLd("/.hydra/context.jsonld");
