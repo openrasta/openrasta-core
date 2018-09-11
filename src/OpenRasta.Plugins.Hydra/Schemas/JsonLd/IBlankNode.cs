@@ -1,10 +1,11 @@
 ﻿namespace OpenRasta.Plugins.Hydra.Schemas
 {
-  public static partial class JsonLd
+  public static class JsonLd
   {
     public interface IBlankNode
     {
 
     }
+    public interface INode{}
   }
 }

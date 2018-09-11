@@ -1,4 +1,4 @@
-## Understanding the mapping between classes and JSON
+## Understanding the mapping between classes and JSON-LD
 
 ### Conventions
 
@@ -185,5 +185,50 @@ and their embed resources.
     "@id": "/memorable-people/pay-it-no-mind-marsha",
     "name": "Marsha Johnson"
   }
+}
+```
+
+## Exposing Api documentation with Hydra
+
+The Hydra Api documentation in the format specified by the hydra 
+specification can be found at the URI indicated by a Link header in
+HTTP responses.
+
+```http
+200 OK
+Link: </.hydra/ApiDocumentation.jsonld>; rel=http://www.w3.org/ns/hydra/core#apiDocumentation
+```
+
+This document exposes the structure of the classes that are part of the
+Api. It supportsall classes and all public properties on those classes.
+
+In the events example, both the `Event` and the `Person` classes will
+be documented.
+
+
+```json
+{
+  "@context": "http://www.w3.org/ns/hydra/context.jsonld",
+  "@type": "ApiDocumentation",
+  "entryPoint": "/",
+  "supportedClass": [
+  {
+    "@type": "Class",
+    "@id": "https://schemas.example/schema#Event",
+    "title": "Event",
+    "supportedProperty": [
+    {
+      "@type": "SupportedProperty",
+      "@id": "https://schemas.example/schema#Event/name",
+      "property": {
+        "@type": "rdf:Property",
+        "range": "string"
+      }
+    }]
+  },
+  {
+  
+  }
+  ]
 }
 ```

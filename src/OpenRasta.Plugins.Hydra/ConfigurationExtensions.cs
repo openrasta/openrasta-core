@@ -12,26 +12,34 @@ using OpenRasta.Plugins.Hydra.Schemas.Hydra;
 
 namespace OpenRasta.Plugins.Hydra
 {
+  public class HydraOperationOptions
+  {
+    
+  }
   public static class ConfigurationExtensions
   {
+    
     public static IUses Hydra(this IUses uses, Action<HydraOptions> hydraOptions = null)
     {
       var fluent = (IFluentTarget) uses;
       var has = (IHas) uses;
 
-      var opts = new HydraOptions()
+      var opts = new HydraOptions
       {
-        SystemVocabularies =
+        Curies =
         {
           Vocabularies.Hydra,
-          Vocabularies.SchemaDotOrg
+          Vocabularies.SchemaDotOrg,
+          Vocabularies.Rdf,
+          Vocabularies.XmlSchema
         }
       };
+      
       hydraOptions?.Invoke(opts);
       
       fluent.Repository.CustomRegistrations.Add(opts);
 
-      has.ResourcesOfType<IIriNode>()
+      has.ResourcesOfType<JsonLd.INode>()
         .WithoutUri
         .TranscodedBy<JsonLdCodec>()
         .ForMediaType("application/ld+json");
@@ -44,8 +52,9 @@ namespace OpenRasta.Plugins.Hydra
 
       has
         .ResourcesOfType<Context>()
+        .Vocabulary(Vocabularies.Hydra)
         .AtUri("/.hydra/context.jsonld")
-        .HandledBy<RootContextHandler>();
+        .HandledBy<ContextHandler>();
 
       has
         .ResourcesOfType<ApiDocumentation>()
@@ -79,7 +88,7 @@ namespace OpenRasta.Plugins.Hydra
       if (ienum.Count != 1)
         throw new ArgumentException("The resource definition implements multiple IEnumerable interfaces");
 
-      var itemType = ienum[index: 0].GenericTypeArguments[0];
+      var itemType = ienum[0].GenericTypeArguments[0];
 
       var uriModel = resource.Uri.Hydra();
 
@@ -101,6 +110,7 @@ namespace OpenRasta.Plugins.Hydra
 
   public class HydraOptions
   {
-    public IList<Vocabulary> SystemVocabularies { get; } = new List<Vocabulary>();
+    public IList<Vocabulary> Curies { get; } = new List<Vocabulary>();
+    public Vocabulary Vocabulary { get; set; }
   }
 }
