@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
@@ -22,7 +24,8 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization
     static readonly string _apiDocumentationRel = $"{Vocabularies.Hydra.Uri}apiDocumentation";
 
 
-    public JsonLdCodec(IUriResolver uris, ICommunicationContext context, IMetaModelRepository models, IResponse responseMessage)
+    public JsonLdCodec(IUriResolver uris, ICommunicationContext context, IMetaModelRepository models,
+      IResponse responseMessage)
     {
       _uris = uris;
       _context = context;
@@ -37,7 +40,10 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization
 
     public async Task WriteTo(object entity, IHttpEntity response, IEnumerable<string> codecParameters)
     {
-      _responseMessage.Headers.Add("link", $"<{_apiDocumentationLink}>; rel=\"{_apiDocumentationRel}\""); 
+      _responseMessage.Headers.Add("link", $"<{_apiDocumentationLink}>; rel=\"{_apiDocumentationRel}\"");
+
+      if (entity is IEnumerable enumerableEntity)
+        entity = ConvertToHydraCollection(enumerableEntity, _context.Request.Uri);
       
       var customConverter = new JsonSerializer
       {
@@ -61,6 +67,15 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization
       {
         customConverter.Serialize(jsonWriter, entity);
       }
+    }
+
+    Collection ConvertToHydraCollection(IEnumerable entity, Uri requestUri)
+    {
+      var arrayOfObjects = entity.Cast<object>().ToArray();
+      return new Collection
+      {
+        Member = arrayOfObjects
+      };
     }
   }
 }

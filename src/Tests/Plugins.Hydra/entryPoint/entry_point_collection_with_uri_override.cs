@@ -13,13 +13,13 @@ using Xunit;
 
 namespace Tests.Plugins.Hydra
 {
-  public class entryPoint_collection_with_uri_override : IAsyncLifetime
+  public class collection_with_uri_override : IAsyncLifetime
   {
     IResponse response;
     JToken body;
     readonly InMemoryHost server;
 
-    public entryPoint_collection_with_uri_override()
+    public collection_with_uri_override()
     {
       server = new InMemoryHost(() =>
       {
@@ -29,7 +29,7 @@ namespace Tests.Plugins.Hydra
           .ResourcesOfType<List<Event>>()
           .Vocabulary("https://schemas.example/schema#")
           .AtUri("/events/{location}/")
-          .EntryPointCollection("/events/gb/");
+          .EntryPointCollection(options=>options.Uri = "/events/gb/");
 
         ResourceSpace.Has.ResourcesOfType<Event>()
           .Vocabulary("https://schemas.example/schema#")

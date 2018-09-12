@@ -39,7 +39,7 @@ namespace OpenRasta.Plugins.Hydra
       
       fluent.Repository.CustomRegistrations.Add(opts);
 
-      has.ResourcesOfType<JsonLd.INode>()
+      has.ResourcesOfType<object>()
         .WithoutUri
         .TranscodedBy<JsonLdCodec>()
         .ForMediaType("application/ld+json");
@@ -63,10 +63,10 @@ namespace OpenRasta.Plugins.Hydra
         .HandledBy<ApiDocumentationHandler>();
 
       has.ResourcesOfType<Collection>().Vocabulary(Vocabularies.Hydra);
-
       has.ResourcesOfType<Class>().Vocabulary(Vocabularies.Hydra);
-
       has.ResourcesOfType<SupportedProperty>().Vocabulary(Vocabularies.Hydra);
+      has.ResourcesOfType<IriTemplate>().Vocabulary(Vocabularies.Hydra);
+      has.ResourcesOfType<IriTemplateMapping>().Vocabulary(Vocabularies.Hydra);
 
 //      has.ResourcesOfType<Rdf.Property>().Vocabulary(Vocabularies.Rdf);
       
@@ -80,7 +80,7 @@ namespace OpenRasta.Plugins.Hydra
       return resource;
     }
 
-    public static IUriDefinition<T> EntryPointCollection<T>(this IUriDefinition<T> resource, string collectionUri = null)
+    public static IUriDefinition<T> EntryPointCollection<T>(this IUriDefinition<T> resource, Action<CollectionEntryPointOptions> options = null)
     {
       var ienum = typeof(T).GetInterfaces()
         .Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IEnumerable<>)).ToList();
@@ -91,10 +91,14 @@ namespace OpenRasta.Plugins.Hydra
       var itemType = ienum[0].GenericTypeArguments[0];
 
       var uriModel = resource.Uri.Hydra();
+      
+      var opts = new CollectionEntryPointOptions();
+      options?.Invoke(opts);
 
       uriModel.CollectionItemType = itemType;
       uriModel.ResourceType = typeof(T);
-      uriModel.EntryPointUri = collectionUri ?? resource.Uri.Uri;
+      uriModel.EntryPointUri = opts.Uri ?? resource.Uri.Uri;
+      uriModel.SearchTemplate = opts.Search;
       return resource;
     }
 
@@ -107,6 +111,12 @@ namespace OpenRasta.Plugins.Hydra
     {
       return model.Properties.GetOrAdd("openrasta.Hydra.UriModel", () => new HydraUriModel(model));
     }
+  }
+
+  public class CollectionEntryPointOptions
+  {
+    public string Uri { get; set; }
+    public IriTemplate Search { get; set; }
   }
 
   public class HydraOptions

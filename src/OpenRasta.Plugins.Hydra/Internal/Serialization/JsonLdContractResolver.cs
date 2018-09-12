@@ -81,7 +81,7 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization
         Readable = true,
         Writable = true,
         ValueProvider = new ConstantValueProvider(value =>
-          (model.Vocabulary == null ? string.Empty : $"{model.Vocabulary.DefaultPrefix}:") +
+          (model.Vocabulary?.DefaultPrefix == null ? string.Empty : $"{model.Vocabulary.DefaultPrefix}:") +
           type.Name)
       });
     }

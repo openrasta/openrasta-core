@@ -1,10 +1,11 @@
 ﻿using OpenRasta.Plugins.Hydra;
+using OpenRasta.Plugins.Hydra.Schemas;
 
 namespace Tests.Plugins.Hydra.Examples
 {
-  public class Event
+  public class Event : JsonLd.INode
   {
-    
+    public int Id { get; set; }
   }
 
   public class Customer

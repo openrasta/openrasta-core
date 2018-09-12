@@ -15,10 +15,11 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization
 
     public override void WriteJson(JsonWriter writer, HydraUriModel value, JsonSerializer serializer)
     {
-      writer.WriteValue(new Uri(_baseUri,new Uri(value.EntryPointUri, UriKind.RelativeOrAbsolute)));
+      writer.WriteValue(new Uri(_baseUri, new Uri(value.EntryPointUri, UriKind.RelativeOrAbsolute)));
     }
 
-    public override HydraUriModel ReadJson(JsonReader reader, Type objectType, HydraUriModel existingValue, bool hasExistingValue,
+    public override HydraUriModel ReadJson(JsonReader reader, Type objectType, HydraUriModel existingValue,
+      bool hasExistingValue,
       JsonSerializer serializer)
     {
       throw new NotImplementedException();
