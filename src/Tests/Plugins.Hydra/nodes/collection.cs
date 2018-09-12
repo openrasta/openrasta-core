@@ -52,6 +52,6 @@ namespace Tests.Plugins.Hydra.nodes
       (response, body) = await server.GetJsonLd("/events/");
     }
 
-    public Task DisposeAsync() => Task.CompletedTask;
+    public async Task DisposeAsync() => server.Close();
   }
 }

@@ -10,11 +10,12 @@ using Newtonsoft.Json.Converters;
 using OpenRasta.Codecs;
 using OpenRasta.Configuration.MetaModel;
 using OpenRasta.Plugins.Hydra.Schemas.Hydra;
+using OpenRasta.TypeSystem;
 using OpenRasta.Web;
 
 namespace OpenRasta.Plugins.Hydra.Internal.Serialization
 {
-  public class JsonLdCodec : IMediaTypeWriterAsync
+  public class JsonLdCodec : IMediaTypeWriterAsync, IMediaTypeReaderAsync
   {
     readonly ICommunicationContext _context;
     readonly IMetaModelRepository _models;
@@ -37,6 +38,12 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization
     Uri BaseUri => _context.ApplicationBaseUri;
 
     public object Configuration { get; set; }
+    public async Task<object> ReadFrom(IHttpEntity request, IType destinationType, string destinationName)
+    {
+      var content = await new StreamReader(request.Stream, Encoding.UTF8).ReadToEndAsync();
+
+      return JsonConvert.DeserializeObject(content, destinationType.StaticType);
+    }
 
     public async Task WriteTo(object entity, IHttpEntity response, IEnumerable<string> codecParameters)
     {

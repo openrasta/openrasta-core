@@ -18,5 +18,10 @@ namespace Tests.Plugins.Hydra.nodes
         new Event() {Id = 2}
       };
     }
+
+    public Event PostCreate(CreateAction action)
+    {
+      return new Event{Id = 1};
+    }
   }
 }

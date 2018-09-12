@@ -9,9 +9,13 @@ namespace Tests
 {
   public static class MemoryHostExtensions
   {
-    public static Task<IResponse> Post(this InMemoryHost host, string uri, string content, string contentType = null)
+    public static Task<IResponse> Post(this InMemoryHost host, string uri, string content, string contentType = null,
+      string accept = null)
     {
-      return ExecuteMethod(host, uri, "POST", content, contentType);
+      return ExecuteMethod(host, uri, "POST", content, contentType, h =>
+      {
+        if (accept != null) h["Accept"] = accept;
+      });
     }
 
     public static Task<IResponse> Put(this InMemoryHost host, string uri, string content, string contentType = null)
@@ -28,14 +32,18 @@ namespace Tests
       string contentType = null, Action<HttpHeaderDictionary> headers = null)
     {
       if (uri.StartsWith('/') == false) uri = "/" + uri;
-      
+
       var request = new InMemoryRequest
       {
         HttpMethod = method,
         Uri = new Uri($"http://localhost{uri}", UriKind.RelativeOrAbsolute)
       };
       headers?.Invoke(request.Headers);
-      if (content != null) request = request.WriteString(content, contentType);
+      if (content != null)
+      {
+        request = request.WriteString(content, contentType);
+        
+      }
       return host.ProcessRequestAsync(request);
     }
 
@@ -51,6 +59,7 @@ namespace Tests
       var buffer = Encoding.UTF8.GetBytes(text);
       request.Entity.ContentLength = buffer.Length;
       request.Entity.Stream.Write(buffer);
+      request.Entity.Stream.Position = 0;
       return request;
     }
   }

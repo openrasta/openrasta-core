@@ -69,9 +69,6 @@ namespace OpenRasta.Plugins.Hydra
       has.ResourcesOfType<IriTemplateMapping>().Vocabulary(Vocabularies.Hydra);
       has.ResourcesOfType<Operation>().Vocabulary(Vocabularies.Hydra);
 
-//      has.ResourcesOfType<Rdf.Property>().Vocabulary(Vocabularies.Rdf);
-      
-
       return uses;
     }
 

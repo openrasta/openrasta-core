@@ -2,5 +2,7 @@
 
 namespace Tests.Plugins.Hydra
 {
-  class CreateAction : Operation {}
+  public class CreateAction : Operation {}
+
+  public class BuyAction : Operation {}
 }

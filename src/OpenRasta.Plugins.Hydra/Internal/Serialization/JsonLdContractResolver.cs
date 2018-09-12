@@ -12,7 +12,7 @@ using OpenRasta.Web;
 
 namespace OpenRasta.Plugins.Hydra.Internal.Serialization
 {
-  public class JsonLdContractResolver : CamelCasePropertyNamesContractResolver
+  public class JsonLdContractResolver : DefaultContractResolver
   {
     readonly Uri _baseUri;
     readonly IMetaModelRepository _models;
@@ -24,6 +24,11 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization
       _baseUri = baseUri;
       _uris = uris;
       _models = models;
+      
+      CamelCaseNamingStrategy caseNamingStrategy = new CamelCaseNamingStrategy();
+      caseNamingStrategy.ProcessDictionaryKeys = true;
+      caseNamingStrategy.OverrideSpecifiedNames = true;
+      NamingStrategy = caseNamingStrategy;
     }
 
     protected override IList<JsonProperty> CreateProperties(Type type, MemberSerialization memberSerialization)
@@ -73,7 +78,7 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization
 
     static void TryAddType(Type type, IList<JsonProperty> jsonProperties, HydraResourceModel model)
     {
-      jsonProperties.Insert(index: 0, item: new JsonProperty
+      jsonProperties.Insert(0, new JsonProperty
       {
         PropertyName = "@type",
         PropertyType = typeof(string),
@@ -91,7 +96,7 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization
       var idProperty = jsonProperties.FirstOrDefault(p => p.PropertyName == "@id");
       if (idProperty == null)
       {
-        jsonProperties.Insert(index: 0, item: new JsonProperty
+        jsonProperties.Insert(0, new JsonProperty
         {
           PropertyName = "@id",
           PropertyType = typeof(Uri),

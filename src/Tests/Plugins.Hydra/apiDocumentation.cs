@@ -24,18 +24,17 @@ namespace Tests.Plugins.Hydra
     {
       server = new InMemoryHost(() =>
       {
-        ResourceSpace.Uses.Hydra(opt=>opt.Vocabulary = ExampleVocabularies.ExampleApp.Uri.ToString());
+        ResourceSpace.Uses.Hydra(opt => opt.Vocabulary = ExampleVocabularies.ExampleApp.Uri.ToString());
 
         ResourceSpace.Has.ResourcesOfType<CreateAction>().Vocabulary(Vocabularies.SchemaDotOrg);
-        
+
         ResourceSpace.Has.ResourcesOfType<Customer>()
           .Vocabulary(ExampleVocabularies.ExampleApp.Uri.ToString())
           .SupportedOperation(new Operation {Method = "POST", Expects = "schema:Event"})
           .SupportedOperation(new CreateAction {Method = "POST", Expects = "schema:Person"});
-
       });
     }
-  
+
     [Fact]
     public void custom_class_is_defined()
     {
@@ -45,7 +44,6 @@ namespace Tests.Plugins.Hydra
     [Fact]
     public void custom_class_properties_are_defined()
     {
-      
       customer["supportedProperty"][0]["property"]["@id"].ShouldBe("Customer/name");
       customer["supportedProperty"][0]["property"]["range"].ShouldBe("xsd:string");
       customer["supportedProperty"][0]["property"]["@type"].ShouldBe("rdf:Property");
@@ -58,19 +56,19 @@ namespace Tests.Plugins.Hydra
       customer["supportedOperation"][0]["method"].ShouldBe("POST");
       customer["supportedOperation"][0]["expects"].ShouldBe("schema:Event");
     }
+
     [Fact]
     public void specific_operations_are_defined()
     {
-
       customer["supportedOperation"][1]["@type"].ShouldBe("schema:CreateAction");
       customer["supportedOperation"][1]["method"].ShouldBe("POST");
       customer["supportedOperation"][1]["expects"].ShouldBe("schema:Person");
     }
+
     public async Task InitializeAsync()
     {
       (_, body) = await server.GetJsonLd("/.hydra/documentation.jsonld");
-      customer = body["supportedClass"].Single(c=>c["@id"].Value<string>() == "Customer");
-
+      customer = body["supportedClass"].Single(c => c["@id"].Value<string>() == "Customer");
     }
 
     public Task DisposeAsync()
