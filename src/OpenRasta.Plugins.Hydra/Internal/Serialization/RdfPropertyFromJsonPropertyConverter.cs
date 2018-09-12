@@ -40,7 +40,8 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization
 
     string GetSchemaName(Vocabulary vocab, ResourceModel resourceModel, string propertyName)
     {
-      return $"{vocab.DefaultPrefix}:{resourceModel.ResourceType.Name}/{propertyName}";
+      var prefix = vocab.DefaultPrefix != null ? $"{vocab.DefaultPrefix}:" : "";
+      return $"{prefix}{resourceModel.ResourceType.Name}/{propertyName}";
     }
 
     public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)

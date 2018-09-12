@@ -80,6 +80,7 @@ namespace Tests.Plugins.Hydra.nodes
     {
       body["@id"].ShouldBe("http://localhost/events/2");
       body["@type"].ShouldBe("Event");
+      body["@context"].ShouldBe("http://localhost/.hydra/context.jsonld");
     }
 
     public async Task InitializeAsync()

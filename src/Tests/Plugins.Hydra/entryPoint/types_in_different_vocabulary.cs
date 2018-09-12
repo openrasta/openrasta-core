@@ -12,13 +12,13 @@ using Xunit;
 
 namespace Tests.Plugins.Hydra
 {
-  public class defaults : IAsyncLifetime
+  public class types_in_different_vocabulary : IAsyncLifetime
   {
     readonly InMemoryHost server;
     IResponse response;
     JToken body;
 
-    public defaults()
+    public types_in_different_vocabulary()
     {
       server = new InMemoryHost(() =>
       {

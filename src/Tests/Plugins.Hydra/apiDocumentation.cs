@@ -22,10 +22,10 @@ namespace Tests.Plugins.Hydra
       
       server = new InMemoryHost(() =>
       {
-        ResourceSpace.Uses.Hydra();
+        ResourceSpace.Uses.Hydra(opt=>opt.Vocabulary = ExampleVocabularies.ExampleApp.Uri.ToString());
 
         ResourceSpace.Has.ResourcesOfType<Customer>()
-          .Vocabulary(ExampleVocabularies.ExampleApp);
+          .Vocabulary(ExampleVocabularies.ExampleApp.Uri.ToString());
 
       });
     }
@@ -33,14 +33,14 @@ namespace Tests.Plugins.Hydra
     [Fact]
     public void custom_class_is_defined()
     {
-      body["supportedClass"][0]["@id"].Value<string>().ShouldBe("ev:Customer");
+      body["supportedClass"][0]["@id"].Value<string>().ShouldBe("Customer");
       body["supportedClass"][0]["@type"].Value<string>().ShouldBe("hydra:Class");
     }
 
     [Fact]
     public void custom_class_properties_are_defined()
     {
-      body["supportedClass"][0]["supportedProperty"][0]["property"]["@id"].ShouldBe("ev:Customer/name");
+      body["supportedClass"][0]["supportedProperty"][0]["property"]["@id"].ShouldBe("Customer/name");
       body["supportedClass"][0]["supportedProperty"][0]["property"]["range"].ShouldBe("xsd:string");
       body["supportedClass"][0]["supportedProperty"][0]["property"]["@type"].ShouldBe("rdf:Property");
     }

@@ -51,9 +51,11 @@ namespace OpenRasta.Plugins.Hydra.Internal
       
       var vocabPrefix = hydraModel.Vocabulary.DefaultPrefix;
       var className = model.ResourceType.Name;
+      var identifier = vocabPrefix != null ? $"{vocabPrefix}:{className}" : className;
+       
       return new Class
       {
-        Identifier = $"{vocabPrefix}:{className}",
+        Identifier = identifier,
         SupportedProperties = contract.Properties.Select(p=>new SupportedProperty(p)).ToList()
       };
     }
