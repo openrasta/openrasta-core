@@ -22,7 +22,6 @@ namespace Tests.Plugins.Hydra
 
     public apiDocumentation()
     {
-      
       server = new InMemoryHost(() =>
       {
         ResourceSpace.Uses.Hydra(opt=>opt.Vocabulary = ExampleVocabularies.ExampleApp.Uri.ToString());
@@ -79,5 +78,4 @@ namespace Tests.Plugins.Hydra
       return Task.CompletedTask;
     }
   }
-  class CreateAction : Operation {}
 }
