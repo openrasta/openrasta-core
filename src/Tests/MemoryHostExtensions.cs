@@ -11,12 +11,12 @@ namespace Tests
   {
     public static Task<IResponse> Post(this InMemoryHost host, string uri, string content, string contentType = null)
     {
-      return ExecuteMethod(host, "POST", uri, content, contentType);
+      return ExecuteMethod(host, uri, "POST", content, contentType);
     }
 
     public static Task<IResponse> Put(this InMemoryHost host, string uri, string content, string contentType = null)
     {
-      return ExecuteMethod(host, "PUT", uri, content, contentType);
+      return ExecuteMethod(host, uri, "PUT", content, contentType);
     }
 
     public static Task<IResponse> Get(this InMemoryHost host, string uri, string accept = null)
@@ -27,6 +27,8 @@ namespace Tests
     static Task<IResponse> ExecuteMethod(InMemoryHost host, string uri, string method, string content = null,
       string contentType = null, Action<HttpHeaderDictionary> headers = null)
     {
+      if (uri.StartsWith('/') == false) uri = "/" + uri;
+      
       var request = new InMemoryRequest
       {
         HttpMethod = method,
