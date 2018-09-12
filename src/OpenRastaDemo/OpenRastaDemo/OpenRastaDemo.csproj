@@ -9,8 +9,8 @@
         <PackageReference Include="Microsoft.AspNetCore.Server.Kestrel" Version="2.1.1" />
         <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="2.1.1" />
         <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="2.1.1" />
-        <PackageReference Include="OpenRasta.Hosting.AspNetCore" Version="2.6.0-preview.1.1360" />
-        <PackageReference Include="OpenRasta.Codecs.Newtonsoft.Json" Version="2.6.0-preview.1.1360" />
+        <PackageReference Include="OpenRasta.Hosting.AspNetCore" Version="2.6.0-preview.1.1371" />
+        <PackageReference Include="OpenRasta.Codecs.Newtonsoft.Json" Version="2.6.0-preview.1.1371" />
     </ItemGroup>
 
     <ItemGroup>

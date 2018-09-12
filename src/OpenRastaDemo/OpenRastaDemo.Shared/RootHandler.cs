@@ -2,11 +2,11 @@
 
 namespace OpenRastaDemo
 {
-    public class RootHandler
+  public class RootHandler
+  {
+    public IEnumerable<RootResponse> Get()
     {
-        public IEnumerable<RootResponse> Get()
-        {
-            return DemoJsonResponse.LargeJson;
-        }
+      return DemoJsonResponse.LargeJson;
     }
+  }
 }

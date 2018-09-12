@@ -2,8 +2,8 @@
 
 namespace OpenRastaDemo
 {
-    public static class DemoJsonResponse
-    {
-        public static IList<RootResponse> LargeJson { get; set; }
-    }
+  public static class DemoJsonResponse
+  {
+    public static IList<RootResponse> LargeJson { get; set; }
+  }
 }
