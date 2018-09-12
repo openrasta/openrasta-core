@@ -27,15 +27,25 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization
       writer.WriteValue(GetSchemaName(vocab, resourceModel, pi.PropertyName));
       writer.WritePropertyName("@type");
       writer.WriteValue("rdf:Property");
-      writer.WritePropertyName("range");
-      writer.WriteValue(GetRange(pi.PropertyType));
+      if (TryGetRange(pi.PropertyType, out var range))
+      {
+        writer.WritePropertyName("range");
+        writer.WriteValue(range);
+      }
+
       writer.WriteEndObject();
     }
 
-    string GetRange(Type propertyType)
+    bool TryGetRange(Type propertyType, out string range)
     {
-      if (propertyType == typeof(string)) return "xsd:string";
-      throw new InvalidOperationException($"Cannot figure range for property type {propertyType}");
+      if (propertyType == typeof(string))
+      {
+        range = "xsd:string";
+        return true;
+      }
+
+      range = null;
+      return false;
     }
 
     string GetSchemaName(Vocabulary vocab, ResourceModel resourceModel, string propertyName)

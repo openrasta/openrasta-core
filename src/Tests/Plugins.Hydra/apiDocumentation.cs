@@ -32,7 +32,17 @@ namespace Tests.Plugins.Hydra
           .Vocabulary(ExampleVocabularies.ExampleApp.Uri.ToString())
           .SupportedOperation(new Operation {Method = "POST", Expects = "schema:Event"})
           .SupportedOperation(new CreateAction {Method = "POST", Expects = "schema:Person"});
+
+        ResourceSpace.Has.ResourcesOfType<Event>()
+          .Vocabulary(ExampleVocabularies.ExampleApp.Uri.ToString());
       });
+    }
+
+    [Fact]
+    public void has_all_classes()
+    {
+      var customerClass = body["supportedClass"].Single(c => c["@id"].Value<string>() == "Customer");
+      var eventClass =  body["supportedClass"].Single(c => c["@id"].Value<string>() == "Event");
     }
 
     [Fact]
