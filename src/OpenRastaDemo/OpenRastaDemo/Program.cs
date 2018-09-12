@@ -8,27 +8,28 @@ using OpenRasta.Configuration;
 
 namespace OpenRastaDemo
 {
-    class Program
+  class Program
+  {
+    static void Main(string[] args)
     {
-        static void Main(string[] args)
+      var json = File.ReadAllText(Path.Combine(Directory.GetCurrentDirectory(), "large.json"));
+
+      DemoJsonResponse.LargeJson = JsonConvert.DeserializeObject<IList<RootResponse>>(json);
+      DemoHydraResponse.LargeJson = JsonConvert.DeserializeObject<List<HydraRootResponse>>(json);
+
+      var host = new WebHostBuilder()
+        .UseKestrel()
+        .ConfigureLogging((logging) =>
         {
-            var json = File.ReadAllText(Path.Combine(Directory.GetCurrentDirectory(), "large.json"));
+          logging.AddConsole().SetMinimumLevel(LogLevel.Trace);
+          logging.AddDebug().SetMinimumLevel(LogLevel.Trace);;
+        })
+        .UseContentRoot(Directory.GetCurrentDirectory())
+        .ConfigureServices(s => s.AddSingleton<IConfigurationSource>(new DemoConfigurationSource()))
+        .UseStartup<Startup>()
+        .Build();
 
-            DemoJsonResponse.LargeJson = JsonConvert.DeserializeObject<IList<RootResponse>>(json);
-
-            var host = new WebHostBuilder()
-                .UseKestrel()
-                .ConfigureLogging((logging) =>
-                {
-                    logging.AddConsole();
-                    logging.AddDebug();
-                })
-                .UseContentRoot(Directory.GetCurrentDirectory())
-                .ConfigureServices(s => s.AddSingleton<IConfigurationSource>(new DemoConfigurationSource()))
-                .UseStartup<Startup>()
-                .Build();
-
-            host.Run();
-        }
+      host.Run();
     }
+  }
 }

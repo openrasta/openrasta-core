@@ -1,9 +1,10 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
+using OpenRasta.Plugins.Hydra.Schemas;
 
 namespace OpenRastaDemo
 {
-  public class RootResponse
+  public class HydraRootResponse : JsonLd.INode
   {
     public string _id { get; set; }
     public int index { get; set; }

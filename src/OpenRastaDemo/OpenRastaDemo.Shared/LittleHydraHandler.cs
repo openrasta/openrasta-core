@@ -1,13 +1,13 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 namespace OpenRastaDemo
 {
-  public class LittleJsonHandler
+  public class LittleHydraHandler
   {
-    public RootResponse Get()
+    public HydraRootResponse Get()
     {
-      return new RootResponse
+      return new HydraRootResponse
       {
         _id = "1",
         about = "about",

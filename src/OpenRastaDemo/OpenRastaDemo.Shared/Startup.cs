@@ -5,22 +5,22 @@ using OpenRasta.Hosting.AspNetCore;
 
 namespace OpenRastaDemo
 {
-    public class Startup
+  public class Startup
+  {
+    private readonly IConfigurationSource configurationSource;
+
+    public Startup(IConfigurationSource configurationSource)
     {
-        private readonly IConfigurationSource configurationSource;
-
-        public Startup(IConfigurationSource configurationSource)
-        {
-            this.configurationSource = configurationSource;
-        }
-
-        public void ConfigureServices(IServiceCollection services)
-        {
-        }
-
-        public void Configure(IApplicationBuilder app)
-        {
-            app.UseOpenRasta(this.configurationSource);
-        }
+      this.configurationSource = configurationSource;
     }
+
+    public void ConfigureServices(IServiceCollection services)
+    {
+    }
+
+    public void Configure(IApplicationBuilder app)
+    {
+      app.UseOpenRasta(this.configurationSource);
+    }
+  }
 }
