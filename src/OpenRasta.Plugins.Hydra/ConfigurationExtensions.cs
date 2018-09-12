@@ -67,6 +67,7 @@ namespace OpenRasta.Plugins.Hydra
       has.ResourcesOfType<SupportedProperty>().Vocabulary(Vocabularies.Hydra);
       has.ResourcesOfType<IriTemplate>().Vocabulary(Vocabularies.Hydra);
       has.ResourcesOfType<IriTemplateMapping>().Vocabulary(Vocabularies.Hydra);
+      has.ResourcesOfType<Operation>().Vocabulary(Vocabularies.Hydra);
 
 //      has.ResourcesOfType<Rdf.Property>().Vocabulary(Vocabularies.Rdf);
       
@@ -74,6 +75,12 @@ namespace OpenRasta.Plugins.Hydra
       return uses;
     }
 
+    
+    public static IResourceDefinition<T> SupportedOperation<T>(this IResourceDefinition<T> resource, Operation operation)
+    {
+      resource.Resource.Hydra().SupportedOperations.Add(operation);
+      return resource;
+    }
     public static IResourceDefinition<T> Vocabulary<T>(this IResourceDefinition<T> resource, Vocabulary vocab)
     {
       resource.Resource.Hydra().Vocabulary = vocab;

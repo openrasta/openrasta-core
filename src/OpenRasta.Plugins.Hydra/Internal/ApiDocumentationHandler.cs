@@ -56,7 +56,8 @@ namespace OpenRasta.Plugins.Hydra.Internal
       return new Class
       {
         Identifier = identifier,
-        SupportedProperties = contract.Properties.Select(p=>new SupportedProperty(p)).ToList()
+        SupportedProperties = contract.Properties.Select(p=>new SupportedProperty(p)).ToList(),
+        SupportedOperations = hydraModel.SupportedOperations
       };
     }
   }

@@ -18,5 +18,8 @@ namespace OpenRasta.Plugins.Hydra.Internal
 
     [JsonProperty("supportedProperty")]
     public List<SupportedProperty> SupportedProperties { get; set; }
+    
+    [JsonProperty("supportedOperation")]
+    public List<Operation> SupportedOperations { get; set; }
   }
 }

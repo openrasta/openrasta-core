@@ -1,9 +1,11 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using OpenRasta.Configuration;
 using OpenRasta.Hosting.InMemory;
 using OpenRasta.Plugins.Hydra;
+using OpenRasta.Plugins.Hydra.Schemas.Hydra;
 using OpenRasta.Web;
 using Shouldly;
 using Tests.Plugins.Hydra.Examples;
@@ -16,6 +18,7 @@ namespace Tests.Plugins.Hydra
   {
     readonly InMemoryHost server;
     JToken body;
+    JToken customer;
 
     public apiDocumentation()
     {
@@ -24,8 +27,12 @@ namespace Tests.Plugins.Hydra
       {
         ResourceSpace.Uses.Hydra(opt=>opt.Vocabulary = ExampleVocabularies.ExampleApp.Uri.ToString());
 
+        ResourceSpace.Has.ResourcesOfType<CreateAction>().Vocabulary(Vocabularies.SchemaDotOrg);
+        
         ResourceSpace.Has.ResourcesOfType<Customer>()
-          .Vocabulary(ExampleVocabularies.ExampleApp.Uri.ToString());
+          .Vocabulary(ExampleVocabularies.ExampleApp.Uri.ToString())
+          .SupportedOperation(new Operation {Method = "POST", Expects = "schema:Event"})
+          .SupportedOperation(new CreateAction {Method = "POST", Expects = "schema:Person"});
 
       });
     }
@@ -33,21 +40,38 @@ namespace Tests.Plugins.Hydra
     [Fact]
     public void custom_class_is_defined()
     {
-      body["supportedClass"][0]["@id"].Value<string>().ShouldBe("Customer");
-      body["supportedClass"][0]["@type"].Value<string>().ShouldBe("hydra:Class");
+      customer["@type"].Value<string>().ShouldBe("hydra:Class");
     }
 
     [Fact]
     public void custom_class_properties_are_defined()
     {
-      body["supportedClass"][0]["supportedProperty"][0]["property"]["@id"].ShouldBe("Customer/name");
-      body["supportedClass"][0]["supportedProperty"][0]["property"]["range"].ShouldBe("xsd:string");
-      body["supportedClass"][0]["supportedProperty"][0]["property"]["@type"].ShouldBe("rdf:Property");
+      
+      customer["supportedProperty"][0]["property"]["@id"].ShouldBe("Customer/name");
+      customer["supportedProperty"][0]["property"]["range"].ShouldBe("xsd:string");
+      customer["supportedProperty"][0]["property"]["@type"].ShouldBe("rdf:Property");
     }
-    
+
+    [Fact]
+    public void supported_operations_are_defined()
+    {
+      customer["supportedOperation"][0]["@type"].ShouldBe("hydra:Operation");
+      customer["supportedOperation"][0]["method"].ShouldBe("POST");
+      customer["supportedOperation"][0]["expects"].ShouldBe("schema:Event");
+    }
+    [Fact]
+    public void specific_operations_are_defined()
+    {
+
+      customer["supportedOperation"][1]["@type"].ShouldBe("schema:CreateAction");
+      customer["supportedOperation"][1]["method"].ShouldBe("POST");
+      customer["supportedOperation"][1]["expects"].ShouldBe("schema:Person");
+    }
     public async Task InitializeAsync()
     {
       (_, body) = await server.GetJsonLd("/.hydra/documentation.jsonld");
+      customer = body["supportedClass"].Single(c=>c["@id"].Value<string>() == "Customer");
+
     }
 
     public Task DisposeAsync()
@@ -55,4 +79,5 @@ namespace Tests.Plugins.Hydra
       return Task.CompletedTask;
     }
   }
+  class CreateAction : Operation {}
 }
