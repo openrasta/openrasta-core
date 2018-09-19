@@ -24,7 +24,7 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization
       _baseUri = baseUri;
       _uris = uris;
       _models = models;
-      
+
       CamelCaseNamingStrategy caseNamingStrategy = new CamelCaseNamingStrategy();
       caseNamingStrategy.ProcessDictionaryKeys = true;
       caseNamingStrategy.OverrideSpecifiedNames = true;
@@ -38,14 +38,13 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization
       var isNode = typeof(JsonLd.INode).IsAssignableFrom(type);
       var isBlankNode = typeof(JsonLd.IBlankNode).IsAssignableFrom(type);
       if (!isNode && !isBlankNode) return jsonProperties;
-      
+
       if (_models.TryGetResourceModel(type, out var resourceModel))
       {
         var hydraModel = resourceModel.Hydra();
 
         TryAddType(type, jsonProperties, hydraModel);
         if (isNode) TryAddId(type, jsonProperties);
-        TrySetPropertyInfoConverters(jsonProperties);
       }
 
       if (_isRoot)
@@ -57,11 +56,6 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization
       return jsonProperties;
     }
 
-    void TrySetPropertyInfoConverters(IList<JsonProperty> jsonProperties)
-    {
-      foreach(var prop in jsonProperties.Where(p=>p.PropertyType == typeof(PropertyInfo)))
-        prop.Converter = new RdfPropertyFromJsonPropertyConverter(_models);
-    }
 
     void AddContext(Type type, IList<JsonProperty> jsonProperties)
     {

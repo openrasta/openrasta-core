@@ -9,6 +9,7 @@ using OpenRasta.DI;
 using OpenRasta.Plugins.Hydra.Configuration;
 using OpenRasta.Plugins.Hydra.Internal;
 using OpenRasta.Plugins.Hydra.Internal.Serialization;
+using OpenRasta.Plugins.Hydra.Schemas;
 using OpenRasta.Plugins.Hydra.Schemas.Hydra;
 using OpenRasta.Web;
 
@@ -69,6 +70,7 @@ namespace OpenRasta.Plugins.Hydra
       has.ResourcesOfType<IriTemplate>().Vocabulary(Vocabularies.Hydra);
       has.ResourcesOfType<IriTemplateMapping>().Vocabulary(Vocabularies.Hydra);
       has.ResourcesOfType<Operation>().Vocabulary(Vocabularies.Hydra);
+      has.ResourcesOfType<Rdf.Property>().Vocabulary(Vocabularies.Rdf);
 
       uses.CustomDependency<IMetaModelHandler, JsonNetMetaModelHandler>(DependencyLifetime.Transient);
       uses.CustomDependency<IMetaModelHandler, JsonNetApiDocumentationMetaModelHandler>(DependencyLifetime.Transient);
