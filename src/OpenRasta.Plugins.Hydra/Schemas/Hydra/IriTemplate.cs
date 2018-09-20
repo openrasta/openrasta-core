@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace OpenRasta.Plugins.Hydra.Schemas.Hydra
 {
-  public class IriTemplate : JsonLd.IBlankNode
+  public class IriTemplate //: JsonLd.IBlankNode
   {
     public IriTemplate(string template)
     {
