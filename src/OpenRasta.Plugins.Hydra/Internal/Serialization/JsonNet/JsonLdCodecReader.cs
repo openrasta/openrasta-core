@@ -6,7 +6,7 @@ using OpenRasta.Codecs;
 using OpenRasta.TypeSystem;
 using OpenRasta.Web;
 
-namespace OpenRasta.Plugins.Hydra.Internal.Serialization
+namespace OpenRasta.Plugins.Hydra.Internal.Serialization.JsonNet
 {
   public class JsonLdCodecReader : IMediaTypeReaderAsync
   {

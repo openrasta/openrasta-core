@@ -22,7 +22,11 @@ namespace Tests.Plugins.Hydra.nodes
     {
       server = new InMemoryHost(() =>
       {
-        ResourceSpace.Uses.Hydra(options => options.Vocabulary = "https://schemas.example/schema#");
+        ResourceSpace.Uses.Hydra(options =>
+        {
+          options.Vocabulary = "https://schemas.example/schema#";
+          options.Utf8Json = true;
+        });
 
         ResourceSpace.Has.ResourcesOfType<List<Event>>()
           .Vocabulary("https://schemas.example/schema#")
@@ -55,3 +59,48 @@ namespace Tests.Plugins.Hydra.nodes
     public async Task DisposeAsync() => server.Close();
   }
 }
+
+/*
+
+{
+  "member": [
+    {
+      "id": 1,
+      "@type": "Event",
+      "@id": "http://localhost/events/1"
+    },
+    {
+      "id": 2,
+      "@type": "Event",
+      "@id": "http://localhost/events/2"
+    }
+  ],
+  "totalItems": 2,
+  "@type": "hydra:Collection",
+  "@context": "http://localhost/.hydra/context.jsonld"
+}
+
+
+
+
+****JSON.NET****
+
+{
+  "@context": "http://localhost/.hydra/context.jsonld",
+  "@type": "hydra:Collection",
+  "member": [
+    {
+      "@id": "http://localhost/events/1",
+      "@type": "Event",
+      "id": 1
+    },
+    {
+      "@id": "http://localhost/events/2",
+      "@type": "Event",
+      "id": 2
+    }
+  ],
+  "totalItems": 2
+}
+
+*/

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using OpenRasta.Configuration.MetaModel;
@@ -10,7 +9,7 @@ using OpenRasta.Plugins.Hydra.Schemas;
 using OpenRasta.Plugins.Hydra.Schemas.Hydra;
 using OpenRasta.Web;
 
-namespace OpenRasta.Plugins.Hydra.Internal.Serialization
+namespace OpenRasta.Plugins.Hydra.Internal.Serialization.JsonNet
 {
   public class JsonLdContractResolver : DefaultContractResolver
   {

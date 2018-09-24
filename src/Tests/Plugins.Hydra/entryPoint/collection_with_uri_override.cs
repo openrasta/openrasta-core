@@ -23,7 +23,12 @@ namespace Tests.Plugins.Hydra
     {
       server = new InMemoryHost(() =>
       {
-        ResourceSpace.Uses.Hydra(options => options.Vocabulary = "https://schemas.example/schema#");
+        ResourceSpace.Uses.Hydra(options =>
+        {
+          
+          options.Vocabulary = "https://schemas.example/schema#";
+          options.Utf8Json = true;
+        });
 
         ResourceSpace.Has
           .ResourcesOfType<List<Event>>()
@@ -39,7 +44,7 @@ namespace Tests.Plugins.Hydra
 
 
     [Fact]
-    public void collection_is_linked()
+    public async Task collection_is_linked()
     {
       body["collection"].ShouldBeOfType<JArray>();
       body["collection"][0]["@type"].ShouldBe("hydra:Collection");

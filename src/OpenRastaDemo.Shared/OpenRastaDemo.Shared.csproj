@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netcoreapp2.1</TargetFramework>
+    </PropertyGroup>
+    
+    <ItemGroup>
+        <!--<PackageReference Include="OpenRasta.Hosting.AspNetCore" Version="2.6.0-preview.1.1371" />-->
+        <!--<PackageReference Include="OpenRasta.Codecs.Newtonsoft.Json" Version="2.6.0-preview.1.1371" />-->
+        <!--<PackageReference Include="OpenRasta.Plugins.Hydra" Version="2.6.0-preview.1.1371" />-->
+    </ItemGroup>
+    
+    <ItemGroup>
+      <ProjectReference Include="..\OpenRasta.Codecs.Newtonsoft.Json\OpenRasta.Codecs.Newtonsoft.Json.csproj" />
+      <ProjectReference Include="..\OpenRasta.Hosting.AspNetCore\OpenRasta.Hosting.AspNetCore.csproj" />
+      <ProjectReference Include="..\OpenRasta.Plugins.Hydra\OpenRasta.Plugins.Hydra.csproj" />
+    </ItemGroup>
+
+</Project>

@@ -1,18 +1,17 @@
 using System;
 using System.Collections;
 using System.IO;
-using OpenRasta.Configuration.MetaModel;
-using OpenRasta.Configuration.MetaModel.Handlers;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
-using OpenRasta.Plugins.Hydra.Internal.Serialization;
+using OpenRasta.Configuration.MetaModel;
+using OpenRasta.Configuration.MetaModel.Handlers;
 using OpenRasta.Plugins.Hydra.Schemas.Hydra;
 using OpenRasta.Web;
 
-namespace OpenRasta.Plugins.Hydra.Internal
+namespace OpenRasta.Plugins.Hydra.Internal.Serialization.JsonNet
 {
   public class JsonNetMetaModelHandler : IMetaModelHandler
   {

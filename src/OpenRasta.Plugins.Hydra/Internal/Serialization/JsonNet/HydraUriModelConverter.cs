@@ -2,7 +2,7 @@
 using Newtonsoft.Json;
 using OpenRasta.Plugins.Hydra.Configuration;
 
-namespace OpenRasta.Plugins.Hydra.Internal.Serialization
+namespace OpenRasta.Plugins.Hydra.Internal.Serialization.JsonNet
 {
   public class HydraUriModelConverter : JsonConverter<HydraUriModel>
   {

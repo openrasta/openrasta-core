@@ -7,7 +7,7 @@ namespace Tests.Plugins.Hydra.nodes
   {
     public Event Get(int id)
     {
-      return new Event { Id = id };
+      return new Event { Id = id, FirstName = "Bilbo Baggins"};
     }
 
     public List<Event> Get()
