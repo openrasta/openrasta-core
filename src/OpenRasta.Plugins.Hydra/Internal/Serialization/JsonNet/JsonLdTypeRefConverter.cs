@@ -2,7 +2,7 @@
 using Newtonsoft.Json;
 using OpenRasta.Configuration.MetaModel;
 
-namespace OpenRasta.Plugins.Hydra.Internal.Serialization
+namespace OpenRasta.Plugins.Hydra.Internal.Serialization.JsonNet
 {
   class JsonLdTypeRefConverter : JsonConverter
   {

@@ -39,6 +39,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenRasta.Hosting.AspNet.Te
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenRasta.Plugins.Hydra", "src\OpenRasta.Plugins.Hydra\OpenRasta.Plugins.Hydra.csproj", "{05AD6BA1-C771-41DC-94B5-5D4CA2C8DB2F}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "BenchMark", "BenchMark", "{83414358-5D1F-42A6-940E-E2BD4BAE27FC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenRastaDemo.Benchmark", "src\OpenRastaDemo.Benchmark\OpenRastaDemo.Benchmark.csproj", "{1E7E2514-133D-4EA3-9D86-D56757857AFA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenRastaDemo.Shared", "src\OpenRastaDemo.Shared\OpenRastaDemo.Shared.csproj", "{2A1F6D15-F676-4715-963F-2C136AE54B7F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenRastaDemo", "src\OpenRastaDemo\OpenRastaDemo.csproj", "{6BE6695C-91C0-41A2-ACAA-E0697C5B7CFE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -101,11 +109,28 @@ Global
 		{05AD6BA1-C771-41DC-94B5-5D4CA2C8DB2F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{05AD6BA1-C771-41DC-94B5-5D4CA2C8DB2F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{05AD6BA1-C771-41DC-94B5-5D4CA2C8DB2F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1E7E2514-133D-4EA3-9D86-D56757857AFA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1E7E2514-133D-4EA3-9D86-D56757857AFA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1E7E2514-133D-4EA3-9D86-D56757857AFA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1E7E2514-133D-4EA3-9D86-D56757857AFA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2A1F6D15-F676-4715-963F-2C136AE54B7F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2A1F6D15-F676-4715-963F-2C136AE54B7F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2A1F6D15-F676-4715-963F-2C136AE54B7F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2A1F6D15-F676-4715-963F-2C136AE54B7F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6BE6695C-91C0-41A2-ACAA-E0697C5B7CFE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6BE6695C-91C0-41A2-ACAA-E0697C5B7CFE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6BE6695C-91C0-41A2-ACAA-E0697C5B7CFE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6BE6695C-91C0-41A2-ACAA-E0697C5B7CFE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E66BC41B-A020-4673-8A3F-1986A41479AD}
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{1E7E2514-133D-4EA3-9D86-D56757857AFA} = {83414358-5D1F-42A6-940E-E2BD4BAE27FC}
+		{2A1F6D15-F676-4715-963F-2C136AE54B7F} = {83414358-5D1F-42A6-940E-E2BD4BAE27FC}
+		{6BE6695C-91C0-41A2-ACAA-E0697C5B7CFE} = {83414358-5D1F-42A6-940E-E2BD4BAE27FC}
 	EndGlobalSection
 EndGlobal

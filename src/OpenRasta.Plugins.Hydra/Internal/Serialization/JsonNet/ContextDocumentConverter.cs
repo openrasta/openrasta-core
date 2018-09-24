@@ -2,7 +2,7 @@ using System;
 using Newtonsoft.Json;
 using OpenRasta.Plugins.Hydra.Schemas.Hydra;
 
-namespace OpenRasta.Plugins.Hydra.Internal.Serialization
+namespace OpenRasta.Plugins.Hydra.Internal.Serialization.JsonNet
 {
   public class ContextDocumentConverter : JsonConverter<Context>
   {

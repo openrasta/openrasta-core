@@ -9,7 +9,11 @@ namespace OpenRastaDemo
   {
     public void Configure()
     {
-      ResourceSpace.Uses.Hydra(options => options.Vocabulary = "https://schemas.example/schema#");
+      ResourceSpace.Uses.Hydra(options =>
+      {
+        options.Vocabulary = "https://schemas.example/schema#";
+        options.Utf8Json = true;
+      });
 
       ResourceSpace.Has
         .ResourcesOfType<IEnumerable<RootResponse>>()

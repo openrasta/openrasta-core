@@ -24,7 +24,11 @@ namespace Tests.Plugins.Hydra
     {
       server = new InMemoryHost(() =>
       {
-        ResourceSpace.Uses.Hydra(opt => opt.Vocabulary = ExampleVocabularies.ExampleApp.Uri.ToString());
+        ResourceSpace.Uses.Hydra(opt =>
+        {
+          opt.Vocabulary = ExampleVocabularies.ExampleApp.Uri.ToString();
+          opt.Utf8Json = true;
+        });
 
         ResourceSpace.Has.ResourcesOfType<CreateAction>().Vocabulary(Vocabularies.SchemaDotOrg);
 

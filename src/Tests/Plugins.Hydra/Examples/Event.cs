@@ -5,5 +5,6 @@ namespace Tests.Plugins.Hydra.Examples
   public class Event : JsonLd.INode
   {
     public int Id { get; set; }
+    public string FirstName { get; set; }
   }
 }

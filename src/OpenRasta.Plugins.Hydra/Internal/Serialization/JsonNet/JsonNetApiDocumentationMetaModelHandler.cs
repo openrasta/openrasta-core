@@ -8,7 +8,7 @@ using OpenRasta.Plugins.Hydra.Configuration;
 using OpenRasta.Plugins.Hydra.Schemas;
 using OpenRasta.Plugins.Hydra.Schemas.Hydra;
 
-namespace OpenRasta.Plugins.Hydra.Internal
+namespace OpenRasta.Plugins.Hydra.Internal.Serialization.JsonNet
 {
   public class JsonNetApiDocumentationMetaModelHandler : IMetaModelHandler
   {

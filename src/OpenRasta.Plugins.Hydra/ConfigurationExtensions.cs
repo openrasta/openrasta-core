@@ -9,6 +9,8 @@ using OpenRasta.DI;
 using OpenRasta.Plugins.Hydra.Configuration;
 using OpenRasta.Plugins.Hydra.Internal;
 using OpenRasta.Plugins.Hydra.Internal.Serialization;
+using OpenRasta.Plugins.Hydra.Internal.Serialization.JsonNet;
+using OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8Json;
 using OpenRasta.Plugins.Hydra.Schemas;
 using OpenRasta.Plugins.Hydra.Schemas.Hydra;
 using OpenRasta.Web;
@@ -72,7 +74,15 @@ namespace OpenRasta.Plugins.Hydra
       has.ResourcesOfType<Operation>().Vocabulary(Vocabularies.Hydra);
       has.ResourcesOfType<Rdf.Property>().Vocabulary(Vocabularies.Rdf);
 
-      uses.CustomDependency<IMetaModelHandler, JsonNetMetaModelHandler>(DependencyLifetime.Transient);
+      if (opts.Utf8Json)
+      {
+        uses.CustomDependency<IMetaModelHandler, Utf8JsonMetaModelHandler>(DependencyLifetime.Transient);
+      }
+      else
+      {
+        uses.CustomDependency<IMetaModelHandler, JsonNetMetaModelHandler>(DependencyLifetime.Transient);
+      }
+
       uses.CustomDependency<IMetaModelHandler, JsonNetApiDocumentationMetaModelHandler>(DependencyLifetime.Transient);
 
       return uses;
@@ -134,5 +144,6 @@ namespace OpenRasta.Plugins.Hydra
   {
     public IList<Vocabulary> Curies { get; } = new List<Vocabulary>();
     public Vocabulary Vocabulary { get; set; }
+    public bool Utf8Json { get; set; }
   }
 }

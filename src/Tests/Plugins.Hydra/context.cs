@@ -24,7 +24,11 @@ namespace Tests.Plugins.Hydra
     {
       server = new InMemoryHost(() =>
       {
-        ResourceSpace.Uses.Hydra(options => options.Vocabulary = "https://schemas.example/schema#");
+        ResourceSpace.Uses.Hydra(options =>
+        {
+          options.Vocabulary = "https://schemas.example/schema#";
+          options.Utf8Json = true;
+        });
 
         ResourceSpace.Has
           .ResourcesOfType<List<Event>>()
