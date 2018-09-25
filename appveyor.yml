@@ -22,7 +22,7 @@ install:
       if ($env:APPVEYOR_REPO_TAG -eq "true") {
           echo "Version: Using git tag $env:APPVEYOR_REPO_TAG_NAME"
                 
-          if (-not $env:APPVEYOR_REPO_TAG -match "^(\d+\.\d+\.\d+)") {
+          if (-not $env:APPVEYOR_REPO_TAG_NAME -match "^(\d+\.\d+\.\d+)") {
               throw "Invalid version in tag name"
           }          
           $version = [version]$Matches[0]
