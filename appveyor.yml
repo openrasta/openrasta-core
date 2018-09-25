@@ -66,6 +66,7 @@ dotnet_csproj:
   informational_version: '{version}'
 
 build:
+  project: OpenRasta.sln
   parallel: true
   verbosity: minimal
   publish_nuget: true
