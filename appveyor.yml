@@ -51,7 +51,7 @@ install:
   - ps: if ($branch -eq "master") {chandler push }
 
 before_build:
-  - dotnet restore
+  - ps: dotnet restore
 
 nuget:
   project_feed: true
