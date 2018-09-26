@@ -22,13 +22,14 @@ install:
       if ($env:APPVEYOR_REPO_TAG -eq "true") {
           echo "Version: Using git tag $env:APPVEYOR_REPO_TAG_NAME"
                 
-          if (-not $env:APPVEYOR_REPO_TAG_NAME -match "^(\d+\.\d+\.\d+)") {
+          $validTag = $env:APPVEYOR_REPO_TAG_NAME -match "^(\d+\.\d+\.\d+)"
+          $versionString = $Matches[0]
+          
+          if (-not $validTag) {
               throw "Invalid version in tag name"
-          }          
-          $version = [version]$Matches[0]
-                
-          $semver = $env:APPVEYOR_REPO_TAG_NAME
-                
+          }
+            
+          $version = [version]$versionString
       }
       else {
           $semver = (git describe --abbrev=0 2>&1);
