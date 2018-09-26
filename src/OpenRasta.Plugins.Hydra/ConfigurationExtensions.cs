@@ -71,6 +71,7 @@ namespace OpenRasta.Plugins.Hydra
       has.ResourcesOfType<Operation>().Vocabulary(Vocabularies.Hydra);
 
       uses.CustomDependency<IMetaModelHandler, JsonNetMetaModelHandler>(DependencyLifetime.Transient);
+      uses.CustomDependency<IMetaModelHandler, JsonNetApiDocumentationMetaModelHandler>(DependencyLifetime.Transient);
 
       return uses;
     }
