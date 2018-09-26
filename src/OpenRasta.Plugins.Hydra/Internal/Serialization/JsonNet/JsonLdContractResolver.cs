@@ -36,8 +36,10 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization
       var jsonProperties = base.CreateProperties(type, memberSerialization);
 
       var isNode = typeof(JsonLd.INode).IsAssignableFrom(type);
-      var isBlankNode = typeof(JsonLd.IBlankNode).IsAssignableFrom(type);
-      if (!isNode && !isBlankNode) return jsonProperties;
+      
+      //var isBlankNode = typeof(JsonLd.IBlankNode).IsAssignableFrom(type);
+      
+      //if (!isNode && !isBlankNode) return jsonProperties;
 
       if (_models.TryGetResourceModel(type, out var resourceModel))
       {
