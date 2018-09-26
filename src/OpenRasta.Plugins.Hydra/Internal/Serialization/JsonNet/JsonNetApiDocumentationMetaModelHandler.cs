@@ -5,6 +5,7 @@ using Newtonsoft.Json.Serialization;
 using OpenRasta.Configuration.MetaModel;
 using OpenRasta.Configuration.MetaModel.Handlers;
 using OpenRasta.Plugins.Hydra.Configuration;
+using OpenRasta.Plugins.Hydra.Schemas;
 using OpenRasta.Plugins.Hydra.Schemas.Hydra;
 
 namespace OpenRasta.Plugins.Hydra.Internal
@@ -43,9 +44,20 @@ namespace OpenRasta.Plugins.Hydra.Internal
       return new Class
       {
         Identifier = identifier,
-        SupportedProperties = contract.Properties.Select(p => new SupportedProperty(p)).ToList(),
+        SupportedProperties = contract.Properties.Select(p => new SupportedProperty
+          {Property = new Rdf.Property {Identifier = $"{identifier}/{p.PropertyName}", Range = TryGetRange(p.PropertyType)}}).ToList(),
         SupportedOperations = hydraModel.SupportedOperations
       };
+    }
+
+    string TryGetRange(Type propertyType)
+    {
+      if (propertyType == typeof(string))
+      {
+        return "xsd:string";
+      }
+
+      return null;
     }
   }
 }

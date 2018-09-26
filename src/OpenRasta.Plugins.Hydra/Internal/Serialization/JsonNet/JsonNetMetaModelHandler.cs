@@ -53,7 +53,6 @@ namespace OpenRasta.Plugins.Hydra.Internal
             new StringEnumConverter(),
             new JsonLdTypeRefConverter(_models),
             new HydraUriModelConverter(options.BaseUri),
-            new RdfPropertyFromJsonPropertyConverter(_models),
             new ContextDocumentConverter()
           }
         };
