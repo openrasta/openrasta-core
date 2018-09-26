@@ -17,8 +17,10 @@
     <ProjectReference Include="..\OpenRasta\OpenRasta.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="FastMember" Version="1.4.1" />
     <PackageReference Include="Microsoft.CSharp" Version="4.5.0" />
     <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
     <PackageReference Include="Utf8Json" Version="1.3.7" />
+    <PackageReference Include="Jil" Version="2.16.0" />
   </ItemGroup>
 </Project>
