@@ -1,3 +1,0 @@
-﻿namespace OpenRasta.Plugins.Hydra
-{
-}

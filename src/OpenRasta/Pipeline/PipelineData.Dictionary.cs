@@ -29,5 +29,4 @@ namespace OpenRasta.Pipeline
       set => base[key] = value;
     }
   }
-
 }
