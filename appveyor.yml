@@ -31,6 +31,7 @@ install:
           }
             
           $version = [version]$versionString
+          $semver = $env:APPVEYOR_REPO_TAG_NAME
       }
       else {
           $semver = (git describe --abbrev=0 2>&1);
@@ -51,7 +52,10 @@ install:
               $semver += "+$branch"
           }
       }
-              
+
+      echo "Version: $version"
+      echo "Semver: $semver"
+
       Set-AppveyorBuildVariable -Name "AssemblyMajor" -Value $version.Major
       Update-AppVeyorBuild -Version "$semver"
 
