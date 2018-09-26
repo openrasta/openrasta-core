@@ -5,6 +5,7 @@
 [![Gitter chat](https://badges.gitter.im/openrasta/general.png)](https://gitter.im/openrasta/general)
 Cutting Edge nuget packages
 [https://ci.appveyor.com/nuget/openrasta-core](https://ci.appveyor.com/nuget/openrasta-core)
+[![CodeFactor](https://www.codefactor.io/repository/github/openrasta/openrasta-core/badge)](https://www.codefactor.io/repository/github/openrasta/openrasta-core)
 
 OpenRasta core library
 
