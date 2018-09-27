@@ -49,7 +49,7 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8Json
       public string FirstName { get; set; }
     }
 
-    public Func<object, SerializationOptions, Stream, Task> GetHydraFunc(IMetaModelRepository _models)
+    public Func<object, SerializationContext, Stream, Task> GetHydraFunc(IMetaModelRepository _models)
     {
       return async (entity, options, stream) =>
       {

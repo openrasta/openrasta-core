@@ -26,7 +26,7 @@ namespace Tests.Plugins.Hydra.Utf8Json
       repository.ResourceRegistrations.Add(resourceModel);
       repository.Process();
 
-      var opts = new SerializationOptions {BaseUri = new Uri("http://localhost/")};
+      var opts = new SerializationContext {BaseUri = new Uri("http://localhost/")};
       var ms = new MemoryStream();
 
       await resourceModel.Hydra().SerializeFunc(customer, opts, ms);

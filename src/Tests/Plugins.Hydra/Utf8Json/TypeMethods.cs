@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using OpenRasta.Configuration.MetaModel;
+using OpenRasta.Plugins.Hydra.Internal;
 using Utf8Json;
 
 namespace Tests.Plugins.Hydra.Utf8Json
@@ -12,26 +14,36 @@ namespace Tests.Plugins.Hydra.Utf8Json
     static readonly MethodInfo ResolverGetFormatterMethodInfo =
       typeof(CustomResolver).GetMethod(nameof(IJsonFormatterResolver.GetFormatter));
 
-//    public static IEnumerable<Expression> WriteObjectPropertyValue(
-//      ParameterExpression jsonWriter,
-//      ParameterExpression resource,
-//      PropertyInfo property
-//    )
-//    {
-//      // var val = resource.property;
-//      var variable = Variable(property.PropertyType);
-//      var member = Expression.Property()
-//      yield return 
-//    }
+    static readonly PropertyInfo SerializationContextUriResolverPropertyInfo =
+      typeof(SerializationContext).GetProperty(nameof(SerializationContext.UriGenerator));
+    static readonly PropertyInfo SerializationContextBaseUriPropertyInfo =
+      typeof(SerializationContext).GetProperty(nameof(SerializationContext.BaseUri));
+
+    static readonly MethodInfo StringConcatTwoParamsMethodInfo =
+      typeof(string).GetMethod(nameof(string.Concat), new[] {typeof(string), typeof(string)});
+
+    public static Expression StringConcat(Expression first, Expression second)
+      => Expression.Call(StringConcatTwoParamsMethodInfo, first, second);
     public static void Resource(
       ParameterExpression jsonWriter,
       ResourceModel model,
       Expression resource,
+      Expression options,
       Action<ParameterExpression> variable,
       Action<Expression> statement)
     {
       var type = model.ResourceType.Name;
-      foreach (var exp in BeginObjectWithContextAndType(jsonWriter, type))
+      var uriResolverFunc = Expression.MakeMemberAccess(options, SerializationContextUriResolverPropertyInfo);
+      var uriResolver = Expression.Invoke(uriResolverFunc, resource);
+      var contextUri = StringConcat(
+        Expression.Call(Expression.MakeMemberAccess(options, SerializationContextBaseUriPropertyInfo), typeof(object).GetMethod(nameof(ToString))),
+        Expression.Constant(".hydra/context.jsonld"));
+      
+      var start = model.Uris.Any()
+        ? WriteBeginObjectWithContextIdAndType(jsonWriter, contextUri, type, uriResolver)
+        : BeginObjectWithContextAndType(jsonWriter, type, contextUri);
+
+      foreach (var exp in start)
         statement(exp);
 
       var resolver = Expression.Variable(typeof(CustomResolver), "resolver");
@@ -44,6 +56,29 @@ namespace Tests.Plugins.Hydra.Utf8Json
       }
 
       statement(JsonWriterMethods.WriteEndObject(jsonWriter));
+    }
+
+    static IEnumerable<Expression> WriteBeginObjectWithContextIdAndType(
+      ParameterExpression jsonWriter,
+      Expression contextUri,
+      string type,
+      Expression uri)
+    {
+      foreach (var exp in WriteBeginObjectContext(jsonWriter, contextUri)) yield return exp;
+      yield return JsonWriterMethods.WriteRaw(jsonWriter, Nodes.IdProperty);
+
+      yield return JsonWriterMethods.WriteString(jsonWriter, uri);
+      yield return JsonWriterMethods.WriteValueSeparator(jsonWriter);
+
+      yield return WritePropertyName(jsonWriter, "@type");
+      yield return WriteString(jsonWriter, type);
+    }
+
+    static IEnumerable<Expression> WriteBeginObjectContext(ParameterExpression jsonWriter, Expression contextUri)
+    {
+      yield return JsonWriterMethods.WriteRaw(jsonWriter, Nodes.BeginObjectContext);
+      yield return JsonWriterMethods.WriteString(jsonWriter,contextUri);
+      yield return JsonWriterMethods.WriteValueSeparator(jsonWriter);
     }
 
     static void WriteResourceProperty(ParameterExpression jsonWriter, Expression resource,
@@ -85,16 +120,11 @@ namespace Tests.Plugins.Hydra.Utf8Json
     }
 
     public static IEnumerable<Expression> BeginObjectWithContextAndType(ParameterExpression jsonWriter,
-      string type)
+      string type, Expression contextUri)
     {
-      yield return JsonWriterMethods.WriteRaw(jsonWriter, Nodes.BeginObjectContextComa);
+      WriteBeginObjectContext(jsonWriter, contextUri);
       yield return WritePropertyName(jsonWriter, "@type");
       yield return WriteString(jsonWriter, type);
-    }
-
-    public static ParameterExpression Var<T>(string name)
-    {
-      return Expression.Variable(typeof(T), name);
     }
 
     public static Expression WritePropertyName(ParameterExpression jsonWriter, string propertyName)
