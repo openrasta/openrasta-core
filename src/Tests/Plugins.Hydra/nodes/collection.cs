@@ -8,6 +8,7 @@ using OpenRasta.Web;
 using Shouldly;
 using Tests.Plugins.Hydra.Examples;
 using Tests.Plugins.Hydra.Implementation;
+using Tests.Plugins.Hydra.Utf8Json;
 using Xunit;
 
 namespace Tests.Plugins.Hydra.nodes
@@ -25,7 +26,7 @@ namespace Tests.Plugins.Hydra.nodes
         ResourceSpace.Uses.Hydra(options =>
         {
           options.Vocabulary = "https://schemas.example/schema#";
-          options.Utf8Json = true;
+//          options.Serializer = ctx => ctx.Transient(() => new PreCompiledUtf8JsonSerializer());
         });
 
         ResourceSpace.Has.ResourcesOfType<List<Event>>()

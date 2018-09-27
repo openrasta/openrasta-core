@@ -58,7 +58,10 @@ namespace OpenRasta.Web
 
     public void Add(string key, string value)
     {
-      _base.Add(key, value);
+      if (_base.ContainsKey(key))
+        _base[key] = _base[key] + ", " + value;
+      else
+        _base.Add(key, value);
       UpdateValue(key, value);
     }
 

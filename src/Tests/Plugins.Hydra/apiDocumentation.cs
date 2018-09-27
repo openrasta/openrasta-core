@@ -10,7 +10,9 @@ using OpenRasta.Web;
 using Shouldly;
 using Tests.Plugins.Hydra.Examples;
 using Tests.Plugins.Hydra.Implementation;
+using Tests.Plugins.Hydra.Utf8Json;
 using Xunit;
+using Customer = Tests.Plugins.Hydra.Examples.Customer;
 
 namespace Tests.Plugins.Hydra
 {
@@ -27,7 +29,7 @@ namespace Tests.Plugins.Hydra
         ResourceSpace.Uses.Hydra(opt =>
         {
           opt.Vocabulary = ExampleVocabularies.ExampleApp.Uri.ToString();
-          opt.Utf8Json = true;
+          opt.Serializer = ctx => ctx.Transient(() => new PreCompiledUtf8JsonSerializer());
         });
 
         ResourceSpace.Has.ResourcesOfType<CreateAction>().Vocabulary(Vocabularies.SchemaDotOrg);

@@ -12,7 +12,7 @@ namespace OpenRastaDemo
       ResourceSpace.Uses.Hydra(options =>
       {
         options.Vocabulary = "https://schemas.example/schema#";
-        options.Utf8Json = true;
+//        options.Utf8Json = true;
       });
 
       ResourceSpace.Has

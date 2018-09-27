@@ -27,7 +27,6 @@ namespace Tests.Plugins.Hydra
         {
           
           options.Vocabulary = "https://schemas.example/schema#";
-          options.Utf8Json = true;
         });
 
         ResourceSpace.Has
