@@ -24,7 +24,7 @@ namespace Tests.Plugins.Hydra.nodes
         ResourceSpace.Uses.Hydra(options =>
         {
           options.Vocabulary = "https://schemas.example/schema#";
-          options.Utf8Json = true;
+//          options.Utf8Json = true;
         });
         
         ResourceSpace.Has.ResourcesOfType<CreateAction>().Vocabulary(Vocabularies.SchemaDotOrg);

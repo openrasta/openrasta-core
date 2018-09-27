@@ -74,14 +74,11 @@ namespace OpenRasta.Plugins.Hydra
       has.ResourcesOfType<Operation>().Vocabulary(Vocabularies.Hydra);
       has.ResourcesOfType<Rdf.Property>().Vocabulary(Vocabularies.Rdf);
 
-      if (opts.Utf8Json)
-      {
-        uses.CustomDependency<IMetaModelHandler, Utf8JsonMetaModelHandler>(DependencyLifetime.Transient);
-      }
+      if (opts.Serializer != null)
+        uses.Dependency(opts.Serializer);
       else
-      {
         uses.CustomDependency<IMetaModelHandler, JsonNetMetaModelHandler>(DependencyLifetime.Transient);
-      }
+
 
       uses.CustomDependency<IMetaModelHandler, JsonNetApiDocumentationMetaModelHandler>(DependencyLifetime.Transient);
 
@@ -89,7 +86,8 @@ namespace OpenRasta.Plugins.Hydra
     }
 
 
-    public static IResourceDefinition<T> SupportedOperation<T>(this IResourceDefinition<T> resource, Operation operation)
+    public static IResourceDefinition<T> SupportedOperation<T>(this IResourceDefinition<T> resource,
+      Operation operation)
     {
       resource.Resource.Hydra().SupportedOperations.Add(operation);
       return resource;
@@ -101,7 +99,8 @@ namespace OpenRasta.Plugins.Hydra
       return resource;
     }
 
-    public static IUriDefinition<T> EntryPointCollection<T>(this IUriDefinition<T> resource, Action<CollectionEntryPointOptions> options = null)
+    public static IUriDefinition<T> EntryPointCollection<T>(this IUriDefinition<T> resource,
+      Action<CollectionEntryPointOptions> options = null)
     {
       var ienum = typeof(T).GetInterfaces()
         .Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IEnumerable<>)).ToList();
@@ -144,6 +143,6 @@ namespace OpenRasta.Plugins.Hydra
   {
     public IList<Vocabulary> Curies { get; } = new List<Vocabulary>();
     public Vocabulary Vocabulary { get; set; }
-    public bool Utf8Json { get; set; }
+    public Action<ITypeRegistrationContext> Serializer { get; set; }
   }
 }

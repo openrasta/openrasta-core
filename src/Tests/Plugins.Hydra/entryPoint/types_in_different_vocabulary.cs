@@ -22,7 +22,7 @@ namespace Tests.Plugins.Hydra
     {
       server = new InMemoryHost(() =>
       {
-        ResourceSpace.Uses.Hydra(opt => opt.Utf8Json = true);
+        ResourceSpace.Uses.Hydra(/*opt => opt.Utf8Json = true*/);
 
         ResourceSpace.Has
           .ResourcesOfType<List<Event>>()

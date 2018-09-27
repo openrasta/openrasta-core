@@ -1,12 +1,16 @@
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
+using OpenRasta.Concordia;
 using OpenRasta.Configuration;
+using OpenRasta.Configuration.MetaModel.Handlers;
+using OpenRasta.DI;
 using OpenRasta.Hosting.InMemory;
 using OpenRasta.Plugins.Hydra;
 using OpenRasta.Web;
 using Shouldly;
 using Tests.Plugins.Hydra.Examples;
 using Tests.Plugins.Hydra.Implementation;
+using Tests.Plugins.Hydra.Utf8Json;
 using Xunit;
 
 namespace Tests.Plugins.Hydra.nodes
@@ -24,14 +28,14 @@ namespace Tests.Plugins.Hydra.nodes
         ResourceSpace.Uses.Hydra(options =>
         {
           options.Vocabulary = "https://schemas.example/schema#";
-          options.Utf8Json = true;
+          options.Serializer = ctx => ctx.Transient(() => new PreCompiledUtf8JsonSerializer()).As<IMetaModelHandler>();
         });
 
         ResourceSpace.Has.ResourcesOfType<Event>()
           .Vocabulary("https://schemas.example/schema#")
           .AtUri("/events/{id}")
           .HandledBy<EventHandler>();
-      });
+      }, startup: new StartupProperties(){OpenRasta = { Diagnostics = { TracePipelineExecution = false},Errors = { HandleAllExceptions = false,HandleCatastrophicExceptions = false}}});
     }
 
 

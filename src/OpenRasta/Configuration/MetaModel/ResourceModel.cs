@@ -27,7 +27,7 @@ namespace OpenRasta.Configuration.MetaModel
       set
       {
         _resourceKey = value;
-        ResourceType = (value as IType)?.StaticType;
+        ResourceType = (value as IType)?.StaticType ?? value as Type;
       }
     }
 

@@ -5,7 +5,7 @@ using OpenRasta.TypeSystem;
 
 namespace OpenRasta.Plugins.Hydra
 {
-  static class ModelExtensions
+  public static class ModelExtensions
   {
     public static ResourceModel GetResourceModel(this IMetaModelRepository metaModelRepository, Type entityType)
     {

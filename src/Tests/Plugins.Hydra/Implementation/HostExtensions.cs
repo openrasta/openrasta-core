@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -24,6 +25,7 @@ namespace Tests.Plugins.Hydra.Implementation
       if (response.StatusCode / 100 != 2)
         throw new InvalidOperationException($"Returned a {response.StatusCode} status code");
       var responseBody = response.ReadString();
+      Console.WriteLine(responseBody);
       return (response,JObject.Parse(responseBody));
     }
     public static async Task<(IResponse, JToken)> PostJsonLd(this InMemoryHost host, string uri, string content)
