@@ -45,7 +45,8 @@ namespace Tests.Plugins.Hydra.Utf8Json
 
 
       renderer.Add(Assign(jsonWriter, New(typeof(JsonWriter))));
-      TypeMethods.Resource(jsonWriter, model, resource, options, variables.Add, renderer.Add);
+      
+      TypeMethods.ResourceDocument(jsonWriter, model, resource, options, variables.Add, renderer.Add);
 
       renderer.Add(Assign(buffer, JsonWriterMethods.GetBuffer(jsonWriter)));
       renderer.Add(Assign(retVal, ClassLibMethods.StreamWriteAsync(stream, buffer)));

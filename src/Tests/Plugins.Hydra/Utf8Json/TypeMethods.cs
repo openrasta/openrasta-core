@@ -16,6 +16,7 @@ namespace Tests.Plugins.Hydra.Utf8Json
 
     static readonly PropertyInfo SerializationContextUriResolverPropertyInfo =
       typeof(SerializationContext).GetProperty(nameof(SerializationContext.UriGenerator));
+
     static readonly PropertyInfo SerializationContextBaseUriPropertyInfo =
       typeof(SerializationContext).GetProperty(nameof(SerializationContext.BaseUri));
 
@@ -24,7 +25,8 @@ namespace Tests.Plugins.Hydra.Utf8Json
 
     public static Expression StringConcat(Expression first, Expression second)
       => Expression.Call(StringConcatTwoParamsMethodInfo, first, second);
-    public static void Resource(
+
+    public static void ResourceDocument(
       ParameterExpression jsonWriter,
       ResourceModel model,
       Expression resource,
@@ -32,18 +34,28 @@ namespace Tests.Plugins.Hydra.Utf8Json
       Action<ParameterExpression> variable,
       Action<Expression> statement)
     {
-      var type = model.ResourceType.Name;
+
       var uriResolverFunc = Expression.MakeMemberAccess(options, SerializationContextUriResolverPropertyInfo);
       var uriResolver = Expression.Invoke(uriResolverFunc, resource);
       var contextUri = StringConcat(
-        Expression.Call(Expression.MakeMemberAccess(options, SerializationContextBaseUriPropertyInfo), typeof(object).GetMethod(nameof(ToString))),
+        Expression.Call(Expression.MakeMemberAccess(options, SerializationContextBaseUriPropertyInfo),
+          typeof(object).GetMethod(nameof(ToString))),
         Expression.Constant(".hydra/context.jsonld"));
-      
-      var start = model.Uris.Any()
-        ? WriteBeginObjectWithContextIdAndType(jsonWriter, contextUri, type, uriResolver)
-        : BeginObjectWithContextAndType(jsonWriter, type, contextUri);
 
-      foreach (var exp in start)
+      foreach (var exp in WriteBeginObjectContext(jsonWriter, contextUri)) statement(exp);
+
+      Resource(jsonWriter, model, resource, variable, statement, uriResolver);
+
+      statement(JsonWriterMethods.WriteEndObject(jsonWriter));
+    }
+
+    static void Resource(ParameterExpression jsonWriter, ResourceModel model, Expression resource, Action<ParameterExpression> variable,
+      Action<Expression> statement, InvocationExpression uriResolver)
+    {
+      var type = model.ResourceType.Name;
+      foreach (var exp in model.Uris.Any()
+        ? WriteIdType(jsonWriter, type, uriResolver)
+        : WriteType(jsonWriter, type))
         statement(exp);
 
       var resolver = Expression.Variable(typeof(CustomResolver), "resolver");
@@ -54,17 +66,13 @@ namespace Tests.Plugins.Hydra.Utf8Json
       {
         WriteResourceProperty(jsonWriter, resource, variable, statement, pi, resolver);
       }
-
-      statement(JsonWriterMethods.WriteEndObject(jsonWriter));
     }
 
-    static IEnumerable<Expression> WriteBeginObjectWithContextIdAndType(
+    static IEnumerable<Expression> WriteIdType(
       ParameterExpression jsonWriter,
-      Expression contextUri,
       string type,
       Expression uri)
     {
-      foreach (var exp in WriteBeginObjectContext(jsonWriter, contextUri)) yield return exp;
       yield return JsonWriterMethods.WriteRaw(jsonWriter, Nodes.IdProperty);
 
       yield return JsonWriterMethods.WriteString(jsonWriter, uri);
@@ -74,10 +82,16 @@ namespace Tests.Plugins.Hydra.Utf8Json
       yield return WriteString(jsonWriter, type);
     }
 
+    public static IEnumerable<Expression> WriteType(ParameterExpression jsonWriter, string type)
+    {
+      yield return WritePropertyName(jsonWriter, "@type");
+      yield return WriteString(jsonWriter, type);
+    }
+
     static IEnumerable<Expression> WriteBeginObjectContext(ParameterExpression jsonWriter, Expression contextUri)
     {
       yield return JsonWriterMethods.WriteRaw(jsonWriter, Nodes.BeginObjectContext);
-      yield return JsonWriterMethods.WriteString(jsonWriter,contextUri);
+      yield return JsonWriterMethods.WriteString(jsonWriter, contextUri);
       yield return JsonWriterMethods.WriteValueSeparator(jsonWriter);
     }
 
@@ -117,14 +131,6 @@ namespace Tests.Plugins.Hydra.Utf8Json
     static string ToCamelCase(string piName)
     {
       return char.ToLowerInvariant(piName[0]) + piName.Substring(1);
-    }
-
-    public static IEnumerable<Expression> BeginObjectWithContextAndType(ParameterExpression jsonWriter,
-      string type, Expression contextUri)
-    {
-      WriteBeginObjectContext(jsonWriter, contextUri);
-      yield return WritePropertyName(jsonWriter, "@type");
-      yield return WriteString(jsonWriter, type);
     }
 
     public static Expression WritePropertyName(ParameterExpression jsonWriter, string propertyName)
