@@ -9,7 +9,7 @@ namespace OpenRasta.Plugins.Hydra.Configuration
 {
   public class HydraResourceModel
   {
-    public Func<object,SerializationOptions, Stream,Task> SerializeFunc { get; set; }
+    public Func<object,SerializationContext, Stream,Task> SerializeFunc { get; set; }
     public Vocabulary Vocabulary { get; set; }
     public List<Operation> SupportedOperations { get; set; } = new List<Operation>();
     public Class ApiClass { get; set; }

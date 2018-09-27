@@ -9,6 +9,7 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization
 {
   public class JsonLdCodecWriter : IMediaTypeWriterAsync
   {
+    readonly IUriResolver _uris;
     readonly ICommunicationContext _context;
     readonly IResponse _responseMessage;
     Uri _apiDocumentationLink;
@@ -16,6 +17,7 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization
 
     public JsonLdCodecWriter(IUriResolver uris, ICommunicationContext context, IResponse responseMessage)
     {
+      _uris = uris;
       _context = context;
       _responseMessage = responseMessage;
       _apiDocumentationLink = uris.CreateUriFor<ApiDocumentation>();
@@ -31,7 +33,11 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization
 
       var func = _context.PipelineData.SelectedResource.ResourceModel.Hydra().SerializeFunc;
 
-      await func(entity, new SerializationOptions {BaseUri = BaseUri}, response.Stream);
+      await func(entity, new SerializationContext
+      {
+        BaseUri = BaseUri,
+        UriGenerator = resource=>_uris.CreateFrom(resource, BaseUri).ToString()
+      }, response.Stream);
     }
   }
 }

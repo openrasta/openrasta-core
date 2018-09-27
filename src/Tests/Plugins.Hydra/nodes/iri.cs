@@ -15,13 +15,13 @@ using Xunit;
 
 namespace Tests.Plugins.Hydra.nodes
 {
-  public class iri : IAsyncLifetime
+  public class iri_node : IAsyncLifetime
   {
     IResponse response;
     JToken body;
     readonly InMemoryHost server;
 
-    public iri()
+    public iri_node()
     {
       server = new InMemoryHost(() =>
       {
