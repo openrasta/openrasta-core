@@ -32,7 +32,7 @@ namespace Tests.Plugins.Hydra.Utf8Json
       var renderer = new List<Expression>();
       var variables = new List<ParameterExpression>();
 
-
+  
       var resourceIn = Parameter(typeof(object), "resource");
       var options = Parameter(typeof(SerializationContext), "options");
       var stream = Parameter(typeof(Stream), "stream");
