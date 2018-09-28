@@ -4,6 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using OpenRasta.Configuration.MetaModel;
+using OpenRasta.Plugins.Hydra;
 using OpenRasta.Plugins.Hydra.Internal;
 using OpenRasta.TypeSystem.ReflectionBased;
 using Utf8Json;
@@ -27,13 +28,12 @@ namespace Tests.Plugins.Hydra.Utf8Json
     public static Expression StringConcat(Expression first, Expression second)
       => Expression.Call(StringConcatTwoParamsMethodInfo, first, second);
 
-    public static void ResourceDocument(
-      ParameterExpression jsonWriter,
+    public static void ResourceDocument(ParameterExpression jsonWriter,
       ResourceModel model,
       Expression resource,
       Expression options,
       Action<ParameterExpression> variable,
-      Action<Expression> statement)
+      Action<Expression> statement, IMetaModelRepository models)
     {
       var uriResolverFunc = Expression.MakeMemberAccess(options, SerializationContextUriResolverPropertyInfo);
       var uriResolver = Expression.Invoke(uriResolverFunc, resource);
@@ -44,14 +44,17 @@ namespace Tests.Plugins.Hydra.Utf8Json
 
       foreach (var exp in WriteBeginObjectContext(jsonWriter, contextUri)) statement(exp);
 
-      Resource(jsonWriter, model, resource, variable, statement, uriResolver);
+      Resource(jsonWriter, model, resource, variable, statement, uriResolver, models);
 
       statement(JsonWriterMethods.WriteEndObject(jsonWriter));
     }
 
     static void Resource(ParameterExpression jsonWriter, ResourceModel model, Expression resource,
       Action<ParameterExpression> variable,
-      Action<Expression> statement, InvocationExpression uriResolver, Stack<ResourceModel> recursionDefender = null)
+      Action<Expression> statement,
+      InvocationExpression uriResolver,
+      IMetaModelRepository models,
+      Stack<ResourceModel> recursionDefender = null)
     {
       if (recursionDefender == null) recursionDefender = new Stack<ResourceModel>();
       else if (recursionDefender.Contains(model))
@@ -70,7 +73,46 @@ namespace Tests.Plugins.Hydra.Utf8Json
 
       foreach (var pi in model.ResourceType.GetProperties(BindingFlags.Public | BindingFlags.Instance))
       {
-        WriteResourceProperty(jsonWriter, resource, variable, statement, pi, resolver);
+        if (pi.CustomAttributes.Any(a => a.AttributeType.Name == "JsonIgnoreAttribute"))
+          continue;
+
+
+        if (pi.PropertyType.IsValueType)
+        {
+          WriteResourceProperty(jsonWriter, variable, statement, pi, resolver,
+            Expression.MakeMemberAccess(resource, pi));
+          continue;
+        }
+
+
+        var propertyStatements = new List<Expression>();
+        var propertyVars = new List<ParameterExpression>();
+
+        // var propertyValue;
+        var propertyValue = Expression.Variable(pi.PropertyType);
+        variable(propertyValue);
+
+        // propertyValue = resource.Property;
+        statement(Expression.Assign(propertyValue, Expression.MakeMemberAccess(resource, pi)));
+
+        if (models.TryGetResourceModel(pi.PropertyType, out var propertyResourceModel))
+        {
+          propertyStatements.Add(JsonWriterMethods.WriteValueSeparator(jsonWriter));
+          propertyStatements.Add(WritePropertyName(jsonWriter, GetJsonPropertyName(pi)));
+          propertyStatements.Add(JsonWriterMethods.WriteBeginObject(jsonWriter));
+          Resource(jsonWriter, propertyResourceModel, propertyValue, propertyVars.Add, propertyStatements.Add,
+            uriResolver, models, recursionDefender);
+          propertyStatements.Add(JsonWriterMethods.WriteEndObject(jsonWriter));
+        }
+        else
+        {
+          WriteResourceProperty(jsonWriter, propertyVars.Add, propertyStatements.Add, pi, resolver,
+            Expression.MakeMemberAccess(resource, pi));
+        }
+
+        statement(Expression.IfThen(
+          Expression.NotEqual(propertyValue, Expression.Default(pi.PropertyType)),
+          Expression.Block(propertyVars.ToArray(), propertyStatements.ToArray())));
       }
 
       recursionDefender.Pop();
@@ -103,25 +145,24 @@ namespace Tests.Plugins.Hydra.Utf8Json
       yield return JsonWriterMethods.WriteValueSeparator(jsonWriter);
     }
 
-    static void WriteResourceProperty(ParameterExpression jsonWriter, Expression resource,
+    static void WriteResourceProperty(ParameterExpression jsonWriter,
       Action<ParameterExpression> variable,
-      Action<Expression> statement, PropertyInfo pi, ParameterExpression jsonFormatterResolver)
+      Action<Expression> statement,
+      PropertyInfo pi,
+      ParameterExpression jsonFormatterResolver, MemberExpression propertyGet)
     {
-      if (pi.CustomAttributes.Any(a => a.AttributeType.Name == "JsonIgnoreAttribute"))
-        return;
-
       statement(JsonWriterMethods.WriteValueSeparator(jsonWriter));
       var propertyName = GetJsonPropertyName(pi);
+
+
       statement(WritePropertyName(jsonWriter, propertyName));
 
 
       var propertyType = pi.PropertyType;
-
       var (formatterInstance, serializeMethod) = GetFormatter(variable, statement, jsonFormatterResolver, propertyType);
 
-      var propertyAccess = Expression.MakeMemberAccess(resource, pi);
       var serializeFormatter =
-        Expression.Call(formatterInstance, serializeMethod, jsonWriter, propertyAccess, jsonFormatterResolver);
+        Expression.Call(formatterInstance, serializeMethod, jsonWriter, propertyGet, jsonFormatterResolver);
       statement(serializeFormatter);
     }
 

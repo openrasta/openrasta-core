@@ -13,7 +13,7 @@ namespace Tests.Plugins.Hydra.Utf8Json
 
     public IJsonFormatter<T> GetFormatter<T>()
     {
-      return BuiltinResolver.Instance.GetFormatter<T>();
+      return StandardResolver.CamelCase.GetFormatter<T>();
     }
   }
-}
+}  
