@@ -36,29 +36,29 @@ namespace OpenRasta.DI.Windsor
     IRequestScopedResolver,
     IDisposable
   {
-        readonly IWindsorContainer _windsorContainer;
-        readonly bool _disposeContainerOnCleanup;
-        static readonly object ContainerLock = new object();
+    readonly IWindsorContainer _windsorContainer;
+    readonly bool _disposeContainerOnCleanup;
+    static readonly object ContainerLock = new object();
 
-        public WindsorDependencyResolver() : this(new WindsorContainer(), true)
-        {
-        }
+    public WindsorDependencyResolver() : this(new WindsorContainer(), true)
+    {
+    }
 
     static string GetComponentName(Type serviceType)
     {
       return $"openrasta.{serviceType.FullName}.{Guid.NewGuid()}";
     }
-        public WindsorDependencyResolver(IWindsorContainer container, bool disposeContainerOnCleanup = false)
-        {
-            _windsorContainer = container;
-            _disposeContainerOnCleanup = disposeContainerOnCleanup;
+    public WindsorDependencyResolver(IWindsorContainer container, bool disposeContainerOnCleanup = false)
+    {
+      _windsorContainer = container;
+      _disposeContainerOnCleanup = disposeContainerOnCleanup;
 
-            _windsorContainer.Kernel.Resolver.AddSubResolver(new CollectionResolver(container.Kernel, true));
+      _windsorContainer.Kernel.Resolver.AddSubResolver(new CollectionResolver(container.Kernel, true));
 
-            if (_windsorContainer.Kernel.GetFacilities().All(x => x.GetType() != typeof(TypedFactoryFacility)))
-            {
-                _windsorContainer.AddFacility<TypedFactoryFacility>();
-            }
+      if (_windsorContainer.Kernel.GetFacilities().All(x => x.GetType() != typeof(TypedFactoryFacility)))
+      {
+        _windsorContainer.AddFacility<TypedFactoryFacility>();
+      }
 
       _windsorContainer.Register(
         Component
@@ -71,60 +71,60 @@ namespace OpenRasta.DI.Windsor
         .Named(GetComponentName(typeof(ScopedInstanceStore)))
         .ImplementedBy<ScopedInstanceStore>()
         .LifestyleScoped());
-        }
+    }
 
-        public bool HasDependency(Type serviceType)
-        {
+    public bool HasDependency(Type serviceType)
+    {
       return serviceType != null && _windsorContainer.Kernel.GetHandlers(serviceType).Any();
-        }
+    }
 
-        public bool HasDependencyImplementation(Type serviceType, Type concreteType)
-        {
-            return
-        _windsorContainer.Kernel.GetHandlers(serviceType)
-                    .Any(h => h.ComponentModel.Implementation == concreteType);
-        }
+    public bool HasDependencyImplementation(Type serviceType, Type concreteType)
+    {
+      return
+  _windsorContainer.Kernel.GetHandlers(serviceType)
+              .Any(h => h.ComponentModel.Implementation == concreteType);
+    }
 
-        public void HandleIncomingRequestProcessed()
-        {
+    public void HandleIncomingRequestProcessed()
+    {
       throw new NotSupportedException("Unsupported, are you sure you're using OpenRasta 2.6?");
-        }
+    }
 
     static readonly ConcurrentDictionary<Type, Type> EnumMappings = new ConcurrentDictionary<Type, Type>();
-        protected override object ResolveCore(Type serviceType)
-        {
+    protected override object ResolveCore(Type serviceType)
+    {
       var enumType = EnumMappings.GetOrAdd(serviceType, type => serviceType.GetCompatibleArrayItemType());
 
       return enumType != null
         ? _windsorContainer.ResolveAll(enumType)
         : _windsorContainer.Resolve(serviceType);
-        }
+    }
 
-        protected override IEnumerable<TService> ResolveAllCore<TService>()
-        {
+    protected override IEnumerable<TService> ResolveAllCore<TService>()
+    {
       return _windsorContainer.ResolveAll<TService>();
-        }
+    }
 
-        protected override void AddDependencyCore(Type dependent, Type concrete, DependencyLifetime lifetime)
-        {
+    protected override void AddDependencyCore(Type dependent, Type concrete, DependencyLifetime lifetime)
+    {
       string componentName = GetComponentName(dependent);
-            lock (ContainerLock)
-            {
+      lock (ContainerLock)
+      {
         _windsorContainer.Register(Component.For(dependent).ImplementedBy(concrete).Named(componentName).LifeStyle
           .Is(ConvertLifestyles.ToLifestyleType(lifetime)));
-            }
-        }
+      }
+    }
 
-        protected override void AddDependencyInstanceCore(Type serviceType, object instance, DependencyLifetime lifetime)
-        {
+    protected override void AddDependencyInstanceCore(Type serviceType, object instance, DependencyLifetime lifetime)
+    {
       var key = GetComponentName(serviceType);
       lock (ContainerLock)
-            {
+      {
         if (lifetime == DependencyLifetime.PerRequest)
-                    {
-                        // try to see if we have a registration already
+        {
+          // try to see if we have a registration already
           if (!_windsorContainer.Kernel.HasComponent(serviceType))
-                                // if there's already an instance registration we update the store with the correct reg.
+            // if there's already an instance registration we update the store with the correct reg.
             _windsorContainer.Register(Component
               .For(serviceType)
               .Named(key)
@@ -132,40 +132,37 @@ namespace OpenRasta.DI.Windsor
               .LifestyleScoped());
 
           _windsorContainer.Resolve<ScopedInstanceStore>().SetInstance(serviceType, instance);
-                            }
-                        else
-                        {
+        }
+        else
+        {
           _windsorContainer.Register(Component
             .For(serviceType)
             .Instance(instance)
-                                                 .Named(key)
+            .Named(key)
             .IsDefault()
             .LifeStyle.Is(ConvertLifestyles.ToLifestyleType(lifetime)));
-                                }
-                            }
-                        }
-
-        protected override void AddDependencyCore(Type handlerType, DependencyLifetime lifetime)
-        {
-            AddDependencyCore(handlerType, handlerType, lifetime);
-
-
-
         }
+      }
+    }
 
-        public void Dispose()
-        {
-            if (_disposeContainerOnCleanup)
-            {
-                _windsorContainer?.Dispose();
-            }
-        }
+    protected override void AddDependencyCore(Type handlerType, DependencyLifetime lifetime)
+    {
+      AddDependencyCore(handlerType, handlerType, lifetime);
+    }
 
-        public void Register(DependencyFactoryModel registration)
-        {
+    public void Dispose()
+    {
+      if (_disposeContainerOnCleanup)
+      {
+        _windsorContainer?.Dispose();
+      }
+    }
+
+    public void Register(DependencyFactoryModel registration)
+    {
       var genericTypeDef = registration.GetType().GetGenericTypeDefinition();
       var args = registration.GetType().GenericTypeArguments;
-      var allArgs = new[] {registration.ServiceType}.Concat(args).ToArray();
+      var allArgs = new[] { registration.ServiceType }.Concat(args).ToArray();
       Type registrarType;
       if (genericTypeDef == typeof(DependencyFactoryModel<>))
         registrarType = typeof(FactoryRegistration<,>).MakeGenericType(allArgs);
@@ -179,7 +176,7 @@ namespace OpenRasta.DI.Windsor
         registrarType = typeof(FactoryRegistration<,,,,,>).MakeGenericType(allArgs);
       else
         throw new NotSupportedException();
-      var registrar = (IRegisterFactories) Activator.CreateInstance(registrarType);
+      var registrar = (IRegisterFactories)Activator.CreateInstance(registrarType);
       registrar.Register(GetComponentName(registration.ServiceType), _windsorContainer, registration);
     }
     public IDisposable CreateRequestScope()
@@ -187,9 +184,9 @@ namespace OpenRasta.DI.Windsor
       return _windsorContainer.BeginScope();
     }
     interface IRegisterFactories
-            {
+    {
       void Register(string componentName, IWindsorContainer container, DependencyFactoryModel model);
-            }
+    }
 
     class FactoryRegistration<TService, TConcrete> : IRegisterFactories
       where TConcrete : TService where TService : class
@@ -206,22 +203,22 @@ namespace OpenRasta.DI.Windsor
         }
         else
         {
-          var factoryMethod = ((Expression<Func<TConcrete>>) registration.Factory).Compile();
+          var factoryMethod = ((Expression<Func<TConcrete>>)registration.Factory).Compile();
           container.Register(
             Component.For<TService>()
               .Named(componentName)
               .UsingFactoryMethod(factoryMethod)
-                    .LifeStyle.Is(ConvertLifestyles.ToLifestyleType(registration.Lifetime)));
+              .LifeStyle.Is(ConvertLifestyles.ToLifestyleType(registration.Lifetime)));
         }
+      }
     }
-}
 
     class FactoryRegistration<TService, TArg, TConcrete> : IRegisterFactories
       where TService : class where TConcrete : TService
     {
       public void Register(string componentName, IWindsorContainer container, DependencyFactoryModel registration)
       {
-        var factoryMethod = ((Expression<Func<TArg, TConcrete>>) registration.Factory).Compile();
+        var factoryMethod = ((Expression<Func<TArg, TConcrete>>)registration.Factory).Compile();
         container.Register(
           Component.For<TService>()
             .Named(componentName)
@@ -236,7 +233,7 @@ namespace OpenRasta.DI.Windsor
     {
       public void Register(string componentName, IWindsorContainer container, DependencyFactoryModel registration)
       {
-        var factoryMethod = ((Expression<Func<TArg1, TArg2, TConcrete>>) registration.Factory).Compile();
+        var factoryMethod = ((Expression<Func<TArg1, TArg2, TConcrete>>)registration.Factory).Compile();
         container.Register(
           Component.For<TService>()
             .Named(componentName)
@@ -252,7 +249,7 @@ namespace OpenRasta.DI.Windsor
     {
       public void Register(string componentName, IWindsorContainer container, DependencyFactoryModel registration)
       {
-        var factoryMethod = ((Expression<Func<TArg1, TArg2, TArg3, TConcrete>>) registration.Factory).Compile();
+        var factoryMethod = ((Expression<Func<TArg1, TArg2, TArg3, TConcrete>>)registration.Factory).Compile();
         container.Register(
           Component.For<TService>()
             .Named(componentName)
@@ -269,7 +266,7 @@ namespace OpenRasta.DI.Windsor
     {
       public void Register(string componentName, IWindsorContainer container, DependencyFactoryModel registration)
       {
-        var factoryMethod = ((Expression<Func<TArg1, TArg2, TArg3, TArg4, TConcrete>>) registration.Factory).Compile();
+        var factoryMethod = ((Expression<Func<TArg1, TArg2, TArg3, TArg4, TConcrete>>)registration.Factory).Compile();
         container.Register(
           Component.For<TService>()
             .Named(componentName)
