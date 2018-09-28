@@ -23,11 +23,12 @@ namespace Tests.Plugins.Hydra.Utf8Json
     {
       foreach (var model in repository.ResourceRegistrations)
       {
-        model.Hydra().SerializeFunc = CreateDocumentSerializer(model);
+        model.Hydra().SerializeFunc = CreateDocumentSerializer(model, repository);
       }
     }
 
-    Func<object, SerializationContext, Stream, Task> CreateDocumentSerializer(ResourceModel model)
+    Func<object, SerializationContext, Stream, Task> CreateDocumentSerializer(ResourceModel model,
+      IMetaModelRepository repository)
     {
       var renderer = new List<Expression>();
       var variables = new List<ParameterExpression>();
@@ -46,7 +47,7 @@ namespace Tests.Plugins.Hydra.Utf8Json
 
       renderer.Add(Assign(jsonWriter, New(typeof(JsonWriter))));
       
-      TypeMethods.ResourceDocument(jsonWriter, model, resource, options, variables.Add, renderer.Add);
+      TypeMethods.ResourceDocument(jsonWriter, model, resource, options, variables.Add, renderer.Add, repository);
 
       renderer.Add(Assign(buffer, JsonWriterMethods.GetBuffer(jsonWriter)));
       renderer.Add(Assign(retVal, ClassLibMethods.StreamWriteAsync(stream, buffer)));
