@@ -27,6 +27,8 @@ namespace OpenRasta.Plugins.Hydra.Schemas.Hydra
     public CollectionManages Manages { get; } = new CollectionManages();
     public object[] Member { get; set; }
     public int? TotalItems => Member?.Length;
+    [JsonProperty("@id")]
+    public Uri Identifier { get; set; }
   }
 
   public class CollectionManages
