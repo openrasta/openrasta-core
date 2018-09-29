@@ -1,6 +1,4 @@
-using System.Collections.Generic;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using OpenRasta.Concordia;
 using OpenRasta.Configuration;
@@ -15,22 +13,13 @@ using Xunit;
 
 namespace Tests.Plugins.Hydra.nodes
 {
-  public class EventWithPerson
-  {
-    public string Name { get; set; }
-
-    public Person Organiser { get; set; }
-    public int Id { get; set; }
-    public List<Person> Attendees { get; set; }
-  }
-
-  public class iri_node_with_blank_node : IAsyncLifetime
+  public class iri_node_with_iri_node : IAsyncLifetime
   {
     IResponse response;
     JToken body;
     readonly InMemoryHost server;
 
-    public iri_node_with_blank_node()
+    public iri_node_with_iri_node()
     {
       server = new InMemoryHost(() =>
         {
@@ -41,7 +30,10 @@ namespace Tests.Plugins.Hydra.nodes
               ctx.Transient(() => new PreCompiledUtf8JsonSerializer()).As<IMetaModelHandler>();
           });
 
-          ResourceSpace.Has.ResourcesOfType<Person>().Vocabulary("https://schemas.example/schema#");
+          ResourceSpace.Has.ResourcesOfType<Person>()
+            .Vocabulary("https://schemas.example/schema#")
+            .AtUri("/people/{id}");
+          
           ResourceSpace.Has.ResourcesOfType<EventWithPerson>()
             .Vocabulary("https://schemas.example/schema#")
             .AtUri("/events/{id}")
@@ -66,6 +58,7 @@ namespace Tests.Plugins.Hydra.nodes
       body["@context"].ShouldBe("http://localhost/.hydra/context.jsonld");
       body["organiser"]["name"].ShouldBe("person name");
       body["organiser"]["@type"].ShouldBe("Person");
+      body["organiser"]["@id"].ShouldBe("http://localhost/people/1");
     }
 
     public async Task InitializeAsync()
@@ -80,17 +73,11 @@ namespace Tests.Plugins.Hydra.nodes
         return new EventWithPerson()
         {
           Id = id, Name = "event",
-          Organiser = new Person() {Name = "person name"}
+          Organiser = new Person() {Name = "person name", Id=1}
         };
       }
     }
 
     public async Task DisposeAsync() => server.Close();
-  }
-
-  public class Person
-  {
-    public string Name { get; set; }
-    public int Id { get; set; }
   }
 }

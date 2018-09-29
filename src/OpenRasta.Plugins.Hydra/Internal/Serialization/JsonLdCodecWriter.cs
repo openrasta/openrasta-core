@@ -33,6 +33,7 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization
 
       var func = _context.PipelineData.SelectedResource.ResourceModel.Hydra().SerializeFunc;
 
+      if (func == null) throw new InvalidOperationException($"Hydra serialiser not found for object of type {entity?.GetType()}");
       await func(entity, new SerializationContext
       {
         BaseUri = BaseUri,

@@ -3,12 +3,14 @@ using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using OpenRasta.Concordia;
 using OpenRasta.Configuration;
+using OpenRasta.Configuration.MetaModel.Handlers;
 using OpenRasta.Hosting.InMemory;
 using OpenRasta.Plugins.Hydra;
 using OpenRasta.Web;
 using Shouldly;
 using Tests.Plugins.Hydra.Examples;
 using Tests.Plugins.Hydra.Implementation;
+using Tests.Plugins.Hydra.Utf8Json;
 using Xunit;
 
 namespace Tests.Plugins.Hydra
@@ -25,7 +27,7 @@ namespace Tests.Plugins.Hydra
       {
         ResourceSpace.Uses.Hydra(options =>
         {
-          
+          options.Serializer = ctx => ctx.Transient(() => new PreCompiledUtf8JsonSerializer()).As<IMetaModelHandler>();
           options.Vocabulary = "https://schemas.example/schema#";
         });
 
@@ -33,12 +35,12 @@ namespace Tests.Plugins.Hydra
           .ResourcesOfType<List<Event>>()
           .Vocabulary("https://schemas.example/schema#")
           .AtUri("/events/{location}/")
-          .EntryPointCollection(options=>options.Uri = "/events/gb/");
+          .EntryPointCollection(options => options.Uri = "/events/gb/");
 
         ResourceSpace.Has.ResourcesOfType<Event>()
           .Vocabulary("https://schemas.example/schema#")
           .AtUri("/events/{location}/{id}");
-      });
+      }, startup: new StartupProperties(){OpenRasta = { Errors = {  HandleAllExceptions = false,HandleCatastrophicExceptions = false}}});
     }
 
 

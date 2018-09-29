@@ -3,13 +3,16 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http;
 using Newtonsoft.Json.Linq;
+using OpenRasta.Concordia;
 using OpenRasta.Configuration;
+using OpenRasta.Configuration.MetaModel.Handlers;
 using OpenRasta.Hosting.InMemory;
 using OpenRasta.Plugins.Hydra;
 using OpenRasta.Web;
 using Shouldly;
 using Tests.Plugins.Hydra.Examples;
 using Tests.Plugins.Hydra.Implementation;
+using Tests.Plugins.Hydra.Utf8Json;
 using Xunit;
 
 namespace Tests.Plugins.Hydra
@@ -23,22 +26,32 @@ namespace Tests.Plugins.Hydra
     public context()
     {
       server = new InMemoryHost(() =>
-      {
-        ResourceSpace.Uses.Hydra(options =>
         {
-          options.Vocabulary = "https://schemas.example/schema#";
+          ResourceSpace.Uses.Hydra(options =>
+          {
+            options.Vocabulary = "https://schemas.example/schema#";
+            options.Serializer = ctx =>
+              ctx.Transient(() => new PreCompiledUtf8JsonSerializer()).As<IMetaModelHandler>();
+          });
+
+          ResourceSpace.Has
+            .ResourcesOfType<List<Event>>()
+            .Vocabulary("https://schemas.example/schema#")
+            .AtUri("/events")
+            .EntryPointCollection();
+
+          ResourceSpace.Has.ResourcesOfType<Event>()
+            .Vocabulary("https://schemas.example/schema#")
+            .AtUri("/events/{id}");
+        },
+        startup: new StartupProperties
+        {
+          OpenRasta =
+          {
+            Diagnostics = {TracePipelineExecution = false},
+            Errors = {HandleAllExceptions = false, HandleCatastrophicExceptions = false}
+          }
         });
-
-        ResourceSpace.Has
-          .ResourcesOfType<List<Event>>()
-          .Vocabulary("https://schemas.example/schema#")
-          .AtUri("/events")
-          .EntryPointCollection();
-
-        ResourceSpace.Has.ResourcesOfType<Event>()
-          .Vocabulary("https://schemas.example/schema#")
-          .AtUri("/events/{id}");
-      });
     }
 
     [Fact]
