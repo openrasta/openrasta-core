@@ -8,6 +8,11 @@ namespace Tests.Plugins.Hydra.Utf8Json
     public static Expression WriteBeginObject(ParameterExpression jsonWriter)
       => Expression.Call(jsonWriter, typeof(JsonWriter).GetMethod(nameof(JsonWriter.WriteBeginObject)));
 
+    public static Expression WriteBeginArray(ParameterExpression jsonWriter)
+      => Expression.Call(jsonWriter, typeof(JsonWriter).GetMethod(nameof(JsonWriter.WriteBeginArray)));
+    public static Expression WriteEndArray(ParameterExpression jsonWriter)
+      => Expression.Call(jsonWriter, typeof(JsonWriter).GetMethod(nameof(JsonWriter.WriteEndArray)));
+
     public static Expression WriteString(ParameterExpression jsonWriter, string value)
       => Expression.Call(jsonWriter, typeof(JsonWriter).GetMethod(nameof(JsonWriter.WriteString)),
         Expression.Constant(value, typeof(string)));

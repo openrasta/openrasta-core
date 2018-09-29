@@ -2,7 +2,9 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
+using OpenRasta.Concordia;
 using OpenRasta.Configuration;
+using OpenRasta.Configuration.MetaModel.Handlers;
 using OpenRasta.Hosting.InMemory;
 using OpenRasta.Plugins.Hydra;
 using OpenRasta.Plugins.Hydra.Schemas.Hydra;
@@ -29,7 +31,7 @@ namespace Tests.Plugins.Hydra
         ResourceSpace.Uses.Hydra(opt =>
         {
           opt.Vocabulary = ExampleVocabularies.ExampleApp.Uri.ToString();
-          opt.Serializer = ctx => ctx.Transient(() => new PreCompiledUtf8JsonSerializer());
+          opt.Serializer = ctx => ctx.Transient(() => new PreCompiledUtf8JsonSerializer()).As<IMetaModelHandler>();
         });
 
         ResourceSpace.Has.ResourcesOfType<CreateAction>().Vocabulary(Vocabularies.SchemaDotOrg);
@@ -41,7 +43,7 @@ namespace Tests.Plugins.Hydra
 
         ResourceSpace.Has.ResourcesOfType<Event>()
           .Vocabulary(ExampleVocabularies.ExampleApp.Uri.ToString());
-      });
+        }, startup: new StartupProperties(){OpenRasta = { Errors = {  HandleAllExceptions = false,HandleCatastrophicExceptions = false}}});
     }
 
     [Fact]
@@ -68,17 +70,19 @@ namespace Tests.Plugins.Hydra
     [Fact]
     public void supported_operations_are_defined()
     {
-      customer["supportedOperation"][0]["@type"].ShouldBe("hydra:Operation");
-      customer["supportedOperation"][0]["method"].ShouldBe("POST");
-      customer["supportedOperation"][0]["expects"].ShouldBe("schema:Event");
+      var op = customer["supportedOperation"].Single(o => o["@type"].Value<string>() == "hydra:Operation");
+      
+      op["method"].ShouldBe("POST");
+      op["expects"].ShouldBe("schema:Event");
     }
 
     [Fact]
     public void specific_operations_are_defined()
     {
-      customer["supportedOperation"][1]["@type"].ShouldBe("schema:CreateAction");
-      customer["supportedOperation"][1]["method"].ShouldBe("POST");
-      customer["supportedOperation"][1]["expects"].ShouldBe("schema:Person");
+      var op = customer["supportedOperation"].Single(o => o["@type"].Value<string>() == "schema:CreateAction");
+      
+      op["method"].ShouldBe("POST");
+      op["expects"].ShouldBe("schema:Person");
     }
 
     public async Task InitializeAsync()

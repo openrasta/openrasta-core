@@ -2,12 +2,14 @@
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using OpenRasta.Configuration;
+using OpenRasta.Configuration.MetaModel.Handlers;
 using OpenRasta.Hosting.InMemory;
 using OpenRasta.Plugins.Hydra;
 using OpenRasta.Web;
 using Shouldly;
 using Tests.Plugins.Hydra.Examples;
 using Tests.Plugins.Hydra.Implementation;
+using Tests.Plugins.Hydra.Utf8Json;
 using Xunit;
 
 namespace Tests.Plugins.Hydra
@@ -22,7 +24,9 @@ namespace Tests.Plugins.Hydra
     {
       server = new InMemoryHost(() =>
       {
-        ResourceSpace.Uses.Hydra(/*opt => opt.Utf8Json = true*/);
+        ResourceSpace.Uses.Hydra(opt =>
+            opt.Serializer = ctx => ctx.Transient(() => new PreCompiledUtf8JsonSerializer()).As<IMetaModelHandler>()
+          );
 
         ResourceSpace.Has
           .ResourcesOfType<List<Event>>()

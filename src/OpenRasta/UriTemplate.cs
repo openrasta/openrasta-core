@@ -179,7 +179,7 @@ namespace OpenRasta
       };
       if (!builder.Path.EndsWith("/"))
         builder.Path += "/";
-      return builder.Uri;
+        return builder.Uri;
     }
 
     public Uri BindByPosition(Uri baseAddress, params string[] values)

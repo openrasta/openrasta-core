@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -34,7 +35,7 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.JsonNet
       }
     }
 
-    public Func<object, SerializationContext, Stream, Task> GetHydraFunc(IMetaModelRepository _models)
+    public Func<object, SerializationContext, Stream, Task> GetHydraFunc(IMetaModelRepository models)
     {
       return (entity, options, stream) =>
       {
@@ -45,12 +46,12 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.JsonNet
         {
           NullValueHandling = NullValueHandling.Ignore,
           MissingMemberHandling = MissingMemberHandling.Ignore,
-          ContractResolver = new JsonLdContractResolver(options.BaseUri, _uriResolver, _models),
+          ContractResolver = new JsonLdContractResolver(options.BaseUri, _uriResolver, models),
           TypeNameHandling = TypeNameHandling.None,
           Converters =
           {
             new StringEnumConverter(),
-            new JsonLdTypeRefConverter(_models),
+            new JsonLdTypeRefConverter(models),
             new HydraUriModelConverter(options.BaseUri),
             new ContextDocumentConverter()
           }
@@ -69,9 +70,13 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.JsonNet
     Collection ConvertToHydraCollection(IEnumerable entity)
     {
       var arrayOfObjects = entity.Cast<object>().ToArray();
+      var itemType = entity.GetType().GetInterfaces()
+        .Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IEnumerable<>))
+        .Select(i => i.GetGenericArguments()[0]).Single();
       return new Collection
       {
-        Member = arrayOfObjects
+        Member = arrayOfObjects,
+        Manages = { Object = itemType.Name}
       };
     }
   }

@@ -1,29 +1,37 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Newtonsoft.Json;
 using OpenRasta.Plugins.Hydra.Configuration;
 
 namespace OpenRasta.Plugins.Hydra.Schemas.Hydra
 {
+  public class Collection<T>
+  {
+    public Collection(IEnumerable<T> enumerable)
+    {
+      Member = enumerable.ToArray();
+      Manages = new CollectionManages()
+      {
+        Object = typeof(T).Name
+      };
+    }
+    public CollectionManages Manages { get; }
+    public T[] Member { get; set; }
+    public int? TotalItems => Member?.Length;
+  }
   public class Collection : JsonLd.INode
   {
-    public Collection()
-    {
-      
-    }
-    public Collection(Type itemType, HydraUriModel id)
-    {
-      Manages = itemType;
-      Identifier = id;
-      Search = id.SearchTemplate;
-    }
-
     public IriTemplate Search { get; set; }
 
-    [JsonProperty("@id")]
-    public HydraUriModel Identifier { get; set; }
-
-    public Type Manages { get; }
+    public CollectionManages Manages { get; } = new CollectionManages();
     public object[] Member { get; set; }
     public int? TotalItems => Member?.Length;
+  }
+
+  public class CollectionManages
+  {
+    public string Property => "rdf:type";
+    public string Object { get; set; }
   }
 }

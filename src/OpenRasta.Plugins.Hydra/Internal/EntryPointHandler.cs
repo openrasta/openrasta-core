@@ -25,7 +25,11 @@ namespace OpenRasta.Plugins.Hydra.Internal
           where uriModel.CollectionItemType != null
           let horridBackwardsIType = TypeSystems.Default.FromClr(uriModel.CollectionItemType)
           let itemModel = _models.ResourceRegistrations.Single(r => Equals(r.ResourceKey, horridBackwardsIType))
-          select new Collection(uriModel.CollectionItemType, uriModel)
+          select new Collection()
+          {
+            Search = uriModel.SearchTemplate,
+            Manages = { Object = itemModel.ResourceType.Name }
+          }
         ).ToList()
       };
     }

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
+using OpenRasta.Concordia;
 using OpenRasta.Configuration;
 using OpenRasta.Hosting.InMemory;
 using OpenRasta.Plugins.Hydra;
@@ -38,7 +39,7 @@ namespace Tests.Plugins.Hydra.nodes
           .Vocabulary("https://schemas.example/schema#")
           .AtUri("/events/{id}")
           .HandledBy<EventHandler>();
-      });
+      }, startup: new StartupProperties {OpenRasta = { Errors = {  HandleAllExceptions = false,HandleCatastrophicExceptions = false}}});
     }
 
     [Fact]
