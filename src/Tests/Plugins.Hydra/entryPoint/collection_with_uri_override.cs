@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using OpenRasta.Concordia;
@@ -50,6 +51,7 @@ namespace Tests.Plugins.Hydra
       body["collection"].ShouldBeOfType<JArray>();
       body["collection"][0]["@type"].ShouldBe("hydra:Collection");
       body["collection"][0]["@id"].ShouldBe("http://localhost/events/gb/");
+      body["collection"][0].OfType<JProperty>().ShouldNotContain(t => t.Name == "totalItems");
     }
 
     public async Task InitializeAsync()

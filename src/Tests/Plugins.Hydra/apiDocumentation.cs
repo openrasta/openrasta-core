@@ -43,7 +43,10 @@ namespace Tests.Plugins.Hydra
 
         ResourceSpace.Has.ResourcesOfType<Event>()
           .Vocabulary(ExampleVocabularies.ExampleApp.Uri.ToString());
-        }, startup: new StartupProperties(){OpenRasta = { Errors = {  HandleAllExceptions = false,HandleCatastrophicExceptions = false}}});
+
+        ResourceSpace.Has.ResourcesNamed("Ignored");
+      }, startup: new StartupProperties(){OpenRasta = { Errors = {  HandleAllExceptions = false,HandleCatastrophicExceptions = false}}});
+      
     }
 
     [Fact]
