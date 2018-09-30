@@ -6,20 +6,25 @@ using OpenRasta.Plugins.Hydra.Configuration;
 
 namespace OpenRasta.Plugins.Hydra.Schemas.Hydra
 {
-  public class Collection<T>
+  public static partial class Hydra
   {
-    public Collection(IEnumerable<T> enumerable)
+    public class Collection<T>
     {
-      Member = enumerable.ToArray();
-      Manages = new CollectionManages()
+      public Collection(IEnumerable<T> enumerable)
       {
-        Object = typeof(T).Name
-      };
+        Member = enumerable.ToArray();
+        Manages = new CollectionManages()
+        {
+          Object = typeof(T).Name
+        };
+      }
+
+      public CollectionManages Manages { get; }
+      public T[] Member { get; set; }
+      public int? TotalItems => Member?.Length;
     }
-    public CollectionManages Manages { get; }
-    public T[] Member { get; set; }
-    public int? TotalItems => Member?.Length;
   }
+
   public class Collection : JsonLd.INode
   {
     public IriTemplate Search { get; set; }
@@ -27,6 +32,7 @@ namespace OpenRasta.Plugins.Hydra.Schemas.Hydra
     public CollectionManages Manages { get; } = new CollectionManages();
     public object[] Member { get; set; }
     public int? TotalItems => Member?.Length;
+
     [JsonProperty("@id")]
     public Uri Identifier { get; set; }
   }

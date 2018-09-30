@@ -5,15 +5,17 @@ namespace Tests.Plugins.Hydra.Utf8Json
 {
   public class CustomResolver : IJsonFormatterResolver
   {
+    readonly IJsonFormatterResolver _resolver;
+
     public CustomResolver()
     {
+      _resolver = CompositeResolver.Create(new IJsonFormatter[] {new ContextFormatter()},
+        new[] {StandardResolver.CamelCase});
     }
-
-    public static IJsonFormatterResolver Instance { get; } = new CustomResolver();
 
     public IJsonFormatter<T> GetFormatter<T>()
     {
-      return StandardResolver.CamelCase.GetFormatter<T>();
+      return _resolver.GetFormatter<T>();
     }
   }
-}  
+}

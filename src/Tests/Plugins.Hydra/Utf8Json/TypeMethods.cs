@@ -43,45 +43,69 @@ namespace Tests.Plugins.Hydra.Utf8Json
           typeof(object).GetMethod(nameof(ToString))),
         Constant(".hydra/context.jsonld"));
 
+      var resolver = Variable(typeof(CustomResolver), "resolver");
+      variable(resolver);
+      statement(Assign(resolver, New(typeof(CustomResolver))));
+
       foreach (var exp in WriteBeginObjectContext(jsonWriter, contextUri)) statement(exp);
 
-      Resource(jsonWriter, model, resource, variable, statement, uriResolverFunc, models, new Stack<ResourceModel>());
+      WriteNode(jsonWriter, model, resource, variable, statement, uriResolverFunc, models, new Stack<ResourceModel>(),
+        resolver);
 
       statement(JsonWriterMethods.WriteEndObject(jsonWriter));
     }
 
     static InvocationExpression GetUri(Expression resource, MemberExpression uriResolverFunc)
     {
-      var uri = Invoke(uriResolverFunc, resource);
-      return uri;
+      return Invoke(uriResolverFunc, resource);
     }
 
-    static void Resource(
+    static void WriteNode(
       ParameterExpression jsonWriter,
       ResourceModel model,
       Expression resource,
-      Action<ParameterExpression> variable,
+      Action<ParameterExpression> var,
       Action<Expression> statement,
-      MemberExpression uriResolverFunc,
+      MemberExpression uriResolver,
       IMetaModelRepository models,
-      Stack<ResourceModel> recursionDefender)
+      Stack<ResourceModel> recursionDefender,
+      ParameterExpression jsonResolver)
     {
+      var resourceType = model.ResourceType;
       if (recursionDefender.Contains(model))
         throw new InvalidOperationException(
-          $"Detected recursion, already processing {model.ResourceType?.Name}: {string.Join("->", recursionDefender.Select(m => m.ResourceType?.Name).Where(n => n != null))}");
+          $"Detected recursion, already processing {resourceType?.Name}: {string.Join("->", recursionDefender.Select(m => m.ResourceType?.Name).Where(n => n != null))}");
 
       recursionDefender.Push(model);
+      
       var type = GetTypeName(models, model);
+      var uri = GetUri(resource, uriResolver);
+
+      var collectionItemTypes = CollectionItemTypes(resourceType).ToList();
+
+      Type collectionItemType;
+      if (collectionItemTypes.Count() == 1 &&
+          models.TryGetResourceModel((collectionItemType = collectionItemTypes.First()), out _))
+      {
+        var collectionType =
+          typeof(OpenRasta.Plugins.Hydra.Schemas.Hydra.Hydra.Collection<>).MakeGenericType(collectionItemType);
+        var collection = Variable(collectionType);
+        var(collection);
+        statement(Assign(collection,
+          New(collectionType.GetConstructor(new[] {typeof(IEnumerable<>).MakeGenericType(collectionItemType)}),
+            resource)));
+        resource = collection;
+        type = "hydra:Collection"; // hack, lazy, 2am.
+        resourceType = collectionType;
+      }
+
       foreach (var exp in model.Uris.Any()
-        ? WriteIdType(jsonWriter, type, GetUri(resource, uriResolverFunc))
+        ? WriteIdType(jsonWriter, type, uri)
         : WriteType(jsonWriter, type))
         statement(exp);
 
-      var resolver = Variable(typeof(CustomResolver), "resolver");
-      variable(resolver);
-      statement(Assign(resolver, New(typeof(CustomResolver))));
 
-      foreach (var pi in model.ResourceType.GetProperties(BindingFlags.Public | BindingFlags.Instance))
+      foreach (var pi in resourceType.GetProperties(BindingFlags.Public | BindingFlags.Instance))
       {
         if (pi.CustomAttributes.Any(a => a.AttributeType.Name == "JsonIgnoreAttribute"))
           continue;
@@ -90,133 +114,156 @@ namespace Tests.Plugins.Hydra.Utf8Json
 
         if (pi.PropertyType.IsValueType)
         {
-          WriteResourceProperty(jsonWriter, variable, statement, pi, resolver,
+          WriteNodePropertyValue(jsonWriter, var, statement, pi, jsonResolver,
             MakeMemberAccess(resource, pi));
           continue;
         }
 
 
-        var propertyStatements = new List<Expression>();
-        var propertyVars = new List<ParameterExpression>();
-
-        // var propertyValue;
-        var propertyValue = Variable(pi.PropertyType, $"val{pi.DeclaringType.Name}{pi.Name}");
-        variable(propertyValue);
-
-        // propertyValue = resource.Property;
-        statement(Assign(propertyValue, MakeMemberAccess(resource, pi)));
-
-
-        if (models.TryGetResourceModel(pi.PropertyType, out var propertyResourceModel))
-        {
-          propertyStatements.Add(JsonWriterMethods.WriteValueSeparator(jsonWriter));
-          propertyStatements.Add(WritePropertyName(jsonWriter, GetJsonPropertyName(pi)));
-          propertyStatements.Add(JsonWriterMethods.WriteBeginObject(jsonWriter));
-          Resource(jsonWriter, propertyResourceModel, propertyValue, propertyVars.Add, propertyStatements.Add,
-            uriResolverFunc, models, recursionDefender);
-          propertyStatements.Add(JsonWriterMethods.WriteEndObject(jsonWriter));
-        }
-        else
-        {
-          var itemResourceRegistrations = (
-            from i in pi.PropertyType.GetInterfaces()
-            where i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IEnumerable<>)
-            let itemType = i.GetGenericArguments()[0]
-            where itemType != typeof(object)
-            let resourceModels = models.ResourceRegistrations.Where(r => itemType.IsAssignableFrom(r.ResourceType))
-            where resourceModels.Any()
-            orderby resourceModels.Count() descending
-            select new {
-              itemType, models=
-                (from possible in resourceModels
-              orderby possible.ResourceType.GetInheritanceDistance(itemType)
-              select possible).ToList()}).FirstOrDefault();
-
-          if (itemResourceRegistrations == null)
-          {
-            WriteResourceProperty(jsonWriter, propertyVars.Add, propertyStatements.Add, pi, resolver,
-              MakeMemberAccess(resource, pi));
-          }
-          else
-          {
-            var itemArrayType = itemResourceRegistrations.itemType.MakeArrayType();
-            var itemArray = Variable(itemArrayType);
-
-            var toArrayMethod = typeof(Enumerable).GetMethod("ToArray")
-              .MakeGenericMethod(itemResourceRegistrations.itemType);
-            var assign = Assign(itemArray, Call(toArrayMethod, propertyValue));
-            propertyVars.Add(itemArray);
-            propertyStatements.Add(assign);
-
-            var i = Variable(typeof(int));
-            propertyVars.Add(i);
-
-            var initialValue = Assign(i, Constant(0));
-            propertyStatements.Add(initialValue);
-
-            var itemVars = new List<ParameterExpression>();
-            var itemStatements = new List<Expression>();
-
-            var @break = Label("break");
-
-            propertyStatements.Add(JsonWriterMethods.WriteValueSeparator(jsonWriter));
-            propertyStatements.Add(WritePropertyName(jsonWriter, GetJsonPropertyName(pi)));
-
-            propertyStatements.Add(JsonWriterMethods.WriteBeginArray(jsonWriter));
-
-            itemStatements.Add(IfThen(GreaterThan(i, Constant(0)), JsonWriterMethods.WriteValueSeparator(jsonWriter)));
-            itemStatements.Add(JsonWriterMethods.WriteBeginObject(jsonWriter));
-
-            BlockExpression resourceBlock(ResourceModel r, ParameterExpression typed)
-            {
-              var vars = new List<ParameterExpression>();
-              var statements = new List<Expression>();
-              Resource(
-                jsonWriter,
-                r,
-                typed,
-                vars.Add, statements.Add,
-                uriResolverFunc, models, recursionDefender);
-              return Block(vars.ToArray(), statements.ToArray());
-            }
-
-            
-            Expression renderBlock = Block(Throw(New(typeof(InvalidOperationException))));
-            
-            // with C : B : A, if is C else if is B else if is A else throw
-            
-            foreach (var specificModel in itemResourceRegistrations.models)
-            {
-              var typed = Variable(specificModel.ResourceType, "as" + specificModel.ResourceType.Name);
-              itemVars.Add(typed);
-              var @as = Assign(typed, TypeAs(ArrayAccess(itemArray, i), specificModel.ResourceType));
-              renderBlock = IfThenElse(
-                NotEqual(@as, Default(specificModel.ResourceType)),
-                resourceBlock(specificModel, @typed),
-                renderBlock);
-            }
-
-            itemStatements.Add(renderBlock);
-            itemStatements.Add(PostIncrementAssign(i));
-            itemStatements.Add(JsonWriterMethods.WriteEndObject(jsonWriter));
-            var loop = Loop(
-              IfThenElse(
-                LessThan(i, MakeMemberAccess(itemArray, itemArrayType.GetProperty("Length"))),
-                Block(itemVars.ToArray(), itemStatements.ToArray()),
-                Break(@break)),
-              @break
-            );
-            propertyStatements.Add(loop);
-            propertyStatements.Add(JsonWriterMethods.WriteEndArray(jsonWriter));
-          }
-        }
-
-        statement(IfThen(
-          NotEqual(propertyValue, Default(pi.PropertyType)),
-          Block(propertyVars.ToArray(), propertyStatements.ToArray())));
+        WriteNodeProperty(jsonWriter, resource, var, statement, uriResolver, models, recursionDefender, pi,
+          jsonResolver);
       }
 
       recursionDefender.Pop();
+    }
+
+    static void WriteNodeProperty(ParameterExpression jsonWriter, Expression resource,
+      Action<ParameterExpression> variable, Action<Expression> statement,
+      MemberExpression uriResolverFunc, IMetaModelRepository models, Stack<ResourceModel> recursionDefender,
+      PropertyInfo pi,
+      ParameterExpression resolver)
+    {
+      var propertyStatements = new List<Expression>();
+      var propertyVars = new List<ParameterExpression>();
+
+      // var propertyValue;
+      var propertyValue = Variable(pi.PropertyType, $"val{pi.DeclaringType.Name}{pi.Name}");
+      variable(propertyValue);
+
+      // propertyValue = resource.Property;
+      statement(Assign(propertyValue, MakeMemberAccess(resource, pi)));
+
+
+      if (models.TryGetResourceModel(pi.PropertyType, out var propertyResourceModel))
+      {
+        // property has a registration, it's either an iri node or a blank node
+        propertyStatements.Add(JsonWriterMethods.WriteValueSeparator(jsonWriter));
+        propertyStatements.Add(WritePropertyName(jsonWriter, GetJsonPropertyName(pi)));
+        propertyStatements.Add(JsonWriterMethods.WriteBeginObject(jsonWriter));
+        WriteNode(jsonWriter, propertyResourceModel, propertyValue, propertyVars.Add, propertyStatements.Add,
+          uriResolverFunc, models, recursionDefender, resolver);
+        propertyStatements.Add(JsonWriterMethods.WriteEndObject(jsonWriter));
+      }
+      else
+      {
+        // not an iri node itself, but is it a list of nodes?
+        var itemResourceRegistrations = (
+          from i in pi.PropertyType.GetInterfaces()
+          where i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IEnumerable<>)
+          let itemType = i.GetGenericArguments()[0]
+          where itemType != typeof(object)
+          let resourceModels = models.ResourceRegistrations.Where(r => itemType.IsAssignableFrom(r.ResourceType))
+          where resourceModels.Any()
+          orderby resourceModels.Count() descending
+          select new
+          {
+            itemType, models =
+              (from possible in resourceModels
+                orderby possible.ResourceType.GetInheritanceDistance(itemType)
+                select possible).ToList()
+          }).FirstOrDefault();
+
+        if (itemResourceRegistrations == null)
+        {
+          // not a list of iri or blank nodes
+          WriteNodePropertyValue(jsonWriter, propertyVars.Add, propertyStatements.Add, pi, resolver,
+            MakeMemberAccess(resource, pi));
+        }
+        else
+        {
+          // it's a list of nodes
+          var itemArrayType = itemResourceRegistrations.itemType.MakeArrayType();
+          var itemArray = Variable(itemArrayType);
+
+          var toArrayMethod = typeof(Enumerable).GetMethod("ToArray")
+            .MakeGenericMethod(itemResourceRegistrations.itemType);
+          var assign = Assign(itemArray, Call(toArrayMethod, propertyValue));
+          propertyVars.Add(itemArray);
+          propertyStatements.Add(assign);
+
+          var i = Variable(typeof(int));
+          propertyVars.Add(i);
+
+          var initialValue = Assign(i, Constant(0));
+          propertyStatements.Add(initialValue);
+
+          var itemVars = new List<ParameterExpression>();
+          var itemStatements = new List<Expression>();
+
+          var @break = Label("break");
+
+          propertyStatements.Add(JsonWriterMethods.WriteValueSeparator(jsonWriter));
+          propertyStatements.Add(WritePropertyName(jsonWriter, GetJsonPropertyName(pi)));
+
+          propertyStatements.Add(JsonWriterMethods.WriteBeginArray(jsonWriter));
+
+          itemStatements.Add(IfThen(GreaterThan(i, Constant(0)), JsonWriterMethods.WriteValueSeparator(jsonWriter)));
+          itemStatements.Add(JsonWriterMethods.WriteBeginObject(jsonWriter));
+
+          BlockExpression resourceBlock(ResourceModel r, ParameterExpression typed)
+          {
+            var vars = new List<ParameterExpression>();
+            var statements = new List<Expression>();
+            WriteNode(
+              jsonWriter,
+              r,
+              typed,
+              vars.Add, statements.Add,
+              uriResolverFunc, models, recursionDefender, resolver);
+            return Block(vars.ToArray(), statements.ToArray());
+          }
+
+
+          Expression renderBlock = Block(Throw(New(typeof(InvalidOperationException))));
+
+          // with C : B : A, if is C else if is B else if is A else throw
+
+          foreach (var specificModel in itemResourceRegistrations.models)
+          {
+            var typed = Variable(specificModel.ResourceType, "as" + specificModel.ResourceType.Name);
+            itemVars.Add(typed);
+            var @as = Assign(typed, TypeAs(ArrayAccess(itemArray, i), specificModel.ResourceType));
+            renderBlock = IfThenElse(
+              NotEqual(@as, Default(specificModel.ResourceType)),
+              resourceBlock(specificModel, @typed),
+              renderBlock);
+          }
+
+          itemStatements.Add(renderBlock);
+          itemStatements.Add(PostIncrementAssign(i));
+          itemStatements.Add(JsonWriterMethods.WriteEndObject(jsonWriter));
+          var loop = Loop(
+            IfThenElse(
+              LessThan(i, MakeMemberAccess(itemArray, itemArrayType.GetProperty("Length"))),
+              Block(itemVars.ToArray(), itemStatements.ToArray()),
+              Break(@break)),
+            @break
+          );
+          propertyStatements.Add(loop);
+          propertyStatements.Add(JsonWriterMethods.WriteEndArray(jsonWriter));
+        }
+      }
+
+      statement(IfThen(
+        NotEqual(propertyValue, Default(pi.PropertyType)),
+        Block(propertyVars.ToArray(), propertyStatements.ToArray())));
+    }
+
+    static IEnumerable<Type> CollectionItemTypes(Type type)
+    {
+      return from i in type.GetInterfaces()
+        where i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IEnumerable<>)
+        select i.GetGenericArguments()[0];
     }
 
     static string GetTypeName(IMetaModelRepository models, ResourceModel model)
@@ -256,7 +303,7 @@ namespace Tests.Plugins.Hydra.Utf8Json
       yield return JsonWriterMethods.WriteValueSeparator(jsonWriter);
     }
 
-    static void WriteResourceProperty(ParameterExpression jsonWriter,
+    static void WriteNodePropertyValue(ParameterExpression jsonWriter,
       Action<ParameterExpression> variable,
       Action<Expression> statement,
       PropertyInfo pi,
