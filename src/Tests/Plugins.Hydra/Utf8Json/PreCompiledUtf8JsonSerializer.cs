@@ -8,6 +8,7 @@ using OpenRasta.Configuration.MetaModel;
 using OpenRasta.Configuration.MetaModel.Handlers;
 using OpenRasta.Plugins.Hydra;
 using OpenRasta.Plugins.Hydra.Internal;
+using OpenRasta.Plugins.Hydra.Schemas.Hydra;
 using Utf8Json;
 using static System.Linq.Expressions.Expression;
 
@@ -23,8 +24,14 @@ namespace Tests.Plugins.Hydra.Utf8Json
     {
       foreach (var model in repository.ResourceRegistrations)
       {
-        model.Hydra().SerializeFunc = CreateDocumentSerializer(model, repository);
+        model.Hydra().SerializeFunc = model.ResourceType == typeof(Context) ? CreateContextSerializer() : CreateDocumentSerializer(model, repository);
       }
+    }
+
+    Func<object, SerializationContext, Stream, Task> CreateContextSerializer()
+    {
+      // Hack. 3am. meh.
+      return (o, context, stream) => JsonSerializer.SerializeAsync(stream, (Context) o, new CustomResolver());
     }
 
     Func<object, SerializationContext, Stream, Task> CreateDocumentSerializer(ResourceModel model,
