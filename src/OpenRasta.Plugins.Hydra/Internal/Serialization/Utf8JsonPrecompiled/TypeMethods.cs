@@ -112,7 +112,7 @@ namespace Tests.Plugins.Hydra.Utf8Json
 
         if (pi.GetIndexParameters().Any()) continue;
 
-        if (pi.PropertyType.IsValueType)
+        if (pi.PropertyType.IsValueType && Nullable.GetUnderlyingType(pi.PropertyType) == null)
         {
           WriteNodePropertyValue(jsonWriter, var, statement, pi, jsonResolver,
             MakeMemberAccess(resource, pi));

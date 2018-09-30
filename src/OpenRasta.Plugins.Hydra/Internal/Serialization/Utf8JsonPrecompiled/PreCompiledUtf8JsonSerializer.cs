@@ -22,9 +22,11 @@ namespace Tests.Plugins.Hydra.Utf8Json
 
     public void Process(IMetaModelRepository repository)
     {
-      foreach (var model in repository.ResourceRegistrations)
+      foreach (var model in repository.ResourceRegistrations.Where(r=>r.ResourceType != null))
       {
-        model.Hydra().SerializeFunc = model.ResourceType == typeof(Context) ? CreateContextSerializer() : CreateDocumentSerializer(model, repository);
+        model.Hydra().SerializeFunc = model.ResourceType == typeof(Context)
+          ? CreateContextSerializer()
+          : CreateDocumentSerializer(model, repository);
       }
     }
 
@@ -40,7 +42,7 @@ namespace Tests.Plugins.Hydra.Utf8Json
       var renderer = new List<Expression>();
       var variables = new List<ParameterExpression>();
 
-  
+
       var resourceIn = Parameter(typeof(object), "resource");
       var options = Parameter(typeof(SerializationContext), "options");
       var stream = Parameter(typeof(Stream), "stream");
@@ -53,7 +55,7 @@ namespace Tests.Plugins.Hydra.Utf8Json
 
 
       renderer.Add(Assign(jsonWriter, New(typeof(JsonWriter))));
-      
+
       TypeMethods.ResourceDocument(jsonWriter, model, resource, options, variables.Add, renderer.Add, repository);
 
       renderer.Add(Assign(buffer, JsonWriterMethods.GetBuffer(jsonWriter)));
