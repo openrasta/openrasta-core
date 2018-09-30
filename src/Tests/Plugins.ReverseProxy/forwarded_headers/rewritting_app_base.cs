@@ -8,6 +8,24 @@ namespace Tests.Plugins.ReverseProxy.forwarded_headers
   public class rewritting_app_base
   {
     [Fact]
+    public async Task enabled_header_with_base()
+    {
+      using (var response = await new ProxyServer()
+        .FromServer("/base/proxy")
+        .ToServer(
+          "/base/proxied",
+          async ctx => $"{ctx.ApplicationBaseUri.ToString()}|{ctx.Request.Uri}",
+          options => options.FrowardedHeaders.RunAsForwardedHost = true,
+          resourceRegistrationUri: "/proxied")
+        .AddHeader("Forwarded", "host=openrasta.example;proto=https;base=\"/base\"")
+
+        .GetAsync("base/proxy"))
+      {
+        // TODO: Can't rewrite the app base correctly due to ICommContext appbase  being readonly, needs fixing
+        response.Content.ShouldBe("https://openrasta.example/|https://openrasta.example/proxied");
+      }
+    }
+    [Fact]
     public async Task enabled_header()
     {
       using (var response = await new ProxyServer()

@@ -36,8 +36,11 @@ namespace OpenRasta.Plugins.ReverseProxy
         if (!hasPort)
           appBaseUri.Port = -1;
       }
-      
 
+      if (header.TryGetValue("base", out var baseUri) && appBaseUri.Path.StartsWith(baseUri))
+      {
+        appBaseUri.Path = appBaseUri.Path.Substring(baseUri.Length);
+      }
 
       ctx.Request.Uri = appBaseUri.Uri;
       
