@@ -4,21 +4,23 @@ using System.Linq;
 using OpenRasta.Configuration;
 using OpenRasta.Configuration.Fluent;
 using OpenRasta.Configuration.MetaModel;
+using OpenRasta.Configuration.MetaModel.Handlers;
+using OpenRasta.DI;
 using OpenRasta.Plugins.Hydra.Configuration;
 using OpenRasta.Plugins.Hydra.Internal;
 using OpenRasta.Plugins.Hydra.Internal.Serialization;
 using OpenRasta.Plugins.Hydra.Schemas;
 using OpenRasta.Plugins.Hydra.Schemas.Hydra;
+using OpenRasta.Web;
 
 namespace OpenRasta.Plugins.Hydra
 {
   public class HydraOperationOptions
   {
-    
   }
+
   public static class ConfigurationExtensions
   {
-    
     public static IUses Hydra(this IUses uses, Action<HydraOptions> hydraOptions = null)
     {
       var fluent = (IFluentTarget) uses;
@@ -34,15 +36,15 @@ namespace OpenRasta.Plugins.Hydra
           Vocabularies.XmlSchema
         }
       };
-      
+
       hydraOptions?.Invoke(opts);
-      
+
       fluent.Repository.CustomRegistrations.Add(opts);
 
       has.ResourcesOfType<object>()
         .WithoutUri
-        .TranscodedBy<JsonLdCodec>()
-        .ForMediaType("application/ld+json");
+        .TranscodedBy<JsonLdCodecWriter>().ForMediaType("application/ld+json")
+        .And.TranscodedBy<JsonLdCodecReader>().ForMediaType("application/ld+json");
 
       has
         .ResourcesOfType<EntryPoint>()
@@ -68,16 +70,21 @@ namespace OpenRasta.Plugins.Hydra
       has.ResourcesOfType<IriTemplate>().Vocabulary(Vocabularies.Hydra);
       has.ResourcesOfType<IriTemplateMapping>().Vocabulary(Vocabularies.Hydra);
       has.ResourcesOfType<Operation>().Vocabulary(Vocabularies.Hydra);
+      has.ResourcesOfType<Rdf.Property>().Vocabulary(Vocabularies.Rdf);
+
+      uses.CustomDependency<IMetaModelHandler, JsonNetMetaModelHandler>(DependencyLifetime.Transient);
+      uses.CustomDependency<IMetaModelHandler, JsonNetApiDocumentationMetaModelHandler>(DependencyLifetime.Transient);
 
       return uses;
     }
 
-    
+
     public static IResourceDefinition<T> SupportedOperation<T>(this IResourceDefinition<T> resource, Operation operation)
     {
       resource.Resource.Hydra().SupportedOperations.Add(operation);
       return resource;
     }
+
     public static IResourceDefinition<T> Vocabulary<T>(this IResourceDefinition<T> resource, Vocabulary vocab)
     {
       resource.Resource.Hydra().Vocabulary = vocab;
@@ -95,7 +102,7 @@ namespace OpenRasta.Plugins.Hydra
       var itemType = ienum[0].GenericTypeArguments[0];
 
       var uriModel = resource.Uri.Hydra();
-      
+
       var opts = new CollectionEntryPointOptions();
       options?.Invoke(opts);
 
