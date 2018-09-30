@@ -51,19 +51,19 @@ namespace OpenRasta.Plugins.Hydra
       has
         .ResourcesOfType<EntryPoint>()
         .Vocabulary(Vocabularies.Hydra)
-        .AtUri("/")
+        .AtUri(r=>"/")
         .HandledBy<EntryPointHandler>();
 
       has
         .ResourcesOfType<Context>()
         .Vocabulary(Vocabularies.Hydra)
-        .AtUri("/.hydra/context.jsonld")
+        .AtUri(r=>"/.hydra/context.jsonld")
         .HandledBy<ContextHandler>();
 
       has
         .ResourcesOfType<ApiDocumentation>()
         .Vocabulary(Vocabularies.Hydra)
-        .AtUri("/.hydra/documentation.jsonld")
+        .AtUri(r=>"/.hydra/documentation.jsonld")
         .HandledBy<ApiDocumentationHandler>();
 
       has.ResourcesOfType<Collection>().Vocabulary(Vocabularies.Hydra);
@@ -79,7 +79,7 @@ namespace OpenRasta.Plugins.Hydra
       else
         uses.CustomDependency<IMetaModelHandler, JsonNetMetaModelHandler>(DependencyLifetime.Transient);
 
-
+      uses.Dependency(ctx => ctx.Singleton<FastUriGenerator>());
       uses.CustomDependency<IMetaModelHandler, JsonNetApiDocumentationMetaModelHandler>(DependencyLifetime.Transient);
 
       return uses;

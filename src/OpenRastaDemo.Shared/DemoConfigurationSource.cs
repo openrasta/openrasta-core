@@ -37,6 +37,11 @@ namespace OpenRastaDemo
         .EntryPointCollection()
         .HandledBy<HydraHandler>()
         .AsJsonNewtonsoft();
+      
+      ResourceSpace.Has
+        .ResourcesOfType<List<HydraRootResponse>>()
+        .AtUri(r => "/hydrafasturi")
+        .HandledBy<HydraHandler>();
 
       ResourceSpace.Has
         .ResourcesOfType<HydraRootResponse>()
