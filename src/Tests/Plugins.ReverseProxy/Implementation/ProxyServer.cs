@@ -25,6 +25,7 @@ namespace Tests.Plugins.ReverseProxy.Implementation
     Func<ICommunicationContext, Task<string>> _handler;
     TestServer _toServer;
     Func<(HttpClient client, IDisposable disposer)> _serverFactory;
+    string _toResourceRegistration;
 
     public ProxyServer()
     {
@@ -45,12 +46,16 @@ namespace Tests.Plugins.ReverseProxy.Implementation
       return this;
     }
 
-    public ProxyServer ToServer(string toUri, Func<ICommunicationContext, Task<string>> handler = null,
-      Action<ReverseProxyOptions> options = null)
+    public ProxyServer ToServer(
+      string toUri, 
+      Func<ICommunicationContext, Task<string>> handler = null,
+      Action<ReverseProxyOptions> options = null
+      ,string resourceRegistrationUri = null)
     {
       _toUri = port => toUri;
       _toOptions = options;
       _handler = handler;
+      _toResourceRegistration = resourceRegistrationUri;
       return this;
     }
 
@@ -182,7 +187,7 @@ namespace Tests.Plugins.ReverseProxy.Implementation
           {
             app.UseOpenRasta(
               new ProxyApiTo(
-                _toUri(80),
+                _toResourceRegistration ?? _toUri(80),
                 options,
                 _handler));
           })
@@ -215,7 +220,7 @@ namespace Tests.Plugins.ReverseProxy.Implementation
           {
             app.UseOpenRasta(
               new ProxyApiTo(
-                _toUri(80),
+                _toResourceRegistration ?? _toUri(80),
                 options,
                 _handler));
           }));

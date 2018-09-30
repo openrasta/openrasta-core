@@ -117,6 +117,12 @@ namespace OpenRasta.Plugins.ReverseProxy
             appendParameter("proto", header.Value);
             continue;
           }
+          if (header.Key.Equals("X-Forwarded-Base", StringComparison.OrdinalIgnoreCase))
+          {
+            var baseVal = $"\"{(header.Value[0] != '/' ? "/" + header.Value : header.Value)}\""; 
+            appendParameter("base", baseVal);
+            continue;
+          }
         }
 
         if (header.Key.Equals("host", StringComparison.OrdinalIgnoreCase)) continue;
