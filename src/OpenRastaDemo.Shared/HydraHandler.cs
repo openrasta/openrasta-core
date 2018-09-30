@@ -2,15 +2,15 @@ using System.Collections.Generic;
 
 namespace OpenRastaDemo
 {
-  public class HydraHandler
+  public class HydraHandler<T>
   {
-    readonly List<HydraRootResponse> _data;
+    readonly List<T> _data;
 
-    public HydraHandler(List<HydraRootResponse> data)
+    public HydraHandler(List<T> data)
     {
       _data = data;
     }
-    public List<HydraRootResponse> Get()
+    public List<T> Get()
     {
       return _data;
     }
