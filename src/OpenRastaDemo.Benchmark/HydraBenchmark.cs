@@ -20,6 +20,7 @@ namespace OpenRastaDemo.Benchmark
   [GroupBenchmarksBy(BenchmarkLogicalGroupRule.ByCategory)]
   [CategoriesColumn]
   [MemoryDiagnoser]
+  [InvocationCount(10)]
   public class HydraBenchmark
   {
     TestServer newtonsoftServer;
@@ -60,17 +61,24 @@ namespace OpenRastaDemo.Benchmark
     {
       return await Get(newtonsoftClient, "/hydra", "application/json");
     }
-    [BenchmarkCategory("large"), Benchmark]
-    public async Task<HttpResponseMessage> LargeNewtonsoft()
-    {
-      return await Get(newtonsoftClient, "/hydra", "application/ld+json");
-    }
+//    [BenchmarkCategory("large"), Benchmark]
+//    public async Task<HttpResponseMessage> LargeNewtonsoft()
+//    {
+//      return await Get(newtonsoftClient, "/hydra", "application/ld+json");
+//    }
 
     [BenchmarkCategory("large"), Benchmark()]
     public async Task<HttpResponseMessage> LargeUtf8()
     {
       return await Get(utf8Client, "/hydra", "application/ld+json");
     }
+    
+    [BenchmarkCategory("large"), Benchmark()]
+    public async Task<HttpResponseMessage> LargeUtf8FastUri()
+    {
+      return await Get(utf8Client, "/hydrafasturi", "application/ld+json");
+    }
+    
 //
 //    [BenchmarkCategory("small"), Benchmark(Baseline = true)]
 //    public async Task<HttpResponseMessage> SmallNewtonsoftRaw()

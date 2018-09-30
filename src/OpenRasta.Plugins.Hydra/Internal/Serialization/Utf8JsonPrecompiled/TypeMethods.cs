@@ -100,7 +100,7 @@ namespace Tests.Plugins.Hydra.Utf8Json
       }
 
       foreach (var exp in model.Uris.Any()
-        ? WriteIdType(jsonWriter, type, uri)
+        ? WriteIdType(jsonWriter, type, uri, model)
         : WriteType(jsonWriter, type))
         statement(exp);
 
@@ -276,10 +276,9 @@ namespace Tests.Plugins.Hydra.Utf8Json
              model.ResourceType.Name;
     }
 
-    static IEnumerable<Expression> WriteIdType(
-      ParameterExpression jsonWriter,
+    static IEnumerable<Expression> WriteIdType(ParameterExpression jsonWriter,
       string type,
-      Expression uri)
+      Expression uri, ResourceModel model)
     {
       yield return JsonWriterMethods.WriteRaw(jsonWriter, Nodes.IdProperty);
 
