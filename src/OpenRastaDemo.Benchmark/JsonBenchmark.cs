@@ -26,18 +26,12 @@ namespace OpenRastaDemo.Benchmark
       DemoJsonResponse.LargeJson = JsonConvert.DeserializeObject<IList<RootResponse>>(json);
 
       this.server = new TestServer(new WebHostBuilder()
-        .ConfigureServices(s => s.AddSingleton<IConfigurationSource>(new DemoConfigurationSource()))
+        .ConfigureServices(s => s.AddSingleton<IConfigurationSource>(new HydraApi(false,json)))
         .UseStartup<Startup>()
       );
 
       this.client = this.server.CreateClient();
       this.client.DefaultRequestHeaders.Add("Accept", "application/json");
-    }
-
-    [Benchmark]
-    public async Task<HttpResponseMessage> GetMeSomeJson()
-    {
-      return await this.client.GetAsync("/");
     }
 
     [Benchmark]

@@ -5,9 +5,9 @@ namespace OpenRastaDemo
 {
   public class LittleHydraHandler
   {
-    public HydraRootResponse Get()
+    public LittleHydraResponse Get()
     {
-      return new HydraRootResponse
+      return new LittleHydraResponse
       {
         _id = "1",
         about = "about",

@@ -34,13 +34,11 @@ namespace OpenRastaDemo.Benchmark
     {
       var json = File.ReadAllText(Path.Combine(Directory.GetCurrentDirectory(), "large.json"));
 
-      var largeResponse = JsonConvert.DeserializeObject<List<HydraRootResponse>>(json);
-
       newtonsoftServer = new TestServer(new WebHostBuilder()
-        .Configure(c => c.UseOpenRasta(new HydraApi(false, largeResponse)))
+        .Configure(c => c.UseOpenRasta(new HydraApi(false, json)))
       );
       utf8Server = new TestServer(new WebHostBuilder()
-        .Configure(c => c.UseOpenRasta(new HydraApi(true, largeResponse)))
+        .Configure(c => c.UseOpenRasta(new HydraApi(true, json)))
       );
 
       newtonsoftClient = newtonsoftServer.CreateClient();

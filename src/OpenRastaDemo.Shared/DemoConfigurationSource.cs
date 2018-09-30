@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Newtonsoft.Json;
 using OpenRasta.Codecs.Newtonsoft.Json;
 using OpenRasta.Configuration;
 using OpenRasta.Configuration.MetaModel.Handlers;
@@ -10,9 +11,9 @@ namespace OpenRastaDemo
   public class HydraApi : IConfigurationSource
   {
     readonly bool _precompile;
-    List<HydraRootResponse> _data;
+    string _data;
 
-    public HydraApi(bool precompile, List<HydraRootResponse> data)
+    public HydraApi(bool precompile, string data)
     {
       _precompile = precompile;
       _data = data;
@@ -29,63 +30,38 @@ namespace OpenRastaDemo
         }
       });
 
-      ResourceSpace.Uses.Dependency(ctx => ctx.Transient(() => new HydraHandler(_data)));
+      ResourceSpace.Uses.Dependency(ctx => ctx.Transient(() => new HydraHandler<HydraRootResponse>(JsonConvert.DeserializeObject<List<HydraRootResponse>>(_data))));
+      ResourceSpace.Uses.Dependency(ctx => ctx.Transient(() => new HydraHandler<FastUriResponse>(JsonConvert.DeserializeObject<List<FastUriResponse>>(_data))));
 
       ResourceSpace.Has
         .ResourcesOfType<List<HydraRootResponse>>()
         .AtUri("/hydra")
-        .EntryPointCollection()
-        .HandledBy<HydraHandler>()
+        .HandledBy<HydraHandler<HydraRootResponse>>()
         .AsJsonNewtonsoft();
       
       ResourceSpace.Has
-        .ResourcesOfType<List<HydraRootResponse>>()
+        .ResourcesOfType<HydraRootResponse>()
+        .AtUri("/hydra/{_id}")
+        .HandledBy<HydraHandler<HydraRootResponse>>()
+        .AsJsonNewtonsoft();
+      
+      
+      ResourceSpace.Has
+        .ResourcesOfType<List<FastUriResponse>>()
         .AtUri(r => "/hydrafasturi")
-        .HandledBy<HydraHandler>();
+        .HandledBy<HydraHandler<FastUriResponse>>();
 
       ResourceSpace.Has
-        .ResourcesOfType<HydraRootResponse>()
+        .ResourcesOfType<FastUriResponse>()
+        .AtUri(r => $"/hydrafasturi/{r._id}")
+        .HandledBy<HydraHandler<FastUriResponse>>();
+      
+      ResourceSpace.Has
+        .ResourcesOfType<LittleHydraHandler>()
         .AtUri("/littlehydra")
         .HandledBy<LittleHydraHandler>()
         .AsJsonNewtonsoft();
       ;
-    }
-  }
-
-  public class DemoConfigurationSource : IConfigurationSource
-  {
-    public void Configure()
-    {
-      ResourceSpace.Uses.Hydra(options => { options.Vocabulary = "https://schemas.example/schema#"; });
-
-      ResourceSpace.Has
-        .ResourcesOfType<IEnumerable<RootResponse>>()
-        .AtUri("/")
-        .Named("root")
-        .HandledBy<RootHandler>()
-        .TranscodedBy<NewtonsoftJsonCodec>()
-        .ForMediaType("application/json")
-        ;
-
-      ResourceSpace.Has
-        .ResourcesOfType<RootResponse>()
-        .AtUri("/littlejson")
-        .Named("littlejson")
-        .HandledBy<LittleJsonHandler>()
-        .TranscodedBy<NewtonsoftJsonCodec>()
-        .ForMediaType("application/json")
-        ;
-
-      ResourceSpace.Has
-        .ResourcesOfType<List<HydraRootResponse>>()
-        .AtUri("/hydra")
-        .EntryPointCollection()
-        .HandledBy<HydraHandler>();
-
-      ResourceSpace.Has
-        .ResourcesOfType<HydraRootResponse>()
-        .AtUri("/littlehydra")
-        .HandledBy<LittleHydraHandler>();
     }
   }
 }
