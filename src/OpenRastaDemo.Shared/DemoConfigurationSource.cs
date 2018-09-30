@@ -1,19 +1,57 @@
 ﻿using System.Collections.Generic;
 using OpenRasta.Codecs.Newtonsoft.Json;
 using OpenRasta.Configuration;
+using OpenRasta.Configuration.MetaModel.Handlers;
 using OpenRasta.Plugins.Hydra;
+using Tests.Plugins.Hydra.Utf8Json;
 
 namespace OpenRastaDemo
 {
-  public class DemoConfigurationSource : IConfigurationSource
+  public class HydraApi : IConfigurationSource
   {
+    readonly bool _precompile;
+    List<HydraRootResponse> _data;
+
+    public HydraApi(bool precompile, List<HydraRootResponse> data)
+    {
+      _precompile = precompile;
+      _data = data;
+    }
+
     public void Configure()
     {
       ResourceSpace.Uses.Hydra(options =>
       {
         options.Vocabulary = "https://schemas.example/schema#";
-//        options.Utf8Json = true;
+        if (_precompile)
+        {
+          options.Serializer = ctx => ctx.Transient(() => new PreCompiledUtf8JsonSerializer()).As<IMetaModelHandler>();
+        }
       });
+
+      ResourceSpace.Uses.Dependency(ctx => ctx.Transient(() => new HydraHandler(_data)));
+
+      ResourceSpace.Has
+        .ResourcesOfType<List<HydraRootResponse>>()
+        .AtUri("/hydra")
+        .EntryPointCollection()
+        .HandledBy<HydraHandler>()
+        .AsJsonNewtonsoft();
+
+      ResourceSpace.Has
+        .ResourcesOfType<HydraRootResponse>()
+        .AtUri("/littlehydra")
+        .HandledBy<LittleHydraHandler>()
+        .AsJsonNewtonsoft();
+      ;
+    }
+  }
+
+  public class DemoConfigurationSource : IConfigurationSource
+  {
+    public void Configure()
+    {
+      ResourceSpace.Uses.Hydra(options => { options.Vocabulary = "https://schemas.example/schema#"; });
 
       ResourceSpace.Has
         .ResourcesOfType<IEnumerable<RootResponse>>()
