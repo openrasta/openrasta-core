@@ -28,6 +28,15 @@ namespace TemplatedUriResolver_Specification
         .Equals<Gandalf>().ShouldBeTrue();
     }
 
+    [Test]
+    public void hash_uris_are_not_matched()
+    {
+      given_uri_mapping("/Valinor#Olorin", typeof(Gandalf), CultureInfo.CurrentCulture, null);
+      when_matching_uri("https://localhost/Valinor#Olorin");
+
+      matching_result.ShouldBeNull();
+    }
+
     void when_matching_uri(string uri)
     {
       matching_result = Resolver.Match(new Uri(uri));
@@ -83,6 +92,18 @@ namespace TemplatedUriResolver_Specification
       Result.ToString().ShouldBe("http://localhost/test?query=injected1");
     }
 
+    [Test]
+    public void the_generated_uri_is_correct_when_injecting_in_fragment()
+    {
+      given_uri_mapping("/test#before{variable1}after",
+        typeof(IList<object>),
+        CultureInfo.CurrentCulture,
+        null);
+
+      when_creating_uri<IList<object>>(new NameValueCollection {{"variable1", "injected1"}});
+
+      Result.ToString().ShouldBe("http://localhost/test#beforeinjected1after");
+    }
     [Test]
     public void uris_with_names_are_not_selected_by_default()
     {
