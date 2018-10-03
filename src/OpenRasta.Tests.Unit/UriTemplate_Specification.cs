@@ -50,7 +50,7 @@ namespace UriTemplate_Specification
     }
 
     [Test]
-    public void a_query_string_with_seperator_is_injected()
+    public void a_query_string_with_separator_is_injected()
     {
       BindingUriByName("/test?first={first}&?second={second}", new {first = "1", second = "2"})
         .ShouldAllBe(item => item == "http://localhost/test?first=1&second=2");
@@ -190,6 +190,31 @@ namespace UriTemplate_Specification
     }
   }
 
+
+  [TestFixture]
+  public class when_using_fragment_identifiers : uritemplate_context
+  {
+    [Test]
+    public void BindingReturnsGeneratedUri()
+    {
+      var baseUri = new Uri("http://localhost");
+      var variableValues = new NameValueCollection().With("state", "washington").With("City",
+        "seattle");
+
+      var bindByName = new UriTemplate("weather#{state}/{city}/").BindByName(baseUri, variableValues).ToString();
+      bindByName
+        .ShouldBe("http://localhost/weather#washington/seattle/");
+
+      bindByName = new UriTemplate("weather/#{state}/{city}/").BindByName(baseUri, variableValues).ToString();
+      bindByName
+        .ShouldBe("http://localhost/weather/#washington/seattle/");
+
+      bindByName = new UriTemplate("weather/#/{state}/{city}/").BindByName(baseUri, variableValues).ToString();
+      bindByName
+        .ShouldBe("http://localhost/weather/#/washington/seattle/");
+    }
+  }
+
   [TestFixture]
   public class when_binding_by_name : uritemplate_context
   {
@@ -244,7 +269,7 @@ namespace UriTemplate_Specification
 
       match.ShouldNotBeNull();
 
-      match.QueryStringVariables["queryValue"].ShouldBe( "search");
+      match.QueryStringVariables["queryValue"].ShouldBe("search");
     }
 
     [Test]
@@ -263,6 +288,7 @@ namespace UriTemplate_Specification
       template.QueryStringVariableNames.Contains("test").ShouldBeTrue();
       template.QueryStringVariableNames.Contains("test2").ShouldBeTrue();
     }
+
     [Test]
     public void query_string_segments_are_filled()
     {
@@ -271,17 +297,17 @@ namespace UriTemplate_Specification
       query1.Key.ShouldBe("query1");
       query1.Value.ShouldBe("test");
       query1.Type.ShouldBe(UriTemplate.SegmentType.Variable);
-      
+
       var query2 = template.QueryString.ElementAt(1);
       query2.Key.ShouldBe("query2");
       query2.Value.ShouldBe("test2");
       query2.Type.ShouldBe(UriTemplate.SegmentType.Variable);
-      
+
       var query3 = template.QueryString.ElementAt(2);
       query3.Key.ShouldBe("query3");
       query3.Value.ShouldBe("val");
       query3.Type.ShouldBe(UriTemplate.SegmentType.Literal);
-      
+
       template.QueryStringVariableNames.Contains("test").ShouldBeTrue();
       template.QueryStringVariableNames.Contains("test2").ShouldBeTrue();
     }
@@ -323,9 +349,9 @@ namespace UriTemplate_Specification
       UriTemplateMatch match =
         table.Match(new Uri("http://localhost"), new Uri("http://localhost/test?q=&p=1&s=10"));
       match.ShouldNotBeNull();
-      match.QueryStringVariables["searchTerm"].ShouldBe( string.Empty);
-      match.QueryStringVariables["pageNumber"].ShouldBe( "1");
-      match.QueryStringVariables["pageSize"].ShouldBe( "10");
+      match.QueryStringVariables["searchTerm"].ShouldBe(string.Empty);
+      match.QueryStringVariables["pageNumber"].ShouldBe("1");
+      match.QueryStringVariables["pageSize"].ShouldBe("10");
     }
 
     [Test]
@@ -354,7 +380,7 @@ namespace UriTemplate_Specification
 
       match.ShouldNotBeNull();
       match.QueryStringVariables.Count.ShouldBe(1);
-      match.QueryStringVariables["PAGE"].ShouldBe( "2");
+      match.QueryStringVariables["PAGE"].ShouldBe("2");
     }
 
     [Test]

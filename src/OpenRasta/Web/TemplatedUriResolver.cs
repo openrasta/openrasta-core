@@ -179,7 +179,9 @@ namespace OpenRasta.Web
           where CompatibleKeys(resourceKey, descriptor.ResourceKey)
           where UriNameMatches(uriName, descriptor.UriName)
           let templateParameters =
-              template.Key.PathSegmentVariableNames.Concat(template.Key.QueryStringVariableNames).ToList()
+              template.Key.PathSegmentVariableNames
+                .Concat(template.Key.QueryStringVariableNames)
+                .Concat(template.Key.FragmentVariableNames).ToList()
           let hasKeys = keyValues != null && keyValues.HasKeys()
           where (templateParameters.Count == 0) ||
                 (templateParameters.Count > 0

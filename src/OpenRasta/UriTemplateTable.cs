@@ -57,6 +57,8 @@ namespace OpenRasta
       var matches = new Collection<UriTemplateMatch>();
       foreach (var template in KeyValuePairs)
       {
+        // TODO: discard uri templates with fragment identifiers until tests are implemented
+        if (template.Key.Fragment.Any()) continue;
         UriTemplateMatch potentialMatch = template.Key.Match(BaseAddress, uri);
 
         if (potentialMatch != null)

@@ -21,16 +21,81 @@ namespace OpenRasta
       _segments = ParsePathSegments(_templateUri);
       _pathSegmentVariables = ParsePathSegments(_segments);
       QueryString = ParseQueryStringSegments(_templateUri.Query).ToList();
+      Fragment = ParseFragment(_templateUri.Fragment).ToList();
       _queryStringSegments = ParseQueryStringSegments(QueryString);
 
       PathSegmentVariableNames = new ReadOnlyCollection<string>(new List<string>(_pathSegmentVariables.Keys));
-      QueryStringVariableNames = new ReadOnlyCollection<string>(new List<string>(GetQueryStringVariableNames(_queryStringSegments)));
+      QueryStringVariableNames =
+        new ReadOnlyCollection<string>(new List<string>(GetQueryStringVariableNames(_queryStringSegments)));
+      FragmentVariableNames =
+        new ReadOnlyCollection<string>(Fragment.Where(f => f.Type == SegmentType.Variable).Select(f => f.Text).ToList());
+    }
+
+    public List<FragmentSegment> Fragment { get; set; }
+    const string LBRACE = "%7B";
+    const string RBRACE = "%7D";
+
+    IEnumerable<FragmentSegment> ParseFragment(string templateUriFragment)
+    {
+      if (templateUriFragment.Length == 0) yield break;
+      int openBraceFragmentPos = templateUriFragment.IndexOf(LBRACE, StringComparison.OrdinalIgnoreCase);
+      if (openBraceFragmentPos == -1)
+      {
+        yield return new FragmentSegment() {Text = templateUriFragment, Type = SegmentType.Literal};
+        yield break;
+      }
+
+      var pos = 0;
+      do
+      {
+        if (openBraceFragmentPos > pos)
+        {
+          yield return new FragmentSegment()
+          {
+            Text = templateUriFragment.Substring(pos, openBraceFragmentPos - pos),
+            Type = SegmentType.Literal
+          };
+          pos = openBraceFragmentPos;
+        }
+
+        var endBracePos =
+          templateUriFragment.IndexOf(RBRACE, openBraceFragmentPos + 1, StringComparison.OrdinalIgnoreCase);
+        if (endBracePos == -1)
+        {
+          yield return new FragmentSegment() {Text = templateUriFragment.Substring(openBraceFragmentPos)};
+          yield break;
+        }
+
+        var varNameLength = endBracePos - openBraceFragmentPos - LBRACE.Length;
+        if (varNameLength == 0)
+        {
+          yield return new FragmentSegment() {Text = LBRACE + RBRACE, Type = SegmentType.Literal};
+          continue;
+        }
+
+        yield return new FragmentSegment()
+        {
+          Type = SegmentType.Variable,
+          Text = templateUriFragment.Substring(openBraceFragmentPos + LBRACE.Length, varNameLength)
+        };
+        pos = endBracePos + RBRACE.Length;
+      } while ((openBraceFragmentPos =
+                 templateUriFragment.IndexOf(LBRACE, openBraceFragmentPos + 1, StringComparison.OrdinalIgnoreCase)) !=
+               -1);
+
+      if (pos < templateUriFragment.Length)
+        yield return new FragmentSegment
+        {
+          Text = templateUriFragment.Substring(pos),
+          Type = SegmentType.Literal
+        };
     }
 
     public IEnumerable<QuerySegment> QueryString { get; }
 
     public ReadOnlyCollection<string> PathSegmentVariableNames { get; }
     public ReadOnlyCollection<string> QueryStringVariableNames { get; }
+    public ReadOnlyCollection<string> FragmentVariableNames { get; set; }
 
     IEnumerable<string> GetQueryStringVariableNames(Dictionary<string, QuerySegment> valueCollection)
     {
@@ -54,8 +119,8 @@ namespace OpenRasta
     static Dictionary<string, QuerySegment> ParseQueryStringSegments(IEnumerable<QuerySegment> queryString)
     {
       return queryString
-          .GroupBy(qs => qs.Key, StringComparer.OrdinalIgnoreCase)
-          .ToDictionary(qs => qs.Key, qs => qs.First(), StringComparer.OrdinalIgnoreCase);
+        .GroupBy(qs => qs.Key, StringComparer.OrdinalIgnoreCase)
+        .ToDictionary(qs => qs.Key, qs => qs.First(), StringComparer.OrdinalIgnoreCase);
     }
 
     public static IEnumerable<QuerySegment> ParseQueryStringSegments(string query)
@@ -75,22 +140,23 @@ namespace OpenRasta
           var key = unescapedString.Substring(variableStart, equalSignPosition - variableStart);
           var val = unescapedString.Substring(equalSignPosition + 1);
 
-          
+
           var valAsVariable = GetVariableName(val);
           var segment = new QuerySegment
           {
-              Key = key,
-              Value = valAsVariable ?? val,
-              Type = valAsVariable == null ? SegmentType.Literal : SegmentType.Variable
+            Key = key,
+            Value = valAsVariable ?? val,
+            Type = valAsVariable == null ? SegmentType.Literal : SegmentType.Variable
           };
           yield return (segment);
         }
         else
         {
-          yield return new QuerySegment { Key = unescapedString, Value = null, Type = SegmentType.Literal };
+          yield return new QuerySegment {Key = unescapedString, Value = null, Type = SegmentType.Literal};
         }
       }
     }
+
     static List<UrlSegment> ParsePathSegments(Uri templateUri)
     {
       var pasedSegments = new List<UrlSegment>();
@@ -105,11 +171,20 @@ namespace OpenRasta
         if (sanitizedSegment == string.Empty) // this is the '/' returned by Uri which we don't care much for
           continue;
         if ((variableName = GetVariableName(unescapedSegment)) != null)
-          parsedSegment = new UrlSegment { Text = variableName, OriginalText = sanitizedSegment, Type = SegmentType.Variable, TrailingSeparator = trailingSeparator };
+          parsedSegment = new UrlSegment
+          {
+            Text = variableName, OriginalText = sanitizedSegment, Type = SegmentType.Variable,
+            TrailingSeparator = trailingSeparator
+          };
         else if (string.Compare(unescapedSegment, WILDCARD_TEXT, StringComparison.OrdinalIgnoreCase) == 0)
-          parsedSegment = new UrlSegment { Text = WILDCARD_TEXT, OriginalText = sanitizedSegment, Type = SegmentType.Wildcard };
+          parsedSegment = new UrlSegment
+            {Text = WILDCARD_TEXT, OriginalText = sanitizedSegment, Type = SegmentType.Wildcard};
         else
-          parsedSegment = new UrlSegment { Text = sanitizedSegment, OriginalText = sanitizedSegment, Type = SegmentType.Literal, TrailingSeparator = trailingSeparator };
+          parsedSegment = new UrlSegment
+          {
+            Text = sanitizedSegment, OriginalText = sanitizedSegment, Type = SegmentType.Literal,
+            TrailingSeparator = trailingSeparator
+          };
 
         pasedSegments.Add(parsedSegment);
       }
@@ -167,6 +242,14 @@ namespace OpenRasta
         path.Remove(path.Length - 1, 1);
       }
 
+      foreach (var frag in Fragment)
+      {
+        if (frag.Type == SegmentType.Literal)
+          path.Append(frag.Text);
+        else if (frag.Type == SegmentType.Variable)
+          path.Append(parameters[frag.Text.ToUpperInvariant()]);
+      }
+
       return new Uri(baseAddress, path.ToString());
     }
 
@@ -174,12 +257,12 @@ namespace OpenRasta
     {
       var builder = new UriBuilder(address)
       {
-          Fragment = null,
-          Query = null
+        Fragment = null,
+        Query = null
       };
       if (!builder.Path.EndsWith("/"))
         builder.Path += "/";
-        return builder.Uri;
+      return builder.Uri;
     }
 
     public Uri BindByPosition(Uri baseAddress, params string[] values)
@@ -263,13 +346,14 @@ namespace OpenRasta
       {
         var segment = candidateSegments[i];
 
-        var candidateSegment = new { Text = segment, ProposedSegment = _segments[i] };
+        var candidateSegment = new {Text = segment, ProposedSegment = _segments[i]};
 
         candidateSegments[i] = candidateSegment.Text;
 
         switch (candidateSegment.ProposedSegment.Type)
         {
-          case SegmentType.Literal when string.Compare(candidateSegment.ProposedSegment.Text, segment, StringComparison.OrdinalIgnoreCase) != 0:
+          case SegmentType.Literal when string.Compare(candidateSegment.ProposedSegment.Text, segment,
+                                          StringComparison.OrdinalIgnoreCase) != 0:
             return null;
           case SegmentType.Wildcard:
             throw new NotImplementedException("Not finished wildcards implementation yet");
@@ -282,20 +366,20 @@ namespace OpenRasta
       var queryStringVariables = new NameValueCollection();
       var uriQuery = ParseQueryStringSegments(uri.Query).ToList();
       var requestUriQuerySegments = ParseQueryStringSegments(uriQuery);
-      
+
       var queryParams = new Collection<string>();
 
       foreach (var templateQuerySegment in _queryStringSegments.Values)
       {
         var requestUriHasQueryStringKey = requestUriQuerySegments.ContainsKey(templateQuerySegment.Key);
-        
+
         switch (templateQuerySegment.Type)
         {
           case SegmentType.Literal:
-            if (requestUriHasQueryStringKey == false || 
+            if (requestUriHasQueryStringKey == false ||
                 QuerySegmentValueIsDifferent(requestUriQuerySegments, templateQuerySegment))
               return null;
-            
+
             break;
           case SegmentType.Variable when requestUriHasQueryStringKey:
             queryStringVariables[templateQuerySegment.Value] = requestUriQuerySegments[templateQuerySegment.Key].Value;
@@ -307,20 +391,21 @@ namespace OpenRasta
 
       return new UriTemplateMatch
       {
-          BaseUri = baseAddress,
-          Data = 0,
-          PathSegmentVariables = boundVariables,
-          QueryString = uriQuery,
-          QueryParameters = queryParams,
-          QueryStringVariables = queryStringVariables,
-          RelativePathSegments = new Collection<string>(candidateSegments),
-          RequestUri = uri,
-          Template = this,
-          WildcardPathSegments = new Collection<string>()
+        BaseUri = baseAddress,
+        Data = 0,
+        PathSegmentVariables = boundVariables,
+        QueryString = uriQuery,
+        QueryParameters = queryParams,
+        QueryStringVariables = queryStringVariables,
+        RelativePathSegments = new Collection<string>(candidateSegments),
+        RequestUri = uri,
+        Template = this,
+        WildcardPathSegments = new Collection<string>()
       };
     }
 
-    static bool QuerySegmentValueIsDifferent(Dictionary<string, QuerySegment> requestUriQuerySegments, QuerySegment templateQuerySegment)
+    static bool QuerySegmentValueIsDifferent(Dictionary<string, QuerySegment> requestUriQuerySegments,
+      QuerySegment templateQuerySegment)
     {
       return requestUriQuerySegments[templateQuerySegment.Key].Value != templateQuerySegment.Value;
     }
@@ -351,23 +436,23 @@ namespace OpenRasta
       public string Key { get; set; }
       public string Value { get; set; }
       public SegmentType Type { get; set; }
+
       public override string ToString()
       {
         switch (Type)
-            {
-              case SegmentType.Wildcard:
-                return "*";
-                break;
-              case SegmentType.Variable:
-                return $"{Key}={{{Value}}}";
-                break;
-              case SegmentType.Literal:
-                return Value == null ? Key : $"{Key}={Value}";
-                break;
-              default:
-                throw new ArgumentOutOfRangeException();
-            }
-
+        {
+          case SegmentType.Wildcard:
+            return "*";
+            break;
+          case SegmentType.Variable:
+            return $"{Key}={{{Value}}}";
+            break;
+          case SegmentType.Literal:
+            return Value == null ? Key : $"{Key}={Value}";
+            break;
+          default:
+            throw new ArgumentOutOfRangeException();
+        }
       }
     }
 
@@ -376,6 +461,12 @@ namespace OpenRasta
       Wildcard,
       Variable,
       Literal
+    }
+
+    public class FragmentSegment
+    {
+      public SegmentType Type { get; set; }
+      public string Text { get; set; }
     }
 
     class UrlSegment

@@ -144,7 +144,7 @@ namespace OpenRasta.Plugins.ReverseProxy
       request.Headers.Add("forwarded", CurrentForwarded(context));
     }
 
-    static Uri GetProxyTargetUri(TemplatedUriMatch requestUriMatch, string target)
+    static Uri GetProxyTargetUri(TemplatedUriMatch requestUriMatch, string target, Action<UriBuilder> overrideUri = null)
     {
       var destinationBaseUri = new Uri(new Uri(target), "/");
       var targetTemplate = new UriTemplate(target);
@@ -180,6 +180,7 @@ namespace OpenRasta.Plugins.ReverseProxy
         targetUriBuilder.Query = query;
       }
 
+      overrideUri?.Invoke(targetUriBuilder);
       var proxyTargetUri = targetUriBuilder.Uri;
       return proxyTargetUri;
     }
