@@ -14,17 +14,21 @@ namespace OpenRasta.Plugins.ReverseProxy
   public class ReverseProxy
   {
     readonly Func<HttpClient> _httpClient;
+    readonly Action<ICommunicationContext, HttpRequestMessage> _onSend;
     readonly TimeSpan _timeout;
     readonly bool _convertForwardedHeaders;
     readonly string _viaIdentifier;
 
     public ReverseProxy(TimeSpan requestTimeout, bool convertForwardedHeaders, string viaIdentifier,
-      Func<HttpClient> clientFactory)
+      Func<HttpClient> clientFactory,
+      Action<ICommunicationContext, HttpRequestMessage> onSend)
     {
       _timeout = requestTimeout;
       _httpClient = clientFactory;
+      _onSend = onSend;
       _convertForwardedHeaders = convertForwardedHeaders;
       _viaIdentifier = viaIdentifier;
+      
     }
 
     public async Task<ReverseProxyResponse> Send(ICommunicationContext context, string target)
@@ -43,13 +47,14 @@ namespace OpenRasta.Plugins.ReverseProxy
       var viaIdentifier = PrepareViaHeader(context, requestMessage);
 
       var httpClient = _httpClient();
-      
+
       var cts = new CancellationTokenSource();
       cts.CancelAfter(_timeout);
       var timeoutToken = cts.Token;
 
       try
       {
+        _onSend?.Invoke(context, requestMessage);
         var responseMessage = await httpClient.SendAsync(
           requestMessage,
           HttpCompletionOption.ResponseHeadersRead,
@@ -117,9 +122,10 @@ namespace OpenRasta.Plugins.ReverseProxy
             appendParameter("proto", header.Value);
             continue;
           }
+
           if (header.Key.Equals("X-Forwarded-Base", StringComparison.OrdinalIgnoreCase))
           {
-            var baseVal = $"\"{(header.Value[0] != '/' ? "/" + header.Value : header.Value)}\""; 
+            var baseVal = $"\"{(header.Value[0] != '/' ? "/" + header.Value : header.Value)}\"";
             appendParameter("base", baseVal);
             continue;
           }
@@ -144,7 +150,8 @@ namespace OpenRasta.Plugins.ReverseProxy
       request.Headers.Add("forwarded", CurrentForwarded(context));
     }
 
-    static Uri GetProxyTargetUri(TemplatedUriMatch requestUriMatch, string target, Action<UriBuilder> overrideUri = null)
+    static Uri GetProxyTargetUri(TemplatedUriMatch requestUriMatch, string target,
+      Action<UriBuilder> overrideUri = null)
     {
       var destinationBaseUri = new Uri(new Uri(target), "/");
       var targetTemplate = new UriTemplate(target);

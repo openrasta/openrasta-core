@@ -42,7 +42,8 @@ namespace OpenRasta.Plugins.ReverseProxy
           options.Timeout,
           options.FrowardedHeaders.ConvertLegacyHeaders,
           options.Via.Pseudonym,
-          factory.GetClient
+          factory.GetClient,
+          options.OnSend
         )));
       }
       else
@@ -51,7 +52,9 @@ namespace OpenRasta.Plugins.ReverseProxy
           options.Timeout,
           options.FrowardedHeaders.ConvertLegacyHeaders,
           options.Via.Pseudonym,
-          options.HttpClient.Factory)));
+          options.HttpClient.Factory, 
+          options.OnSend
+        )));
       }
 
       var has = (IHas) uses;

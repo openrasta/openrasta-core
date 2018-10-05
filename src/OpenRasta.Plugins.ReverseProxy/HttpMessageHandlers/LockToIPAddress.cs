@@ -14,7 +14,9 @@ namespace OpenRasta.Plugins.ReverseProxy.HttpMessageHandlers
     IPAddress _ipAddress;
     string _rewrittenHost;
 
-    public LockToIPAddress(HttpMessageHandler inner, Func<string,Task<IPAddress>> dnsResolver = null) : base(inner)
+    public LockToIPAddress(
+      HttpMessageHandler inner, 
+      Func<string,Task<IPAddress>> dnsResolver = null) : base(inner)
     {
       _dnsResolver = dnsResolver ?? (async name => (await Dns.GetHostEntryAsync(name)).AddressList.First());
     }

@@ -2,6 +2,7 @@
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using OpenRasta.Web;
 
 namespace OpenRasta.Plugins.ReverseProxy
 {
@@ -14,6 +15,7 @@ namespace OpenRasta.Plugins.ReverseProxy
     public ForwardedHeaders FrowardedHeaders { get; } = new ForwardedHeaders();
     public TimeSpan Timeout { get; set; } = TimeSpan.FromSeconds(30);
     public HttpClientOptions HttpClient { get; set; } = new HttpClientOptions();
+    public Action<ICommunicationContext,HttpRequestMessage> OnSend { get; set; }
 
     public class ViaOptions
     {
