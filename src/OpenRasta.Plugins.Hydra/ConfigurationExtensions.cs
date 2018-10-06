@@ -81,6 +81,7 @@ namespace OpenRasta.Plugins.Hydra
 
       uses.Dependency(ctx => ctx.Singleton<FastUriGenerator>());
       uses.CustomDependency<IMetaModelHandler, JsonNetApiDocumentationMetaModelHandler>(DependencyLifetime.Transient);
+      uses.CustomDependency<IMetaModelHandler, ClassDefinitionHandler>(DependencyLifetime.Transient);
 
       return uses;
     }

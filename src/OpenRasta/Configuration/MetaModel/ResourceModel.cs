@@ -34,7 +34,8 @@ namespace OpenRasta.Configuration.MetaModel
     public Type ResourceType { get; set; }
 
     public IList<UriModel> Uris { get; }
-
+    
+    public ClassDefinition ClassDefinition { get; set; }
 
     public override string ToString()
     {
