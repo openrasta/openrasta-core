@@ -1,17 +1,35 @@
-﻿using System.Reflection;
+﻿using System.Collections.Generic;
 
 namespace OpenRasta.Configuration.MetaModel
 {
   public class ClassDefinition
   {
-    public ClassDefinition(PropertyInfo[] propertyInfos, string resourceTypeName)
+    public ClassDefinition(IEnumerable<ClassProperty> properties, string resourceTypeName, ResourceModel resourceRegistration)
     {
-      this.Properties = propertyInfos;
-      this.ResourceTypeName = resourceTypeName;
+      Properties = properties;
+      ResourceTypeName = resourceTypeName;
+      ResourceRegistration = resourceRegistration;
     }
 
-    public string ResourceTypeName { get; set; }
+    public string ResourceTypeName { get; }
 
-    public PropertyInfo[] Properties { get; set; }
+    public ResourceModel ResourceRegistration { get; }
+
+    public IEnumerable<ClassProperty> Properties { get; }
+  }
+
+  public class ClassProperty
+  {
+    public ClassProperty(string name) => Name = name;
+
+    public ClassProperty(string name, ResourceModel resourceModel)
+    {
+      Name = name;
+      ResourceModel = resourceModel;
+    }
+
+    public ResourceModel ResourceModel { get; set; }
+
+    public string Name { get; }
   }
 }

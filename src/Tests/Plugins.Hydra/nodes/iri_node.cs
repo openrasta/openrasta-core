@@ -12,6 +12,7 @@ using Tests.Plugins.Hydra.Examples;
 using Tests.Plugins.Hydra.Implementation;
 using Tests.Plugins.Hydra.Utf8Json;
 using Xunit;
+using Customer = Tests.Plugins.Hydra.Examples.Customer;
 
 namespace Tests.Plugins.Hydra.nodes
 {
@@ -36,6 +37,9 @@ namespace Tests.Plugins.Hydra.nodes
             .Vocabulary("https://schemas.example/schema#")
             .AtUri("/events/{id}")
             .HandledBy<EventHandler>();
+
+          ResourceSpace.Has.ResourcesOfType<Customer>();
+          
         },
         startup: new StartupProperties()
         {
