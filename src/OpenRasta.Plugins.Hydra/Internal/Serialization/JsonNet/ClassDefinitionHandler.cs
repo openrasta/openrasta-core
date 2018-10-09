@@ -40,9 +40,8 @@ namespace OpenRasta.Plugins.Hydra.Internal
            
            */
 
-          if (property.CustomAttributes.Any(x => x.AttributeType == typeof(JsonIgnoreAttribute) || x.AttributeType == typeof(IgnoreDataMemberAttribute)))
+          if (property.CustomAttributes.Any(x => x.AttributeType.Name == "JsonIgnoreAttribute" || x.AttributeType.Name == "IgnoreDataMemberAttribute"))
             continue;
-
 
           string propertyName = string.Empty;
 
