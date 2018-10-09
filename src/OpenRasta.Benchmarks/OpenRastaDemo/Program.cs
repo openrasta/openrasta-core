@@ -5,7 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using OpenRasta.Configuration;
-using OpenRasta.Hosting.AspNetCore;
+using OpenRastaDemo.Shared;
 
 namespace OpenRastaDemo
 {
@@ -15,15 +15,19 @@ namespace OpenRastaDemo
     {
       var json = File.ReadAllText(Path.Combine(Directory.GetCurrentDirectory(), "large.json"));
 
+      DemoJsonResponse.LargeJson = JsonConvert.DeserializeObject<IList<RootResponse>>(json);
+      DemoHydraResponse.LargeJson = JsonConvert.DeserializeObject<List<HydraRootResponse>>(json);
+
       var host = new WebHostBuilder()
         .UseKestrel()
         .ConfigureLogging((logging) =>
         {
           logging.AddConsole().SetMinimumLevel(LogLevel.Trace);
-          logging.AddDebug().SetMinimumLevel(LogLevel.Trace);;
+          logging.AddDebug().SetMinimumLevel(LogLevel.Trace);
         })
-        .Configure(builder => builder.UseOpenRasta(new HydraApi(true,json)))
         .UseContentRoot(Directory.GetCurrentDirectory())
+        .ConfigureServices(s => s.AddSingleton<IConfigurationSource>(new DemoConfigurationSource("http://localhost:5000/demoreverseproxy")))
+        .UseStartup<Startup>()
         .Build();
 
       host.Run();

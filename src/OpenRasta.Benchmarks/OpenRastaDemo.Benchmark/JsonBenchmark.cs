@@ -8,15 +8,15 @@ using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using OpenRasta.Configuration;
+using OpenRastaDemo.Shared;
 
 namespace OpenRastaDemo.Benchmark
 {
   [CoreJob]
   public class JsonBenchmark
   {
-    private TestServer server;
-
-    private HttpClient client;
+    HttpClient client;
+    TestServer server;
 
     [GlobalSetup]
     public void Setup()
@@ -25,19 +25,19 @@ namespace OpenRastaDemo.Benchmark
 
       DemoJsonResponse.LargeJson = JsonConvert.DeserializeObject<IList<RootResponse>>(json);
 
-      this.server = new TestServer(new WebHostBuilder()
-        .ConfigureServices(s => s.AddSingleton<IConfigurationSource>(new HydraApi(false,json)))
+      server = new TestServer(new WebHostBuilder()
+        .ConfigureServices(s => s.AddSingleton<IConfigurationSource>(new DemoConfigurationSource()))
         .UseStartup<Startup>()
       );
 
-      this.client = this.server.CreateClient();
-      this.client.DefaultRequestHeaders.Add("Accept", "application/json");
+      client = server.CreateClient();
+      client.DefaultRequestHeaders.Add("Accept", "application/json");
     }
 
     [Benchmark]
-    public async Task<HttpResponseMessage> GetMeSomeLittleJson()
-    {
-      return await this.client.GetAsync("/littlejson");
-    }
+    public async Task<HttpResponseMessage> GetMeSomeJson() => await client.GetAsync("/");
+
+    [Benchmark]
+    public async Task<HttpResponseMessage> GetMeSomeLittleJson() => await client.GetAsync("/littlejson");
   }
 }

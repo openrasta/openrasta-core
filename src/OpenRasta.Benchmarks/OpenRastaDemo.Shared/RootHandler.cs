@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace OpenRastaDemo
+namespace OpenRastaDemo.Shared
 {
   public class RootHandler
   {

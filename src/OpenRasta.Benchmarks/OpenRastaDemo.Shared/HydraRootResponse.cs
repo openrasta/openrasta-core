@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using OpenRasta.Plugins.Hydra.Schemas;
 
-namespace OpenRastaDemo
+namespace OpenRastaDemo.Shared
 {
   public class HydraRootResponse : JsonLd.INode
   {

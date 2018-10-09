@@ -1,4 +1,4 @@
-﻿namespace OpenRastaDemo
+﻿namespace OpenRastaDemo.Shared
 {
   public class Friend
   {

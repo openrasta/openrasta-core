@@ -3,7 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using OpenRasta.Configuration;
 using OpenRasta.Hosting.AspNetCore;
 
-namespace OpenRastaDemo
+namespace OpenRastaDemo.Shared
 {
   public class Startup
   {
