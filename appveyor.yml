@@ -19,6 +19,7 @@ install:
 
       $build = $env:APPVEYOR_BUILD_NUMBER
       $branch = $env:APPVEYOR_REPO_BRANCH
+      $isPullRequest = $False
 
       if ($env:APPVEYOR_REPO_TAG -eq "true") {
           echo "Version: Using git tag $env:APPVEYOR_REPO_TAG_NAME"
@@ -47,6 +48,7 @@ install:
                 
           if ($env:APPVEYOR_PULL_REQUEST_NUMBER) {
               $semver += "+pr.$env:APPVEYOR_PULL_REQUEST_NUMBER"
+              $isPullRequest = $True
           }
           else {
               $semver += "+$branch"
@@ -62,7 +64,7 @@ install:
   - gem install chandler --no-ri --no-rdoc
   - ps: set-content ~/.netrc "machine api.github.com login $env:github_username password $env:github_password" -encoding ascii
   - ps: cp ~/.netrc ~/_netrc
-  - ps: if ($branch -eq "master") {chandler push }
+  - ps: if ($branch -eq "master" -And $isPullRequest -eq $False) {chandler push }
 
 before_build:
   - ps: dotnet restore
