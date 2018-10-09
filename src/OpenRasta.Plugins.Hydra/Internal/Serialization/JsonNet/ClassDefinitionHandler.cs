@@ -41,47 +41,36 @@ namespace OpenRasta.Plugins.Hydra.Internal
            */
 
           if (property.CustomAttributes.Any(x => x.AttributeType == typeof(JsonIgnoreAttribute) || x.AttributeType == typeof(IgnoreDataMemberAttribute)))
-          {
             continue;
-          }
+
 
           string propertyName = string.Empty;
 
-          if (property.CustomAttributes.Any(x => x.AttributeType == typeof(JsonPropertyAttribute)))
-          {
-            propertyName = property.CustomAttributes.Where(x => x.AttributeType == typeof(JsonPropertyAttribute)).Select(x => x.ConstructorArguments.FirstOrDefault().Value.ToString())
+          if (property.CustomAttributes.Any(x => x.AttributeType.Name == "JsonPropertyAttribute"))
+            propertyName = property.CustomAttributes.Where(x => x.AttributeType.Name == "JsonPropertyAttribute").Select(x => x.ConstructorArguments.FirstOrDefault(a=>a.ArgumentType == typeof(string)).Value.ToString())
               .FirstOrDefault();
-          }
-          else if (property.CustomAttributes.Any(x => x.AttributeType == typeof(DataMemberAttribute)))
-          {
-            propertyName = property.CustomAttributes.Where(x => x.AttributeType == typeof(DataMemberAttribute)).SelectMany(x => x.NamedArguments).Where(c => c.MemberName == "Name")
+          else if (property.CustomAttributes.Any(x => x.AttributeType.Name == "DataMemberAttribute"))
+            propertyName = property.CustomAttributes.Where(x => x.AttributeType.Name == "DataMemberAttribute").SelectMany(x => x.NamedArguments).Where(c => c.MemberName == "Name")
               .Select(v => v.TypedValue.Value.ToString()).FirstOrDefault();
-          }
+
 
           if (string.IsNullOrWhiteSpace(propertyName))
-          {
             propertyName = MakeCamelCase(property.Name);
-          }
+
 
           //Should we explicitly check for Collection type (i.e. HydraCollection)
 
           Type propertyType = null;
 
           if (property.PropertyType.GetGenericArguments().Any())
-          {
             propertyType = property.PropertyType.GetGenericArguments()[0];
-          }
 
           propertyType = propertyType ?? property.PropertyType;
 
           if (repository.ResourceRegistrations.Any(x => x.ResourceType == propertyType))
-          {
-            classProperties.Add(new ClassProperty(propertyName, repository.ResourceRegistrations.FirstOrDefault(x => x.ResourceType == propertyType)));
-          }
+            classProperties.Add(new ClassProperty(propertyName, property.PropertyType, repository.ResourceRegistrations.FirstOrDefault(x => x.ResourceType == propertyType)));
           else
-          {
-            classProperties.Add(new ClassProperty(propertyName));
-          }
+            classProperties.Add(new ClassProperty(propertyName, property.PropertyType));
         }
 
         //We need to store the Vocabulary but if we pass that to ClassDefinition we leak Hydra into OR.Core so do we pass a Dictionary<string,object> to ClassDefinition for plugin specific properties?
