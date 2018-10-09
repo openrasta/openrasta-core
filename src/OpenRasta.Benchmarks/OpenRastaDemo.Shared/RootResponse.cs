@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace OpenRastaDemo
+namespace OpenRastaDemo.Shared
 {
   public class RootResponse
   {

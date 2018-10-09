@@ -2,7 +2,7 @@
 
 ## OpenRastaDemo
 
-This is a runnable application that returns JSON resources
+This is a runnable application that returns resources
 
 ## OpenRastaDemo.Benchmark
 
@@ -10,7 +10,7 @@ This is a benchmark app that benchmarks the same resources in the demo
 
 ### To run
 
-Build the OpenRastaDemo.Benchmark project in Release mode
+Build the OpenRastaDemo.Benchmark project in Release mode `dotnet build -c Release`
 
 Go to the bin/Release/netcoreapp2.1 folder
 
