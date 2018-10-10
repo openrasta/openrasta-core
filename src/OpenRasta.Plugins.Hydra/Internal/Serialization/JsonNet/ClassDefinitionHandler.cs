@@ -5,6 +5,7 @@ using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using OpenRasta.Configuration.MetaModel;
 using OpenRasta.Configuration.MetaModel.Handlers;
+using Tests.Plugins.Hydra.Utf8Json;
 
 namespace OpenRasta.Plugins.Hydra.Internal
 {
@@ -46,7 +47,8 @@ namespace OpenRasta.Plugins.Hydra.Internal
           string propertyName = string.Empty;
 
           if (property.CustomAttributes.Any(x => x.AttributeType.Name == "JsonPropertyAttribute"))
-            propertyName = property.CustomAttributes.Where(x => x.AttributeType.Name == "JsonPropertyAttribute").Select(x => x.ConstructorArguments.FirstOrDefault(a=>a.ArgumentType == typeof(string)).Value.ToString())
+            propertyName = property.CustomAttributes.Where(x => x.AttributeType.Name == "JsonPropertyAttribute")
+              .Select(x => x.ConstructorArguments.FirstOrDefault(a => a.ArgumentType == typeof(string)).Value.ToString())
               .FirstOrDefault();
           else if (property.CustomAttributes.Any(x => x.AttributeType.Name == "DataMemberAttribute"))
             propertyName = property.CustomAttributes.Where(x => x.AttributeType.Name == "DataMemberAttribute").SelectMany(x => x.NamedArguments).Where(c => c.MemberName == "Name")
@@ -66,10 +68,19 @@ namespace OpenRasta.Plugins.Hydra.Internal
 
           propertyType = propertyType ?? property.PropertyType;
 
-          if (repository.ResourceRegistrations.Any(x => x.ResourceType == propertyType))
-            classProperties.Add(new ClassProperty(propertyName, property.PropertyType, repository.ResourceRegistrations.FirstOrDefault(x => x.ResourceType == propertyType)));
-          else
-            classProperties.Add(new ClassProperty(propertyName, property.PropertyType));
+          var inheritanceTree = propertyType.GetInheritanceHierarchy();
+          var models = new List<ResourceModel>(); //Might want to use SortedList just be sure but should be ok here
+
+          foreach (var type in inheritanceTree)
+          {
+            var result = repository.ResourceRegistrations.FirstOrDefault(x => x.ResourceType == type);
+            if (result != null)
+            {
+              models.Add(result);
+            }
+          }
+
+          classProperties.Add(new ClassProperty(propertyName, property.PropertyType, models, propertyType.GetRange()));
         }
 
         //We need to store the Vocabulary but if we pass that to ClassDefinition we leak Hydra into OR.Core so do we pass a Dictionary<string,object> to ClassDefinition for plugin specific properties?

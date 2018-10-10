@@ -77,7 +77,7 @@ namespace Tests.Plugins.Hydra.Utf8Json
           $"Detected recursion, already processing {resourceType?.Name}: {string.Join("->", recursionDefender.Select(m => m.ResourceType?.Name).Where(n => n != null))}");
 
       recursionDefender.Push(model);
-      
+
       var type = GetTypeName(models, model);
       var uri = GetUri(resource, uriResolver);
 
@@ -370,6 +370,41 @@ namespace Tests.Plugins.Hydra.Utf8Json
       writer.WriteString(value);
       var bytes = writer.ToUtf8ByteArray();
       return JsonWriterMethods.WriteRaw(jsonWriter, bytes);
+    }
+
+    public static IEnumerable<Type> GetInheritanceHierarchy(this Type type)
+    {
+      for (var current = type; current != null; current = current.BaseType)
+      {
+        yield return current;
+      }
+    }
+
+    public static string GetRange(this Type type)
+    {
+      switch (type.Name)
+      {
+        case nameof(Int32):
+          return "xs:int";
+        
+        case nameof(String):
+          return "xs:string";
+        
+        case nameof(Boolean):
+          return "xs:boolean";
+        
+        case nameof(DateTime):
+          return "xs:datetime";
+        
+        case nameof(Decimal):
+          return "xs:decimal";
+        
+        case nameof(Double):
+          return "xs:double";
+        
+        case nameof(Uri):
+          return "xs:anyURI";
+      }
     }
   }
 }
