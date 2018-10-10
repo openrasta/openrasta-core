@@ -21,23 +21,20 @@ namespace OpenRasta.Configuration.MetaModel
 
   public class ClassProperty
   {
-    public ClassProperty(string name, Type propertyType)
+    public ClassProperty(string name, Type propertyType, IEnumerable<ResourceModel> resourceModels, string range)
     {
       Name = name;
       PropertyType = propertyType;
-    }
-
-    public ClassProperty(string name, Type propertyType, ResourceModel resourceModel)
-    {
-      Name = name;
-      PropertyType = propertyType;
-      ResourceModel = resourceModel;
+      ResourceModels = resourceModels;
+      Range = range;
     }
 
     public Type PropertyType { get; set; }
 
-    public ResourceModel ResourceModel { get; set; }
+    public IEnumerable<ResourceModel> ResourceModels { get; set; }
 
     public string Name { get; }
+
+    public string Range { get; }
   }
 }
