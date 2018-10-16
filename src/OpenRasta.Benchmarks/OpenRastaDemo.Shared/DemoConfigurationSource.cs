@@ -31,8 +31,7 @@ namespace OpenRastaDemo.Shared
         .Named("root")
         .HandledBy<RootHandler>()
         .TranscodedBy<NewtonsoftJsonCodec>()
-        .ForMediaType("application/json")
-        ;
+        .ForMediaType("application/json");
 
       ResourceSpace.Has
         .ResourcesOfType<RootResponse>()
@@ -40,8 +39,7 @@ namespace OpenRastaDemo.Shared
         .Named("littlejson")
         .HandledBy<LittleJsonHandler>()
         .TranscodedBy<NewtonsoftJsonCodec>()
-        .ForMediaType("application/json")
-        ;
+        .ForMediaType("application/json");
 
       ResourceSpace.Has
         .ResourcesOfType<List<HydraRootResponse>>()
