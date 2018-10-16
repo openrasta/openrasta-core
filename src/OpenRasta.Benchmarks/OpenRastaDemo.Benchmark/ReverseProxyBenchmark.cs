@@ -33,6 +33,5 @@ namespace OpenRastaDemo.Benchmark
 
     [Benchmark]
     public async Task<HttpResponseMessage> GetMeSomeProxy() => await client.GetAsync("/reverseproxy");
-
   }
 }
