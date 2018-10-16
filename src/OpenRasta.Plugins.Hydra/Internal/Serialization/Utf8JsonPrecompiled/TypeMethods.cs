@@ -385,25 +385,25 @@ namespace Tests.Plugins.Hydra.Utf8Json
       switch (type.Name)
       {
         case nameof(Int32):
-          return "xs:int";
+          return "xsd:int";
         
         case nameof(String):
-          return "xs:string";
+          return "xsd:string";
         
         case nameof(Boolean):
-          return "xs:boolean";
+          return "xsd:boolean";
         
         case nameof(DateTime):
-          return "xs:datetime";
+          return "xsd:datetime";
         
         case nameof(Decimal):
-          return "xs:decimal";
+          return "xsd:decimal";
         
         case nameof(Double):
-          return "xs:double";
+          return "xsd:double";
         
         case nameof(Uri):
-          return "xs:anyURI";
+          return "xsd:anyURI";
       }
     }
   }
