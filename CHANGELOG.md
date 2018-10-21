@@ -31,6 +31,8 @@ OpenRasta adheres to [Semantic Versioning](http://semver.org/).
    so .AtUri(r=>$"/resource/{r.Id}") just works.
  - A new package, `OpenRasta.Plugins.ReverseProxy`, allows you to, well, reverse
    proxy other resoures, even those that weren't, god forbid, using OpenRasta.
+ - Using the ASP.NET Core `UseOpenRasta()` extension will now check and add `IHttpAuthenticationFeature` to the pipeline.  
+   The user no longer has to do this themselves as part of their pipeline.
 
 ### Changed
 
