@@ -5,7 +5,6 @@ using OpenRasta.Codecs.Newtonsoft.Json;
 using OpenRasta.Configuration;
 using OpenRasta.DI;
 using OpenRasta.Pipeline.Contributors;
-using OpenRasta.Web;
 
 namespace Tests.Infrastructure
 {
@@ -35,14 +34,5 @@ namespace Tests.Infrastructure
         .AtUri("/authedtasks")
         .HandledBy<AuthedUserHandler>();
     }
-  }
-
-  public class TaskApiHealthHandler
-  {
-    public void GetSilent()
-    {
-    }
-
-    public OperationResult.OK GetNoContent() => new OperationResult.OK();
   }
 }
