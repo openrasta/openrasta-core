@@ -14,8 +14,8 @@ done for code coming in:
  - [ ] On top of HEAD, unless it's a bugfix on a previous version
  - [ ] VERSION file updated if not creating a pull-request on top of `master`
 
-If those are needed, and you haven't and can't, we thank you enromously for your
-contirbution, and we'll add those before merging the pull request.
+If those are needed, and you haven't and can't, we thank you enormously for your
+contribution, and we'll add those before merging the pull request.
 
 Thanks!
 
