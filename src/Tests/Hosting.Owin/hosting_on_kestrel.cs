@@ -8,7 +8,6 @@ using Shouldly;
 using Tests.Infrastructure;
 using Xunit;
 
-
 namespace Tests.Hosting.Owin
 {
 #if NETCOREAPP2_0
