@@ -12,7 +12,7 @@ namespace OpenRasta.Plugins.ReverseProxy
     {
     }
     public ViaOptions Via { get; } = new ViaOptions();
-    public ForwardedHeaders FrowardedHeaders { get; } = new ForwardedHeaders();
+    public ForwardedHeaderOptions ForwardedHeaders { get; } = new ForwardedHeaderOptions();
     public TimeSpan Timeout { get; set; } = TimeSpan.FromSeconds(30);
     public HttpClientOptions HttpClient { get; set; } = new HttpClientOptions();
     public Action<ICommunicationContext,HttpRequestMessage> OnSend { get; set; }
@@ -21,7 +21,7 @@ namespace OpenRasta.Plugins.ReverseProxy
     {
       public string Pseudonym { get; set; }
     }
-    public class ForwardedHeaders
+    public class ForwardedHeaderOptions
     {
       public bool ConvertLegacyHeaders { get; set; }
       public bool RunAsForwardedHost { get; set; }

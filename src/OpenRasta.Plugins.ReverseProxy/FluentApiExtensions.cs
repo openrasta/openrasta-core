@@ -40,7 +40,7 @@ namespace OpenRasta.Plugins.ReverseProxy
 
         uses.Dependency(d => d.Singleton(() => new ReverseProxy(
           options.Timeout,
-          options.FrowardedHeaders.ConvertLegacyHeaders,
+          options.ForwardedHeaders.ConvertLegacyHeaders,
           options.Via.Pseudonym,
           factory.GetClient,
           options.OnSend
@@ -50,7 +50,7 @@ namespace OpenRasta.Plugins.ReverseProxy
       {
         uses.Dependency(d => d.Singleton(() => new ReverseProxy(
           options.Timeout,
-          options.FrowardedHeaders.ConvertLegacyHeaders,
+          options.ForwardedHeaders.ConvertLegacyHeaders,
           options.Via.Pseudonym,
           options.HttpClient.Factory, 
           options.OnSend
@@ -63,7 +63,7 @@ namespace OpenRasta.Plugins.ReverseProxy
         .TranscodedBy<ReverseProxyResponseCodec>()
         .ForMediaType("*/*");
 
-      if (options.FrowardedHeaders.RunAsForwardedHost)
+      if (options.ForwardedHeaders.RunAsForwardedHost)
         uses.PipelineContributor<RewriteAppBaseUsingForwardedHeaders>();
 
       return uses;

@@ -15,7 +15,7 @@ namespace Tests.Plugins.ReverseProxy.forwarded_headers
         .ToServer(
           "/base/proxied",
           async ctx => $"{ctx.ApplicationBaseUri.ToString()}|{ctx.Request.Uri}",
-          options => options.FrowardedHeaders.RunAsForwardedHost = true,
+          options => options.ForwardedHeaders.RunAsForwardedHost = true,
           resourceRegistrationUri: "/proxied")
         .AddHeader("Forwarded", "host=openrasta.example;proto=https;base=\"/base\"")
 
@@ -31,7 +31,7 @@ namespace Tests.Plugins.ReverseProxy.forwarded_headers
       using (var response = await new ProxyServer()
         .FromServer("/proxy")
         .ToServer("/proxied", async ctx => ctx.ApplicationBaseUri.ToString(),
-          options => options.FrowardedHeaders.RunAsForwardedHost = true)
+          options => options.ForwardedHeaders.RunAsForwardedHost = true)
         .AddHeader("Forwarded", "host=openrasta.example;proto=https")
         .GetAsync("proxy"))
       {
@@ -45,7 +45,7 @@ namespace Tests.Plugins.ReverseProxy.forwarded_headers
       using (var response = await new ProxyServer()
         .FromServer("/proxy")
         .ToServer("/proxied", async ctx => ctx.ApplicationBaseUri.ToString(),
-          options => options.FrowardedHeaders.RunAsForwardedHost = true)
+          options => options.ForwardedHeaders.RunAsForwardedHost = true)
         .GetAsync("proxy"))
       {
         response.Content.ShouldBe("http://localhost/");
@@ -58,7 +58,7 @@ namespace Tests.Plugins.ReverseProxy.forwarded_headers
       using (var response = await new ProxyServer()
         .FromServer("/proxy")
         .ToServer("/proxied", async ctx => ctx.ApplicationBaseUri.ToString(),
-          options => options.FrowardedHeaders.RunAsForwardedHost = false)
+          options => options.ForwardedHeaders.RunAsForwardedHost = false)
         .AddHeader("Forwarded", "host=openrasta.example;proto=https")
         .GetAsync("proxy"))
       {

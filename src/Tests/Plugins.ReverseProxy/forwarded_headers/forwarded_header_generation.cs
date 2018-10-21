@@ -11,7 +11,7 @@ namespace Tests.Plugins.ReverseProxy.forwarded_headers
     public async Task legacy_is_rewritten()
     {
       using (var response = await new ProxyServer()
-        .FromServer("/proxy", options => options.FrowardedHeaders.ConvertLegacyHeaders = true)
+        .FromServer("/proxy", options => options.ForwardedHeaders.ConvertLegacyHeaders = true)
         .ToServer("/proxied",
           async ctx => ctx.Request.Headers["X-Forwarded-Host"] + "|" + ctx.Request.Headers["Forwarded"])
         .AddHeader("X-Forwarded-Host", "openrasta.example")
