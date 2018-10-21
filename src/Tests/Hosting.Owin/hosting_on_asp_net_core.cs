@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using OpenRasta.Hosting.AspNetCore;
 using Shouldly;
 using Tests.Infrastructure;
@@ -46,6 +46,18 @@ namespace Tests.Hosting.Owin
       var response = await client.GetAsync("ping-empty-content");
       response.StatusCode.ShouldBe(HttpStatusCode.OK);
       response.Content.Headers.ContentLength.ShouldBe(0);
+    }
+    
+    [Fact]
+    public async Task can_read_aspnet_core_user_in_openrasta()
+    {
+      //Header value is Foo:Bar
+      client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", "Rm9vOkJhcg==");
+
+      var response = await client.GetAsync("/authedtasks");
+      var content = await response.Content.ReadAsStringAsync();
+
+      content.ShouldBe("Foo");
     }
 
     public void Dispose()
