@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using OpenRasta.Codecs;
 using OpenRasta.Collections;
@@ -8,88 +9,107 @@ using OpenRasta.Web;
 
 namespace OpenRasta.OperationModel.CodecSelectors
 {
-    /// <summary>
-    /// Resolves a compatible codec for an operation, and filters out operations
-    /// that do not have a codec capable of processing the request.
-    /// </summary>
-    public class RequestCodecSelector : IOperationCodecSelector
+  /// <summary>
+  /// Resolves a compatible codec for an operation, and filters out operations
+  /// that do not have a codec capable of processing the request.
+  /// </summary>
+  public class RequestCodecSelector : IOperationCodecSelector
+  {
+    readonly ICodecRepository _codecRepository;
+    readonly IRequest _request;
+
+    public RequestCodecSelector(ICodecRepository codecRepository, IRequest request)
     {
-        readonly ICodecRepository _codecRepository;
-        readonly IRequest _request;
-
-        public RequestCodecSelector(ICodecRepository codecRepository, IRequest request)
-        {
-            _codecRepository = codecRepository;
-            _request = request;
-            Logger = NullLogger.Instance;
-        }
-
-        public ILogger Logger { get; set; }
-
-        bool HasBody
-        {
-          get { return _request.Entity.ContentLength > 0; }
-        }
-
-        public IEnumerable<IOperationAsync> Process(IEnumerable<IOperationAsync> operations)
-        {
-            if (HasBody)
-                return LogSelected(operations.Where(operation => operation.Inputs.AllReady()));
-
-            var requestMediaType = _request.Entity.ContentType ?? DetectMediaType();
-
-            var results = from operation in operations
-                          let requiredMembers = from member in operation.Inputs.Required()
-                                                where !member.IsReadyForAssignment
-                                                select member.Member
-                          let optionalMembers = from member in 
-                                                    operation.Inputs.Optional().Union(
-                                                    operation.Inputs.Required()
-                                                        .Where(x => x.IsReadyForAssignment))
-                                                where member.IsReadyForAssignment
-                                                select member.Member
-                          let hasMembersToFill = optionalMembers.Any() || requiredMembers.Any()
-                          let selectedCodec = hasMembersToFill
-                                                  ? _codecRepository.FindMediaTypeReader(
-                                                        requestMediaType,
-                                                        requiredMembers,
-                                                        optionalMembers)
-                                                  : null
-                          where !hasMembersToFill || selectedCodec != null
-                          select new
-                          {
-                              operation,
-                              codec = selectedCodec
-                          };
-
-            results.ForEach(x => x.operation.SetRequestCodec(x.codec));
-
-            return LogSelected(results.OrderByDescending(x=>x.codec).Select(x => x.operation));
-        }
-
-        MediaType DetectMediaType()
-        {
-            return MediaType.ApplicationOctetStream;
-        }
-
-        IEnumerable<IOperationAsync> LogSelected(IEnumerable<IOperationAsync> selectedOps)
-        {
-            foreach (var op in selectedOps)
-            {
-                if (op.GetRequestCodec() == null)
-                    Logger.WriteInfo("Operation {0} selected with {1} required members and {2} optional members, without request codec",
-                                     op,
-                                     op.Inputs.Required().Count(),
-                                     op.Inputs.Optional().Count());
-                else
-                    Logger.WriteInfo("Operation {0} selected with {1} required members and {2} optional members, with codec {3} with score {4}.",
-                                     op,
-                                     op.Inputs.Required().Count(),
-                                     op.Inputs.Optional().Count(),
-                                     op.GetRequestCodec().CodecRegistration.CodecType.Name,
-                                     op.GetRequestCodec().Score);
-                yield return op;
-            }
-        }
+      _codecRepository = codecRepository;
+      _request = request;
+      Logger = NullLogger.Instance;
     }
+
+    public ILogger Logger { get; set; }
+
+    static readonly HashSet<string> _methodsWithoutBody = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+      { "TRACE" }; 
+    
+    bool HasBody
+    {
+      get
+      {
+        var isMethodWithoutBody = _methodsWithoutBody.Contains(_request.HttpMethod);
+        if (isMethodWithoutBody) return false;
+        
+        var hasChunkedEncodingHeader = _request.Headers.TryGetValue("transfer-encoding", out var val)
+                                && val.EndsWith("chunked");
+
+        if (_request.Entity.ContentLength.HasValue)
+        {
+          return _request.Entity.ContentLength > 0;
+        }
+
+        return hasChunkedEncodingHeader;
+      }
+    }
+
+    public IEnumerable<IOperationAsync> Process(IEnumerable<IOperationAsync> operations)
+    {
+      if (!HasBody)
+        return LogSelected(operations.Where(operation => operation.Inputs.AllReady()));
+
+      var requestMediaType = _request.Entity.ContentType ?? DetectMediaType();
+
+      var results = from operation in operations
+        let requiredMembers = from member in operation.Inputs.Required()
+          where !member.IsReadyForAssignment
+          select member.Member
+        let optionalMembers = from member in
+            operation.Inputs.Optional().Union(
+              operation.Inputs.Required()
+                .Where(x => x.IsReadyForAssignment))
+          where member.IsReadyForAssignment
+          select member.Member
+        let hasMembersToFill = optionalMembers.Any() || requiredMembers.Any()
+        let selectedCodec = hasMembersToFill
+          ? _codecRepository.FindMediaTypeReader(
+            requestMediaType,
+            requiredMembers,
+            optionalMembers)
+          : null
+        where !hasMembersToFill || selectedCodec != null
+        select new
+        {
+          operation,
+          codec = selectedCodec
+        };
+
+      results.ForEach(x => x.operation.SetRequestCodec(x.codec));
+
+      return LogSelected(results.OrderByDescending(x => x.codec).Select(x => x.operation));
+    }
+
+    MediaType DetectMediaType()
+    {
+      return MediaType.ApplicationOctetStream;
+    }
+
+    IEnumerable<IOperationAsync> LogSelected(IEnumerable<IOperationAsync> selectedOps)
+    {
+      foreach (var op in selectedOps)
+      {
+        if (op.GetRequestCodec() == null)
+          Logger.WriteInfo(
+            "Operation {0} selected with {1} required members and {2} optional members, without request codec",
+            op,
+            op.Inputs.Required().Count(),
+            op.Inputs.Optional().Count());
+        else
+          Logger.WriteInfo(
+            "Operation {0} selected with {1} required members and {2} optional members, with codec {3} with score {4}.",
+            op,
+            op.Inputs.Required().Count(),
+            op.Inputs.Optional().Count(),
+            op.GetRequestCodec().CodecRegistration.CodecType.Name,
+            op.GetRequestCodec().Score);
+        yield return op;
+      }
+    }
+  }
 }
