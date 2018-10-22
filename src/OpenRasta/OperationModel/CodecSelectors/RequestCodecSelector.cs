@@ -28,7 +28,7 @@ namespace OpenRasta.OperationModel.CodecSelectors
 
         public IEnumerable<IOperationAsync> Process(IEnumerable<IOperationAsync> operations)
         {
-            if (_request.Entity.ContentLength == 0)
+            if (_request.HttpMethod == "TRACE" || _request.Entity.Headers.ContainsKey("transfer-encoding") || _request.Entity.ContentLength == 0)
                 return LogSelected(operations.Where(operation => operation.Inputs.AllReady()));
 
             var requestMediaType = _request.Entity.ContentType ?? DetectMediaType();
