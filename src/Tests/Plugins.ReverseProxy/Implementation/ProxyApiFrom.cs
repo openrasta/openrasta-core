@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Net;
 using OpenRasta.Configuration;
 using OpenRasta.Pipeline;
 using OpenRasta.Plugins.ReverseProxy;
@@ -10,15 +12,21 @@ namespace Tests.Plugins.ReverseProxy.Implementation
     readonly string from;
     readonly string to;
     readonly ReverseProxyOptions options;
+    readonly string localIpAddress;
+    readonly List<IPAddress> networkIpAddresses;
 
     public ProxyApiFrom(
       string from,
       string to,
-      ReverseProxyOptions options)
+      ReverseProxyOptions options,
+      string localIpAddress = null,
+      List<IPAddress> networkIpAddresses = null)
     {
       this.from = from;
       this.to = to;
       this.options = options;
+      this.localIpAddress = localIpAddress;
+      this.networkIpAddresses = networkIpAddresses;
     }
 
     public void Configure()
@@ -30,6 +38,9 @@ namespace Tests.Plugins.ReverseProxy.Implementation
 
       ResourceSpace.Uses.ReverseProxy(options);
       ResourceSpace.Uses.PipelineContributor<WriteServerTimingHeader>();
+      
+      ResourceSpace.Uses.PipelineContributor(() => new SetLocalIpAddress(localIpAddress));
+      ResourceSpace.Uses.PipelineContributor(() => new SetNetworkIpAddresses(networkIpAddresses));
     }
   }
 
@@ -43,6 +54,56 @@ namespace Tests.Plugins.ReverseProxy.Implementation
           return PipelineContinuation.Continue;
         })
         .Before<KnownStages.IResponseCoding>();
+    }
+  }
+
+  public class SetLocalIpAddress : IPipelineContributor
+  {
+    readonly string localIpAddress;
+    
+    public SetLocalIpAddress(string localIpAddress)
+    {
+      this.localIpAddress = localIpAddress;
+    }
+    
+    public void Initialize(IPipeline pipelineRunner)
+    {
+      pipelineRunner.Notify(context =>
+        {
+          if (localIpAddress != null)
+          {
+            context.PipelineData["server.localIpAddress"] = localIpAddress;
+          }
+          else
+          {
+            context.PipelineData.Remove("server.localIpAddress");
+          }
+          return PipelineContinuation.Continue;
+        })
+        .Before<KnownStages.IAuthentication>();
+    }
+  }
+  
+  public class SetNetworkIpAddresses : IPipelineContributor
+  {
+    readonly List<IPAddress> networkIpAddresses;
+    
+    public SetNetworkIpAddresses(List<IPAddress> networkIpAddresses)
+    {
+      this.networkIpAddresses = networkIpAddresses;
+    }
+    
+    public void Initialize(IPipeline pipelineRunner)
+    {
+      pipelineRunner.Notify(context =>
+        {
+          if (networkIpAddresses != null)
+          {
+            context.PipelineData["network.ipAddresses"] = networkIpAddresses;
+          }
+          return PipelineContinuation.Continue;
+        })
+        .Before<KnownStages.IAuthentication>();
     }
   }
 }

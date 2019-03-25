@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
@@ -9,7 +10,6 @@ using OpenRasta.DI;
 using OpenRasta.Hosting.AspNetCore;
 using OpenRasta.Plugins.ReverseProxy;
 using OpenRasta.Web;
-using Tests.Hosting.Owin;
 using HttpMethod = System.Net.Http.HttpMethod;
 
 namespace Tests.Plugins.ReverseProxy.Implementation
@@ -18,6 +18,8 @@ namespace Tests.Plugins.ReverseProxy.Implementation
   {
     Func<int, string> _fromUri;
     Func<int, string> _toUri;
+    string _fromLocalIpAddress;
+    List<IPAddress> _fromNetworkIpAddresses;
 
     Action<ReverseProxyOptions> _fromOptions;
     Action<ReverseProxyOptions> _toOptions;
@@ -32,10 +34,15 @@ namespace Tests.Plugins.ReverseProxy.Implementation
       _serverFactory = CreateTestServers;
     }
 
-    public ProxyServer FromServer(string fromUri, Action<ReverseProxyOptions> options = null)
+    public ProxyServer FromServer(string fromUri, 
+                                  Action<ReverseProxyOptions> options = null, 
+                                  string localIpAddress = null,
+                                  List<IPAddress> networkIpAddresses = null)
     {
       _fromUri = port => fromUri;
       _fromOptions = options;
+      _fromLocalIpAddress = localIpAddress;
+      _fromNetworkIpAddresses = networkIpAddresses;
       return this;
     }
 
@@ -47,10 +54,10 @@ namespace Tests.Plugins.ReverseProxy.Implementation
     }
 
     public ProxyServer ToServer(
-      string toUri, 
+      string toUri,
       Func<ICommunicationContext, Task<string>> handler = null,
       Action<ReverseProxyOptions> options = null
-      ,string resourceRegistrationUri = null)
+      , string resourceRegistrationUri = null)
     {
       _toUri = port => toUri;
       _toOptions = options;
@@ -158,7 +165,7 @@ namespace Tests.Plugins.ReverseProxy.Implementation
     (IDisposable host, int port) CreateKestrelFromServer(int toPort)
     {
       var options = new ReverseProxyOptions();
-
+      
       _fromOptions?.Invoke(options);
       var host =
         new WebHostBuilder()
@@ -240,7 +247,7 @@ namespace Tests.Plugins.ReverseProxy.Implementation
           .Configure(app =>
           {
             app.UseOpenRasta(
-              new ProxyApiFrom(_fromUri(80), _toUri(80), options));
+              new ProxyApiFrom(_fromUri(80), _toUri(80), options, _fromLocalIpAddress, _fromNetworkIpAddresses));
           }));
     }
   }

@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using OpenRasta.Pipeline;
 using OpenRasta.Web;
 using HttpMethod = System.Net.Http.HttpMethod;
 
@@ -28,7 +30,6 @@ namespace OpenRasta.Plugins.ReverseProxy
       _onSend = onSend;
       _convertForwardedHeaders = convertForwardedHeaders;
       _viaIdentifier = viaIdentifier;
-      
     }
 
     public async Task<ReverseProxyResponse> Send(ICommunicationContext context, string target)
@@ -142,12 +143,18 @@ namespace OpenRasta.Plugins.ReverseProxy
           request.Headers.Add(header.Key, header.Value);
       }
 
+      var byIdentifier = GetByIdentifier(context.PipelineData);
+
       if (convertLegacyHeaders && legacyForward?.Length > 0)
       {
+        if (byIdentifier != null)
+        {
+          legacyForward.Append($";by={byIdentifier}");
+        }
         request.Headers.Add("forwarded", legacyForward.ToString());
       }
 
-      request.Headers.Add("forwarded", CurrentForwarded(context));
+      request.Headers.Add("forwarded", CurrentForwarded(context, byIdentifier));
     }
 
     static Uri GetProxyTargetUri(TemplatedUriMatch requestUriMatch, string target,
@@ -192,9 +199,30 @@ namespace OpenRasta.Plugins.ReverseProxy
       return proxyTargetUri;
     }
 
-    static string CurrentForwarded(ICommunicationContext context)
+    static string CurrentForwarded(ICommunicationContext context, string byIdentifier)
     {
-      return $"proto={context.Request.Uri.Scheme};host={context.Request.Uri.Host}";
+      var currentForwarded = $"proto={context.Request.Uri.Scheme};host={context.Request.Uri.Host}";
+      
+      if (byIdentifier != null)
+      {
+        currentForwarded = $"{currentForwarded};by={byIdentifier}";
+      }
+
+      return currentForwarded;
+    }
+
+    static string GetByIdentifier(PipelineData data)
+    {
+      if (data.ContainsKey("server.localIpAddress"))
+      {
+        return data["server.localIpAddress"].ToString();
+      }
+
+      var externalIpAddresses = ((List<IPAddress>) data["network.ipAddresses"])
+                                    .Where(a => !IPAddress.IsLoopback(a))
+                                    .ToList();
+        
+      return externalIpAddresses.Count == 1 ? externalIpAddresses.Single().ToString() : $"_{Environment.MachineName}";
     }
   }
 }

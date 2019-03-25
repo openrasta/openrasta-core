@@ -1,12 +1,6 @@
-﻿using System;
-using System.Net;
-using System.Net.Http;
-using System.Threading;
-using OpenRasta.Configuration;
+﻿using OpenRasta.Configuration;
 using OpenRasta.Configuration.Fluent;
 using OpenRasta.Configuration.Fluent.Extensions;
-using OpenRasta.Configuration.MetaModel;
-using OpenRasta.Configuration.MetaModel.Handlers;
 using OpenRasta.Plugins.ReverseProxy.HttpClientFactory;
 using OpenRasta.Plugins.ReverseProxy.HttpMessageHandlers;
 
@@ -27,6 +21,8 @@ namespace OpenRasta.Plugins.ReverseProxy
     {
       options = options ?? new ReverseProxyOptions();
 
+      uses.PipelineContributor<NetworkInterfaceContributor>();
+      
       if (options.HttpClient.RoundRobin.Enabled)
       {
         var handler = options.HttpClient.Handler;
@@ -37,7 +33,7 @@ namespace OpenRasta.Plugins.ReverseProxy
           options.HttpClient.RoundRobin.ClientCount,
           handler,
           options.HttpClient.RoundRobin.LeaseTime);
-
+        
         uses.Dependency(d => d.Singleton(() => new ReverseProxy(
           options.Timeout,
           options.ForwardedHeaders.ConvertLegacyHeaders,
