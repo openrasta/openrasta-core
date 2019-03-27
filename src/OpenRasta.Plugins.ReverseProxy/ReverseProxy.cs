@@ -147,10 +147,7 @@ namespace OpenRasta.Plugins.ReverseProxy
 
       if (convertLegacyHeaders && legacyForward?.Length > 0)
       {
-        if (byIdentifier != null)
-        {
-          legacyForward.Append($";by={byIdentifier}");
-        }
+        legacyForward.Append($";by={byIdentifier}");
         request.Headers.Add("forwarded", legacyForward.ToString());
       }
 
@@ -201,14 +198,7 @@ namespace OpenRasta.Plugins.ReverseProxy
 
     static string CurrentForwarded(ICommunicationContext context, string byIdentifier)
     {
-      var currentForwarded = $"proto={context.Request.Uri.Scheme};host={context.Request.Uri.Host}";
-      
-      if (byIdentifier != null)
-      {
-        currentForwarded = $"{currentForwarded};by={byIdentifier}";
-      }
-
-      return currentForwarded;
+      return $"proto={context.Request.Uri.Scheme};host={context.Request.Uri.Host};by={byIdentifier}";
     }
 
     static string GetByIdentifier(PipelineData data)
