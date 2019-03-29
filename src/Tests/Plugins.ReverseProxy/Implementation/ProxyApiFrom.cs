@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Net;
 using OpenRasta.Configuration;
 using OpenRasta.Pipeline;
 using OpenRasta.Plugins.ReverseProxy;
@@ -13,20 +11,17 @@ namespace Tests.Plugins.ReverseProxy.Implementation
     readonly string to;
     readonly ReverseProxyOptions options;
     readonly string localIpAddress;
-    readonly List<IPAddress> networkIpAddresses;
 
     public ProxyApiFrom(
       string from,
       string to,
       ReverseProxyOptions options,
-      string localIpAddress = null,
-      List<IPAddress> networkIpAddresses = null)
+      string localIpAddress = null)
     {
       this.from = from;
       this.to = to;
       this.options = options;
       this.localIpAddress = localIpAddress;
-      this.networkIpAddresses = networkIpAddresses;
     }
 
     public void Configure()
@@ -40,7 +35,6 @@ namespace Tests.Plugins.ReverseProxy.Implementation
       ResourceSpace.Uses.PipelineContributor<WriteServerTimingHeader>();
       
       ResourceSpace.Uses.PipelineContributor(() => new SetLocalIpAddress(localIpAddress));
-      ResourceSpace.Uses.PipelineContributor(() => new SetNetworkIpAddresses(networkIpAddresses));
     }
   }
 
@@ -77,29 +71,6 @@ namespace Tests.Plugins.ReverseProxy.Implementation
           else
           {
             context.PipelineData.Remove("server.localIpAddress");
-          }
-          return PipelineContinuation.Continue;
-        })
-        .Before<KnownStages.IAuthentication>();
-    }
-  }
-  
-  public class SetNetworkIpAddresses : IPipelineContributor
-  {
-    readonly List<IPAddress> networkIpAddresses;
-    
-    public SetNetworkIpAddresses(List<IPAddress> networkIpAddresses)
-    {
-      this.networkIpAddresses = networkIpAddresses;
-    }
-    
-    public void Initialize(IPipeline pipelineRunner)
-    {
-      pipelineRunner.Notify(context =>
-        {
-          if (networkIpAddresses != null)
-          {
-            context.PipelineData["network.ipAddresses"] = networkIpAddresses;
           }
           return PipelineContinuation.Continue;
         })

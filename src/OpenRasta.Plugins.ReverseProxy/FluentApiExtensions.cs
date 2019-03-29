@@ -20,8 +20,6 @@ namespace OpenRasta.Plugins.ReverseProxy
     public static T ReverseProxy<T>(this T uses, ReverseProxyOptions options = null) where T : IUses
     {
       options = options ?? new ReverseProxyOptions();
-
-      uses.PipelineContributor<NetworkInterfaceContributor>();
       
       if (options.HttpClient.RoundRobin.Enabled)
       {
@@ -39,7 +37,8 @@ namespace OpenRasta.Plugins.ReverseProxy
           options.ForwardedHeaders.ConvertLegacyHeaders,
           options.Via.Pseudonym,
           factory.GetClient,
-          options.OnSend
+          options.OnSend,
+          options.ForwardedHeaders.ByIdentifierOverride
         )));
       }
       else
@@ -49,7 +48,8 @@ namespace OpenRasta.Plugins.ReverseProxy
           options.ForwardedHeaders.ConvertLegacyHeaders,
           options.Via.Pseudonym,
           options.HttpClient.Factory, 
-          options.OnSend
+          options.OnSend,
+          options.ForwardedHeaders.ByIdentifierOverride
         )));
       }
 

@@ -19,7 +19,6 @@ namespace Tests.Plugins.ReverseProxy.Implementation
     Func<int, string> _fromUri;
     Func<int, string> _toUri;
     string _fromLocalIpAddress;
-    List<IPAddress> _fromNetworkIpAddresses;
 
     Action<ReverseProxyOptions> _fromOptions;
     Action<ReverseProxyOptions> _toOptions;
@@ -36,13 +35,11 @@ namespace Tests.Plugins.ReverseProxy.Implementation
 
     public ProxyServer FromServer(string fromUri, 
                                   Action<ReverseProxyOptions> options = null, 
-                                  string localIpAddress = null,
-                                  List<IPAddress> networkIpAddresses = null)
+                                  string localIpAddress = null)
     {
       _fromUri = port => fromUri;
       _fromOptions = options;
       _fromLocalIpAddress = localIpAddress;
-      _fromNetworkIpAddresses = networkIpAddresses;
       return this;
     }
 
@@ -247,7 +244,7 @@ namespace Tests.Plugins.ReverseProxy.Implementation
           .Configure(app =>
           {
             app.UseOpenRasta(
-              new ProxyApiFrom(_fromUri(80), _toUri(80), options, _fromLocalIpAddress, _fromNetworkIpAddresses));
+              new ProxyApiFrom(_fromUri(80), _toUri(80), options, _fromLocalIpAddress));
           }));
     }
   }

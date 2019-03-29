@@ -16,7 +16,7 @@ namespace Tests.Plugins.ReverseProxy.forwarded_headers
     public async Task legacy_is_rewritten()
     {
       using (var response = await new ProxyServer()
-        .FromServer("/proxy", options => options.ForwardedHeaders.ConvertLegacyHeaders = true, "10.0.0.1")
+        .FromServer("/proxy", options => options.ForwardedHeaders.ConvertLegacyHeaders = true)
         .ToServer("/proxied",
           async ctx => ctx.Request.Headers["X-Forwarded-Host"] + "|" + ctx.Request.Headers["Forwarded"])
         .AddHeader("X-Forwarded-Host", "openrasta.example")
@@ -25,7 +25,7 @@ namespace Tests.Plugins.ReverseProxy.forwarded_headers
         .GetAsync("proxy"))
 
       {
-        response.Content.ShouldBe("|host=openrasta.example;proto=https;base=\"/app\";by=10.0.0.1,proto=http;host=localhost;by=10.0.0.1");
+        response.Content.ShouldMatch("^\\|host=openrasta.example;proto=https;base=\\\"/app\\\";by=.*,proto=http;host=localhost;by=.*$");
       }
     }
 
@@ -39,7 +39,7 @@ namespace Tests.Plugins.ReverseProxy.forwarded_headers
         .AddHeader("Forwarded", "host=openrasta.example2")
         .GetAsync("proxy"))
       {
-        response.Content.ShouldStartWith("host=openrasta.example,host=openrasta.example2,proto=http;host=localhost;by=");
+        response.Content.ShouldMatch("^host=openrasta.example,host=openrasta.example2,proto=http;host=localhost;by=.*$");
       }
     }
     
@@ -57,31 +57,23 @@ namespace Tests.Plugins.ReverseProxy.forwarded_headers
     }
     
     [Fact]
-    public async Task by_is_set_to_network_interface_ip_when_no_owin_local_ip_is_present_and_only_one_external_interface_exists()
+    public async Task by_is_set_to_configured_override_when_it_is_present()
     {
       using (var response = await new ProxyServer()
-        .FromServer("/proxy", networkIpAddresses: new List<IPAddress>
-        {
-          IPAddress.Parse("127.0.0.1"),
-          IPAddress.Parse("10.0.0.2")
-        })
+        .FromServer("/proxy", options => options.ForwardedHeaders.ByIdentifierOverride = "foo", "10.0.10.1")
         .ToServer("/proxied", async ctx => ctx.Request.Headers["Forwarded"])
         .AddHeader("Forwarded", "host=openrasta.example")
         .GetAsync("proxy"))
       {
-        response.Content.ShouldBe("host=openrasta.example,proto=http;host=localhost;by=10.0.0.2");
+        response.Content.ShouldBe("host=openrasta.example,proto=http;host=localhost;by=foo");
       }
     }
     
     [Fact]
-    public async Task by_is_set_to_obfuscated_machine_name_when_no_owin_local_ip_is_present_and_more_than_one_external_interface_exists()
+    public async Task by_is_set_to_obfuscated_machine_name_when_no_owin_local_ip_is_present_and_no_override_configured()
     {
       using (var response = await new ProxyServer()
-        .FromServer("/proxy", networkIpAddresses: new List<IPAddress>
-        {
-          IPAddress.Parse("10.0.0.2"),
-          IPAddress.Parse("10.0.0.3")
-        })
+        .FromServer("/proxy")
         .ToServer("/proxied", async ctx => ctx.Request.Headers["Forwarded"])
         .AddHeader("Forwarded", "host=openrasta.example")
         .GetAsync("proxy"))
