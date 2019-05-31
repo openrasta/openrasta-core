@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,35 +13,20 @@ namespace OpenRasta.Codecs.Newtonsoft.Json
 {
   [MediaType("application/json")]
   [MediaType("*/*;q=0.5")]
+  [SupportedType(typeof(object))]
   public class NewtonsoftJsonCodec : IMediaTypeReaderAsync, IMediaTypeWriterAsync
   {
-    readonly ICommunicationContext _context;
-    JsonSerializerSettings _settings;
+    NewtonsoftCodecOptions _options = new NewtonsoftCodecOptions();
 
     object ICodec.Configuration
     {
-      get => _settings;
-      set => _settings = value as JsonSerializerSettings;
+      get => _options;
+      set => _options = value as NewtonsoftCodecOptions ?? throw new ArgumentNullException();
     }
-
-    public NewtonsoftJsonCodec(ICommunicationContext context)
-    {
-      _context = context;
-    }
-    static JsonSerializerSettings DefaultSettings = new JsonSerializerSettings
-    {
-        NullValueHandling = NullValueHandling.Ignore,
-        MissingMemberHandling = MissingMemberHandling.Ignore,
-        ContractResolver = new CamelCasePropertyNamesContractResolver(),
-        Converters =
-        {
-            new StringEnumConverter()
-        }
-    };
 
     public async Task WriteTo(object entity, IHttpEntity response, IEnumerable<string> codecParameters)
     {
-      var content = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(entity, _settings ?? DefaultSettings));
+      var content = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(entity, _options.Settings));
       response.ContentLength = content.Length;
       
       await response.Stream.WriteAsync(content, 0, content.Length);
@@ -49,7 +35,7 @@ namespace OpenRasta.Codecs.Newtonsoft.Json
     public async Task<object> ReadFrom(IHttpEntity request, IType destinationType, string destinationName)
     {
       var content = await new StreamReader(request.Stream, Encoding.UTF8).ReadToEndAsync();
-      return JsonConvert.DeserializeObject(content, _settings ?? DefaultSettings);
+      return JsonConvert.DeserializeObject(content,_options.Settings);
     }
   }
 }

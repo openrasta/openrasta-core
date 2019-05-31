@@ -40,7 +40,7 @@ namespace OpenRasta.Plugins.ReverseProxy
         }
         else if (proxyResponse.Error != null)
         {
-          var jsonCodec = new NewtonsoftJsonCodec(_context);
+          var jsonCodec = new NewtonsoftJsonCodec();
           await jsonCodec.WriteTo(proxyResponse.Error, response, new string[] { });
         }
       }
