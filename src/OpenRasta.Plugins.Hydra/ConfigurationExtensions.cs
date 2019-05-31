@@ -11,6 +11,7 @@ using OpenRasta.Plugins.Hydra.Internal;
 using OpenRasta.Plugins.Hydra.Internal.Serialization;
 using OpenRasta.Plugins.Hydra.Internal.Serialization.JsonNet;
 using OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8Json;
+using OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled;
 using OpenRasta.Plugins.Hydra.Schemas;
 using OpenRasta.Plugins.Hydra.Schemas.Hydra;
 using OpenRasta.Web;
@@ -142,6 +143,10 @@ namespace OpenRasta.Plugins.Hydra
 
   public class HydraOptions
   {
+    public HydraOptions()
+    {
+      Serializer = ctx => ctx.Transient(() => new PreCompiledUtf8JsonSerializer()).As<IMetaModelHandler>();
+    }
     public IList<Vocabulary> Curies { get; } = new List<Vocabulary>();
     public Vocabulary Vocabulary { get; set; }
     public Action<ITypeRegistrationContext> Serializer { get; set; }

@@ -6,11 +6,11 @@ using OpenRasta.Configuration.MetaModel.Handlers;
 using OpenRasta.DI;
 using OpenRasta.Hosting.InMemory;
 using OpenRasta.Plugins.Hydra;
+using OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled;
 using OpenRasta.Web;
 using Shouldly;
 using Tests.Plugins.Hydra.Examples;
 using Tests.Plugins.Hydra.Implementation;
-using Tests.Plugins.Hydra.Utf8Json;
 using Xunit;
 using Customer = Tests.Plugins.Hydra.Examples.Customer;
 

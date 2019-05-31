@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using OpenRasta.Plugins.Hydra.Internal;
+using OpenRasta.Plugins.Hydra.Internal.Serialization;
 using OpenRasta.Plugins.Hydra.Schemas.Hydra;
 
 namespace OpenRasta.Plugins.Hydra.Configuration

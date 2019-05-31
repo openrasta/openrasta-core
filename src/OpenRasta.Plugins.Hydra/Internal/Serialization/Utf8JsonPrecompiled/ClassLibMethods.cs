@@ -2,7 +2,7 @@ using System;
 using System.IO;
 using System.Linq.Expressions;
 
-namespace Tests.Plugins.Hydra.Utf8Json
+namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
 {
   public static class ClassLibMethods
   {

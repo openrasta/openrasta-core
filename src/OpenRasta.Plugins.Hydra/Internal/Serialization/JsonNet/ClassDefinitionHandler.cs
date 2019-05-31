@@ -1,13 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Serialization;
-using Newtonsoft.Json;
 using OpenRasta.Configuration.MetaModel;
 using OpenRasta.Configuration.MetaModel.Handlers;
-using Tests.Plugins.Hydra.Utf8Json;
+using OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled;
 
-namespace OpenRasta.Plugins.Hydra.Internal
+namespace OpenRasta.Plugins.Hydra.Internal.Serialization.JsonNet
 {
   public class ClassDefinitionHandler : IMetaModelHandler
   {
@@ -21,7 +19,7 @@ namespace OpenRasta.Plugins.Hydra.Internal
 
     public void Process(IMetaModelRepository repository)
     {
-      foreach (var resourceRegistration in repository.ResourceRegistrations.Where(x => x.ResourceType.Name == "Event"))
+      foreach (var resourceRegistration in repository.ResourceRegistrations.Where(reg=>reg.ResourceType != null))
       {
         var classProperties = new List<ClassProperty>();
         var properties = resourceRegistration.ResourceType.GetProperties();

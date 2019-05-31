@@ -1,8 +1,7 @@
-using System;
 using OpenRasta.Plugins.Hydra.Schemas.Hydra;
 using Utf8Json;
 
-namespace Tests.Plugins.Hydra.Utf8Json
+namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
 {
   public class ContextFormatter : IJsonFormatter<Context>
   {

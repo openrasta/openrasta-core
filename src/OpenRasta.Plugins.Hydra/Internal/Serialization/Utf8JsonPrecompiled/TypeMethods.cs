@@ -4,13 +4,10 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using OpenRasta.Configuration.MetaModel;
-using OpenRasta.Plugins.Hydra;
-using OpenRasta.Plugins.Hydra.Internal;
 using OpenRasta.TypeSystem.ReflectionBased;
 using Utf8Json;
-using static System.Linq.Expressions.Expression;
 
-namespace Tests.Plugins.Hydra.Utf8Json
+namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
 {
   public static class TypeMethods
   {
@@ -27,7 +24,7 @@ namespace Tests.Plugins.Hydra.Utf8Json
       typeof(string).GetMethod(nameof(string.Concat), new[] {typeof(string), typeof(string)});
 
     public static Expression StringConcat(Expression first, Expression second)
-      => Call(StringConcatTwoParamsMethodInfo, first, second);
+      => Expression.Call(StringConcatTwoParamsMethodInfo, first, second);
 
     public static void ResourceDocument(ParameterExpression jsonWriter,
       ResourceModel model,
@@ -36,16 +33,16 @@ namespace Tests.Plugins.Hydra.Utf8Json
       Action<ParameterExpression> variable,
       Action<Expression> statement, IMetaModelRepository models)
     {
-      var uriResolverFunc = MakeMemberAccess(options, SerializationContextUriResolverPropertyInfo);
+      var uriResolverFunc = Expression.MakeMemberAccess(options, SerializationContextUriResolverPropertyInfo);
 
       var contextUri = StringConcat(
-        Call(MakeMemberAccess(options, SerializationContextBaseUriPropertyInfo),
+        Expression.Call(Expression.MakeMemberAccess(options, SerializationContextBaseUriPropertyInfo),
           typeof(object).GetMethod(nameof(ToString))),
-        Constant(".hydra/context.jsonld"));
+        Expression.Constant(".hydra/context.jsonld"));
 
-      var resolver = Variable(typeof(CustomResolver), "resolver");
+      var resolver = Expression.Variable(typeof(CustomResolver), "resolver");
       variable(resolver);
-      statement(Assign(resolver, New(typeof(CustomResolver))));
+      statement(Expression.Assign(resolver, Expression.New(typeof(CustomResolver))));
 
       foreach (var exp in WriteBeginObjectContext(jsonWriter, contextUri)) statement(exp);
 
@@ -57,7 +54,7 @@ namespace Tests.Plugins.Hydra.Utf8Json
 
     static InvocationExpression GetUri(Expression resource, MemberExpression uriResolverFunc)
     {
-      return Invoke(uriResolverFunc, resource);
+      return Expression.Invoke(uriResolverFunc, resource);
     }
 
     static void WriteNode(
@@ -89,10 +86,11 @@ namespace Tests.Plugins.Hydra.Utf8Json
       {
         var collectionType =
           typeof(OpenRasta.Plugins.Hydra.Schemas.Hydra.Hydra.Collection<>).MakeGenericType(collectionItemType);
-        var collection = Variable(collectionType);
+        var collection = Expression.Variable(collectionType);
         var(collection);
-        statement(Assign(collection,
-          New(collectionType.GetConstructor(new[] {typeof(IEnumerable<>).MakeGenericType(collectionItemType)}),
+        statement(Expression.Assign(collection,
+          Expression.New(
+            collectionType.GetConstructor(new[] {typeof(IEnumerable<>).MakeGenericType(collectionItemType)}),
             resource)));
         resource = collection;
         type = "hydra:Collection"; // hack, lazy, 2am.
@@ -115,7 +113,7 @@ namespace Tests.Plugins.Hydra.Utf8Json
         if (pi.PropertyType.IsValueType && Nullable.GetUnderlyingType(pi.PropertyType) == null)
         {
           WriteNodePropertyValue(jsonWriter, var, statement, pi, jsonResolver,
-            MakeMemberAccess(resource, pi));
+            Expression.MakeMemberAccess(resource, pi));
           continue;
         }
 
@@ -137,11 +135,11 @@ namespace Tests.Plugins.Hydra.Utf8Json
       var propertyVars = new List<ParameterExpression>();
 
       // var propertyValue;
-      var propertyValue = Variable(pi.PropertyType, $"val{pi.DeclaringType.Name}{pi.Name}");
+      var propertyValue = Expression.Variable(pi.PropertyType, $"val{pi.DeclaringType.Name}{pi.Name}");
       variable(propertyValue);
 
       // propertyValue = resource.Property;
-      statement(Assign(propertyValue, MakeMemberAccess(resource, pi)));
+      statement(Expression.Assign(propertyValue, Expression.MakeMemberAccess(resource, pi)));
 
 
       if (models.TryGetResourceModel(pi.PropertyType, out var propertyResourceModel))
@@ -177,37 +175,38 @@ namespace Tests.Plugins.Hydra.Utf8Json
         {
           // not a list of iri or blank nodes
           WriteNodePropertyValue(jsonWriter, propertyVars.Add, propertyStatements.Add, pi, resolver,
-            MakeMemberAccess(resource, pi));
+            Expression.MakeMemberAccess(resource, pi));
         }
         else
         {
           // it's a list of nodes
           var itemArrayType = itemResourceRegistrations.itemType.MakeArrayType();
-          var itemArray = Variable(itemArrayType);
+          var itemArray = Expression.Variable(itemArrayType);
 
           var toArrayMethod = typeof(Enumerable).GetMethod("ToArray")
             .MakeGenericMethod(itemResourceRegistrations.itemType);
-          var assign = Assign(itemArray, Call(toArrayMethod, propertyValue));
+          var assign = Expression.Assign(itemArray, Expression.Call(toArrayMethod, propertyValue));
           propertyVars.Add(itemArray);
           propertyStatements.Add(assign);
 
-          var i = Variable(typeof(int));
+          var i = Expression.Variable(typeof(int));
           propertyVars.Add(i);
 
-          var initialValue = Assign(i, Constant(0));
+          var initialValue = Expression.Assign(i, Expression.Constant(0));
           propertyStatements.Add(initialValue);
 
           var itemVars = new List<ParameterExpression>();
           var itemStatements = new List<Expression>();
 
-          var @break = Label("break");
+          var @break = Expression.Label("break");
 
           propertyStatements.Add(JsonWriterMethods.WriteValueSeparator(jsonWriter));
           propertyStatements.Add(WritePropertyName(jsonWriter, GetJsonPropertyName(pi)));
 
           propertyStatements.Add(JsonWriterMethods.WriteBeginArray(jsonWriter));
 
-          itemStatements.Add(IfThen(GreaterThan(i, Constant(0)), JsonWriterMethods.WriteValueSeparator(jsonWriter)));
+          itemStatements.Add(Expression.IfThen(Expression.GreaterThan(i, Expression.Constant(0)),
+            JsonWriterMethods.WriteValueSeparator(jsonWriter)));
           itemStatements.Add(JsonWriterMethods.WriteBeginObject(jsonWriter));
 
           BlockExpression resourceBlock(ResourceModel r, ParameterExpression typed)
@@ -220,33 +219,35 @@ namespace Tests.Plugins.Hydra.Utf8Json
               typed,
               vars.Add, statements.Add,
               uriResolverFunc, models, recursionDefender, resolver);
-            return Block(vars.ToArray(), statements.ToArray());
+            return Expression.Block(vars.ToArray(), statements.ToArray());
           }
 
 
-          Expression renderBlock = Block(Throw(New(typeof(InvalidOperationException))));
+          Expression renderBlock =
+            Expression.Block(Expression.Throw(Expression.New(typeof(InvalidOperationException))));
 
           // with C : B : A, if is C else if is B else if is A else throw
 
           foreach (var specificModel in itemResourceRegistrations.models)
           {
-            var typed = Variable(specificModel.ResourceType, "as" + specificModel.ResourceType.Name);
+            var typed = Expression.Variable(specificModel.ResourceType, "as" + specificModel.ResourceType.Name);
             itemVars.Add(typed);
-            var @as = Assign(typed, TypeAs(ArrayAccess(itemArray, i), specificModel.ResourceType));
-            renderBlock = IfThenElse(
-              NotEqual(@as, Default(specificModel.ResourceType)),
+            var @as = Expression.Assign(typed,
+              Expression.TypeAs(Expression.ArrayAccess(itemArray, i), specificModel.ResourceType));
+            renderBlock = Expression.IfThenElse(
+              Expression.NotEqual(@as, Expression.Default(specificModel.ResourceType)),
               resourceBlock(specificModel, @typed),
               renderBlock);
           }
 
           itemStatements.Add(renderBlock);
-          itemStatements.Add(PostIncrementAssign(i));
+          itemStatements.Add(Expression.PostIncrementAssign(i));
           itemStatements.Add(JsonWriterMethods.WriteEndObject(jsonWriter));
-          var loop = Loop(
-            IfThenElse(
-              LessThan(i, MakeMemberAccess(itemArray, itemArrayType.GetProperty("Length"))),
-              Block(itemVars.ToArray(), itemStatements.ToArray()),
-              Break(@break)),
+          var loop = Expression.Loop(
+            Expression.IfThenElse(
+              Expression.LessThan(i, Expression.MakeMemberAccess(itemArray, itemArrayType.GetProperty("Length"))),
+              Expression.Block(itemVars.ToArray(), itemStatements.ToArray()),
+              Expression.Break(@break)),
             @break
           );
           propertyStatements.Add(loop);
@@ -254,9 +255,9 @@ namespace Tests.Plugins.Hydra.Utf8Json
         }
       }
 
-      statement(IfThen(
-        NotEqual(propertyValue, Default(pi.PropertyType)),
-        Block(propertyVars.ToArray(), propertyStatements.ToArray())));
+      statement(Expression.IfThen(
+        Expression.NotEqual(propertyValue, Expression.Default(pi.PropertyType)),
+        Expression.Block(propertyVars.ToArray(), propertyStatements.ToArray())));
     }
 
     static IEnumerable<Type> CollectionItemTypes(Type type)
@@ -319,7 +320,7 @@ namespace Tests.Plugins.Hydra.Utf8Json
       var (formatterInstance, serializeMethod) = GetFormatter(variable, statement, jsonFormatterResolver, propertyType);
 
       var serializeFormatter =
-        Call(formatterInstance, serializeMethod, jsonWriter, propertyGet, jsonFormatterResolver);
+        Expression.Call(formatterInstance, serializeMethod, jsonWriter, propertyGet, jsonFormatterResolver);
       statement(serializeFormatter);
     }
 
@@ -342,11 +343,11 @@ namespace Tests.Plugins.Hydra.Utf8Json
       var serializeMethod = jsonFormatterType.GetMethod("Serialize",
         new[] {typeof(JsonWriter).MakeByRefType(), propertyType, typeof(IJsonFormatterResolver)});
 
-      var formatterInstance = Variable(jsonFormatterType);
-      statement(Assign(formatterInstance, Call(jsonFormatterResolver, resolverGetFormatter)));
+      var formatterInstance = Expression.Variable(jsonFormatterType);
+      statement(Expression.Assign(formatterInstance, Expression.Call(jsonFormatterResolver, resolverGetFormatter)));
 
-      statement(IfThen(Equal(formatterInstance, Default(jsonFormatterType)),
-        Throw(New(typeof(ArgumentNullException)))));
+      statement(Expression.IfThen(Expression.Equal(formatterInstance, Expression.Default(jsonFormatterType)),
+        Expression.Throw(Expression.New(typeof(ArgumentNullException)))));
       variable(formatterInstance);
       return (formatterInstance, serializeMethod);
     }
@@ -386,24 +387,27 @@ namespace Tests.Plugins.Hydra.Utf8Json
       {
         case nameof(Int32):
           return "xsd:int";
-        
+
         case nameof(String):
           return "xsd:string";
-        
+
         case nameof(Boolean):
           return "xsd:boolean";
-        
+
         case nameof(DateTime):
           return "xsd:datetime";
-        
+
         case nameof(Decimal):
           return "xsd:decimal";
-        
+
         case nameof(Double):
           return "xsd:double";
-        
+
         case nameof(Uri):
           return "xsd:anyURI";
+        
+        default:
+          return "xsd:string";
       }
     }
   }

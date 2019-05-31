@@ -1,6 +1,6 @@
 using System;
 
-namespace OpenRasta.Plugins.Hydra.Internal
+namespace OpenRasta.Plugins.Hydra.Internal.Serialization
 {
   public class SerializationContext
   {

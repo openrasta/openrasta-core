@@ -13,7 +13,7 @@ namespace OpenRasta.Plugins.Hydra.Schemas.Hydra
       public Collection(IEnumerable<T> enumerable)
       {
         Member = enumerable.ToArray();
-        Manages = new CollectionManages()
+        Manages = new CollectionManages
         {
           Object = typeof(T).Name
         };

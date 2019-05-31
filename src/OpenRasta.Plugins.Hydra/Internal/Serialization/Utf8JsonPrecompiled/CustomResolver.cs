@@ -1,7 +1,7 @@
 using Utf8Json;
 using Utf8Json.Resolvers;
 
-namespace Tests.Plugins.Hydra.Utf8Json
+namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
 {
   public class CustomResolver : IJsonFormatterResolver
   {
