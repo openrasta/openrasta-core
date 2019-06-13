@@ -35,7 +35,7 @@ namespace OpenRasta.Codecs.Newtonsoft.Json
     public async Task<object> ReadFrom(IHttpEntity request, IType destinationType, string destinationName)
     {
       var content = await new StreamReader(request.Stream, Encoding.UTF8).ReadToEndAsync();
-      return JsonConvert.DeserializeObject(content,_options.Settings);
+      return JsonConvert.DeserializeObject(content, destinationType.StaticType, _options.Settings);
     }
   }
 }
