@@ -19,54 +19,58 @@ using OpenRasta.TypeSystem.ReflectionBased;
 
 namespace OpenRasta.Web
 {
+  // ReSharper disable once InconsistentNaming - Legacy code
   public static class IUriResolverExtensions
   {
+    [Obsolete]
     public static Uri CreateUri(this object target)
     {
       return CreateUri(target, (string) null);
     }
 
+    [Obsolete]
     public static Uri CreateUri(this object target, string uriName)
     {
       return target.CreateUri(uriName, null);
     }
 
+    [Obsolete]
     public static Uri CreateUri(this object target, string uriName, object additionalProperties)
     {
       return target.CreateUri(DependencyManager.GetService<ICommunicationContext>().ApplicationBaseUri, uriName,
         additionalProperties);
     }
 
+    [Obsolete]
     public static Uri CreateUri(this object target, object additionalProperties)
     {
       return target.CreateUri((string) null, additionalProperties);
     }
 
+    [Obsolete]
     public static Uri CreateUri(this object target, Uri baseUri)
     {
       return target.CreateUri(baseUri, null);
     }
 
+    [Obsolete]
     public static Uri CreateUri(this object target, Uri baseUri, string uriName)
     {
       return target.CreateUri(baseUri, uriName, null);
     }
 
+    [Obsolete]
     public static Uri CreateUri(this object target, Uri baseUri, object additionalProperties)
     {
       return target.CreateUri(baseUri, null, additionalProperties);
     }
 
+    [Obsolete]
     public static Uri CreateUri(this object target, Uri baseUri, string uriName, object additionalProperties)
     {
       if (target == null)
         throw new ArgumentNullException("target");
       var uriResolver = DependencyManager.GetService<IUriResolver>();
-      if (baseUri == null)
-      {
-        baseUri = DependencyManager.GetService<ICommunicationContext>().ApplicationBaseUri;
-      }
-
       return CreateUriCore(target, baseUri, uriName, additionalProperties, uriResolver);
     }
 
@@ -87,7 +91,7 @@ namespace OpenRasta.Web
 
     public static Uri CreateFrom<T>(this IUriResolver resolver, T resourceInstance, Uri baseUri)
     {
-      return CreateUriCore(resourceInstance, baseUri, null,null, resolver);
+      return CreateUriCore(resourceInstance, baseUri, null, null, resolver);
     }
 
     public static Uri CreateUriFor(this IUriResolver resolver, Type type)
@@ -110,6 +114,7 @@ namespace OpenRasta.Web
       return resolver.CreateUriFor(type, uriName, keyValues?.ToNameValueCollection());
     }
 
+    [Obsolete]
     public static Uri CreateUriFor(this IUriResolver resolver, Type type, string uriName, NameValueCollection keyValues)
     {
       return resolver.CreateUriFor(DependencyManager.GetService<ICommunicationContext>().ApplicationBaseUri, type,

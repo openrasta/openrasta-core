@@ -20,7 +20,6 @@ namespace OpenRasta.Tests.Unit.Infrastructure
     [SetUp]
     public void setup()
     {
-      
       Host = new InMemoryHost(startup: new StartupProperties
       {
         OpenRasta =
@@ -37,6 +36,7 @@ namespace OpenRasta.Tests.Unit.Infrastructure
       RequestScope = Host.Resolver.CreateRequestScope();
       HostManager.SetupCommunicationContext(Context = new InMemoryCommunicationContext());
     }
+
     protected void given_context()
     {
     }

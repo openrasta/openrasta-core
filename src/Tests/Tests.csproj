@@ -27,6 +27,5 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Plugins.Caching\attributes\client" />
-    <Folder Include="Plugins.Hydra\Utf8Json" />
   </ItemGroup>
 </Project>

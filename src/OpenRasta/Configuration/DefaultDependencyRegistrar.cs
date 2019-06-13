@@ -54,7 +54,8 @@ namespace OpenRasta.Configuration
 
       SetTypeSystem<ReflectionBasedTypeSystem>();
       SetMetaModelRepository<MetaModelRepository>();
-      SetUriResolver<TemplatedUriResolver>();
+
+      
       SetCodecRepository<CodecRepository>();
       SetHandlerRepository<HandlerRepository>();
       SetLogger<TraceSourceLogger>();
@@ -76,6 +77,11 @@ namespace OpenRasta.Configuration
       AddOperationCodecResolvers();
       AddLogSources();
       AddSurrogateBuilders();
+    }
+
+    void SetUriResolver(IDependencyResolver resolver)
+    {
+      resolver.AddDependency(typeof(IUriResolver),typeof(BaseAddressInjectingUriResolver), DependencyLifetime.Singleton);
     }
 
     protected IList<Type> CodeSnippetModifierTypes { get; }
@@ -102,8 +108,6 @@ namespace OpenRasta.Configuration
     protected IList<Type> SurrogateBuilders { get; }
     protected IList<Type> TraceSourceListenerTypes { get; }
     protected Type TypeSystemType { get; set; }
-    protected Type UriResolverType { get; set; }
-
     public void AddCodeSnippetModifier<T>() where T : ICodeSnippetModifier
     {
       CodeSnippetModifierTypes.Add(typeof(T));
@@ -195,11 +199,6 @@ namespace OpenRasta.Configuration
       TypeSystemType = typeof(T);
     }
 
-    public void SetUriResolver<T>() where T : IUriResolver
-    {
-      UriResolverType = typeof(T);
-    }
-
     public virtual void Register(IDependencyResolver resolver)
     {
       RegisterCoreComponents(resolver);
@@ -212,6 +211,7 @@ namespace OpenRasta.Configuration
       RegisterOperationModel(resolver);
       RegisterLogSources(resolver);
       RegisterCodecs(resolver);
+      SetUriResolver(resolver);
       resolver.AddDependency(
         typeof(IRequestEntityReader),
         typeof(RequestEntityReaderHydrator),
@@ -298,7 +298,9 @@ namespace OpenRasta.Configuration
     {
       resolver.AddDependency(typeof(ITypeSystem), TypeSystemType, DependencyLifetime.Singleton);
       resolver.AddDependency(typeof(IMetaModelRepository), MetaModelRepositoryType, DependencyLifetime.Singleton);
-      resolver.AddDependency(typeof(IUriResolver), UriResolverType, DependencyLifetime.Singleton);
+      
+      
+      
       resolver.AddDependency(typeof(ICodecRepository), CodecRepositoryType, DependencyLifetime.Singleton);
       resolver.AddDependency(typeof(IHandlerRepository), HandlerRepositoryType, DependencyLifetime.Singleton);
       resolver.AddDependency(typeof(IObjectBinderLocator), ParameterBinderLocatorType, DependencyLifetime.Singleton);

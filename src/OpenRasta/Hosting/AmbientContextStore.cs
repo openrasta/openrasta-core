@@ -23,6 +23,7 @@ namespace OpenRasta.Hosting
              AmbientContext.Current.TryGet(key, out instance);
     }
 
+
     public void Add<T>(string key, T instance)
     {
       AmbientContext.Current[key] = instance;
