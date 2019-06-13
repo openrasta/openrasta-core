@@ -1,63 +1,42 @@
-#region License
-
-/* Authors:
- *      Sebastien Lambla (seb@serialseb.com)
- * Copyright:
- *      (C) 2007-2009 Caffeine IT & naughtyProd Ltd (http://www.caffeine-it.com)
- * License:
- *      This file is distributed under the terms of the MIT License found at the end of this file.
- */
-
-#endregion
-
 using System;
 using System.Collections.Specialized;
-using System.Linq;
 using OpenRasta.Collections.Specialized;
 using OpenRasta.DI;
-using OpenRasta.TypeSystem.ReflectionBased;
+
+// ReSharper disable once InconsistentNaming - Legacy code
+// ReSharper disable UnusedMethodReturnValue.Global
+// ReSharper disable UnusedMember.Global
+// ReSharper disable MemberCanBePrivate.Global
 
 namespace OpenRasta.Web
 {
-  // ReSharper disable once InconsistentNaming - Legacy code
   public static class IUriResolverExtensions
   {
     [Obsolete]
     public static Uri CreateUri(this object target)
     {
+      // ReSharper disable once IntroduceOptionalParameters.Global - compat
       return CreateUri(target, (string) null);
     }
 
     [Obsolete]
-    public static Uri CreateUri(this object target, string uriName)
-    {
-      return target.CreateUri(uriName, null);
-    }
+    public static Uri CreateUri(this object target, string uriName) => target.CreateUri(uriName, null);
 
     [Obsolete]
-    public static Uri CreateUri(this object target, string uriName, object additionalProperties)
-    {
-      return target.CreateUri(DependencyManager.GetService<ICommunicationContext>().ApplicationBaseUri, uriName,
+    public static Uri CreateUri(this object target, string uriName, object additionalProperties) =>
+      target.CreateUri(DependencyManager.GetService<ICommunicationContext>().ApplicationBaseUri, uriName,
         additionalProperties);
-    }
 
     [Obsolete]
-    public static Uri CreateUri(this object target, object additionalProperties)
-    {
-      return target.CreateUri((string) null, additionalProperties);
-    }
+    public static Uri CreateUri(this object target, object additionalProperties) =>
+      target.CreateUri((string) null, additionalProperties);
 
     [Obsolete]
-    public static Uri CreateUri(this object target, Uri baseUri)
-    {
-      return target.CreateUri(baseUri, null);
-    }
+    public static Uri CreateUri(this object target, Uri baseUri) => target.CreateUri(baseUri, null);
 
     [Obsolete]
-    public static Uri CreateUri(this object target, Uri baseUri, string uriName)
-    {
-      return target.CreateUri(baseUri, uriName, null);
-    }
+    public static Uri CreateUri(this object target, Uri baseUri, string uriName) =>
+      target.CreateUri(baseUri, uriName, null);
 
     [Obsolete]
     public static Uri CreateUri(this object target, Uri baseUri, object additionalProperties)
@@ -69,7 +48,7 @@ namespace OpenRasta.Web
     public static Uri CreateUri(this object target, Uri baseUri, string uriName, object additionalProperties)
     {
       if (target == null)
-        throw new ArgumentNullException("target");
+        throw new ArgumentNullException(nameof(target));
       var uriResolver = DependencyManager.GetService<IUriResolver>();
       return CreateUriCore(target, baseUri, uriName, additionalProperties, uriResolver);
     }
@@ -84,64 +63,39 @@ namespace OpenRasta.Web
       return uriResolver.CreateUriFor(baseUri, target.GetType(), uriName, Merge(props, additionalProperties));
     }
 
-    public static Uri CreateUriFor<T>(this IUriResolver resolver)
-    {
-      return resolver.CreateUriFor(typeof(T));
-    }
+    public static Uri CreateUriFor<T>(this IUriResolver resolver) => resolver.CreateUriFor(typeof(T));
 
-    public static Uri CreateFrom<T>(this IUriResolver resolver, T resourceInstance, Uri baseUri)
-    {
-      return CreateUriCore(resourceInstance, baseUri, null, null, resolver);
-    }
+    public static Uri CreateFrom<T>(this IUriResolver resolver, T resourceInstance, Uri baseUri) =>
+      CreateUriCore(resourceInstance, baseUri, null, null, resolver);
 
-    public static Uri CreateUriFor(this IUriResolver resolver, Type type)
-    {
-      return resolver.CreateUriFor(type, null);
-    }
+    public static Uri CreateUriFor(this IUriResolver resolver, Type type) => resolver.CreateUriFor(type, null);
 
-    public static Uri CreateUriFor(this IUriResolver resolver, Type type, object keyValues)
-    {
-      return resolver.CreateUriFor(type, keyValues?.ToNameValueCollection());
-    }
+    public static Uri CreateUriFor(this IUriResolver resolver, Type type, object keyValues) =>
+      resolver.CreateUriFor(type, keyValues?.ToNameValueCollection());
 
-    public static Uri CreateUriFor(this IUriResolver resolver, Type type, NameValueCollection keyValues)
-    {
-      return resolver.CreateUriFor(type, null, keyValues);
-    }
+    public static Uri CreateUriFor(this IUriResolver resolver, Type type, NameValueCollection keyValues) =>
+      resolver.CreateUriFor(type, null, keyValues);
 
-    public static Uri CreateUriFor(this IUriResolver resolver, Type type, string uriName, object keyValues)
-    {
-      return resolver.CreateUriFor(type, uriName, keyValues?.ToNameValueCollection());
-    }
+    public static Uri CreateUriFor(this IUriResolver resolver, Type type, string uriName, object keyValues) =>
+      resolver.CreateUriFor(type, uriName, keyValues?.ToNameValueCollection());
 
-    [Obsolete]
-    public static Uri CreateUriFor(this IUriResolver resolver, Type type, string uriName, NameValueCollection keyValues)
-    {
-      return resolver.CreateUriFor(DependencyManager.GetService<ICommunicationContext>().ApplicationBaseUri, type,
-        uriName,
-        keyValues);
-    }
+    // ReSharper disable once MemberCanBePrivate.Global
+    public static Uri CreateUriFor(this IUriResolver resolver, Type type, string uriName,
+      NameValueCollection keyValues) =>
+      resolver.CreateUriFor(null, type, uriName,keyValues);
 
-    public static Uri CreateUriFor(this IUriResolver resolver, Uri baseAddress, Type type)
-    {
-      return resolver.CreateUriFor(baseAddress, type, (string) null);
-    }
+    public static Uri CreateUriFor(this IUriResolver resolver, Uri baseAddress, Type type) =>
+      resolver.CreateUriFor(baseAddress, type, (string) null);
 
-    public static Uri CreateUriFor(this IUriResolver resolver, Uri baseAddress, Type type, string uriName)
-    {
-      return resolver.CreateUriFor(baseAddress, type, uriName, (NameValueCollection) null);
-    }
+    public static Uri CreateUriFor(this IUriResolver resolver, Uri baseAddress, Type type, string uriName) =>
+      resolver.CreateUriFor(baseAddress, type, uriName, null);
 
-    public static Uri CreateUriFor(this IUriResolver resolver, Uri baseAddress, Type type, object nameValues)
-    {
-      return resolver.CreateUriFor(baseAddress, type, nameValues != null ? nameValues.ToNameValueCollection() : null);
-    }
+    public static Uri CreateUriFor(this IUriResolver resolver, Uri baseAddress, Type type, object nameValues) =>
+      resolver.CreateUriFor(baseAddress, type, nameValues?.ToNameValueCollection());
 
     public static Uri CreateUriFor(this IUriResolver resolver, Uri baseAddress, Type resourceType,
-      NameValueCollection nameValues)
-    {
-      return resolver.CreateUriFor(baseAddress, resourceType, "", nameValues);
-    }
+      NameValueCollection nameValues) =>
+      resolver.CreateUriFor(baseAddress, resourceType, "", nameValues);
 
 
     static NameValueCollection Merge(NameValueCollection source, object target)
@@ -150,8 +104,8 @@ namespace OpenRasta.Web
         return source;
       if (source == null)
         source = new NameValueCollection();
-      if (target is NameValueCollection)
-        source.AddReplace((NameValueCollection) target);
+      if (target is NameValueCollection collection)
+        source.AddReplace(collection);
       else
         source.AddReplace(target.ToNameValueCollection());
       return source;
