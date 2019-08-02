@@ -40,7 +40,7 @@ namespace IUriResolverExtensions_Specification
       base.SetUp();
       var resolver = new InternalDependencyResolver();
       DependencyManager.SetResolver(resolver);
-      resolver.AddDependency<IUriResolver, TemplatedUriResolver>();
+      resolver.AddDependency<IUriResolver, BaseAddressInjectingUriResolver>();
       resolver.AddDependencyInstance<IDependencyResolver>(resolver);
       UriResolver = DependencyManager.GetService<IUriResolver>();
     }
