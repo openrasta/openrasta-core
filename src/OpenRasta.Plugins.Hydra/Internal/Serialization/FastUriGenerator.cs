@@ -9,7 +9,7 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization
   public class FastUriGenerator
   {
     readonly IUriResolver _uris;
-    Dictionary<Type, Func<object, string>> _generators;
+    readonly Dictionary<Type, Func<object, string>> _generators;
     public FastUriGenerator(IMetaModelRepository repository, IUriResolver uris)
     {
       _uris = uris;
@@ -35,7 +35,7 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization
     {
       if (_generators.TryGetValue(instance.GetType(), out var generator))
       {
-        return baseUri + generator(instance).Substring(1);
+        return string.Format("{0}{1}", baseUri, generator(instance).Substring(1));
         
       }
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using OpenRasta.TypeSystem;
@@ -36,11 +37,25 @@ namespace OpenRasta.Configuration.MetaModel
     public IList<UriModel> Uris { get; }
     
     public ClassDefinition ClassDefinition { get; set; }
+    public List<ResourceLinkModel> Links { get;  } = new List<ResourceLinkModel>();
 
     public override string ToString()
     {
       return
         $"ResourceKey: {ResourceKey}, Uris: {Uris.Aggregate(string.Empty, (str, reg) => str + reg + ";")}, Handlers: {Handlers.Aggregate(string.Empty, (str, reg) => str + reg + ";")}, Codecs: {Codecs.Aggregate(string.Empty, (str, reg) => str + reg + ";")}";
     }
+  }
+
+  public class ResourceLinkModel
+  {
+    public string Relationship { get; set; }
+    public Uri Uri { get; set; }
+    public ResourceLinkCombination CombinationType { get; set; }
+  }
+
+  public enum ResourceLinkCombination
+  {
+    Standard,
+    SubResource
   }
 }

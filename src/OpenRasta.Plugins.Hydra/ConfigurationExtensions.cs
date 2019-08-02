@@ -101,6 +101,16 @@ namespace OpenRasta.Plugins.Hydra
       return resource;
     }
 
+    public static IResourceDefinition<T> Link<T>(this IResourceDefinition<T> resource, SubLink link)
+    {
+      resource.Resource.Links.Add(new ResourceLinkModel
+      {
+        Relationship = link.Rel,
+        Uri = link.Uri,
+        CombinationType = ResourceLinkCombination.SubResource
+      });
+      return resource;
+    }
     public static IUriDefinition<T> EntryPointCollection<T>(this IUriDefinition<T> resource,
       Action<CollectionEntryPointOptions> options = null)
     {
@@ -132,6 +142,19 @@ namespace OpenRasta.Plugins.Hydra
     public static HydraUriModel Hydra(this UriModel model)
     {
       return model.Properties.GetOrAdd("openrasta.Hydra.UriModel", () => new HydraUriModel(model));
+    }
+
+  }
+
+  public class SubLink
+  {
+    public string Rel { get; }
+    public Uri Uri { get; }
+
+    public SubLink(string rel, Uri uri)
+    {
+      Rel = rel;
+      Uri = uri;
     }
   }
 
