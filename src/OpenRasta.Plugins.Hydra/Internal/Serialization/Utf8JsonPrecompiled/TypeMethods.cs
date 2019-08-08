@@ -101,10 +101,16 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
         resourceType = collectionType;
       }
 
-      foreach (var exp in model.Uris.Any()
-        ? WriteIdAndType(jsonWriter, type, getCurrentUri, model)
-        : WriteType(jsonWriter, type))
-        addStatement(exp);
+      if (model.Uris.Any())
+      {
+        foreach (var x in WriteId(jsonWriter, getCurrentUri)) addStatement(x);
+
+        addStatement(jsonWriter.WriteValueSeparator());
+      }
+
+
+      foreach (var x in WriteType(jsonWriter, type))
+        addStatement(x);
 
       foreach (var link in model.Links)
       {
@@ -324,17 +330,13 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
              model.ResourceType.Name;
     }
 
-    static IEnumerable<Expression> WriteIdAndType(ParameterExpression jsonWriter,
-      string type,
-      Expression uri, ResourceModel model)
+    static IEnumerable<Expression> WriteId(
+      ParameterExpression jsonWriter,
+      Expression uri)
     {
       yield return jsonWriter.WriteRaw(Nodes.IdProperty);
 
       yield return jsonWriter.WriteString(uri);
-      yield return jsonWriter.WriteValueSeparator();
-
-      yield return WritePropertyName(jsonWriter, "@type");
-      yield return WriteString(jsonWriter, type);
     }
 
     public static IEnumerable<Expression> WriteType(ParameterExpression jsonWriter, string type)

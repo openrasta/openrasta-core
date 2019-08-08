@@ -19,6 +19,13 @@ namespace Tests.Plugins.Hydra.Implementation
       return JObject.Parse(responseBody);
     }
     
+    public static async Task<string> GetJsonLdString(this InMemoryHost host, string uri)
+    {
+      var response = await host.Get(uri, "application/ld+json");
+      if (response.StatusCode / 100 != 2)
+        throw new InvalidOperationException($"Returned a {response.StatusCode} status code");
+      return response.ReadString();
+    }
     public static async Task<(IResponse,JToken)> GetJsonLd(this InMemoryHost host, string uri)
     {
       var response = await host.Get(uri, "application/ld+json");
