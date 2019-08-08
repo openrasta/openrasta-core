@@ -26,6 +26,7 @@ namespace Tests.Plugins.Hydra.Implementation
         throw new InvalidOperationException($"Returned a {response.StatusCode} status code");
       return response.ReadString();
     }
+    
     public static async Task<(IResponse,JToken)> GetJsonLd(this InMemoryHost host, string uri)
     {
       var response = await host.Get(uri, "application/ld+json");
