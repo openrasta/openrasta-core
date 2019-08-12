@@ -37,7 +37,7 @@ namespace Tests.Plugins.Hydra.nodes
           ResourceSpace.Has.ResourcesOfType<Event>()
             .Vocabulary("https://schemas.example/schema#")
             .Link(new SubLink("sub", new Uri("sub", UriKind.Relative)))
-            .Link(new SubLink("subdub", new Uri("sub/dub", UriKind.Relative)))
+            .Link(new SubLink("subdub", new Uri("sub/dub", UriKind.Relative), "blah"))
             .AtUri("/events/{id}")
             .HandledBy<EventHandler>();
 
@@ -52,7 +52,7 @@ namespace Tests.Plugins.Hydra.nodes
           }
         });
     }
-
+ 
 
     [Fact]
     public void content_is_correct()
@@ -64,6 +64,7 @@ namespace Tests.Plugins.Hydra.nodes
       Console.WriteLine(body);
       body["sub"]["@id"].ShouldBe("http://localhost/events/2/sub");
       body["subdub"]["@id"].ShouldBe("http://localhost/events/2/sub/dub");
+      body["subdub"]["@type"].ShouldBe("blah");
     }
 
     public async Task InitializeAsync()

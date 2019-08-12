@@ -107,7 +107,8 @@ namespace OpenRasta.Plugins.Hydra
       {
         Relationship = link.Rel,
         Uri = link.Uri,
-        CombinationType = ResourceLinkCombination.SubResource
+        CombinationType = ResourceLinkCombination.SubResource,
+        Type = link.Type
       });
       return resource;
     }
@@ -151,11 +152,14 @@ namespace OpenRasta.Plugins.Hydra
     public string Rel { get; }
     public Uri Uri { get; }
 
-    public SubLink(string rel, Uri uri)
+    public SubLink(string rel, Uri uri, string type = null)
     {
       Rel = rel;
       Uri = uri;
+      Type = type;
     }
+
+    public string Type { get; set; }
   }
 
   public class CollectionEntryPointOptions
