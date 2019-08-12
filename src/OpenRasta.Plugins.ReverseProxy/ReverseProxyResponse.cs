@@ -20,7 +20,8 @@ namespace OpenRasta.Plugins.ReverseProxy
       RequestMessage = requestMessage ?? throw new ArgumentNullException(nameof(requestMessage));
       ResponseMessage = responseMessage;
       Via = via;
-      StatusCode = statusCode ?? (responseMessage != null ? (int)responseMessage.StatusCode : 500);
+      StatusCode = statusCode ?? (responseMessage != null ? (int) responseMessage.StatusCode : 500);
+      Error = error;
     }
 
     public void Dispose()

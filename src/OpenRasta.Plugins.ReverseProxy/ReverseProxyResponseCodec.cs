@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 using OpenRasta.Codecs;
 using OpenRasta.Codecs.Newtonsoft.Json;
@@ -40,8 +41,8 @@ namespace OpenRasta.Plugins.ReverseProxy
         }
         else if (proxyResponse.Error != null)
         {
-          var jsonCodec = new NewtonsoftJsonCodec();
-          await jsonCodec.WriteTo(proxyResponse.Error, response, new string[] { });
+          var errorMessage = Encoding.UTF8.GetBytes(proxyResponse.Error.ToString());
+          await response.Stream.WriteAsync(errorMessage, 0, errorMessage.Length);
         }
       }
       finally
