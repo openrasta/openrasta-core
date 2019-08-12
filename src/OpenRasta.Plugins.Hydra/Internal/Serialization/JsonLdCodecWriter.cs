@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
 using OpenRasta.Codecs;
 using OpenRasta.Configuration.MetaModel;
@@ -34,16 +35,31 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization
     {
       _responseMessage.Headers.Add("link", $"<{_apiDocumentationLink}>; rel=\"{_apiDocumentationRel}\"");
 
-      var func = _context.PipelineData.SelectedResource.ResourceModel.Hydra().SerializeFunc;
-
-      if (func == null) throw new InvalidOperationException($"Hydra serialiser not found for object of type {entity?.GetType()}");
-
-
-      return func(entity, new SerializationContext
+      var resourceSelectedByUri = _context.PipelineData.SelectedResource;
+      
+      
+      var serializerFunc = resourceSelectedByUri.ResourceModel.Hydra().SerializeFunc;
+      
+      if (serializerFunc == null)
+      {
+        serializerFunc = GetFuncFromResponseResourceType(_context.Response.Entity.Instance);
+        if (serializerFunc == null)
+          throw new InvalidOperationException($"Hydra serialiser not found for object of type {entity?.GetType()}");
+      }
+      
+      return serializerFunc(entity, new SerializationContext
       {
         BaseUri = BaseUri,
         UriGenerator = resource => _uris.CreateUri(resource,_context.ApplicationBaseUri)
       }, response.Stream);
+    }
+
+    Func<object, SerializationContext, Stream, Task> GetFuncFromResponseResourceType(object entityInstance)
+    {
+      if (entityInstance == null) return null;
+
+      if (!_models.TryGetResourceModel(entityInstance.GetType(), out var responseEntityResourceModel)) return null;
+      return responseEntityResourceModel.Hydra().SerializeFunc;
     }
   }
 }
