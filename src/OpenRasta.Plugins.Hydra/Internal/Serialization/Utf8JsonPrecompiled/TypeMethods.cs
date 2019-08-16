@@ -9,6 +9,16 @@ using Utf8Json;
 
 namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
 {
+  public class InlineCode
+  {
+    public List<Expression> Variables { get; set; } = new List<Expression>();
+    public List<Expression> Statements { get; set; } = new List<Expression>();
+  }
+  public static class HydraTypes
+  {
+    public static readonly Type Collection = typeof(OpenRasta.Plugins.Hydra.Schemas.Hydra.Hydra.Collection<>);
+  }
+
   public static class StringMethods
   {
     static readonly MethodInfo StringConcatTwoParamsMethodInfo =
@@ -17,6 +27,7 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
     public static Expression StringConcat(Expression first, Expression second)
       => Expression.Call(StringConcatTwoParamsMethodInfo, first, second);
   }
+
   public static class TypeMethods
   {
     static readonly MethodInfo ResolverGetFormatterMethodInfo =
@@ -89,7 +100,7 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
         hasKeysInObject = true;
       }
 
-      var reosurceRegistrationHydraType = GetHydraTypeName(model);
+      var resourceRegistrationHydraType = GetHydraTypeName(model);
       var invokeGetCurrentUri = InvokeGetCurrentUriExpression(resource, uriResolver);
 
       var collectionItemTypes = CollectionItemTypes(resourceType).ToList();
@@ -98,18 +109,23 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
       if (collectionItemTypes.Count == 1 &&
           models.TryGetResourceModel((collectionItemType = collectionItemTypes.First()), out _))
       {
-        var collectionType =
-          typeof(OpenRasta.Plugins.Hydra.Schemas.Hydra.Hydra.Collection<>).MakeGenericType(collectionItemType);
+        var collectionType = HydraTypes.Collection.MakeGenericType(collectionItemType);
+        var collectionCtor =
+          collectionType.GetConstructor(new[] {typeof(IEnumerable<>).MakeGenericType(collectionItemType)});
         var collection = Expression.Variable(collectionType);
 
         defineVar(collection);
         addStatement(Expression.Assign(collection,
           Expression.New(
-            collectionType.GetConstructor(new[] {typeof(IEnumerable<>).MakeGenericType(collectionItemType)}),
+            collectionCtor,
             resource)));
 
         resource = collection;
-        reosurceRegistrationHydraType = "hydra:Collection"; // hack, lazy, 2am.
+
+        // if we have a generic list of sort, we hydra:Collection instead
+        if (resourceType.IsGenericType) // IEnum<T>, List<T> etc
+          resourceRegistrationHydraType = "hydra:Collection"; // hack, lazy, 2am.
+
         resourceType = collectionType;
       }
 
@@ -128,12 +144,12 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
 
         foreach (var x in WriteId(jsonWriter, invokeGetCurrentUri)) addStatement(x);
       }
-      
+
       if (overridesType == false)
       {
         EnsureKeySeparator(addStatement);
 
-        foreach (var x in WriteType(jsonWriter, reosurceRegistrationHydraType))
+        foreach (var x in WriteType(jsonWriter, resourceRegistrationHydraType))
           addStatement(x);
       }
 
@@ -150,7 +166,6 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
 
         if (pi.PropertyType.IsValueType && Nullable.GetUnderlyingType(pi.PropertyType) == null)
         {
-          
           EnsureKeySeparator(addStatement);
 
           var propertyGet = Expression.MakeMemberAccess(resource, pi);
@@ -163,7 +178,7 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
             propertyGet);
           continue;
         }
-        
+
         WriteNodeProperty(jsonWriter, resource, defineVar, addStatement, uriResolver, models, recursionDefender, pi,
           jsonResolver, EnsureKeySeparator);
       }
@@ -411,6 +426,7 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
       addStatement(serializeFormatter);
     }
 
+    
     static string GetJsonPropertyName(PropertyInfo pi)
     {
       return pi.CustomAttributes

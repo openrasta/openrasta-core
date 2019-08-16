@@ -7,8 +7,10 @@ namespace Tests.Plugins.Hydra.Examples
 {
   public class Event : JsonLd.INode
   {
-//    [DataMember(Name = "ID")]
-//    [JsonProperty("ID")]
+    public Event()
+    {
+      Customers = new List<Customer>();
+    }
     public int Id { get; set; }
     
     public string FirstName { get; set; }

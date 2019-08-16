@@ -14,8 +14,13 @@ namespace Tests.Plugins.Hydra.nodes
     {
       return new List<Event>
       {
-        new Event() {Id = 1},
-        new Event() {Id = 2}
+        new Event {Id = 1, Customer = new Customer {Name = "Boromear"}},
+        new Event
+        {Id = 2, Customers =
+        {
+          new Customer {Name = "An elf"},
+          new Customer {Name = "Another elf"},
+        }}
       };
     }
 

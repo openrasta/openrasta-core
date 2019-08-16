@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
@@ -7,6 +8,7 @@ using OpenRasta.Configuration.MetaModel.Handlers;
 using OpenRasta.Hosting.InMemory;
 using OpenRasta.Plugins.Hydra;
 using OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled;
+using OpenRasta.Plugins.Hydra.Schemas.Hydra;
 using OpenRasta.Web;
 using Shouldly;
 using Tests.Plugins.Hydra.Examples;
@@ -15,13 +17,13 @@ using Xunit;
 
 namespace Tests.Plugins.Hydra.nodes
 {
-  public class collection : IAsyncLifetime
+  public class custom_collection_type : IAsyncLifetime
   {
     IResponse response;
     JToken body;
     readonly InMemoryHost server;
 
-    public collection()
+    public custom_collection_type()
     {
       server = new InMemoryHost(() =>
       {
@@ -31,15 +33,14 @@ namespace Tests.Plugins.Hydra.nodes
           options.Serializer = ctx => ctx.Transient(() => new PreCompiledUtf8JsonSerializer()).As<IMetaModelHandler>();
         });
 
-        ResourceSpace.Has.ResourcesOfType<List<Event>>()
+        ResourceSpace.Has.ResourcesOfType<EventCollection>()
           .Vocabulary("https://schemas.example/schema#")
           .AtUri("/events/")
-          .HandledBy<EventHandler>();
-        
+          .HandledBy<Handler>();
+
         ResourceSpace.Has.ResourcesOfType<Event>()
           .Vocabulary("https://schemas.example/schema#")
-          .AtUri("/events/{id}")
-          .HandledBy<EventHandler>();
+          .AtUri("/events/{id}");
 
         ResourceSpace.Has.ResourcesOfType<Customer>()
           .Vocabulary("https://schemas.example/schema#")
@@ -48,10 +49,48 @@ namespace Tests.Plugins.Hydra.nodes
       }, startup: new StartupProperties {OpenRasta = { Errors = {  HandleAllExceptions = false,HandleCatastrophicExceptions = false}}});
     }
 
+    public class EventCollection : IEnumerable<Event>
+    {
+      List<Event> _events = new List<Event>();
+      public string CustomProperty => "CustomPropertyValue";
+
+      public IEnumerator<Event> GetEnumerator()
+      {
+        return _events.GetEnumerator();
+      }
+
+      IEnumerator IEnumerable.GetEnumerator()
+      {
+        return GetEnumerator();
+      }
+      public void Add(Event @event){
+       _events.Add(@event);
+    }
+    
+    }
+
+    public class Handler
+    {
+      public EventCollection Get()
+      {
+        return new EventCollection
+        {
+          new Event {Id = 1, Customer = new Customer {Name = "Boromear"}},
+          new Event
+          {Id = 2, Customers =
+          {
+            new Customer {Name = "An elf"},
+            new Customer {Name = "Another elf"},
+          }}
+        };
+      }
+
+    }
+
     [Fact]
     public void content_is_correct()
     {
-      body["@type"].ShouldBe("hydra:Collection");
+      body["@type"].ShouldBe("EventCollection");
       body["totalItems"].ShouldBe(2);
       body["member"].ShouldBeOfType<JArray>();
       body["member"][0]["@id"].ShouldBe("http://localhost/events/1");
@@ -67,48 +106,3 @@ namespace Tests.Plugins.Hydra.nodes
     public async Task DisposeAsync() => server.Close();
   }
 }
-
-/*
-
-{
-  "member": [
-    {
-      "id": 1,
-      "@type": "Event",
-      "@id": "http://localhost/events/1"
-    },
-    {
-      "id": 2,
-      "@type": "Event",
-      "@id": "http://localhost/events/2"
-    }
-  ],
-  "totalItems": 2,
-  "@type": "hydra:Collection",
-  "@context": "http://localhost/.hydra/context.jsonld"
-}
-
-
-
-
-****JSON.NET****
-
-{
-  "@context": "http://localhost/.hydra/context.jsonld",
-  "@type": "hydra:Collection",
-  "member": [
-    {
-      "@id": "http://localhost/events/1",
-      "@type": "Event",
-      "id": 1
-    },
-    {
-      "@id": "http://localhost/events/2",
-      "@type": "Event",
-      "id": 2
-    }
-  ],
-  "totalItems": 2
-}
-
-*/
