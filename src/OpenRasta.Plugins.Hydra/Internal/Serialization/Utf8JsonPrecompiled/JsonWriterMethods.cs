@@ -65,8 +65,7 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
       => Expression.Call(jsonWriter, WriteEndArrayMethodInfo);
 
     public static Expression WriteString(this Variable<JsonWriter> jsonWriter, string value)
-      => Expression.Call(jsonWriter, WriteStringMethodInfo,
-        Expression.Constant(value, typeof(string)));
+      => Expression.Call(jsonWriter, WriteStringMethodInfo, Expression.Constant(value, typeof(string)));
 
     public static Expression WriteString(this Variable<JsonWriter> jsonWriter, Expression value)
       => Expression.Call(jsonWriter, WriteStringMethodInfo, value);

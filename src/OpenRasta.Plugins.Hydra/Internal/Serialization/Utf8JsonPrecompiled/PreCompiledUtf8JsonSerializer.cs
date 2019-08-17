@@ -20,7 +20,7 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
 
     public void Process(IMetaModelRepository repository)
     {
-      foreach (var model in repository.ResourceRegistrations.Where(r=>r.ResourceType != null))
+      foreach (var model in repository.ResourceRegistrations.Where(r => r.ResourceType != null))
       {
         model.Hydra().SerializeFunc = model.ResourceType == typeof(Context)
           ? CreateContextSerializer()
@@ -39,19 +39,19 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
     {
       var renderer = new List<Expression>();
       var variables = new List<ParameterExpression>();
-      
-      var resourceIn = Expression.Parameter(typeof(object), "resource");
-      var options = New.Parameter<SerializationContext>( "options");
+
+      var resourceIn = New.Parameter<object>("resource");
+      var options = New.Parameter<SerializationContext>("options");
       var stream = New.Parameter<Stream>("stream");
-      var retVal = Expression.Variable(typeof(Task), "retVal");
+      var retVal = New.Var<Task>("retVal");
 
       var resource = Expression.Variable(model.ResourceType, "typedResource");
-      
+
       renderer.Add(Expression.Assign(resource, Expression.Convert(resourceIn, model.ResourceType)));
-      
+
       var jsonWriter = New.Var<JsonWriter>("jsonWriter");
       var buffer = New.Var<ArraySegment<byte>>("buffer");
-      
+
       renderer.Add(Expression.Assign(jsonWriter, Expression.New(typeof(JsonWriter))));
 
       TypeMethods.ResourceDocument(jsonWriter, model, resource, options, variables.Add, renderer.Add, repository);
@@ -62,7 +62,8 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
 
       var block = Expression.Block(variables.Concat(new[] {jsonWriter, buffer, retVal, resource}).ToArray(), renderer);
       var lambda =
-        Expression.Lambda<Func<object, SerializationContext, Stream, Task>>(block, "Render", new[] {resourceIn, options, stream});
+        Expression.Lambda<Func<object, SerializationContext, Stream, Task>>(block, "Render",
+          new ParameterExpression[] {resourceIn, options, stream});
       return lambda.Compile();
     }
   }

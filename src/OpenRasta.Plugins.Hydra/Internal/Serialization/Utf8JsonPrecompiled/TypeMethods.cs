@@ -18,20 +18,21 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
     static readonly MethodInfo EnumerableToArrayMethodInfo = typeof(Enumerable).GetMethod(nameof(Enumerable.ToArray));
     static readonly MethodInfo ObjectToStringMethodInfo = typeof(object).GetMethod(nameof(ToString));
 
-    public static void ResourceDocument(Variable<JsonWriter> jsonWriter,
+    public static void ResourceDocument(
+      Variable<JsonWriter> jsonWriter,
       ResourceModel model,
       Expression resource,
       Variable<SerializationContext> options,
       Action<ParameterExpression> defineVar,
-      Action<Expression> addStatement, IMetaModelRepository models)
+      Action<Expression> addStatement,
+      IMetaModelRepository models)
     {
-      var uriResolverFunc = options.get_UriResolver();
+      var uriResolverFunc = options.get_UriGenerator();
 
-      var contextUri = StringMethods.Concat(
-        Expression.Call(options.get_BaseUri(), ObjectToStringMethodInfo),
-        Expression.Constant(".hydra/context.jsonld"));
+      var converter = options.get_BaseUri().ObjectToString();
+      var contextUri = StringMethods.Concat(converter, New.Const(".hydra/context.jsonld"));
 
-      var resolver = Expression.Variable(typeof(CustomResolver), "resolver");
+      var resolver = New.Var<CustomResolver>("resolver");
 
       defineVar(resolver);
       addStatement(Expression.Assign(resolver, Expression.New(typeof(CustomResolver))));

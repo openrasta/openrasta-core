@@ -1,3 +1,4 @@
+using System;
 using System.Linq.Expressions;
 using System.Reflection;
 using OpenRasta.Plugins.Hydra.Internal.Serialization.ExpressionTree;
@@ -9,13 +10,10 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
     public static readonly PropertyInfo SerializationContextUriResolverPropertyInfo =
       typeof(SerializationContext).GetProperty(nameof(SerializationContext.UriGenerator));
 
-    public static readonly PropertyInfo SerializationContextBaseUriPropertyInfo =
-      typeof(SerializationContext).GetProperty(nameof(SerializationContext.BaseUri));
+    public static MemberAccess<Func<object, string>> get_UriGenerator(this Variable<SerializationContext> context)
+      => context.get_(c => c.UriGenerator);
 
-    public static MemberExpression get_UriResolver(this Variable<SerializationContext> context)
-      => Expression.MakeMemberAccess(context, SerializationContextTypes.SerializationContextUriResolverPropertyInfo);
-    
-    public static MemberExpression get_BaseUri(this Variable<SerializationContext> context)
-      => Expression.MakeMemberAccess(context, SerializationContextTypes.SerializationContextBaseUriPropertyInfo);
+    public static MemberAccess<Uri> get_BaseUri(this Variable<SerializationContext> context)
+      => context.get_(_ => _.BaseUri);
   }
 }

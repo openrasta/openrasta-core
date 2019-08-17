@@ -12,8 +12,7 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
     public static Expression Concat(Expression first, Expression second)
       => Expression.Call(ConcatTwoParamsMethodInfo, first, second);
 
-    public static Expression Concat(Variable<string> first, Variable<string> second)
-      => Expression.Call(ConcatTwoParamsMethodInfo, first, second);
+    public static MethodCall<string> Concat(TypedExpression<string> first,TypedExpression<string> second)
+      => new MethodCall<string>(Expression.Call(ConcatTwoParamsMethodInfo, first, second));
   }
-  
 }
