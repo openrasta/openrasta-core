@@ -309,7 +309,6 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
             return Expression.Block(vars.ToArray(), statements.ToArray());
           }
 
-
           Expression renderBlock =
             Expression.Block(Expression.Throw(Expression.New(typeof(InvalidOperationException))));
 
