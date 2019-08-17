@@ -16,7 +16,6 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
       typeof(CustomResolver).GetMethod(nameof(IJsonFormatterResolver.GetFormatter));
 
     static readonly MethodInfo EnumerableToArrayMethodInfo = typeof(Enumerable).GetMethod(nameof(Enumerable.ToArray));
-    static readonly MethodInfo ObjectToStringMethodInfo = typeof(object).GetMethod(nameof(ToString));
 
     public static void ResourceDocument(
       Variable<JsonWriter> jsonWriter,
@@ -279,11 +278,10 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
           propertyVars.Add(itemArray);
           propertyStatements.Add(assign);
 
-          var i = Expression.Variable(typeof(int));
+          var i = New.Var<int>();
+          
           propertyVars.Add(i);
-
-          var initialValue = Expression.Assign(i, Expression.Constant(0));
-          propertyStatements.Add(initialValue);
+          propertyStatements.Add(i.Assign(0));
 
           var itemVars = new List<ParameterExpression>();
           var itemStatements = new List<Expression>();

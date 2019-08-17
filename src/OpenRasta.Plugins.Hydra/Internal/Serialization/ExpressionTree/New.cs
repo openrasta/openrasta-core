@@ -6,6 +6,10 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.ExpressionTree
 {
   public static class ExpressionExtensions
   {
+    public static Expression Assign<T>(this Variable<T> @var, T @value)
+    {
+      return Expression.Assign(@var, Expression.Constant(@value));
+    }
     public static MethodCall<TReturn> Call<T, TReturn>(this TypedExpression<T> target, System.Linq.Expressions.Expression<Func<T, TReturn>> method)
     {
       return new MethodCall<TReturn>(Expression.Call(target, MethodInfoVisitor.GetMethod(method)));
@@ -63,6 +67,10 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.ExpressionTree
     public static Variable<T> Var<T>(string variableName)
     {
       return new Variable<T>(Expression.Variable(typeof(T), variableName));
+    }
+    public static Variable<T> Var<T>()
+    {
+      return new Variable<T>(Expression.Variable(typeof(T)));
     }
 
     public static Variable<T> Parameter<T>(string variableName)
