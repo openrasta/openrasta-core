@@ -23,11 +23,4 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.ExpressionTree
       return variable.Inner;
     }
   }
-
-  public enum ConstructedType
-  {
-    Var,
-    Parameter,
-    Any
-  }
 }
