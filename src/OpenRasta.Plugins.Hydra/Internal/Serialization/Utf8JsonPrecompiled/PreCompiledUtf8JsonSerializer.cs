@@ -39,25 +39,25 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
     {
       var renderer = new List<Expression>();
       var variables = new List<ParameterExpression>();
-
-
+      
       var resourceIn = Expression.Parameter(typeof(object), "resource");
-      var options = Expression.Parameter(typeof(SerializationContext), "options");
-      var stream = Expression.Parameter(typeof(Stream), "stream");
+      var options = New.Parameter<SerializationContext>( "options");
+      var stream = New.Parameter<Stream>("stream");
       var retVal = Expression.Variable(typeof(Task), "retVal");
 
       var resource = Expression.Variable(model.ResourceType, "typedResource");
+      
       renderer.Add(Expression.Assign(resource, Expression.Convert(resourceIn, model.ResourceType)));
-      var jsonWriter = Variable.Create<JsonWriter>("jsonWriter");
-      var buffer = Expression.Variable(typeof(ArraySegment<byte>), "buffer");
-
-
+      
+      var jsonWriter = New.Var<JsonWriter>("jsonWriter");
+      var buffer = New.Var<ArraySegment<byte>>("buffer");
+      
       renderer.Add(Expression.Assign(jsonWriter, Expression.New(typeof(JsonWriter))));
 
       TypeMethods.ResourceDocument(jsonWriter, model, resource, options, variables.Add, renderer.Add, repository);
 
       renderer.Add(Expression.Assign(buffer, jsonWriter.GetBuffer()));
-      renderer.Add(Expression.Assign(retVal, ClassLibMethods.StreamWriteAsync(stream, buffer)));
+      renderer.Add(Expression.Assign(retVal, stream.WriteAsync(buffer)));
       renderer.Add(retVal);
 
       var block = Expression.Block(variables.Concat(new[] {jsonWriter, buffer, retVal, resource}).ToArray(), renderer);

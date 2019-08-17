@@ -4,17 +4,17 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
 {
   static class Nodes
   {
-    public static byte[] BeginObjectContext;
-    public static byte[] IdProperty;
-    public static byte[] TypeProperty;
+    public static readonly byte[] BeginObjectContext;
+    public static readonly byte[] IdProperty;
+    public static readonly byte[] TypeProperty;
 
     static Nodes()
     {
       var writer = new JsonWriter();
       writer.WriteBeginObject();
       writer.WritePropertyName("@context");
-      BeginObjectContext = writer.ToUtf8ByteArray();
-      
+      var  bytes = writer.ToUtf8ByteArray();
+      BeginObjectContext = bytes;
       
       writer = new JsonWriter();
       writer.WritePropertyName("@id");

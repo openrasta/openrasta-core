@@ -1,5 +1,6 @@
 using System.Linq.Expressions;
 using System.Reflection;
+using OpenRasta.Plugins.Hydra.Internal.Serialization.ExpressionTree;
 
 namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
 {
@@ -10,5 +11,9 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
 
     public static Expression Concat(Expression first, Expression second)
       => Expression.Call(ConcatTwoParamsMethodInfo, first, second);
+
+    public static Expression Concat(Variable<string> first, Variable<string> second)
+      => Expression.Call(ConcatTwoParamsMethodInfo, first, second);
   }
+  
 }

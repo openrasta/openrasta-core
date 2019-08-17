@@ -15,27 +15,20 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
     static readonly MethodInfo ResolverGetFormatterMethodInfo =
       typeof(CustomResolver).GetMethod(nameof(IJsonFormatterResolver.GetFormatter));
 
-    static readonly PropertyInfo SerializationContextUriResolverPropertyInfo =
-      typeof(SerializationContext).GetProperty(nameof(SerializationContext.UriGenerator));
-
-    static readonly PropertyInfo SerializationContextBaseUriPropertyInfo =
-      typeof(SerializationContext).GetProperty(nameof(SerializationContext.BaseUri));
-
     static readonly MethodInfo EnumerableToArrayMethodInfo = typeof(Enumerable).GetMethod(nameof(Enumerable.ToArray));
     static readonly MethodInfo ObjectToStringMethodInfo = typeof(object).GetMethod(nameof(ToString));
 
     public static void ResourceDocument(Variable<JsonWriter> jsonWriter,
       ResourceModel model,
       Expression resource,
-      Expression options,
+      Variable<SerializationContext> options,
       Action<ParameterExpression> defineVar,
       Action<Expression> addStatement, IMetaModelRepository models)
     {
-      var uriResolverFunc = Expression.MakeMemberAccess(options, SerializationContextUriResolverPropertyInfo);
+      var uriResolverFunc = options.get_UriResolver();
 
       var contextUri = StringMethods.Concat(
-        Expression.Call(Expression.MakeMemberAccess(options, SerializationContextBaseUriPropertyInfo),
-          ObjectToStringMethodInfo),
+        Expression.Call(options.get_BaseUri(), ObjectToStringMethodInfo),
         Expression.Constant(".hydra/context.jsonld"));
 
       var resolver = Expression.Variable(typeof(CustomResolver), "resolver");
@@ -110,7 +103,7 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
 
         // if we have a generic list of sort, we hydra:Collection instead
         if (resourceType.IsGenericType) // IEnum<T>, List<T> etc
-          resourceRegistrationHydraType = "hydra:Collection"; // hack, lazy, 2am.
+          resourceRegistrationHydraType = "hydra:Collection";
 
         resourceType = collectionType;
       }
