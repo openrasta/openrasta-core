@@ -292,7 +292,7 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
 
           propertyStatements.Add(jsonWriter.WriteBeginArray());
 
-          itemStatements.Add(Expression.IfThen(
+          itemStatements.Add(If.Then(
             i.GreaterThan(0),
             jsonWriter.WriteValueSeparator()));
           
@@ -332,7 +332,7 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
           itemStatements.Add(Expression.PostIncrementAssign(i));
           itemStatements.Add(jsonWriter.WriteEndObject());
           var loop = Expression.Loop(
-            Expression.IfThenElse(
+            If.ThenElse(
               i.LessThan(Expression.MakeMemberAccess(itemArray, itemArrayType.GetProperty("Length"))),
               Expression.Block(itemVars.ToArray(), itemStatements.ToArray()),
               Expression.Break(@break)),
