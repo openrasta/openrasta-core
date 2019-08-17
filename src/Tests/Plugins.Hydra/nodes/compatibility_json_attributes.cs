@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
+using OpenRasta.Concordia;
 using OpenRasta.Configuration;
 using OpenRasta.Configuration.MetaModel.Handlers;
 using OpenRasta.Hosting.InMemory;
@@ -35,7 +36,7 @@ namespace Tests.Plugins.Hydra.nodes
           .Vocabulary("https://schemas.example/schema#")
           .AtUri("/stuff/{id}")
           .HandledBy<EventWithIgnoredPropertyHandler>();
-      });
+      },startup: new StartupProperties(){OpenRasta = { Errors = {  HandleAllExceptions = false,HandleCatastrophicExceptions = false}}});
     }
 
 

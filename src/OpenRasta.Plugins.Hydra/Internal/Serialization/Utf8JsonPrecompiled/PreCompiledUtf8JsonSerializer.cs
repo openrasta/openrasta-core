@@ -34,37 +34,53 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
       return (o, context, stream) => JsonSerializer.SerializeAsync(stream, (Context) o, new CustomResolver());
     }
 
-    Func<object, SerializationContext, Stream, Task> CreateDocumentSerializer(ResourceModel model,
+    Func<object, SerializationContext, Stream, Task> CreateDocumentSerializer(
+      ResourceModel model,
       IMetaModelRepository repository)
     {
-      var renderer = new List<Expression>();
-      var variables = new List<ParameterExpression>();
+      var block = new CodeBlock(RendererBlock(model, repository));
 
+      var lambda =
+        Expression.Lambda<Func<object, SerializationContext, Stream, Task>>(
+          block,
+          "Render",
+          block.Parameters);
+      return lambda.Compile();
+    }
+
+    static IEnumerable<AnyExpression> RendererBlock(
+      ResourceModel model,
+      IMetaModelRepository repository)
+    {
+      
       var resourceIn = New.Parameter<object>("resource");
       var options = New.Parameter<SerializationContext>("options");
       var stream = New.Parameter<Stream>("stream");
+
+      yield return resourceIn;
+      yield return options;
+      yield return stream;
+
       var retVal = New.Var<Task>("retVal");
 
       var resource = Expression.Variable(model.ResourceType, "typedResource");
-
-      renderer.Add(Expression.Assign(resource, Expression.Convert(resourceIn, model.ResourceType)));
+      yield return resource;
+      
+      yield return Expression.Assign(resource, Expression.Convert(resourceIn, model.ResourceType));
 
       var jsonWriter = New.Var<JsonWriter>("jsonWriter");
       var buffer = New.Var<ArraySegment<byte>>("buffer");
 
-      renderer.Add(Expression.Assign(jsonWriter, Expression.New(typeof(JsonWriter))));
+      yield return jsonWriter;
+      yield return buffer;
 
-      TypeMethods.ResourceDocument(jsonWriter, model, resource, options, variables.Add, renderer.Add, repository);
+      yield return Expression.Assign(jsonWriter, Expression.New(typeof(JsonWriter)));
 
-      renderer.Add(Expression.Assign(buffer, jsonWriter.GetBuffer()));
-      renderer.Add(Expression.Assign(retVal, stream.WriteAsync(buffer)));
-      renderer.Add(retVal);
+      yield return TypeMethods.ResourceDocument(jsonWriter, model, resource, options, repository);
 
-      var block = Expression.Block(variables.Concat(new[] {jsonWriter, buffer, retVal, resource}).ToArray(), renderer);
-      var lambda =
-        Expression.Lambda<Func<object, SerializationContext, Stream, Task>>(block, "Render",
-          new ParameterExpression[] {resourceIn, options, stream});
-      return lambda.Compile();
+      yield return Expression.Assign(buffer, jsonWriter.GetBuffer());
+      yield return Expression.Assign(retVal, stream.WriteAsync(buffer));
+      yield return retVal;
     }
   }
 }
