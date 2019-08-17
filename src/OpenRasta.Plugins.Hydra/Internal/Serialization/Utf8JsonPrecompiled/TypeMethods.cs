@@ -300,6 +300,11 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
 
           BlockExpression resourceBlock(ResourceModel r, ParameterExpression typed)
           {
+            return new CodeBlock(resourceBlockEnumerator(r,typed));
+          }
+
+          IEnumerable<Expression> resourceBlockEnumerator(ResourceModel r, ParameterExpression typed)
+          {
             var vars = new List<ParameterExpression>();
             var statements = new List<Expression>();
             WriteNode(
@@ -308,9 +313,9 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
               typed,
               vars.Add, statements.Add,
               uriResolverFunc, models, recursionDefender, resolver);
-            return Expression.Block(vars.ToArray(), statements.ToArray());
+            foreach (var var in vars) yield return var;
+            foreach (var statement in statements) yield return statement;
           }
-
           Expression renderBlock =
             Expression.Block(Expression.Throw(Expression.New(typeof(InvalidOperationException))));
 
@@ -413,7 +418,7 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
                .SelectMany(a => a.ConstructorArguments)
                .Where(a => a.ArgumentType == typeof(string))
                .Select(a => (string) a.Value)
-               .FirstOrDefault() ?? ToCamelCase(pi.Name);
+               .FirstOrDefault() ?? pi.Name.ToCamelCase();
     }
 
     static (ParameterExpression formatterInstance, MethodInfo serializeMethod) GetFormatter(
@@ -434,7 +439,7 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
       return (formatterInstance, serializeMethod);
     }
 
-    static string ToCamelCase(string piName)
+    public static string ToCamelCase(this string piName)
     {
       return char.ToLowerInvariant(piName[0]) + piName.Substring(1);
     }

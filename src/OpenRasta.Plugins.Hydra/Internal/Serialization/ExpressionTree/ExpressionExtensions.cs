@@ -8,7 +8,7 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.ExpressionTree
   {
     public static BinaryOperator<bool> LessThan<T>(this TypedExpression<T> target, Expression operand)
     {
-      return new BinaryOperator<bool>(Expression.GreaterThan(target, Expression.Constant(operand)));
+      return new BinaryOperator<bool>(Expression.LessThan(target, operand));
     }
     public static BinaryOperator<bool> GreaterThan<T>(this TypedExpression<T> target, T operand)
     {
