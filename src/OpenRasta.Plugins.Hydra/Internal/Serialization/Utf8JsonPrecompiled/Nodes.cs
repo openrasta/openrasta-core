@@ -6,7 +6,7 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
   {
     public static byte[] BeginObjectContext;
     public static byte[] IdProperty;
-    static byte[] TypeProperty;
+    public static byte[] TypeProperty;
 
     static Nodes()
     {

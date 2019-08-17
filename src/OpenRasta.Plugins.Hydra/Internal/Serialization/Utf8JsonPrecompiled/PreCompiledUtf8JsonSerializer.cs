@@ -6,6 +6,7 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using OpenRasta.Configuration.MetaModel;
 using OpenRasta.Configuration.MetaModel.Handlers;
+using OpenRasta.Plugins.Hydra.Internal.Serialization.ExpressionTree;
 using OpenRasta.Plugins.Hydra.Schemas.Hydra;
 using Utf8Json;
 
@@ -47,7 +48,7 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
 
       var resource = Expression.Variable(model.ResourceType, "typedResource");
       renderer.Add(Expression.Assign(resource, Expression.Convert(resourceIn, model.ResourceType)));
-      var jsonWriter = Expression.Variable(typeof(JsonWriter), "jsonWriter");
+      var jsonWriter = Variable.Create<JsonWriter>("jsonWriter");
       var buffer = Expression.Variable(typeof(ArraySegment<byte>), "buffer");
 
 
