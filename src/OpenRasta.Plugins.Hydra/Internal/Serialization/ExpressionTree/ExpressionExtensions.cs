@@ -6,6 +6,14 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.ExpressionTree
 {
   public static class ExpressionExtensions
   {
+    public static BinaryOperator<bool> LessThan<T>(this TypedExpression<T> target, Expression operand)
+    {
+      return new BinaryOperator<bool>(Expression.GreaterThan(target, Expression.Constant(operand)));
+    }
+    public static BinaryOperator<bool> GreaterThan<T>(this TypedExpression<T> target, T operand)
+    {
+      return new BinaryOperator<bool>(Expression.GreaterThan(target, Expression.Constant(operand)));
+    }
     public static Expression Assign<T>(this Variable<T> var, T value)
     {
       return Expression.Assign(var, Expression.Constant(value));

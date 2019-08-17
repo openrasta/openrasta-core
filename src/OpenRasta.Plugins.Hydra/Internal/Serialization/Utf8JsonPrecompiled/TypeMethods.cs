@@ -292,8 +292,10 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
 
           propertyStatements.Add(jsonWriter.WriteBeginArray());
 
-          itemStatements.Add(Expression.IfThen(Expression.GreaterThan(i, Expression.Constant(0)),
+          itemStatements.Add(Expression.IfThen(
+            i.GreaterThan(0),
             jsonWriter.WriteValueSeparator()));
+          
           itemStatements.Add(jsonWriter.WriteBeginObject());
 
           BlockExpression resourceBlock(ResourceModel r, ParameterExpression typed)
@@ -331,7 +333,7 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
           itemStatements.Add(jsonWriter.WriteEndObject());
           var loop = Expression.Loop(
             Expression.IfThenElse(
-              Expression.LessThan(i, Expression.MakeMemberAccess(itemArray, itemArrayType.GetProperty("Length"))),
+              i.LessThan(Expression.MakeMemberAccess(itemArray, itemArrayType.GetProperty("Length"))),
               Expression.Block(itemVars.ToArray(), itemStatements.ToArray()),
               Expression.Break(@break)),
             @break
