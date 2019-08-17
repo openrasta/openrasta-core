@@ -8,7 +8,6 @@ using OpenRasta.Configuration.MetaModel.Handlers;
 using OpenRasta.Hosting.InMemory;
 using OpenRasta.Plugins.Hydra;
 using OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled;
-using OpenRasta.Plugins.Hydra.Schemas.Hydra;
 using OpenRasta.Web;
 using Shouldly;
 using Tests.Plugins.Hydra.Examples;
@@ -98,6 +97,13 @@ namespace Tests.Plugins.Hydra.nodes
       body["member"][0]["id"].ShouldBe(1);
     }
 
+//    [Fact]
+    public void has_custom_properties()
+    {
+      body["@type"].ShouldBe("EventCollection");
+      body["customProperty"].ShouldBe("CustomPropertyValue");
+    }
+    
     public async Task InitializeAsync()
     {
       (response, body) = await server.GetJsonLd("/events/");

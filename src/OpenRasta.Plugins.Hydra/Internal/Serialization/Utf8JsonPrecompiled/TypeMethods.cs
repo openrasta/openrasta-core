@@ -9,25 +9,6 @@ using Utf8Json;
 
 namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
 {
-  public class InlineCode
-  {
-    public List<Expression> Variables { get; set; } = new List<Expression>();
-    public List<Expression> Statements { get; set; } = new List<Expression>();
-  }
-  public static class HydraTypes
-  {
-    public static readonly Type Collection = typeof(OpenRasta.Plugins.Hydra.Schemas.Hydra.Hydra.Collection<>);
-  }
-
-  public static class StringMethods
-  {
-    static readonly MethodInfo StringConcatTwoParamsMethodInfo =
-      typeof(string).GetMethod(nameof(string.Concat), new[] {typeof(string), typeof(string)});
-
-    public static Expression StringConcat(Expression first, Expression second)
-      => Expression.Call(StringConcatTwoParamsMethodInfo, first, second);
-  }
-
   public static class TypeMethods
   {
     static readonly MethodInfo ResolverGetFormatterMethodInfo =
@@ -39,6 +20,8 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
     static readonly PropertyInfo SerializationContextBaseUriPropertyInfo =
       typeof(SerializationContext).GetProperty(nameof(SerializationContext.BaseUri));
 
+    static readonly MethodInfo EnumerableToArrayMethodInfo = typeof(Enumerable).GetMethod("ToArray");
+
     public static void ResourceDocument(ParameterExpression jsonWriter,
       ResourceModel model,
       Expression resource,
@@ -48,7 +31,7 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
     {
       var uriResolverFunc = Expression.MakeMemberAccess(options, SerializationContextUriResolverPropertyInfo);
 
-      var contextUri = StringMethods.StringConcat(
+      var contextUri = StringMethods.Concat(
         Expression.Call(Expression.MakeMemberAccess(options, SerializationContextBaseUriPropertyInfo),
           typeof(object).GetMethod(nameof(ToString))),
         Expression.Constant(".hydra/context.jsonld"));
@@ -86,6 +69,7 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
       bool hasKeysInObject = false)
     {
       var resourceType = model.ResourceType;
+      
       if (recursionDefender.Contains(model))
         throw new InvalidOperationException(
           $"Detected recursion, already processing {resourceType?.Name}: {string.Join("->", recursionDefender.Select(m => m.ResourceType?.Name).Where(n => n != null))}");
@@ -153,12 +137,6 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
           addStatement(x);
       }
 
-      foreach (var link in model.Links)
-      {
-        EnsureKeySeparator(addStatement);
-
-        WriteNodeLink(jsonWriter, defineVar, addStatement, link.Relationship, link.Uri, invokeGetCurrentUri, link);
-      }
 
       foreach (var pi in publicProperties)
       {
@@ -183,6 +161,12 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
           jsonResolver, EnsureKeySeparator);
       }
 
+      foreach (var link in model.Links)
+      {
+        EnsureKeySeparator(addStatement);
+
+        WriteNodeLink(jsonWriter, defineVar, addStatement, link.Relationship, link.Uri, invokeGetCurrentUri, link);
+      }
       recursionDefender.Pop();
     }
 
@@ -292,7 +276,7 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
           var itemArrayType = itemResourceRegistrations.itemType.MakeArrayType();
           var itemArray = Expression.Variable(itemArrayType);
 
-          var toArrayMethod = typeof(Enumerable).GetMethod("ToArray")
+          var toArrayMethod = EnumerableToArrayMethodInfo
             .MakeGenericMethod(itemResourceRegistrations.itemType);
           var assign = Expression.Assign(itemArray, Expression.Call(toArrayMethod, propertyValue));
           propertyVars.Add(itemArray);
@@ -389,7 +373,6 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
       Expression uri)
     {
       yield return jsonWriter.WriteRaw(Nodes.IdProperty);
-
       yield return jsonWriter.WriteString(uri);
     }
 
@@ -401,7 +384,7 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
 
     static IEnumerable<Expression> WriteBeginObjectContext(ParameterExpression jsonWriter, Expression contextUri)
     {
-      yield return jsonWriter.WriteRaw(Nodes.BeginObjectContext);
+      yield return jsonWriter.WriteRaw(Nodes.IdProperty);
       yield return jsonWriter.WriteString(contextUri);
     }
 
