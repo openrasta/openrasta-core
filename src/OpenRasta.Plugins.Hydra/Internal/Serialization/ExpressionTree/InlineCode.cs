@@ -16,29 +16,31 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.ExpressionTree
       
       foreach (var expression in expressions)
       {
-        if (expression == null)
+        switch (expression)
         {
-          continue;
+          case null:
+            continue;
+          case InlineCode code:
+            code.Parameters.ForEach(Parameters.Add);
+            code.Variables.ForEach(Variables.Add);
+            code.Statements.ForEach(Statements.Add);
+            break;
+          default:
+            switch (expression.Inner)
+            {
+              case ParameterExpression param1 when expression.Type == ConstructedType.Parameter:
+                Parameters.Add(param1);
+                break;
+              case ParameterExpression param2 when expression.Type == ConstructedType.Var:
+                Variables.Add(param2);
+                break;
+              default:
+                Statements.Add(expression);
+                break;
+            }
+
+            break;
         }
-        if (expression is InlineCode code)
-        {
-          code.Parameters.ForEach(Parameters.Add);
-          code.Variables.ForEach(Variables.Add);
-          code.Statements.ForEach(Statements.Add);
-        }
-        else
-          switch (expression.Inner)
-          {
-            case ParameterExpression param1 when expression.Type == ConstructedType.Parameter:
-              Parameters.Add(param1);
-              break;
-            case ParameterExpression param2 when expression.Type == ConstructedType.Var:
-              Variables.Add(param2);
-              break;
-            default:
-              Statements.Add(expression);
-              break;
-          }
       }
     }
     public InlineCode(IEnumerable<AnyExpression> expressions): this(expressions.ToArray())
@@ -59,23 +61,6 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.ExpressionTree
             break;
         }
       }
-    }
-  
-    public delegate void Converter(Action<ParameterExpression> param, Action<Expression> statement);
-
-    public static InlineCode Convert(Converter legacy)
-    {
-      var parameters = new List<ParameterExpression>();
-      var expressions = new List<Expression>();
-      legacy(parameters.Add, expressions.Add);
-      return new InlineCode(parameters.Concat(expressions));
-    }
-
-    public void CopyTo(Action<ParameterExpression> defineVar, Action<Expression> addStatement)
-    {
-      if (Parameters.Any()) throw new InvalidOperationException("Cannot copy blocks containing parameters");
-      Variables.ForEach(defineVar);
-      Statements.ForEach(addStatement);
     }
 
     public static InlineCode operator +(InlineCode left, InlineCode right)
