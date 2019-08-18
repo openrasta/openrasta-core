@@ -10,7 +10,7 @@ using Utf8Json;
 
 namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
 {
-  public static class TypeMethods
+  public static class CodeGenerator
   {
     static readonly MethodInfo ResolverGetFormatterMethodInfo =
       typeof(HydraJsonFormatterResolver).GetMethod(nameof(IJsonFormatterResolver.GetFormatter));

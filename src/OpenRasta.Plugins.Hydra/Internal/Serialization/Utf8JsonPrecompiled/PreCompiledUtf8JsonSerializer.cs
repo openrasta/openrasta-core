@@ -76,7 +76,7 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
 
       yield return Expression.Assign(jsonWriter, Expression.New(typeof(JsonWriter)));
 
-      yield return TypeMethods.ResourceDocument(jsonWriter, model, resource, options, repository);
+      yield return CodeGenerator.ResourceDocument(jsonWriter, model, resource, options, repository);
 
       yield return Expression.Assign(buffer, jsonWriter.GetBuffer());
       yield return Expression.Assign(retVal, stream.WriteAsync(buffer));
