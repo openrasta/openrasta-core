@@ -133,15 +133,13 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
       }
       
       if (nodeProperties.Any())
-        WriteNodeProperties(jsonWriter, defineVar, addStatement, hasExistingNodeProperty, nodeProperties);
+        WriteNodeProperties(jsonWriter, hasExistingNodeProperty, nodeProperties).CopyTo(defineVar, addStatement);
       
       recursionDefender.Pop();
     }
 
-    static void WriteNodeProperties(
+    static InlineCode WriteNodeProperties(
       Variable<JsonWriter> jsonWriter,
-      Action<ParameterExpression> defineVar,
-      Action<Expression> addStatement,
       bool hasExistingNodeProperty,
       List<NodeProperty> nodeProperties)
     {
@@ -150,10 +148,8 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
       var conditionalProperties = nodeProperties.Where(p => p.Conditional != null).ToList();
 
 
-      void renderProperty(NodeProperty prop, InlineCode separatorCode)
+      InlineCode convertPropertyToCode(NodeProperty prop, InlineCode separatorCode)
       {
-        prop.Preamble?.CopyTo(defineVar, addStatement);
-
         var code = prop.Code;
         if (separatorCode != null)
           code = new InlineCode(separatorCode, code);
@@ -164,37 +160,40 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
               prop.Conditional,
               new CodeBlock(code)));
 
-        code.CopyTo(defineVar, addStatement);
+        return new InlineCode(prop.Preamble, code);
       }
 
-      InlineCode separator;
-      if (hasExistingNodeProperty || alwaysWrittenProperties.Any())
+      IEnumerable<AnyExpression> renderNode()
       {
-        separator = new InlineCode(jsonWriter.WriteValueSeparator());
+        InlineCode separator;
+        if (hasExistingNodeProperty || alwaysWrittenProperties.Any())
+        {
+          separator = new InlineCode(jsonWriter.WriteValueSeparator());
+        }
+        else
+        {
+          var hasProp = New.Var<bool>("hasProp");
+
+          yield return (hasProp);
+          yield return (hasProp.Assign(false));
+
+          separator = new InlineCode(
+            If.Then(
+              hasProp.EqualTo(false),
+              Expression.Block(jsonWriter.WriteValueSeparator(),
+                hasProp.Assign(true))
+            ));
+        }
+
+        var sortedProperties = alwaysWrittenProperties.Concat(conditionalProperties).ToArray();
+
+        yield return convertPropertyToCode(sortedProperties[0], hasExistingNodeProperty ? separator : null);
+
+        foreach (var property in sortedProperties.Skip(1))
+          yield return convertPropertyToCode(property, separator);
       }
-      else
-      {
-        var hasProp = New.Var<bool>("hasProp");
 
-        defineVar(hasProp);
-        addStatement(hasProp.Assign(false));
-
-        separator = new InlineCode(
-          If.Then(
-            hasProp.EqualTo(false),
-            Expression.Block(jsonWriter.WriteValueSeparator(),
-              hasProp.Assign(true))
-          ));
-      }
-
-      var sortedProperties = alwaysWrittenProperties.Concat(conditionalProperties).ToArray();
-
-      renderProperty(sortedProperties[0], hasExistingNodeProperty ? separator : null);
-
-      foreach (var property in sortedProperties.Skip(1))
-      {
-        renderProperty(property, separator);
-      }
+      return new InlineCode(renderNode());
     }
 
     static IEnumerable<NodeProperty> GetNodeProperties(

@@ -16,6 +16,10 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.ExpressionTree
       
       foreach (var expression in expressions)
       {
+        if (expression == null)
+        {
+          continue;
+        }
         if (expression is InlineCode code)
         {
           code.Parameters.ForEach(Parameters.Add);
