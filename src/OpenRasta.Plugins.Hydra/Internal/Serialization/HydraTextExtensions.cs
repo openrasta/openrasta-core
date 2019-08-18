@@ -1,0 +1,93 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using OpenRasta.Configuration.MetaModel;
+
+namespace OpenRasta.Plugins.Hydra.Internal.Serialization
+{
+  public static class HydraTextExtensions
+  {
+    public static string GetRdfRange(this Type type)
+    {
+      switch (type.Name)
+      {
+        case nameof(Int32):
+          return "xsd:int";
+
+        case nameof(String):
+          return "xsd:string";
+
+        case nameof(Boolean):
+          return "xsd:boolean";
+
+        case nameof(DateTime):
+          return "xsd:datetime";
+
+        case nameof(Decimal):
+          return "xsd:decimal";
+
+        case nameof(Double):
+          return "xsd:double";
+
+        case nameof(Uri):
+          return "xsd:anyURI";
+
+        default:
+          return "xsd:string";
+      }
+    }
+
+    public static IEnumerable<Type> GetInheritanceHierarchy(this Type type)
+    {
+      for (var current = type; current != null; current = current.BaseType)
+      {
+        yield return current;
+      }
+    }
+
+    public static string ToCamelCase(this string piName)
+    {
+      return Char.ToLowerInvariant(piName[0]) + piName.Substring(1);
+    }
+
+    public static bool IsNotIgnored(PropertyInfo pi)
+    {
+      return pi.CustomAttributes.Any(a => a.AttributeType.Name == "JsonIgnoreAttribute") == false;
+    }
+
+    internal static string UriStandardCombine(string current, Uri rel) => new Uri(new Uri(current), rel).ToString();
+
+    internal static string UriSubResourceCombine(string current, Uri rel)
+    {
+      current = current[current.Length - 1] == '/' ? current : current + "/";
+      return new Uri(new Uri(current), rel).ToString();
+    }
+
+    public static IEnumerable<Type> CollectionItemTypes(Type type)
+    {
+      return from i in type.GetInterfaces()
+        where i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IEnumerable<>)
+        select i.GetGenericArguments()[0];
+    }
+
+    public static string GetHydraTypeName(ResourceModel model)
+    {
+      var hydraResourceModel = model.Hydra();
+      return (hydraResourceModel.Vocabulary?.DefaultPrefix == null
+               ? String.Empty
+               : $"{hydraResourceModel.Vocabulary.DefaultPrefix}:") +
+             model.ResourceType.Name;
+    }
+
+    public static string GetJsonPropertyName(PropertyInfo pi)
+    {
+      return pi.CustomAttributes
+               .Where(a => a.AttributeType.Name == "JsonPropertyAttribute")
+               .SelectMany(a => a.ConstructorArguments)
+               .Where(a => a.ArgumentType == typeof(string))
+               .Select(a => (string) a.Value)
+               .FirstOrDefault() ?? pi.Name.ToCamelCase();
+    }
+  }
+}

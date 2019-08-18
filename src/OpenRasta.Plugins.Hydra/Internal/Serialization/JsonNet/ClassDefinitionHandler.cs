@@ -78,7 +78,7 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.JsonNet
             }
           }
 
-          classProperties.Add(new ClassProperty(propertyName, property.PropertyType, models, propertyType.GetRange()));
+          classProperties.Add(new ClassProperty(propertyName, property.PropertyType, models, propertyType.GetRdfRange()));
         }
 
         //We need to store the Vocabulary but if we pass that to ClassDefinition we leak Hydra into OR.Core so do we pass a Dictionary<string,object> to ClassDefinition for plugin specific properties?

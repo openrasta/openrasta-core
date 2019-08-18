@@ -10,10 +10,6 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.ExpressionTree
       Type = inner.NodeType == ExpressionType.Parameter ? ConstructedType.Var : ConstructedType.Any;
     }
 
-    public AnyExpression() : this(Expression.Empty())
-    {
-    }
-
     public static implicit operator Expression(AnyExpression variable)
     {
       return variable.Inner;
