@@ -97,7 +97,6 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
         throw new InvalidOperationException(
           $"Detected recursion, already processing {resourceType?.Name}: {string.Join("->", recursionDefender.Select(m => m.ResourceType?.Name).Where(n => n != null))}");
 
-
       recursionDefender.Push(model);
 
       var resourceRegistrationHydraType = HydraTextExtensions.GetHydraTypeName(model);

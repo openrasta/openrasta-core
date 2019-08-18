@@ -97,7 +97,7 @@ namespace Tests.Plugins.Hydra.nodes
       body["member"][0]["id"].ShouldBe(1);
     }
 
-//    [Fact]
+    [Fact]
     public void has_custom_properties()
     {
       body["@type"].ShouldBe("EventCollection");
