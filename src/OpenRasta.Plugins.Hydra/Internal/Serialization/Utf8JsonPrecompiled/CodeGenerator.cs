@@ -336,40 +336,80 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
       ParameterExpression propertyValue,
       InlineCode preamble)
     {
-      var propertyStatements = new List<Expression>();
-      var propertyVars = new List<ParameterExpression>();
-      var itemVars = new List<ParameterExpression>();
-      var itemStatements = new List<Expression>();
-
-      var itemRegistration = itemResourceRegistrations.First();
-
-      var itemArrayType = itemRegistration.itemType.MakeArrayType();
-      var itemArray = Expression.Variable(itemArrayType);
-
-      var toArrayMethod = EnumerableToArrayMethodInfo
-        .MakeGenericMethod(itemRegistration.itemType);
-      var assign = Expression.Assign(itemArray, Expression.Call(toArrayMethod, propertyValue));
-      propertyVars.Add(itemArray);
-      propertyStatements.Add(assign);
-
-      var arrayIndex = New.Var<int>();
-
-      propertyVars.Add(arrayIndex);
-      propertyStatements.Add(arrayIndex.Assign(0));
-
-      var @break = Expression.Label("break");
-
       var jsonPropertyName = HydraTextExtensions.GetJsonPropertyName(pi);
-      propertyStatements.Add(jsonWriter.WritePropertyName(jsonPropertyName));
+      
+      
+      var itemRegistration = itemResourceRegistrations.First();
+      var itemArrayType = itemRegistration.itemType.MakeArrayType();
+      
+      var itemArray = Expression.Variable(itemArrayType);
+      var itemArrayAssignment = Expression.Assign(
+        itemArray,
+        Expression.Call(EnumerableToArrayMethodInfo.MakeGenericMethod(itemRegistration.itemType), propertyValue));
 
-      propertyStatements.Add(jsonWriter.WriteBeginArray());
+      var currentArrayIndex = New.Var<int>("currentArrayIndex");
+      var currentArrayElement = Expression.ArrayAccess(itemArray, currentArrayIndex);
+      
+      var renderBlock = WriteNodeWithInheritanceChain(jsonWriter, uriGenerator, models, recursionDefender, resolver,
+        itemRegistration, currentArrayElement);
 
-      itemStatements.Add(If.Then(
-        arrayIndex.GreaterThan(0),
-        jsonWriter.WriteValueSeparator()));
+      return new NodeProperty(jsonPropertyName)
+      {
+        Preamble = preamble,
+        Code = new InlineCode(new[]
+        {
+          itemArray,
+          itemArrayAssignment,
+          currentArrayIndex,
+          currentArrayIndex.Assign(0),
+          jsonWriter.WritePropertyName(jsonPropertyName),
 
-      itemStatements.Add(jsonWriter.WriteBeginObject());
+          jsonWriter.WriteBeginArray(),
+          LoopOverArray(jsonWriter, currentArrayIndex, renderBlock, itemArray, itemArrayType),
+          jsonWriter.WriteEndArray()
+        }),
+        Conditional = Expression.NotEqual(propertyValue, Expression.Default(pi.PropertyType))
+      };
+    }
 
+    static LoopExpression LoopOverArray(
+      Variable<JsonWriter> jsonWriter,
+      Variable<int> currentArrayIndex,
+      InlineCode renderBlock,
+      ParameterExpression itemArray,
+      Type itemArrayType)
+    {
+      var arrayElement = new InlineCode(
+        If.Then(
+          currentArrayIndex.GreaterThan(0),
+          jsonWriter.WriteValueSeparator()),
+        jsonWriter.WriteBeginObject(),
+        renderBlock,
+        Expression.PostIncrementAssign(currentArrayIndex),
+        jsonWriter.WriteEndObject()
+      );
+
+      var itemArrayLength = Expression.MakeMemberAccess(itemArray, itemArrayType.GetProperty("Length"));
+      var @break = Expression.Label("break");
+      var loop = Expression.Loop(
+        If.ThenElse(
+          currentArrayIndex.LessThan(itemArrayLength),
+          arrayElement.ToBlock(),
+          Expression.Break(@break)),
+        @break
+      );
+      return loop;
+    }
+
+    static InlineCode WriteNodeWithInheritanceChain(
+      Variable<JsonWriter> jsonWriter,
+      MemberAccess<Func<object, string>> uriGenerator,
+      IMetaModelRepository models,
+      Stack<ResourceModel> recursionDefender,
+      Variable<HydraJsonFormatterResolver> resolver,
+      (Type itemType, List<ResourceModel> models) itemRegistration,
+      Expression resource)
+    {
       CodeBlock resourceBlock(ResourceModel r, ParameterExpression typed)
       {
         return WriteNode(
@@ -382,45 +422,29 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
           recursionDefender: recursionDefender);
       }
 
-      Expression renderBlock =
-        Expression.Block(Expression.Throw(Expression.New(typeof(InvalidOperationException))));
-
-      // with C : B : A, if is C else if is B else if is A else throw
-
-      foreach (var specificModel in itemRegistration.models)
       {
-        var typed = Expression.Variable(specificModel.ResourceType, "as" + specificModel.ResourceType.Name);
-        itemVars.Add(typed);
-        var @as = Expression.Assign(typed,
-          Expression.TypeAs(Expression.ArrayAccess(itemArray, arrayIndex), specificModel.ResourceType));
-        renderBlock = Expression.IfThenElse(
-          Expression.NotEqual(@as, Expression.Default(specificModel.ResourceType)),
-          resourceBlock(specificModel, @typed),
-          renderBlock);
-      }
+        // with C : B : A, if is C else if is B else if is A else throw
+        Expression codeRender = Expression.Block(Expression.Throw(Expression.New(typeof(InvalidOperationException))));
+        var renderBlock = new InlineCode(codeRender);
 
-      itemStatements.Add(renderBlock);
-      itemStatements.Add(Expression.PostIncrementAssign(arrayIndex));
-      itemStatements.Add(jsonWriter.WriteEndObject());
-      var loop = Expression.Loop(
-        If.ThenElse(
-          arrayIndex.LessThan(Expression.MakeMemberAccess(itemArray, itemArrayType.GetProperty("Length"))),
-          Expression.Block(itemVars.ToArray(), itemStatements.ToArray()),
-          Expression.Break(@break)),
-        @break
-      );
-      propertyStatements.Add(loop);
-      propertyStatements.Add(jsonWriter.WriteEndArray());
 
-      return new NodeProperty(jsonPropertyName)
-      {
-        Preamble = preamble,
-        Code = new InlineCode(new[]
+        foreach (var specificModel in itemRegistration.models)
         {
-          Expression.Block(propertyVars.ToArray(), propertyStatements.ToArray())
-        }),
-        Conditional = Expression.NotEqual(propertyValue, Expression.Default(pi.PropertyType))
-      };
+          var typed = Expression.Variable(specificModel.ResourceType, "as" + specificModel.ResourceType.Name);
+
+          var @as = Expression.Assign(typed,
+            Expression.TypeAs(resource, specificModel.ResourceType));
+
+          codeRender = Expression.IfThenElse(
+            Expression.NotEqual(@as, Expression.Default(specificModel.ResourceType)),
+            resourceBlock(specificModel, @typed),
+            codeRender);
+
+          renderBlock = new InlineCode(renderBlock.Variables.Concat(new[] {typed, codeRender}));
+        }
+
+        return renderBlock;
+      }
     }
 
     static NodeProperty WriteId(

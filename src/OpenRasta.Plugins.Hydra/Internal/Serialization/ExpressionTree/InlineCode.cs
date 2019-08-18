@@ -63,6 +63,10 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.ExpressionTree
       }
     }
 
+    public BlockExpression ToBlock()
+    {
+      return Expression.Block(Variables, Statements);
+    }
     public static InlineCode operator +(InlineCode left, InlineCode right)
     {
       return new InlineCode(left, right);
