@@ -17,6 +17,7 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
 
     static readonly MethodInfo EnumerableToArrayMethodInfo = typeof(Enumerable).GetMethod(nameof(Enumerable.ToArray));
 
+
     public static CodeBlock ResourceDocument(
       Variable<JsonWriter> jsonWriter,
       ResourceModel model,
@@ -24,42 +25,24 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
       Variable<SerializationContext> options,
       IMetaModelRepository models)
     {
-      return CodeBlock.Convert((param, statement) => ResourceDocument(
-        jsonWriter,
-        model,
-        resource,
-        options,
-        param, statement,
-        models));
-    }
-
-    static void ResourceDocument(
-      Variable<JsonWriter> jsonWriter,
-      ResourceModel model,
-      Expression resource,
-      Variable<SerializationContext> options,
-      Action<ParameterExpression> defineVar,
-      Action<Expression> addStatement,
-      IMetaModelRepository models)
-    {
       var uriResolverFunc = options.get_UriGenerator();
-
       var converter = options.get_BaseUri().ObjectToString();
       var contextUri = StringMethods.Concat(converter, New.Const(".hydra/context.jsonld"));
 
-      var resolver = New.Var<CustomResolver>("resolver");
- 
-      defineVar(resolver);
-      addStatement(Expression.Assign(resolver, Expression.New(typeof(CustomResolver))));
+      var varResolver = New.Var<CustomResolver>("resolver");
+      var assignResolver = Expression.Assign(varResolver, Expression.New(typeof(CustomResolver)));
 
-      foreach (var exp in WriteBeginObjectContext(jsonWriter, contextUri)) addStatement(exp);
-
-      var rootNode = WriteNode(jsonWriter, model, resource, uriResolverFunc, models,
-        new Stack<ResourceModel>(),
-        resolver, true);
-
-      rootNode.CopyTo(defineVar, addStatement);
-      addStatement(jsonWriter.WriteEndObject());
+      var rootNode = WriteNode(jsonWriter, model, resource, uriResolverFunc, models,new Stack<ResourceModel>(),
+        varResolver,
+        true);
+      
+      return new CodeBlock(
+        varResolver,
+        assignResolver,
+        new InlineCode(WriteBeginObjectContext(jsonWriter, contextUri)),
+        rootNode,
+        jsonWriter.WriteEndObject()
+      );
     }
 
     static InvocationExpression InvokeGetCurrentUriExpression(Expression resource, MemberExpression uriResolverFunc)
@@ -75,7 +58,7 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
       IMetaModelRepository models,
       Stack<ResourceModel> recursionDefender,
       ParameterExpression jsonResolver,
-      bool hasExistingNodeProperty  = false)
+      bool hasExistingNodeProperty = false)
     {
       var resourceType = model.ResourceType;
 
@@ -87,15 +70,16 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
 
       var resourceRegistrationHydraType = HydraTextExtensions.GetHydraTypeName(model);
       var invokeGetCurrentUri = InvokeGetCurrentUriExpression(resource, uriResolver);
-      
-      var nodeProperties = GetNodeProperties(jsonWriter, model, resource, uriResolver, models, recursionDefender, jsonResolver, resourceType, invokeGetCurrentUri, resourceRegistrationHydraType).ToList();
 
-      
+      var nodeProperties = GetNodeProperties(jsonWriter, model, resource, uriResolver, models, recursionDefender,
+        jsonResolver, resourceType, invokeGetCurrentUri, resourceRegistrationHydraType).ToList();
+
+
       var collectionItemTypes = HydraTextExtensions.CollectionItemTypes(resourceType).ToList();
       Type collectionItemType = null;
       var isHydraCollection = collectionItemTypes.Count == 1 &&
-                                models.TryGetResourceModel(collectionItemType = collectionItemTypes.First(), out _);
-      
+                              models.TryGetResourceModel(collectionItemType = collectionItemTypes.First(), out _);
+
       IEnumerable<AnyExpression> render()
       {
         if (isHydraCollection)
@@ -118,13 +102,12 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
           resourceType = collectionType;
           nodeProperties.AddRange(GetNodeProperties(jsonWriter, model, resource, uriResolver, models, recursionDefender,
             jsonResolver, resourceType, invokeGetCurrentUri, resourceRegistrationHydraType));
-
         }
 
         if (nodeProperties.Any())
           yield return WriteNodeProperties(jsonWriter, hasExistingNodeProperty, nodeProperties);
       }
-      
+
       recursionDefender.Pop();
       return new CodeBlock(render());
     }
@@ -207,7 +190,7 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
       var propNames = publicProperties.Select(HydraTextExtensions.GetJsonPropertyName);
       var overridesId = propNames.Any(name => name == "@id");
       var overridesType = propNames.Any(name => name == "@type");
-      
+
       if (overridesId == false && model.Uris.Any())
       {
         yield return WriteId(jsonWriter, invokeGetCurrentUri);
@@ -246,7 +229,7 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
         yield return WriteNodeLink(jsonWriter, link.Relationship, link.Uri, invokeGetCurrentUri, link);
       }
     }
-    
+
     static NodeProperty WriteNodeLink(
       Variable<JsonWriter> jsonWriter,
       string linkRelationship,
@@ -312,7 +295,7 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
             jsonWriter.WritePropertyName(jsonPropertyName),
             jsonWriter.WriteBeginObject(),
             WriteNode(jsonWriter, propertyResourceModel, propertyValue,
-              uriResolverFunc, models, recursionDefender, resolver,false),
+              uriResolverFunc, models, recursionDefender, resolver, false),
             jsonWriter.WriteEndObject()
           }),
           Conditional = Expression.NotEqual(propertyValue, Expression.Default(pi.PropertyType))
@@ -405,7 +388,7 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
           uriResolverFunc,
           models,
           recursionDefender,
-          resolver,false);
+          resolver, false);
       }
 
       Expression renderBlock =
