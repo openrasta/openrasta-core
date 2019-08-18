@@ -72,6 +72,13 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.ExpressionTree
       return Expression.Block(Variables, Statements);
     }
 
+    public void CopyTo(Action<ParameterExpression> defineVar, Action<Expression> addStatement)
+    {
+      if (Parameters.Any()) throw new InvalidOperationException("Cannot copy blocks containing parameters");
+      Variables.ForEach(defineVar);
+      Statements.ForEach(addStatement);
+    }
+    
     public static implicit operator BlockExpression(CodeBlock block) => block.ToBlock();
     public static implicit operator Expression(CodeBlock block) => block.ToBlock();
   }
