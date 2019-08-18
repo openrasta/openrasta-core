@@ -78,6 +78,10 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.ExpressionTree
       Statements.ForEach(addStatement);
     }
 
+    public static InlineCode operator +(InlineCode left, InlineCode right)
+    {
+      return new InlineCode(left, right);
+    }
     public override Expression Inner => throw new InvalidOperationException("Can't do.");
   }
 }

@@ -15,5 +15,18 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
     public InlineCode Code { get; set; }
     public BinaryExpression Conditional { get; set; }
     public InlineCode Preamble { get; set; }
+    
+    public InlineCode ToCode(InlineCode separatorCode = null)
+    {
+      var code = (separatorCode != null) ? separatorCode + Code : Code;
+
+      if (Conditional != null) 
+        code = new InlineCode(
+          Expression.IfThen(
+            Conditional, 
+            new CodeBlock(code)));
+
+      return Preamble + code;
+    }
   }
 }
