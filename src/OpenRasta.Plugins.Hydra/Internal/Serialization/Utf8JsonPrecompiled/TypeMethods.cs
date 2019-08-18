@@ -10,20 +10,6 @@ using Utf8Json;
 
 namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
 {
-  public class NodeProperty
-  {
-    public string Name { get; }
-
-    public NodeProperty(string name)
-    {
-      Name = name;
-    }
-
-    public InlineCode Code { get; set; }
-    public BinaryExpression Conditional { get; set; }
-    public InlineCode Preamble { get; set; }
-  }
-
   public static class TypeMethods
   {
     static readonly MethodInfo ResolverGetFormatterMethodInfo =
@@ -143,54 +129,7 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
         resourceType = collectionType;
       }
 
-      var publicProperties = resourceType
-        .GetProperties(BindingFlags.Public | BindingFlags.Instance)
-        .Where(HydraTextExtensions.IsNotIgnored)
-        .ToList();
-
-      var propNames = publicProperties.Select(HydraTextExtensions.GetJsonPropertyName);
-      var overridesId = propNames.Any(name => name == "@id");
-      var overridesType = propNames.Any(name => name == "@type");
-
-      List<NodeProperty> properties = new List<NodeProperty>();
-
-      if (overridesId == false && model.Uris.Any())
-      {
-        properties.Add(WriteId(jsonWriter, invokeGetCurrentUri));
-      }
-
-      if (overridesType == false)
-      {
-        properties.Add(WriteType(jsonWriter, resourceRegistrationHydraType));
-      }
-
-
-      foreach (var pi in publicProperties)
-      {
-        if (pi.GetIndexParameters().Any()) continue;
-
-        if (pi.PropertyType.IsValueType && Nullable.GetUnderlyingType(pi.PropertyType) == null)
-        {
-          var nodePropertyValue = WriteNodePropertyValue(
-            jsonWriter,
-            pi,
-            jsonResolver,
-            resource);
-
-          properties.Add(nodePropertyValue);
-          continue;
-        }
-
-        properties.Add(WriteNodeProperty(
-          jsonWriter, resource, uriResolver, models, recursionDefender, pi,
-          jsonResolver));
-        ;
-      }
-
-      foreach (var link in model.Links)
-      {
-        properties.Add((WriteNodeLink(jsonWriter, link.Relationship, link.Uri, invokeGetCurrentUri, link)));
-      }
+      var properties = GetNodeProperties(jsonWriter, model, resource, uriResolver, models, recursionDefender, jsonResolver, resourceType, invokeGetCurrentUri, resourceRegistrationHydraType);
 
       if (properties.Any() == false) return;
       
@@ -245,6 +184,66 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
       }
 
       recursionDefender.Pop();
+    }
+
+    static IEnumerable<NodeProperty> GetNodeProperties(
+      Variable<JsonWriter> jsonWriter,
+      ResourceModel model,
+      Expression resource,
+      MemberExpression uriResolver,
+      IMetaModelRepository models,
+      Stack<ResourceModel> recursionDefender,
+      ParameterExpression jsonResolver,
+      Type resourceType,
+      InvocationExpression invokeGetCurrentUri,
+      string resourceRegistrationHydraType)
+    {
+      var publicProperties = resourceType
+        .GetProperties(BindingFlags.Public | BindingFlags.Instance)
+        .Where(HydraTextExtensions.IsNotIgnored)
+        .ToList();
+
+      var propNames = publicProperties.Select(HydraTextExtensions.GetJsonPropertyName);
+      var overridesId = propNames.Any(name => name == "@id");
+      var overridesType = propNames.Any(name => name == "@type");
+      
+      if (overridesId == false && model.Uris.Any())
+      {
+        yield return WriteId(jsonWriter, invokeGetCurrentUri);
+      }
+
+      if (overridesType == false)
+      {
+        yield return WriteType(jsonWriter, resourceRegistrationHydraType);
+      }
+
+
+      foreach (var pi in publicProperties)
+      {
+        if (pi.GetIndexParameters().Any()) continue;
+
+        if (pi.PropertyType.IsValueType && Nullable.GetUnderlyingType(pi.PropertyType) == null)
+        {
+          var nodePropertyValue = WriteNodePropertyValue(
+            jsonWriter,
+            pi,
+            jsonResolver,
+            resource);
+
+          yield return nodePropertyValue;
+          continue;
+        }
+
+        yield return WriteNodeProperty(
+          jsonWriter, resource, uriResolver, models, recursionDefender, pi,
+          jsonResolver);
+        ;
+      }
+
+      foreach (var link in model.Links)
+      {
+        yield return WriteNodeLink(jsonWriter, link.Relationship, link.Uri, invokeGetCurrentUri, link);
+      }
     }
 
 
