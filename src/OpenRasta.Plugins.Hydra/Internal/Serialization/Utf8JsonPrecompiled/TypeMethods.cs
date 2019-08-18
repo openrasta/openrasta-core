@@ -13,7 +13,7 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
   public static class TypeMethods
   {
     static readonly MethodInfo ResolverGetFormatterMethodInfo =
-      typeof(CustomResolver).GetMethod(nameof(IJsonFormatterResolver.GetFormatter));
+      typeof(HydraJsonFormatterResolver).GetMethod(nameof(IJsonFormatterResolver.GetFormatter));
 
     static readonly MethodInfo EnumerableToArrayMethodInfo = typeof(Enumerable).GetMethod(nameof(Enumerable.ToArray));
 
@@ -29,15 +29,15 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
       var converter = options.get_BaseUri().ObjectToString();
       var contextUri = StringMethods.Concat(converter, New.Const(".hydra/context.jsonld"));
 
-      var varResolver = New.Var<CustomResolver>("resolver");
-      var assignResolver = varResolver.Assign(New.Instance<CustomResolver>());
+      var jsonFormatterResolver = New.Var<HydraJsonFormatterResolver>("resolver");
+      var assignResolver = jsonFormatterResolver.Assign(New.Instance<HydraJsonFormatterResolver>());
 
-      var rootNode = WriteNode(jsonWriter, model, resource, uriResolverFunc, models,new Stack<ResourceModel>(),
-        varResolver,
+      var rootNode = WriteNode(jsonWriter, model, resource, uriResolverFunc, models,
+        jsonFormatterResolver,
         true);
       
       return new CodeBlock(
-        varResolver,
+        jsonFormatterResolver,
         assignResolver,
         new InlineCode(WriteBeginObjectContext(jsonWriter, contextUri)),
         rootNode,
@@ -49,12 +49,13 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
       Variable<JsonWriter> jsonWriter,
       ResourceModel model,
       Expression resource,
-      MemberAccess<Func<object,string>> uriResolver,
+      MemberAccess<Func<object, string>> uriResolver,
       IMetaModelRepository models,
-      Stack<ResourceModel> recursionDefender,
-      ParameterExpression jsonResolver,
-      bool hasExistingNodeProperty = false)
+      Variable<HydraJsonFormatterResolver> jsonFormatterResolver,
+      bool hasExistingNodeProperty = false,
+      Stack<ResourceModel> recursionDefender = null)
     {
+      recursionDefender = recursionDefender ?? new Stack<ResourceModel>();
       var resourceType = model.ResourceType;
 
       if (recursionDefender.Contains(model))
@@ -67,7 +68,7 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
       var invokeGetCurrentUri = (InvocationExpression) uriResolver.Invoke(resource);
 
       var nodeProperties = GetNodeProperties(jsonWriter, model, resource, uriResolver, models, recursionDefender,
-        jsonResolver, resourceType, invokeGetCurrentUri, resourceRegistrationHydraType).ToList();
+        jsonFormatterResolver, resourceType, invokeGetCurrentUri, resourceRegistrationHydraType).ToList();
 
 
       var collectionItemTypes = HydraTextExtensions.CollectionItemTypes(resourceType).ToList();
@@ -96,7 +97,7 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
 
           resourceType = collectionType;
           nodeProperties.AddRange(GetNodeProperties(jsonWriter, model, resource, uriResolver, models, recursionDefender,
-            jsonResolver, resourceType, invokeGetCurrentUri, resourceRegistrationHydraType));
+            jsonFormatterResolver, resourceType, invokeGetCurrentUri, resourceRegistrationHydraType));
         }
 
         if (nodeProperties.Any())
@@ -172,7 +173,7 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
       MemberAccess<Func<object,string>> uriResolver,
       IMetaModelRepository models,
       Stack<ResourceModel> recursionDefender,
-      ParameterExpression jsonResolver,
+      Variable<HydraJsonFormatterResolver> jsonFormatterResolver,
       Type resourceType,
       InvocationExpression invokeGetCurrentUri,
       string resourceRegistrationHydraType)
@@ -206,7 +207,7 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
           var nodePropertyValue = WriteNodePropertyValue(
             jsonWriter,
             pi,
-            jsonResolver,
+            jsonFormatterResolver,
             resource);
 
           yield return nodePropertyValue;
@@ -215,7 +216,7 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
 
         yield return WriteNodeProperty(
           jsonWriter, resource, uriResolver, models, recursionDefender, pi,
-          jsonResolver);
+          jsonFormatterResolver);
         ;
       }
 
@@ -268,7 +269,7 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
       IMetaModelRepository models,
       Stack<ResourceModel> recursionDefender,
       PropertyInfo pi,
-      ParameterExpression resolver
+      Variable<HydraJsonFormatterResolver> jsonFormatterResolver
     )
     {
       // var propertyValue;
@@ -290,7 +291,7 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
             jsonWriter.WritePropertyName(jsonPropertyName),
             jsonWriter.WriteBeginObject(),
             WriteNode(jsonWriter, propertyResourceModel, propertyValue,
-              uriResolverFunc, models, recursionDefender, resolver, false),
+              uriResolverFunc, models, jsonFormatterResolver, false, recursionDefender),
             jsonWriter.WriteEndObject()
           }),
           Conditional = Expression.NotEqual(propertyValue, Expression.Default(pi.PropertyType))
@@ -317,7 +318,7 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
       if (itemResourceRegistrations.Any() == false)
       {
         // not a list of iri or blank nodes
-        var propValue = WriteNodePropertyValue(jsonWriter, pi, resolver, resource);
+        var propValue = WriteNodePropertyValue(jsonWriter, pi, jsonFormatterResolver, resource);
         propValue.Preamble = preamble;
         propValue.Conditional = Expression.NotEqual(propertyValue, Expression.Default(pi.PropertyType));
         return propValue;
@@ -325,7 +326,7 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
 
       // it's a list of nodes
 
-      return WriteNodeList(jsonWriter, uriResolverFunc, models, recursionDefender, pi, resolver,
+      return WriteNodeList(jsonWriter, uriResolverFunc, models, recursionDefender, pi, jsonFormatterResolver,
         itemResourceRegistrations, propertyValue, preamble);
     }
 
@@ -335,7 +336,7 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
       IMetaModelRepository models,
       Stack<ResourceModel> recursionDefender,
       PropertyInfo pi,
-      ParameterExpression resolver,
+      Variable<HydraJsonFormatterResolver> resolver,
       List<(Type itemType, List<ResourceModel> models)> itemResourceRegistrations,
       ParameterExpression propertyValue,
       InlineCode preamble)
@@ -382,8 +383,9 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
           typed,
           uriResolverFunc,
           models,
-          recursionDefender,
-          resolver, false);
+          resolver, 
+          false, 
+          recursionDefender);
       }
 
       Expression renderBlock =
@@ -455,7 +457,7 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
     static NodeProperty WriteNodePropertyValue(
       Variable<JsonWriter> jsonWriter,
       PropertyInfo pi,
-      ParameterExpression jsonFormatterResolver,
+      Variable<HydraJsonFormatterResolver> jsonFormatterResolver,
       Expression resource)
     {
       var propertyGet = Expression.MakeMemberAccess(resource, pi);
@@ -472,7 +474,7 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
 
 
     static InlineCode GetFormatter(
-      ParameterExpression jsonFormatterResolver,
+      Variable<HydraJsonFormatterResolver> jsonFormatterResolver,
       Type propertyType,
       Variable<JsonWriter> jsonWriter,
       MemberExpression propertyGet)

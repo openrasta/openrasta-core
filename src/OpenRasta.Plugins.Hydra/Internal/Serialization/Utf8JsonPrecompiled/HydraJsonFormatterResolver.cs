@@ -3,11 +3,11 @@ using Utf8Json.Resolvers;
 
 namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
 {
-  public class CustomResolver : IJsonFormatterResolver
+  public class HydraJsonFormatterResolver : IJsonFormatterResolver
   {
     readonly IJsonFormatterResolver _resolver;
 
-    public CustomResolver()
+    public HydraJsonFormatterResolver()
     {
       _resolver = CompositeResolver.Create(new IJsonFormatter[] {new ContextFormatter()},
         new[] {StandardResolver.CamelCase});
