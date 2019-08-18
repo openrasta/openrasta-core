@@ -102,12 +102,14 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
 
       var resourceRegistrationHydraType = HydraTextExtensions.GetHydraTypeName(model);
       var invokeGetCurrentUri = InvokeGetCurrentUriExpression(resource, uriResolver);
+      var nodeProperties = GetNodeProperties(jsonWriter, model, resource, uriResolver, models, recursionDefender, jsonResolver, resourceType, invokeGetCurrentUri, resourceRegistrationHydraType).ToList();
 
       var collectionItemTypes = HydraTextExtensions.CollectionItemTypes(resourceType).ToList();
 
-      Type collectionItemType;
-      if (collectionItemTypes.Count == 1 &&
-          models.TryGetResourceModel(collectionItemType = collectionItemTypes.First(), out _))
+      Type collectionItemType = null;
+      var isHydraCollection = collectionItemTypes.Count == 1 &&
+                                models.TryGetResourceModel(collectionItemType = collectionItemTypes.First(), out _);
+      if (isHydraCollection)
       {
         var collectionType = HydraTypes.Collection.MakeGenericType(collectionItemType);
         var collectionCtor =
@@ -127,14 +129,26 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
           resourceRegistrationHydraType = "hydra:Collection";
 
         resourceType = collectionType;
+        nodeProperties.AddRange(GetNodeProperties(jsonWriter, model, resource, uriResolver, models, recursionDefender,
+          jsonResolver, resourceType, invokeGetCurrentUri, resourceRegistrationHydraType));
+
       }
-
-      var properties = GetNodeProperties(jsonWriter, model, resource, uriResolver, models, recursionDefender, jsonResolver, resourceType, invokeGetCurrentUri, resourceRegistrationHydraType);
-
-      if (properties.Any() == false) return;
       
-      var alwaysWrittenProperties = properties.Where(p => p.Conditional == null).ToList();
-      var conditionalProperties = properties.Where(p => p.Conditional != null).ToList();
+      if (nodeProperties.Any())
+        WriteNodeProperties(jsonWriter, defineVar, addStatement, hasExistingNodeProperty, nodeProperties);
+      
+      recursionDefender.Pop();
+    }
+
+    static void WriteNodeProperties(
+      Variable<JsonWriter> jsonWriter,
+      Action<ParameterExpression> defineVar,
+      Action<Expression> addStatement,
+      bool hasExistingNodeProperty,
+      List<NodeProperty> nodeProperties)
+    {
+      var alwaysWrittenProperties = nodeProperties.Where(p => p.Conditional == null).ToList();
+      var conditionalProperties = nodeProperties.Where(p => p.Conditional != null).ToList();
 
 
       void renderProperty(NodeProperty prop, InlineCode separatorCode)
@@ -150,7 +164,7 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
             Expression.IfThen(
               prop.Conditional,
               new CodeBlock(code)));
-        
+
         code.CopyTo(defineVar, addStatement);
       }
 
@@ -162,7 +176,7 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
       else
       {
         var hasProp = New.Var<bool>("hasProp");
-        
+
         defineVar(hasProp);
         addStatement(hasProp.Assign(false));
 
@@ -175,15 +189,13 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
       }
 
       var sortedProperties = alwaysWrittenProperties.Concat(conditionalProperties).ToArray();
-      
-      renderProperty(sortedProperties[0], hasExistingNodeProperty  ? separator : null);
-      
+
+      renderProperty(sortedProperties[0], hasExistingNodeProperty ? separator : null);
+
       foreach (var property in sortedProperties.Skip(1))
       {
         renderProperty(property, separator);
       }
-
-      recursionDefender.Pop();
     }
 
     static IEnumerable<NodeProperty> GetNodeProperties(
