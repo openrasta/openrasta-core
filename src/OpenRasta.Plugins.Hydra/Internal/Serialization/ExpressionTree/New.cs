@@ -20,5 +20,9 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.ExpressionTree
       return new Variable<T>(Expression.Parameter(typeof(T), variableName), true);
     }
 
+    public static TypedExpression<T> Instance<T>()
+    {
+      return new TypedExpression<T>(Expression.New(typeof(T)));
+    }
   }
 }

@@ -6,6 +6,10 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.ExpressionTree
 {
   public static class ExpressionExtensions
   {
+    public static Invocation<TReturn> Invoke<T, TReturn>(this TypedExpression<Func<T,TReturn>> target, Expression input)
+    {
+      return new Invocation<TReturn>(Expression.Invoke(target, input));
+    }
     public static BinaryOperator<bool> LessThan<T>(this TypedExpression<T> target, Expression operand)
     {
       return new BinaryOperator<bool>(Expression.LessThan(target, operand));
@@ -21,6 +25,10 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.ExpressionTree
     public static Expression Assign<T>(this Variable<T> var, T value)
     {
       return Expression.Assign(var, Expression.Constant(value));
+    }
+    public static Expression Assign<T>(this Variable<T> var, TypedExpression<T> value)
+    {
+      return Expression.Assign(var, value);
     }
     public static MethodCall<TReturn> Call<T, TReturn>(this TypedExpression<T> target, Expression<Func<T, TReturn>> method)
     {
