@@ -75,22 +75,6 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
       IMetaModelRepository models,
       Stack<ResourceModel> recursionDefender,
       ParameterExpression jsonResolver,
-      bool hasExistingNodeProperty)
-    {
-      return CodeBlock.Convert((param, statement) => WriteNode(jsonWriter, model, resource, param, statement,
-        uriResolver, models, recursionDefender, jsonResolver, hasExistingNodeProperty));
-    }
-
-    static void WriteNode(
-      Variable<JsonWriter> jsonWriter,
-      ResourceModel model,
-      Expression resource,
-      Action<ParameterExpression> defineVar,
-      Action<Expression> addStatement,
-      MemberExpression uriResolver,
-      IMetaModelRepository models,
-      Stack<ResourceModel> recursionDefender,
-      ParameterExpression jsonResolver,
       bool hasExistingNodeProperty  = false)
     {
       var resourceType = model.ResourceType;
@@ -103,39 +87,46 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
 
       var resourceRegistrationHydraType = HydraTextExtensions.GetHydraTypeName(model);
       var invokeGetCurrentUri = InvokeGetCurrentUriExpression(resource, uriResolver);
+      
       var nodeProperties = GetNodeProperties(jsonWriter, model, resource, uriResolver, models, recursionDefender, jsonResolver, resourceType, invokeGetCurrentUri, resourceRegistrationHydraType).ToList();
 
+      
       var collectionItemTypes = HydraTextExtensions.CollectionItemTypes(resourceType).ToList();
       Type collectionItemType = null;
       var isHydraCollection = collectionItemTypes.Count == 1 &&
                                 models.TryGetResourceModel(collectionItemType = collectionItemTypes.First(), out _);
-      if (isHydraCollection)
+      
+      IEnumerable<AnyExpression> render()
       {
-        var collectionType = HydraTypes.Collection.MakeGenericType(collectionItemType);
-        var collectionCtor =
-          collectionType.GetConstructor(new[] {typeof(IEnumerable<>).MakeGenericType(collectionItemType)});
-        var collection = Expression.Variable(collectionType);
+        if (isHydraCollection)
+        {
+          var collectionType = HydraTypes.Collection.MakeGenericType(collectionItemType);
+          var collectionCtor =
+            collectionType.GetConstructor(new[] {typeof(IEnumerable<>).MakeGenericType(collectionItemType)});
+          var collection = Expression.Variable(collectionType);
 
-        defineVar(collection);
-        var instantiateCollection = Expression.Assign(collection,  Expression.New(collectionCtor,resource));
-        addStatement(instantiateCollection);
+          yield return collection;
+          var instantiateCollection = Expression.Assign(collection, Expression.New(collectionCtor, resource));
+          yield return (instantiateCollection);
 
-        resource = collection;
+          resource = collection;
 
-        // if we have a generic list of sort, we hydra:Collection instead
-        if (resourceType.IsGenericType) // IEnum<T>, List<T> etc
-          resourceRegistrationHydraType = "hydra:Collection";
+          // if we have a generic list of sort, we hydra:Collection instead
+          if (resourceType.IsGenericType) // IEnum<T>, List<T> etc
+            resourceRegistrationHydraType = "hydra:Collection";
 
-        resourceType = collectionType;
-        nodeProperties.AddRange(GetNodeProperties(jsonWriter, model, resource, uriResolver, models, recursionDefender,
-          jsonResolver, resourceType, invokeGetCurrentUri, resourceRegistrationHydraType));
+          resourceType = collectionType;
+          nodeProperties.AddRange(GetNodeProperties(jsonWriter, model, resource, uriResolver, models, recursionDefender,
+            jsonResolver, resourceType, invokeGetCurrentUri, resourceRegistrationHydraType));
 
+        }
+
+        if (nodeProperties.Any())
+          yield return WriteNodeProperties(jsonWriter, hasExistingNodeProperty, nodeProperties);
       }
       
-      if (nodeProperties.Any())
-        WriteNodeProperties(jsonWriter, hasExistingNodeProperty, nodeProperties).CopyTo(defineVar, addStatement);
-      
       recursionDefender.Pop();
+      return new CodeBlock(render());
     }
 
     static InlineCode WriteNodeProperties(
@@ -255,8 +246,7 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
         yield return WriteNodeLink(jsonWriter, link.Relationship, link.Uri, invokeGetCurrentUri, link);
       }
     }
-
-
+    
     static NodeProperty WriteNodeLink(
       Variable<JsonWriter> jsonWriter,
       string linkRelationship,
