@@ -1,20 +1,19 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using OpenRasta.Codecs;
 using OpenRasta.DI;
 using OpenRasta.Diagnostics;
-using OpenRasta.IO;
 using OpenRasta.Web;
-using OpenRasta.Pipeline;
 
 namespace OpenRasta.Pipeline.Contributors
 {
+  // ReSharper disable once ClassNeverInstantiated.Global
   public class ResponseEntityWriterContributor : KnownStages.IResponseCoding
   {
     readonly IDependencyResolver _resolver;
-    static readonly byte[] PADDING = Enumerable.Repeat((byte) ' ', 512).ToArray();
 
     public ILogger Log { get; } = TraceSourceLogger.Instance;
 
@@ -38,32 +37,30 @@ namespace OpenRasta.Pipeline.Contributors
         return PipelineContinuation.Continue;
       }
 
+      var isBuffered = context.PipelineData.ResponseCodec.CodecModel?.IsBuffered;
+      var entity = context.Response.Entity;
+      BufferedHttpEntity buffered = null;
+      
+      if (isBuffered == true) entity = buffered = new BufferedHttpEntity(entity);
+
       var codecInstance = ResolveCodec(context);
       var writer = CreateWriter(codecInstance);
       using (Log.Operation(this, "Generating response entity."))
       {
-        
         await writer(
-          context.Response.Entity.Instance,
-          context.Response.Entity,
+          entity.Instance,
+          entity,
           context.Request.CodecParameters.ToArray());
 
-        await TryPadAndOverrideContentLength(context);
+        await entity.Stream.FlushAsync();
         
-        await context.Response.Entity.Stream.FlushAsync();
+        if (isBuffered == true)
+        {
+          await buffered.SendResponseAsync();
+        }
       }
 
       return PipelineContinuation.Continue;
-    }
-
-    static async Task TryPadAndOverrideContentLength(ICommunicationContext context)
-    {
-      if (context.Response.Entity.Stream.CanSeek)
-      {
-        // we assume the host is buffering stuff, it may be unreliable but it's compatible...
-        await PadHtmlToDisableSmartPages(context);
-        context.Response.Entity.ContentLength = context.Response.Entity.Stream.Length;
-      }
     }
 
     bool ShouldSendEmptyResponseBody(ICommunicationContext context)
@@ -115,8 +112,7 @@ namespace OpenRasta.Pipeline.Contributors
 
     static Func<object, IHttpEntity, IEnumerable<string>, Task> CreateWriter(ICodec codecInstance)
     {
-      var codecAsync = codecInstance as IMediaTypeWriterAsync;
-      if (codecAsync != null) return codecAsync.WriteTo;
+      if (codecInstance is IMediaTypeWriterAsync codecAsync) return codecAsync.WriteTo;
       return (instance, entity, parameters) =>
       {
         ((IMediaTypeWriter) codecInstance).WriteTo(instance, entity, parameters.ToArray());
@@ -133,18 +129,55 @@ namespace OpenRasta.Pipeline.Contributors
       await context.Response.Entity.Stream.FlushAsync();
     }
 
-    static Task PadHtmlToDisableSmartPages(ICommunicationContext context)
+    class BufferedHttpEntity : IHttpEntity
     {
-      if ((context.OperationResult.IsClientError || context.OperationResult.IsServerError)
-          && context.Response.Entity.Stream.CanSeek
-          && context.Response.Entity.ContentType == MediaType.Html
-          && context.Response.Entity.Stream.Length <= 512)
+      readonly IHttpEntity _httpEntityImplementation;
+
+      public BufferedHttpEntity(IHttpEntity httpEntityImplementation)
       {
-        return context.Response.Entity.Stream.WriteAsync(PADDING, 0,
-          (int) (512 - context.Response.Entity.Stream.Length));
+        _httpEntityImplementation = httpEntityImplementation;
       }
 
-      return Task.CompletedTask;
+      public void Dispose()
+      {
+        _httpEntityImplementation.Dispose();
+      }
+
+      public ICodec Codec
+      {
+        get => _httpEntityImplementation.Codec;
+        set => _httpEntityImplementation.Codec = value;
+      }
+
+      public object Instance
+      {
+        get => _httpEntityImplementation.Instance;
+        set => _httpEntityImplementation.Instance = value;
+      }
+
+      public MediaType ContentType
+      {
+        get => _httpEntityImplementation.ContentType;
+        set => _httpEntityImplementation.ContentType = value;
+      }
+
+      public long? ContentLength
+      {
+        get => _httpEntityImplementation.ContentLength;
+        set => _httpEntityImplementation.ContentLength = value;
+      }
+
+      public HttpHeaderDictionary Headers => _httpEntityImplementation.Headers;
+
+      public Stream Stream => new MemoryStream();
+
+      public IList<Error> Errors => _httpEntityImplementation.Errors;
+
+
+      public async Task SendResponseAsync()
+      {
+        await Stream.CopyToAsync(_httpEntityImplementation.Stream);
+      }
     }
   }
 }

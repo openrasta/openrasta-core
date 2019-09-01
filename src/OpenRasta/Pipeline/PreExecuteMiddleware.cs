@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using OpenRasta.Web;
 
 namespace OpenRasta.Pipeline
@@ -18,7 +19,13 @@ namespace OpenRasta.Pipeline
 
 #pragma warning disable 618
       if (continuation == PipelineContinuation.Abort)
-        throw new PipelineAbortedException();
+      {
+        throw new PipelineAbortedException(errors: new[]{new Error()
+        {
+          Title = "Aborted pipeline",
+          Message = "A middleware or contributor aborted the pipeline before the request was processed. It didn't give any reason."
+        } });
+      }
 #pragma warning restore 618
 
       await Next.Invoke(env);

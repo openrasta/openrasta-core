@@ -24,7 +24,7 @@ namespace Tests.Hosting.Owin
               .Configure(app => app.UseOpenRasta(new TaskApi())));
       client = server.CreateClient();
     }
-
+ 
     [Fact]
     public async void can_get_list_of_tasks()
     {

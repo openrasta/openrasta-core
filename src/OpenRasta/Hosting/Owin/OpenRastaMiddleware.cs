@@ -59,9 +59,9 @@ namespace OpenRasta.Hosting.Katana
     readonly OwinHost _host;
 
     public OpenRastaMiddleware(
-        IConfigurationSource options,
-        IDependencyResolverAccessor resolverAccesor = null,
-        CancellationToken onDisposing = default(CancellationToken))
+      IConfigurationSource options,
+      IDependencyResolverAccessor resolverAccesor = null,
+      CancellationToken onDisposing = default(CancellationToken))
     {
       _host = new OwinHost(options, resolverAccesor);
       TryInitializeHosting(onDisposing);
@@ -70,11 +70,12 @@ namespace OpenRasta.Hosting.Katana
     public override async Task Invoke(IOwinContext owinContext)
     {
       ICommunicationContext commContext;
+      owinContext.Response.OnSendingHeaders(_ => this.HeadersSent = true, null);
       try
       {
         commContext = await _host.ProcessRequestAsync(owinContext);
       }
-      catch (Exception e)
+      catch (Exception e) when (HeadersSent == false)
       {
         owinContext.Response.StatusCode = 500;
         owinContext.Response.Write(e.ToString());
@@ -88,6 +89,8 @@ namespace OpenRasta.Hosting.Katana
         await Next.Invoke(owinContext);
       }
     }
+
+    public bool HeadersSent { get; set; }
 
 
     void TryInitializeHosting(CancellationToken onDisposing)

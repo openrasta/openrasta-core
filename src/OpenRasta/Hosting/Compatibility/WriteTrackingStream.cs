@@ -10,7 +10,8 @@ namespace OpenRasta.Hosting.Compatibility
     readonly Stream _innerStream;
     readonly WriteTrackingResponse _response;
 
-    public WriteTrackingStream(Stream innerStream,
+    public WriteTrackingStream(
+      Stream innerStream,
       WriteTrackingResponse response)
     {
       _innerStream = innerStream;
@@ -38,9 +39,20 @@ namespace OpenRasta.Hosting.Compatibility
     }
 
     public override bool CanTimeout => _innerStream.CanTimeout;
+
     public override void Close()
     {
-      _innerStream.Close();
+      // don't let consumer code close response streams
+      // TODO: Add flag to enable stricter control than just ignoring shit
+//      throw new IOException("A response stream is private to its server, don't go closing it!");
+    }
+
+    protected override void Dispose(bool disposing)
+    {
+      // TODO: Add flag to enable stricter control than just ignoring shit
+//      if (disposing) throw new IOException("A response stream is private to its server, don't go closing it!");
+
+      base.Dispose(false);
     }
 
     public override int EndRead(IAsyncResult asyncResult)
@@ -78,53 +90,62 @@ namespace OpenRasta.Hosting.Compatibility
       return _innerStream.ReadByte();
     }
 
-    public override int ReadTimeout { get => _innerStream.ReadTimeout; set => _innerStream.ReadTimeout = value; }
+    public override int ReadTimeout
+    {
+      get => _innerStream.ReadTimeout;
+      set => _innerStream.ReadTimeout = value;
+    }
+
     public override string ToString()
     {
       return _innerStream.ToString();
     }
 
-    public override int WriteTimeout { get => _innerStream.WriteTimeout; set => _innerStream.WriteTimeout = value; }
+    public override int WriteTimeout
+    {
+      get => _innerStream.WriteTimeout;
+      set => _innerStream.WriteTimeout = value;
+    }
 
     public override void Flush()
     {
-      _response.WriteHeaders();
+      EnsureHeadersSent();
       _innerStream.Flush();
     }
 
     public override void Write(byte[] buffer, int offset, int count)
     {
-      _response.WriteHeaders();
+      EnsureHeadersSent();
       _innerStream.Write(buffer, offset, count);
     }
 
     public override IAsyncResult BeginWrite(byte[] buffer, int offset, int count, AsyncCallback callback, object state)
     {
-      _response.WriteHeaders();
+      EnsureHeadersSent();
       return _innerStream.BeginWrite(buffer, offset, count, callback, state);
     }
 
     public override Task CopyToAsync(Stream destination, int bufferSize, CancellationToken cancellationToken)
     {
-      _response.WriteHeaders();
+      EnsureHeadersSent();
       return _innerStream.CopyToAsync(destination, bufferSize, cancellationToken);
     }
 
     public override Task FlushAsync(CancellationToken cancellationToken)
     {
-      _response.WriteHeaders();
+      EnsureHeadersSent();
       return _innerStream.FlushAsync(cancellationToken);
     }
 
     public override Task WriteAsync(byte[] buffer, int offset, int count, CancellationToken cancellationToken)
     {
-      _response.WriteHeaders();
+      EnsureHeadersSent();
       return _innerStream.WriteAsync(buffer, offset, count, cancellationToken);
     }
 
     public override void WriteByte(byte value)
     {
-      _response.WriteHeaders();
+      EnsureHeadersSent();
       _innerStream.WriteByte(value);
     }
 
@@ -140,6 +161,11 @@ namespace OpenRasta.Hosting.Compatibility
     {
       get => _innerStream.Position;
       set => _innerStream.Position = value;
+    }
+
+    void EnsureHeadersSent()
+    {
+      if (_response.HeadersSent == false) _response.WriteHeaders();
     }
   }
 }

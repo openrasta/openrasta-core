@@ -19,19 +19,25 @@ namespace OpenRasta.Pipeline
       var contribState = await ContributorInvoke(env);
 
 #pragma warning disable 618
-      if (contribState == PipelineContinuation.Abort)
+      
+      switch (contribState)
       {
-        env.PipelineData.PipelineStage.CurrentState = PipelineContinuation.Abort;
-
-        throw new PipelineAbortedException();
+        case PipelineContinuation.Abort:
+          env.PipelineData.PipelineStage.CurrentState = PipelineContinuation.Abort;
+          throw new PipelineAbortedException(new[]{new Error()
+          {
+            Title = "Aborted pipeline",
+            Message = "A middleware or contributor aborted the pipeline while rendering the response. It didn't give any reason."
+          } });
+        case PipelineContinuation.RenderNow:
+          env.PipelineData.PipelineStage.CurrentState = PipelineContinuation.RenderNow;
+          return;
+        default:
+          await Next.Invoke(env);
+          break;
       }
+      
 #pragma warning restore 618
-      if (contribState == PipelineContinuation.RenderNow)
-      {
-        env.PipelineData.PipelineStage.CurrentState = PipelineContinuation.RenderNow;
-        return;
-      }
-      await Next.Invoke(env);
     }
   }
 }

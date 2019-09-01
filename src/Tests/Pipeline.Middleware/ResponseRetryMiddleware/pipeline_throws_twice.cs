@@ -34,7 +34,7 @@ namespace Tests.Pipeline.Middleware.ResponseRetryMiddleware
     [Fact]
     public void original_exception_is_recorded()
     {
-      Env.ServerErrors.Count().ShouldBe(2);
+      Env.ServerErrors.Count.ShouldBe(2);
       Env.ServerErrors.ShouldAllBe(
         error => error.Exception is PipelineAbortedException);
     }

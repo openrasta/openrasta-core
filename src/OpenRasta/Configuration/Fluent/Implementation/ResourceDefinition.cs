@@ -19,7 +19,7 @@ namespace OpenRasta.Configuration.Fluent.Implementation
 
     public new IUriDefinition<T> AtUri(string uri)
     {
-      if (uri == null) throw new ArgumentNullException("uri");
+      if (uri == null) throw new ArgumentNullException(nameof(uri));
       var uriModel = new UriModel { Uri = uri, ResourceModel = Resource };
       Resource.Uris.Add(uriModel);
 
@@ -50,17 +50,13 @@ namespace OpenRasta.Configuration.Fluent.Implementation
         _resourceDefinition = resourceDefinition;
       }
 
-      public new IResourceDefinition<TResource> And
-      {
-        get { return _resourceDefinition; }
-      }
+      public new IResourceDefinition<TResource> And => _resourceDefinition;
     }
   }
 
   public class UriExpressionVisitor : ExpressionVisitor
   {
-    string _generatedUri;
-    List<string> format = new List<string>();
+    readonly List<string> format = new List<string>();
     Type _resourceType;
     string _formatted;
 
@@ -121,17 +117,11 @@ namespace OpenRasta.Configuration.Fluent.Implementation
       _typeSystem = typeSystem;
     }
 
-    public IHandlerParentDefinition And
-    {
-      get { return this; }
-    }
+    public IHandlerParentDefinition And => this;
 
 
     /// <exception cref="InvalidOperationException">Cannot make a resource URI-less if a URI is already registered.</exception>
-    public ICodecParentDefinition WithoutUri
-    {
-      get { return new CodecParentDefinition(this); }
-    }
+    public ICodecParentDefinition WithoutUri => new CodecParentDefinition(this);
 
     public ICodecDefinition TranscodedBy<TCodec>(object configuration) where TCodec : Codecs.ICodec
     {
@@ -155,7 +145,7 @@ namespace OpenRasta.Configuration.Fluent.Implementation
 
     public IHandlerForResourceWithUriDefinition HandledBy(IType type)
     {
-      if (type == null) throw new ArgumentNullException("type");
+      if (type == null) throw new ArgumentNullException(nameof(type));
       Resource.Handlers.Add(_lastHandlerModel = new HandlerModel(type));
       return this;
     }
@@ -163,29 +153,20 @@ namespace OpenRasta.Configuration.Fluent.Implementation
     /// <exception cref="ArgumentNullException"><c>uri</c> is null.</exception>
     public IUriDefinition AtUri(string uri)
     {
-      if (uri == null) throw new ArgumentNullException("uri");
+      if (uri == null) throw new ArgumentNullException(nameof(uri));
       UriModel model = new UriModel { Uri = uri,ResourceModel = this.Resource};
       Resource.Uris.Add(model);
 
       return new UriDefinition(this, model);
     }
 
-    public IMetaModelRepository Repository
-    {
-      get { return _rootTarget.Repository; }
-    }
+    public IMetaModelRepository Repository => _rootTarget.Repository;
 
-    public ITypeSystem TypeSystem
-    {
-      get { return _rootTarget.TypeSystem; }
-    }
+    public ITypeSystem TypeSystem => _rootTarget.TypeSystem;
 
     public ResourceModel Resource { get; private set; }
 
-    public HandlerModel Handler
-    {
-      get { return _lastHandlerModel; }
-    }
+    public HandlerModel Handler => _lastHandlerModel;
 
     public class UriDefinition : TargetWrapper, IUriDefinition, IUriTarget
     {
@@ -198,10 +179,7 @@ namespace OpenRasta.Configuration.Fluent.Implementation
         _uriModel = uriModel;
       }
 
-      public IResourceDefinition And
-      {
-        get { return _resourceDefinition; }
-      }
+      public IResourceDefinition And => _resourceDefinition;
 
       public IHandlerForResourceWithUriDefinition HandledBy<T>()
       {

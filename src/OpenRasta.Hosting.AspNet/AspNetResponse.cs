@@ -14,6 +14,7 @@ namespace OpenRasta.Hosting.AspNet
       NativeContext = context;
       Headers = new HttpHeaderDictionary();
       Entity = new HttpEntity(Headers, NativeContext.Response.OutputStream);
+      context.Response.AddOnSendingHeaders(httpContext => HeadersSent = true);
     }
 
     public IHttpEntity Entity { get; }
@@ -31,8 +32,7 @@ namespace OpenRasta.Hosting.AspNet
 
     public void WriteHeaders()
     {
-      if (HeadersSent)
-        throw new InvalidOperationException("The headers have already been sent.");
+      if (HeadersSent) throw new InvalidOperationException("HTTP Headers have been sent");
       if (Headers.ContentType != null)
       {
         log.WriteDebug("Writing http header Content-Type:{0}", Headers.ContentType.MediaType);

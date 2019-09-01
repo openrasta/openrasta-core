@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using OpenRasta.Concordia;
 using OpenRasta.Configuration;
 using OpenRasta.Configuration.Fluent;
 using OpenRasta.DI;
@@ -83,7 +84,10 @@ namespace Tests.Plugins.Caching.contexts
 
     protected void when_executing_request(string uri)
     {
-      _host = new InMemoryHost(_configuration);
+      _host = new InMemoryHost(_configuration, startup: new StartupProperties()
+      {
+        OpenRasta = { Errors = { HandleAllExceptions = false, HandleCatastrophicExceptions = false }}
+      });
       _host.Resolver.AddDependencyInstance(typeof(caching), this, DependencyLifetime.Singleton);
       var request = new InMemoryRequest
       {

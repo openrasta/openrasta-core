@@ -2,8 +2,8 @@
 
 namespace OpenRasta.Configuration.Fluent.Extensions
 {
-    public interface ICodecTarget : IResourceTarget
-    {
-        CodecModel Codec { get; }
-    }
+  public interface ICodecTarget : IResourceTarget
+  {
+    CodecModel Codec { get; }
+  }
 }

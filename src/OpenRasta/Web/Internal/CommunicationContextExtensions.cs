@@ -33,12 +33,12 @@ namespace OpenRasta.Web.Internal
     public static void SetOperationResultToServerErrors(this ICommunicationContext env)
     {
       env.OperationResult =
-        new OperationResult.InternalServerError()
+        new OperationResult.InternalServerError
         {
-          Title = "Errors happened while executing the request",
+          Title = "Errors occured while executing the request",
           ResponseResource = env.ServerErrors.ToList(),
           Description = $"Errors happened while executing the request: {Environment.NewLine}" +
-                        string.Concat(env.ServerErrors.Select(error => $"{error}{Environment.NewLine}"))
+                        string.Join(Environment.NewLine,env.ServerErrors.Select(error => error.ToString()))
         };
     }
   }

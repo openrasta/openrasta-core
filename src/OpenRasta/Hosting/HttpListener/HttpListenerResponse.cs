@@ -31,7 +31,7 @@ namespace OpenRasta.Hosting.HttpListener
 
     public void WriteHeaders()
     {
-      if (HeadersSent) return;
+      if (HeadersSent) throw new InvalidOperationException("HTTP Headers have been sent");
 
       HeadersSent = true;
       _nativeResponse.Headers.Clear();

@@ -7,13 +7,10 @@ namespace OpenRasta.Web
 {
   public class HttpEntity : IHttpEntity
   {
-    public HttpEntity(HttpHeaderDictionary messageheaders, Stream entityBodyStream)
+    public HttpEntity(HttpHeaderDictionary messageHeaders, Stream entityBodyStream)
     {
-      Headers = messageheaders;
-      if (entityBodyStream != null)
-      {
-        Stream = entityBodyStream; //new LengthTrackingStream(entityBodyStream);
-      }
+      Headers = messageHeaders;
+      Stream = entityBodyStream; 
 
       Errors = new List<Error>();
     }

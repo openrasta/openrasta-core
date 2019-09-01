@@ -130,7 +130,7 @@ namespace OpenRasta.Codecs
       return member.Type.CompareTo(registration.ResourceType);
     }
 
-    Func<IEnumerable<CodecRegistration>, IGrouping<float, MediaType>, IEnumerable<CodecRegistration>> AppendMediaTypeWriterFor(IMember resourceType)
+    Func<IEnumerable<CodecRegistration>, IGrouping<float, MediaType>, IEnumerable<CodecRegistration>>  AppendMediaTypeWriterFor(IMember resourceType)
     {
       return (source, mediaTypes) => source.Concat(FindMediaTypeWriterFor(mediaTypes, resourceType));
     }

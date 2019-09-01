@@ -43,6 +43,13 @@ namespace OpenRasta.Pipeline
           Log.WriteError($"Exception has happened: {Environment.NewLine}{e}");
           throw;
         }
+        finally
+        {
+          foreach (var error in env.ServerErrors)
+          {
+            Log.WriteError(error.ToString());
+          }
+        }
       }
     }
   }

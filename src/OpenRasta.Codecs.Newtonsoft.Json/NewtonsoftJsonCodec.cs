@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
+using OpenRasta.Configuration.MetaModel;
 using OpenRasta.TypeSystem;
 using OpenRasta.Web;
 
@@ -16,7 +18,13 @@ namespace OpenRasta.Codecs.Newtonsoft.Json
   [SupportedType(typeof(object))]
   public class NewtonsoftJsonCodec : IMediaTypeReaderAsync, IMediaTypeWriterAsync
   {
+    public NewtonsoftJsonCodec(ICommunicationContext context)
+    {
+      _codecModel = context.PipelineData.ResponseCodec.CodecModel;
+    }
+
     NewtonsoftCodecOptions _options = new NewtonsoftCodecOptions();
+    readonly CodecModel _codecModel;
 
     object ICodec.Configuration
     {
@@ -24,12 +32,20 @@ namespace OpenRasta.Codecs.Newtonsoft.Json
       set => _options = value as NewtonsoftCodecOptions ?? throw new ArgumentNullException();
     }
 
-    public async Task WriteTo(object entity, IHttpEntity response, IEnumerable<string> codecParameters)
+    public Task WriteTo(object entity, IHttpEntity response, IEnumerable<string> codecParameters)
     {
-      var content = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(entity, _options.Settings));
-      response.ContentLength = content.Length;
+      var jsonSerializer = JsonSerializer.CreateDefault(_options.Settings);
+      using (var stringWriter = new StreamWriter(response.Stream, new UTF8Encoding(false), 4096, true))
+      using (var jsonTextWriter = new JsonTextWriter(stringWriter))
+      {
+        jsonTextWriter.Formatting = jsonSerializer.Formatting;
+        jsonSerializer.Serialize(jsonTextWriter, entity, null);
+      }
+
+      if (response.Stream.CanSeek && _codecModel.IsBuffered)
+        response.ContentLength = response.Stream.Position;
       
-      await response.Stream.WriteAsync(content, 0, content.Length);
+      return Task.CompletedTask;
     }
 
     public async Task<object> ReadFrom(IHttpEntity request, IType destinationType, string destinationName)

@@ -8,7 +8,6 @@ using OpenRasta.Web;
 
 namespace OpenRasta.Hosting.Compatibility
 {
-  
   public class WriteTrackingResponseCommunicationContext : ICommunicationContext
   {
     ICommunicationContext InnerContext { get; }

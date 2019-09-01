@@ -42,7 +42,8 @@ namespace OpenRasta.Configuration.MetaModel.Handlers
                                          mediaType.MediaType, 
                                          mediaType.Extensions, 
                                          codec.Configuration, 
-                                         false);
+                                         false,
+                                         codec);
             foreach (var reg in codecRegistrations)
                 _codecRepository.Add(reg);
         }

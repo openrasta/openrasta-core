@@ -15,7 +15,7 @@ namespace OpenRasta.Pipeline
       {
         await Next.Invoke(env);
       }
-      catch (Exception e)
+      catch (Exception e) when (env.Response.HeadersSent == false)
       {
         env.Response.StatusCode = 500;
         var message = FormatMessage(e);
