@@ -4,7 +4,7 @@ using OpenRasta.Plugins.Hydra.Schemas;
 
 namespace OpenRastaDemo.Shared
 {
-  public class HydraRootResponse : JsonLd.INode
+  public class HydraRootResponse 
   {
     public string _id { get; set; }
     public int index { get; set; }

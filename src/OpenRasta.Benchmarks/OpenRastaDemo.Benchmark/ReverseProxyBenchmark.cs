@@ -18,7 +18,7 @@ namespace OpenRastaDemo.Benchmark
     [GlobalSetup]
     public void Setup()
     {
-      var configurationSource = new DemoConfigurationSource();
+      var configurationSource = new DemoConfigurationSource(1);
       
       server = new TestServer(new WebHostBuilder()
         .ConfigureServices(s => s.AddSingleton<IConfigurationSource>(configurationSource))

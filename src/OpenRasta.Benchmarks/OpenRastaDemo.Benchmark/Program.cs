@@ -9,21 +9,22 @@ namespace OpenRastaDemo.Benchmark
   {
     static async Task Main(string[] args)
     {
-#if DEBUG
-//      var benchMark = new JsonBenchmark();
+//#if DEBUG
+////      var benchMark = new JsonBenchmark();
+////      benchMark.Setup();
+////      var response = await benchMark.GetMeSomeLittleJson();
+////      var content = await response.Content.ReadAsStringAsync();
+//      var benchMark = new ReverseProxyBenchmark();
 //      benchMark.Setup();
-//      var response = await benchMark.GetMeSomeLittleJson();
+//      var response = await benchMark.GetMeSomeProxy();
 //      var content = await response.Content.ReadAsStringAsync();
-      var benchMark = new ReverseProxyBenchmark();
-      benchMark.Setup();
-      var response = await benchMark.GetMeSomeProxy();
-      var content = await response.Content.ReadAsStringAsync();
-      Console.WriteLine(content);
+//      Console.WriteLine(content);
+//
+//#else
 
-#else
-//var summary = BenchmarkRunner.Run<JsonBenchmark>();
-      new BenchmarkSwitcher(typeof(Program).Assembly).RunAll();
-#endif
+     BenchmarkRunner.Run<SerializationBenchmark>();
+//      new BenchmarkSwitcher(typeof(Program).Assembly).RunAll();
+//#endif
     }
   }
 }

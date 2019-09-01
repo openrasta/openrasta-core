@@ -26,7 +26,7 @@ namespace OpenRastaDemo
           logging.AddDebug().SetMinimumLevel(LogLevel.Trace);
         })
         .UseContentRoot(Directory.GetCurrentDirectory())
-        .ConfigureServices(s => s.AddSingleton<IConfigurationSource>(new DemoConfigurationSource("http://localhost:5000/demoreverseproxy")))
+        .ConfigureServices(s => s.AddSingleton<IConfigurationSource>(new DemoConfigurationSource(1,"http://localhost:5000/demoreverseproxy")))
         .UseStartup<Startup>()
         .Build();
 

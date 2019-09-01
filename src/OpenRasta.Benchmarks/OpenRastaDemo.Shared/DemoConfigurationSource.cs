@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using OpenRasta.Codecs.Newtonsoft.Json;
 using OpenRasta.Configuration;
 using OpenRasta.Plugins.Hydra;
@@ -8,10 +10,12 @@ namespace OpenRastaDemo.Shared
 {
   public class DemoConfigurationSource : IConfigurationSource
   {
+    public int ResponseCount { get; }
     readonly string _reverseProxyUri;
 
-    public DemoConfigurationSource(string reverseProxyUri = null)
+    public DemoConfigurationSource(int responseCount, string reverseProxyUri = null)
     {
+      ResponseCount = responseCount;
       ReverseProxyOptions = new ReverseProxyOptions();
 
       _reverseProxyUri = reverseProxyUri ?? "http://localhost/demoreverseproxy";
@@ -41,16 +45,16 @@ namespace OpenRastaDemo.Shared
         .TranscodedBy<NewtonsoftJsonCodec>()
         .ForMediaType("application/json");
 
+      ResourceSpace.Uses.Dependency(ctx => ctx.Singleton(() => new HydraRootHandler(
+        GenerateHydraRootResponses(ResponseCount))).As<HydraRootHandler>());
+      
       ResourceSpace.Has
         .ResourcesOfType<List<HydraRootResponse>>()
-        .AtUri("/hydra")
+        .AtUri("/rootResponses")
         .EntryPointCollection()
-        .HandledBy<HydraHandler>();
-
-      ResourceSpace.Has
-        .ResourcesOfType<HydraRootResponse>()
-        .AtUri("/littlehydra")
-        .HandledBy<LittleHydraHandler>();
+        .HandledBy<HydraRootHandler>()
+        .TranscodedBy<NewtonsoftJsonCodec>()
+        .ForMediaType("application/json");
 
       ResourceSpace.Has
         .ResourcesNamed("reverseproxy")
@@ -61,6 +65,36 @@ namespace OpenRastaDemo.Shared
         .ResourcesNamed("demoreverseproxy")
         .AtUri("/demoreverseproxy")
         .HandledBy<DemoReverseProxyHandler>();
+    }
+
+    List<HydraRootResponse> GenerateHydraRootResponses(int responseCount)
+    {
+      return Enumerable.Repeat(
+        new HydraRootResponse
+        {
+          _id = "1",
+          about = "about",
+          address = "10 downing street",
+          age = 21,
+          balance = "12.45",
+          company = "IBM",
+          email = "me@home.com",
+          friends = new List<Friend>(new[] {new Friend {id = 2, name = "Joey"}}),
+          name = "Bob",
+          gender = "male",
+          greeting = "hi",
+          guid = Guid.Empty,
+          index = 4,
+          latitude = 56.54,
+          longitude = Decimal.One,
+          phone = "020 7890 4322",
+          picture = new Uri("http://www.google.com"),
+          registered = DateTime.UtcNow,
+          tags = new List<string>(new[] {"awesome"}),
+          eyeColor = "green",
+          favoriteFruit = "coconut",
+          isActive = true
+        }, responseCount).ToList();
     }
   }
 }
