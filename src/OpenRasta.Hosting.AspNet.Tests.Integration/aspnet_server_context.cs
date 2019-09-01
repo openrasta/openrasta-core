@@ -99,11 +99,7 @@ namespace OpenRasta.Hosting.AspNet.Tests.Integration
     {
       _http = new HttpListenerController
         (new[] {"http://+:" + _port + "/"}, "/", TempFolder.FullName);
-      _http.Start(()=>
-      {
-        configuration();
-        ResourceSpace.Has.ResourcesOfType<List<Error>>().WithoutUri.AsJsonNewtonsoft();
-      });
+      _http.Start(configuration);
     }
   }
 }
