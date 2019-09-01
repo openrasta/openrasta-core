@@ -19,7 +19,7 @@ namespace OpenRasta.Hosting.AspNet
 
     public IHttpEntity Entity { get; }
     public HttpHeaderDictionary Headers { get; }
-    public bool HeadersSent => _headersSent || _nativeHeadersSent;
+    public bool HeadersSent => _headersSent ;//|| _nativeHeadersSent;
     readonly ILogger log = TraceSourceLogger.Instance;
     bool _headersSent;
     bool _nativeHeadersSent;
