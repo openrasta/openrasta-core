@@ -46,8 +46,8 @@ namespace OpenRasta.Plugins.Hydra
 
       has.ResourcesOfType<object>()
         .WithoutUri
-        .TranscodedBy<JsonLdCodecWriter>().ForMediaType("application/ld+json").Buffered()
-        .And.TranscodedBy<JsonLdCodecReader>().ForMediaType("application/ld+json").Buffered();
+        .TranscodedBy<JsonLdCodecWriter>().ForMediaType("application/ld+json")
+        .And.TranscodedBy<JsonLdCodecReader>().ForMediaType("application/ld+json");
 
       has
         .ResourcesOfType<EntryPoint>()

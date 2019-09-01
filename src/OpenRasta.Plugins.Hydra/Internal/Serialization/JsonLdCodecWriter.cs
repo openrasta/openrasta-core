@@ -36,8 +36,7 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization
       _responseMessage.Headers.Add("link", $"<{_apiDocumentationLink}>; rel=\"{_apiDocumentationRel}\"");
 
       var resourceSelectedByUri = _context.PipelineData.SelectedResource;
-      
-      
+
       var serializerFunc = resourceSelectedByUri.ResourceModel.Hydra().SerializeFunc;
       
       if (serializerFunc == null)
@@ -50,7 +49,7 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization
       return serializerFunc(entity, new SerializationContext
       {
         BaseUri = BaseUri,
-        UriGenerator = resource => _uris.CreateUri(resource,_context.ApplicationBaseUri)
+        UriGenerator = resource => _uris.CreateUri(resource, _context.ApplicationBaseUri)
       }, response.Stream);
     }
 
@@ -58,8 +57,9 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization
     {
       if (entityInstance == null) return null;
 
-      if (!_models.TryGetResourceModel(entityInstance.GetType(), out var responseEntityResourceModel)) return null;
-      return responseEntityResourceModel.Hydra().SerializeFunc;
+      return _models.TryGetResourceModel(entityInstance.GetType(), out var responseEntityResourceModel) 
+        ? responseEntityResourceModel.Hydra().SerializeFunc
+        : null;
     }
   }
 }
