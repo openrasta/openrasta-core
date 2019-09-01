@@ -110,7 +110,9 @@ namespace ResponseEntityWriter_Specification
 
       when_sending_notification<KnownStages.ICodecResponseSelection>().ShouldBe(PipelineContinuation.Continue);
 
-      Context.Response.Headers.ContentLength.ShouldBe(50);
+      Context.Response.Headers.ContentLength.ShouldBeNull();
+      // used to verify content length was written down, but out of buffering, this is not right
+      // TODO: Rewrite those tests when we address trailer headers
     }
 
     IMediaTypeWriter GivenAContentTypeWriter(Action<object, IHttpEntity, string[]> code)

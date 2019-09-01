@@ -37,7 +37,7 @@ namespace OpenRasta.Pipeline.Contributors
         return PipelineContinuation.Continue;
       }
 
-      var isBuffered = context.PipelineData.ResponseCodec.CodecModel?.IsBuffered;
+      var isBuffered = context.PipelineData.ResponseCodec?.CodecModel?.IsBuffered;
       var entity = context.Response.Entity;
       BufferedHttpEntity buffered = null;
       
