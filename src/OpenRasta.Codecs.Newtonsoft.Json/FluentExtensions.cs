@@ -11,7 +11,7 @@ namespace OpenRasta.Codecs.Newtonsoft.Json
   public static class FluentExtensions
   {
     public static ICodecDefinition AsJsonNewtonsoft(
-      this IHandlerForResourceWithUriDefinition root,
+      this ICodecParentDefinition root,
       Action<NewtonsoftCodecOptions> options = null)
     {
       var opt = new NewtonsoftCodecOptions();

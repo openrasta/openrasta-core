@@ -1,8 +1,11 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net;
 using System.Text;
 using NUnit.Framework;
+using OpenRasta.Codecs.Newtonsoft.Json;
+using OpenRasta.Configuration;
 using OpenRasta.Hosting.AspNet.AspNetHttpListener;
 using OpenRasta.Web;
 
@@ -96,8 +99,11 @@ namespace OpenRasta.Hosting.AspNet.Tests.Integration
     {
       _http = new HttpListenerController
         (new[] {"http://+:" + _port + "/"}, "/", TempFolder.FullName);
-      _http.Start(configuration);
-
+      _http.Start(()=>
+      {
+        configuration();
+        ResourceSpace.Has.ResourcesOfType<List<Error>>().WithoutUri.AsJsonNewtonsoft();
+      });
     }
   }
 }
