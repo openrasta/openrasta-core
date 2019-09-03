@@ -42,6 +42,11 @@ namespace OpenRasta.Pipeline
         ThrowWithNewError(env, "Error re-rendering the response",
           "An error occured while trying to re-rendering the response.", e);
       }
+
+      if (env.PipelineData.PipelineStage.CurrentState == PipelineContinuation.RenderNow)
+        ThrowWithNewError(env,
+          "Re-rendering failed",
+          "A component set the response pipeline in render now mode one too many times.");
     }
 
     static void ThrowWithNewError(ICommunicationContext env, string title, string message, Exception e = null)
