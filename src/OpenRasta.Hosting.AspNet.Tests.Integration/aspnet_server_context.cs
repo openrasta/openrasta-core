@@ -98,7 +98,7 @@ namespace OpenRasta.Hosting.AspNet.Tests.Integration
     public void ConfigureServer(Action configuration)
     {
       _http = new HttpListenerController
-        (new[] {"http://+:" + _port + "/"}, "/", TempFolder.FullName);
+        (new[] {"http://127.0.0.1:" + _port + "/"}, "/", TempFolder.FullName);
       _http.Start(configuration);
     }
   }
