@@ -18,7 +18,7 @@ namespace OpenRasta.Hosting.AspNet.Tests.Integration
             .AtUri("/{customerId}")
             .HandledBy<CustomerHandler>();
           
-          ResourceSpace.Has.ResourcesOfType<object>().WithoutUri.AsJsonNewtonsoft();
+//          ResourceSpace.Has.ResourcesOfType<object>().WithoutUri.AsJsonNewtonsoft();
         });
     }
 
