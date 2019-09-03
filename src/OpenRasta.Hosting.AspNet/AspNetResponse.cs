@@ -14,7 +14,7 @@ namespace OpenRasta.Hosting.AspNet
       NativeContext = context;
       Headers = new HttpHeaderDictionary();
       Entity = new HttpEntity(Headers, NativeContext.Response.OutputStream);
-      context.Response.AddOnSendingHeaders(httpContext => _nativeHeadersSent = true);
+//      context.Response.AddOnSendingHeaders(httpContext => _nativeHeadersSent = true);
     }
 
     public IHttpEntity Entity { get; }
@@ -22,7 +22,7 @@ namespace OpenRasta.Hosting.AspNet
     public bool HeadersSent => _headersSent ;//|| _nativeHeadersSent;
     readonly ILogger log = TraceSourceLogger.Instance;
     bool _headersSent;
-    bool _nativeHeadersSent;
+//    bool _nativeHeadersSent;
 
     public int StatusCode
     {
