@@ -20,11 +20,13 @@ namespace OpenRasta.Codecs.Newtonsoft.Json
   {
     public NewtonsoftJsonCodec(ICommunicationContext context)
     {
-      _codecModel = context.PipelineData.ResponseCodec.CodecModel;
+      _codecModel = context.PipelineData.ResponseCodec?.CodecModel;
+      _context = context;
     }
 
     NewtonsoftCodecOptions _options = new NewtonsoftCodecOptions();
     readonly CodecModel _codecModel;
+    ICommunicationContext _context;
 
     object ICodec.Configuration
     {
@@ -41,8 +43,8 @@ namespace OpenRasta.Codecs.Newtonsoft.Json
         jsonTextWriter.Formatting = jsonSerializer.Formatting;
         jsonSerializer.Serialize(jsonTextWriter, entity, null);
       }
-
-      if (response.Stream.CanSeek && _codecModel.IsBuffered)
+      
+      if (!_context.Response.HeadersSent && response.Stream.CanSeek)
         response.ContentLength = response.Stream.Position;
       
       return Task.CompletedTask;
