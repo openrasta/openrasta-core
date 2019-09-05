@@ -43,6 +43,7 @@ namespace OpenRasta.Web
       get => _contentLength;
       set {
         _contentLength = value;
+        
         _base[HDR_CONTENT_LENGTH] = value == null ? null : value.ToString();
       }
     }

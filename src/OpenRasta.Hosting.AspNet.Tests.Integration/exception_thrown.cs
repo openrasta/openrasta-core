@@ -1,6 +1,8 @@
 ﻿using System.Net;
+using System.Text;
 using NUnit.Framework;
 using OpenRasta.Configuration;
+using OpenRasta.IO;
 using Shouldly;
 
 namespace OpenRasta.Hosting.AspNet.Tests.Integration
@@ -23,7 +25,9 @@ namespace OpenRasta.Hosting.AspNet.Tests.Integration
             TheResponse.StatusCode.ShouldBe(HttpStatusCode.InternalServerError);
             GivenARequest("GET", "/customer/success");
             TheResponse.StatusCode.ShouldBe(HttpStatusCode.OK);
-
+            TheResponse.ContentLength.ShouldBe(5);
+            GivenTheResponseIsInEncoding(Encoding.UTF8);
+            TheResponseAsString.ShouldBe("hello");
         }
     }
 }

@@ -1,19 +1,25 @@
 ﻿using System.Net;
 using System.Text;
 using NUnit.Framework;
+using OpenRasta.Codecs.Newtonsoft.Json;
 using OpenRasta.Configuration;
 using Shouldly;
 
 namespace OpenRasta.Hosting.AspNet.Tests.Integration
 {
-  public class when_issueing_a_get_for_a_resource : aspnet_server_context
+  public class when_issuing_a_get_for_a_resource : aspnet_server_context
   {
-    public when_issueing_a_get_for_a_resource()
+    public when_issuing_a_get_for_a_resource()
     {
       ConfigureServer(
-        () => ResourceSpace.Has.ResourcesOfType<Customer>()
-          .AtUri("/{customerId}")
-          .HandledBy<CustomerHandler>());
+        () =>
+        {
+          ResourceSpace.Has.ResourcesOfType<Customer>()
+            .AtUri("/{customerId}")
+            .HandledBy<CustomerHandler>();
+          
+//          ResourceSpace.Has.ResourcesOfType<object>().WithoutUri.AsJsonNewtonsoft();
+        });
     }
 
     [Test]

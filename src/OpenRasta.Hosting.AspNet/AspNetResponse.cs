@@ -14,15 +14,16 @@ namespace OpenRasta.Hosting.AspNet
       NativeContext = context;
       Headers = new HttpHeaderDictionary();
       Entity = new HttpEntity(Headers, NativeContext.Response.OutputStream);
-      context.Response.AddOnSendingHeaders(httpContext => _nativeHeadersSent = true);
+//      context.Response.AddOnSendingHeaders(httpContext => _nativeHeadersSent = true);
     }
 
     public IHttpEntity Entity { get; }
     public HttpHeaderDictionary Headers { get; }
-    public bool HeadersSent => _headersSent ;//|| _nativeHeadersSent;
+    public bool HeadersSent => _headersSent; //|| _nativeHeadersSent;
     readonly ILogger log = TraceSourceLogger.Instance;
+
     bool _headersSent;
-    bool _nativeHeadersSent;
+//    bool _nativeHeadersSent;
 
     public int StatusCode
     {
@@ -40,7 +41,9 @@ namespace OpenRasta.Hosting.AspNet
         NativeContext.Response.AppendHeader("Content-Type", Headers.ContentType.MediaType);
       }
 
-      foreach (var header in Headers.Where(h => h.Key != "Content-Type"))
+      foreach (var header in Headers
+        .Where(h => h.Value != null &&
+                    !string.Equals(h.Key, "Content-Type", StringComparison.OrdinalIgnoreCase)))
       {
         NativeContext.Response.AppendHeader(header.Key, header.Value);
       }
