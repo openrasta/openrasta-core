@@ -24,9 +24,10 @@ namespace OpenRasta.Hosting.AspNet.Tests.Integration
             GivenARequest("GET", "/customer");
             TheResponse.StatusCode.ShouldBe(HttpStatusCode.InternalServerError);
             GivenARequest("GET", "/customer/success");
-            TheResponseAsString.ShouldBe("hello");
             TheResponse.StatusCode.ShouldBe(HttpStatusCode.OK);
-
+            TheResponse.ContentLength.ShouldBe(5);
+            GivenTheResponseIsInEncoding(Encoding.UTF8);
+            TheResponseAsString.ShouldBe("hello");
         }
     }
 }

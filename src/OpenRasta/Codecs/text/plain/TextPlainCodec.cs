@@ -49,6 +49,7 @@ namespace OpenRasta.Codecs
       response.ContentType = new MediaType("text/plain;charset=ISO-8859-1");
       response.ContentLength = encodedText.Length;
       response.Stream.Write(encodedText, 0, encodedText.Length);
+      response.Stream.Flush();
     }
 
     Encoding DetectTextEncoding(IHttpEntity request)
