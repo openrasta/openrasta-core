@@ -294,13 +294,16 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
         };
       }
 
-      // not an iri node itself, but is it a list of nodes?
-      var itemResourceRegistrations = (
-        from i in pi.PropertyType.GetInterfaces()
+      var itemTypes = (from i in pi.PropertyType.GetInterfaces().Concat(pi.PropertyType.IsInterface ? new[]{pi.PropertyType} : Array.Empty<Type>())
         where i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IEnumerable<>)
         let itemType = i.GetGenericArguments()[0]
         where itemType != typeof(object)
-        let resourceModels = models.ResourceRegistrations.Where(r => itemType.IsAssignableFrom(r.ResourceType))
+        select itemType).ToList();
+      
+      // not an iri node itself, but is it a list of nodes?
+      var itemResourceRegistrations = (
+        from itemType in itemTypes
+        let resourceModels = models.ResourceRegistrations.Where(r => r.ResourceType.IsAssignableFrom(itemType))
         where resourceModels.Any()
         orderby resourceModels.Count() descending
         select
