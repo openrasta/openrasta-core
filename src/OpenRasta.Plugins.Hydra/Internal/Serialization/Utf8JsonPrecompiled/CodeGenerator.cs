@@ -196,7 +196,7 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
       {
         if (pi.GetIndexParameters().Any()) continue;
 
-        if (pi.PropertyType.IsValueType && Nullable.GetUnderlyingType(pi.PropertyType) == null)
+        if (pi.PropertyType == typeof(string) || (pi.PropertyType.IsValueType && Nullable.GetUnderlyingType(pi.PropertyType) == null))
         {
           var nodePropertyValue = WriteNodePropertyValue(
             jsonWriter,
