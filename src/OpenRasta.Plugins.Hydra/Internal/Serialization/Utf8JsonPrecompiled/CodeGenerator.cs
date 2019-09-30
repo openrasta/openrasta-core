@@ -303,7 +303,8 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
       // not an iri node itself, but is it a list of nodes?
       var itemResourceRegistrations = (
         from itemType in itemTypes
-        let resourceModels = models.ResourceRegistrations.Where(r => r.ResourceType.IsAssignableFrom(itemType))
+        let resourceModels = models.ResourceRegistrations.Where(r =>
+          r.ResourceType != null && itemType.IsAssignableFrom(r.ResourceType)).ToList()
         where resourceModels.Any()
         orderby resourceModels.Count() descending
         select
