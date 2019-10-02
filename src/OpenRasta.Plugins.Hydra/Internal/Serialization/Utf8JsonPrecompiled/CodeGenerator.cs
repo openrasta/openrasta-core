@@ -106,6 +106,9 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
             resourceRegistrationHydraType = "hydra:Collection";
 
           resourceType = collectionType;
+          
+          // Remove existing id and type if already defined
+          nodeProperties.RemoveAll(p => p.Name == "@id" || p.Name == "@type");
           nodeProperties.AddRange(GetNodeProperties(jsonWriter, model, resource, uriGenerator, models,
             recursionDefender,
             jsonFormatterResolver, resourceType, resourceUri, resourceRegistrationHydraType));
