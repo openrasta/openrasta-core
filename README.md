@@ -9,6 +9,8 @@ Cutting Edge nuget packages
 
 OpenRasta core library
 
+Slack - httpapis.slack.com channel #OpenRasta [https://httpapis.slack.com/messages/C21F3GBC6](https://httpapis.slack.com/messages/C21F3GBC6)
+
 This the core OpenRasta library which allows you to run an in-memory instance of openrasta.
 
 ``
