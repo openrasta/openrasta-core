@@ -166,6 +166,12 @@ namespace OpenRasta.Web
       }
     }
 
+    public class PermanentRedirect : OperationResult
+    {
+      public PermanentRedirect() : base(308)
+      {
+      }
+    }
     public class MovedTemporarily : OperationResult
     {
       public MovedTemporarily() : base(307)
