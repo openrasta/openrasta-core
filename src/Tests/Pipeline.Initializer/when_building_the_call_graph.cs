@@ -70,7 +70,7 @@ namespace Tests.Pipeline.Initializer
       var pipeline = CreatePipeline(callGraphGeneratorType,
         new[]
         {
-          typeof(EndContributor),
+          typeof(RequestResponseDisposer),
           typeof(AfterContributor<KnownStages.IBegin>),
           typeof(AfterContributor<AfterContributor<KnownStages.IBegin>>),
           typeof(AfterContributor<KnownStages.IEnd>),
@@ -85,7 +85,7 @@ namespace Tests.Pipeline.Initializer
           typeof(AfterContributor<KnownStages.IBegin>),
           typeof(AfterContributor<AfterContributor<KnownStages.IBegin>>),
           typeof(OperationInvokerContributor),
-          typeof(EndContributor),
+          typeof(RequestResponseDisposer),
           typeof(AfterContributor<KnownStages.IEnd>)
         },
         (a, b) => b.IsInstanceOfType(a));
@@ -152,14 +152,14 @@ namespace Tests.Pipeline.Initializer
           {
               typeof(BeforeContributor<KnownStages.IEnd>),
               typeof(AfterContributor<KnownStages.IEnd>),
-              typeof(EndContributor)
+              typeof(RequestResponseDisposer)
           },
           false);
 
       pipeline.Contributors.ShouldHaveSameElementsAs(new[]
           {
               typeof(BeforeContributor<KnownStages.IEnd>),
-              typeof(EndContributor),
+              typeof(RequestResponseDisposer),
               typeof(AfterContributor<KnownStages.IEnd>)
           },
           (a, b) => a.GetType() == b);

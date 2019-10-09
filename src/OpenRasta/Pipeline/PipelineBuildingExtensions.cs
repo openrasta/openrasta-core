@@ -23,16 +23,26 @@ namespace OpenRasta.Pipeline
 
       foreach (var contributorCall in callGraph)
       {
-        if (contributorCall.Target is KnownStages.IOperationResultInvocation)
+        // change the type of middleware to create at key known stages
+        switch (contributorCall.Target)
         {
-          converter = CreateResponseMiddleware;
-          if (startupProperties?.OpenRasta.Errors.HandleAllExceptions == true)
-            yield return (new ResponseRetryMiddleware(), null);
+          case KnownStages.IUriMatching _:
+            converter = CreateRequestMiddleware;
+            break;
+          case KnownStages.IOperationResultInvocation _:
+          {
+            converter = CreateResponseMiddleware;
+            if (startupProperties?.OpenRasta.Errors.HandleAllExceptions == true)
+              yield return (new ResponseRetryMiddleware(), null);
+            break;
+          }
+          case KnownStages.IEnd _:
+            converter = CreatePostExecuteMiddleware;
+            break;
         }
+
         
-        if (contributorCall.Target is KnownStages.IUriMatching)
-          converter = CreateRequestMiddleware;
-        
+
         var middleware = converter(contributorCall, startupProperties);
         yield return (middleware, contributorCall);
         
@@ -49,6 +59,11 @@ namespace OpenRasta.Pipeline
     static IPipelineMiddlewareFactory CreatePreExecuteMiddleware(ContributorCall contrib, StartupProperties props)
     {
       return new PreExecuteMiddleware(contrib);
+    }
+
+    static IPipelineMiddlewareFactory CreatePostExecuteMiddleware(ContributorCall contrib, StartupProperties props)
+    {
+      return new PostExecuteMiddleware(contrib);
     }
 
     static IPipelineMiddlewareFactory CreateResponseMiddleware(ContributorCall contrib, StartupProperties props)

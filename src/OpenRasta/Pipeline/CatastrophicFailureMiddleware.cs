@@ -21,6 +21,7 @@ namespace OpenRasta.Pipeline
         var message = FormatMessage(e);
         env.Response.Entity.ContentLength = message.Length;
         await env.Response.Entity.Stream.WriteAsync(message, 0, message.Length);
+        env.PipelineData["skipToCleanup"] = true;
       }
     }
 

@@ -29,8 +29,9 @@ namespace OpenRasta.Pipeline
 
       var defaults = new List<IPipelineMiddlewareFactory>()
       {
-        new CleanupMiddleware()
+        new CompatibilityMarkPipelineAsFinished()
       };
+      
       if (startup.OpenRasta.Errors.HandleCatastrophicExceptions)
       {
         defaults.Add(new CatastrophicFailureMiddleware());

@@ -12,10 +12,18 @@ namespace OpenRasta.Pipeline
 
     public override async Task Invoke(ICommunicationContext env)
     {
+      if (env.PipelineData.TryGetValue("skipToCleanup",out var isSkip) && isSkip is bool skip && skip)
+      {
+         await Next.Invoke(env);
+         return;
+      }
+      
+      
       if (env.PipelineData.PipelineStage.CurrentState == PipelineContinuation.RenderNow)
       {
         env.PipelineData.PipelineStage.CurrentState = PipelineContinuation.Continue;
       }
+      
       var contribState = await ContributorInvoke(env);
 
 #pragma warning disable 618

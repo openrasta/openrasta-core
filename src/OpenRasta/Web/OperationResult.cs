@@ -158,7 +158,7 @@ namespace OpenRasta.Web
         set { }
       }
     }
-
+  
     public class MovedPermanently : OperationResult
     {
       public MovedPermanently() : base(301)

@@ -411,7 +411,7 @@ namespace OpenRasta.Configuration
       AddPipelineContributor<RequestCodecSelector>();
       AddPipelineContributor<OperationInvokerContributor>();
       AddPipelineContributor<OperationResultInvokerContributor>();
-      AddPipelineContributor<EndContributor>();
+      AddPipelineContributor<RequestResponseDisposer>();
     }
   }
 }
