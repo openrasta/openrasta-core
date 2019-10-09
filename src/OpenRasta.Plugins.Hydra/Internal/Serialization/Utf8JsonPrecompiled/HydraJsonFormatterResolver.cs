@@ -10,7 +10,7 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
     public HydraJsonFormatterResolver()
     {
       _resolver = CompositeResolver.Create(new IJsonFormatter[] {new ContextFormatter()},
-        new[] {StandardResolver.CamelCase});
+        new[] {StandardResolver.ExcludeNullCamelCase});
     }
 
     public IJsonFormatter<T> GetFormatter<T>()
