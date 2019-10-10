@@ -45,18 +45,4 @@ namespace OpenRasta.Configuration.MetaModel
         $"ResourceKey: {ResourceKey}, Uris: {Uris.Aggregate(string.Empty, (str, reg) => str + reg + ";")}, Handlers: {Handlers.Aggregate(string.Empty, (str, reg) => str + reg + ";")}, Codecs: {Codecs.Aggregate(string.Empty, (str, reg) => str + reg + ";")}";
     }
   }
-
-  public class ResourceLinkModel
-  {
-    public string Relationship { get; set; }
-    public Uri Uri { get; set; }
-    public ResourceLinkCombination CombinationType { get; set; }
-    public string Type { get; set; }
-  }
-
-  public enum ResourceLinkCombination
-  {
-    Standard,
-    SubResource
-  }
 }
