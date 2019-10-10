@@ -21,7 +21,6 @@ namespace OpenRasta.Pipeline
     }
 
     async Task LoggingInvoke(ICommunicationContext env)
-
     {
       var shouldRetry = await ShouldRetryRendering(env);
 
@@ -40,7 +39,7 @@ namespace OpenRasta.Pipeline
       catch (Exception e)
       {
         ThrowWithNewError(env, "Error re-rendering the response",
-          "An error occured while trying to re-rendering the response.", e);
+          "An error occured while trying to re-render the response.", e);
       }
 
       if (env.PipelineData.PipelineStage.CurrentState == PipelineContinuation.RenderNow)

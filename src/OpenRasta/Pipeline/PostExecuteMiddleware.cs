@@ -25,6 +25,8 @@ namespace OpenRasta.Pipeline
           Exception = e
         });
       }
+
+      await Next.Invoke(env);
     }
   }
 }

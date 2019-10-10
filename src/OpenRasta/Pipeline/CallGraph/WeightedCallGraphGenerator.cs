@@ -16,7 +16,7 @@ namespace OpenRasta.Pipeline.CallGraph
       bool isSyntheticBootstrap = false;
       if (bootstrapper == null)
       {
-        bootstrapper = new BootstrapperContributor();
+        bootstrapper = new PreExecutingContributor();
         contribList.Add(bootstrapper);
         isSyntheticBootstrap = true;
       }

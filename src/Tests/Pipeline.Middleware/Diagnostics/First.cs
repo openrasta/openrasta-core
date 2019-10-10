@@ -3,7 +3,7 @@ using Tests.Pipeline.Initializer.Examples;
 
 namespace Tests.Pipeline.Middleware.Diagnostics
 {
-  class First : AfterContributor<BootstrapperContributor>
+  class First : AfterContributor<PreExecutingContributor>
   {
   }
 }

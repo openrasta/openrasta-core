@@ -26,13 +26,13 @@ namespace Tests.Pipeline.Initializer
           {
               typeof(SecondIsAfterFirstContributor),
               typeof(FirstIsAfterBootstrapContributor),
-              typeof(BootstrapperContributor)
+              typeof(PreExecutingContributor)
           },
           false);
 
       pipeline.Contributors.ShouldHaveSameElementsAs(new[]
           {
-              typeof(BootstrapperContributor),
+              typeof(PreExecutingContributor),
               typeof(FirstIsAfterBootstrapContributor),
               typeof(SecondIsAfterFirstContributor)
           },
@@ -49,14 +49,14 @@ namespace Tests.Pipeline.Initializer
           {
               typeof(AfterContributor<KnownStages.IBegin>),
               typeof(BeforeContributor<KnownStages.IBegin>),
-              typeof(BootstrapperContributor)
+              typeof(PreExecutingContributor)
           },
           false);
 
       pipeline.Contributors.ShouldHaveSameElementsAs(new[]
           {
               typeof(BeforeContributor<KnownStages.IBegin>),
-              typeof(BootstrapperContributor),
+              typeof(PreExecutingContributor),
               typeof(AfterContributor<KnownStages.IBegin>)
           },
           (a, b) => b.IsInstanceOfType(a));
@@ -74,14 +74,14 @@ namespace Tests.Pipeline.Initializer
           typeof(AfterContributor<KnownStages.IBegin>),
           typeof(AfterContributor<AfterContributor<KnownStages.IBegin>>),
           typeof(AfterContributor<KnownStages.IEnd>),
-          typeof(BootstrapperContributor),
+          typeof(PreExecutingContributor),
           typeof(OperationInvokerContributor),
         },
         false);
 
       pipeline.Contributors.ShouldHaveSameElementsAs(new[]
         {
-          typeof(BootstrapperContributor),
+          typeof(PreExecutingContributor),
           typeof(AfterContributor<KnownStages.IBegin>),
           typeof(AfterContributor<AfterContributor<KnownStages.IBegin>>),
           typeof(OperationInvokerContributor),
@@ -99,7 +99,7 @@ namespace Tests.Pipeline.Initializer
       var pipeline = CreatePipeline(callGraphGeneratorType,
         new[]
         {
-          typeof(BootstrapperContributor),
+          typeof(PreExecutingContributor),
           typeof(OperationInvokerContributor),
           typeof(BeforeContributor<KnownStages.IBegin>),
           typeof(BeforeContributor<KnownStages.IOperationExecution>),
@@ -109,7 +109,7 @@ namespace Tests.Pipeline.Initializer
       pipeline.Contributors.ShouldHaveSameElementsAs(new[]
         {
           typeof(BeforeContributor<KnownStages.IBegin>),
-          typeof(BootstrapperContributor),
+          typeof(PreExecutingContributor),
           typeof(BeforeContributor<KnownStages.IOperationExecution>),
           typeof(OperationInvokerContributor),
         },
@@ -124,7 +124,7 @@ namespace Tests.Pipeline.Initializer
       var pipeline = CreatePipeline(callGraphGeneratorType,
         new[]
         {
-          typeof(BootstrapperContributor),
+          typeof(PreExecutingContributor),
           typeof(OperationInvokerContributor),
           typeof(BeforeContributor<BeforeContributor<KnownStages.IOperationExecution>>),
           typeof(BeforeContributor<KnownStages.IBegin>),
@@ -135,7 +135,7 @@ namespace Tests.Pipeline.Initializer
       pipeline.Contributors.ShouldHaveSameElementsAs(new[]
         {
           typeof(BeforeContributor<KnownStages.IBegin>),
-          typeof(BootstrapperContributor),
+          typeof(PreExecutingContributor),
           typeof(BeforeContributor<BeforeContributor<KnownStages.IOperationExecution>>),
           typeof(BeforeContributor<KnownStages.IOperationExecution>),
           typeof(OperationInvokerContributor),
@@ -177,13 +177,13 @@ namespace Tests.Pipeline.Initializer
               typeof(SecondIsAfterFirstContributor),
               typeof(ThirdIsBeforeFirstContributor),
               typeof(FourthIsAfterThirdContributor),
-              typeof(BootstrapperContributor)
+              typeof(PreExecutingContributor)
           },
           false);
 
       pipeline.Contributors.ShouldHaveSameElementsAs(new[]
           {
-              typeof(BootstrapperContributor),
+              typeof(PreExecutingContributor),
               typeof(ThirdIsBeforeFirstContributor),
               typeof(FourthIsAfterThirdContributor),
               typeof(FirstIsAfterBootstrapContributor),
@@ -200,7 +200,7 @@ namespace Tests.Pipeline.Initializer
       Executing(() => CreatePipeline(callGraphGeneratorType,
               new[]
               {
-                  typeof(BootstrapperContributor),
+                  typeof(PreExecutingContributor),
                   typeof(RecursiveA),
                   typeof(RecursiveB)
               },
@@ -217,7 +217,7 @@ namespace Tests.Pipeline.Initializer
       Executing(() => CreatePipeline(callGraphGeneratorType,
               new[]
               {
-                  typeof(BootstrapperContributor),
+                  typeof(PreExecutingContributor),
                   typeof(ContributorA),
                   typeof(ContributorB),
                   typeof(ContributorC)

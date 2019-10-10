@@ -16,7 +16,7 @@ namespace Tests.Pipeline.Middleware.Diagnostics
     {
       IDependencyResolver resolver = new InternalDependencyResolver();
       resolver.AddDependency<IGenerateCallGraphs, TopologicalSortCallGraphGenerator>();
-      resolver.AddDependency<IPipelineContributor, BootstrapperContributor>();
+      resolver.AddDependency<IPipelineContributor, PreExecutingContributor>();
       resolver.AddDependency<IPipelineContributor, First>();
       var initialiser = new ThreePhasePipelineInitializer(
         resolver.Resolve<IEnumerable<IPipelineContributor>>(),

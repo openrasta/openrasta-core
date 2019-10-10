@@ -397,7 +397,7 @@ namespace OpenRasta.Configuration
     {
       AddPipelineContributor<ResponseEntityCodecResolverContributor>();
       AddPipelineContributor<ResponseEntityWriterContributor>();
-      AddPipelineContributor<BootstrapperContributor>();
+      AddPipelineContributor<PreExecutingContributor>();
       AddPipelineContributor<HttpMethodOverriderContributor>();
       AddPipelineContributor<UriDecoratorsContributor>();
 

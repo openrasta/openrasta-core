@@ -21,7 +21,7 @@ namespace Tests.Pipeline.Initializer
       var pipeline = CreatePipeline(callGraphGeneratorType,
           new[]
           {
-              typeof(BootstrapperContributor),
+              typeof(PreExecutingContributor),
               typeof(DummyContributor)
           },
           false);

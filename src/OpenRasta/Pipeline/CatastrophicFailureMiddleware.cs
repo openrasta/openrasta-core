@@ -20,8 +20,10 @@ namespace OpenRasta.Pipeline
         env.Response.StatusCode = 500;
         var message = FormatMessage(e);
         env.Response.Entity.ContentLength = message.Length;
+        env.Response.Entity.ContentType = MediaType.TextPlain;
         await env.Response.Entity.Stream.WriteAsync(message, 0, message.Length);
-        env.PipelineData["skipToCleanup"] = true;
+        env.PipelineData.Add("skipToCleanup", true);
+        await Next.Invoke(env);
       }
     }
 
