@@ -24,7 +24,7 @@ namespace Tests.Pipeline.Initializer
               typeof(PreExecutingContributor),
               typeof(DummyContributor)
           },
-          false);
+          opt=>opt.OpenRasta.Pipeline.Validate = false);
       
       pipeline.Contributors
           .OfType<DummyContributor>()

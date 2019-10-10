@@ -17,6 +17,12 @@ namespace OpenRasta.Pipeline
 
     public override async Task Invoke(ICommunicationContext env)
     {
+      if (env.PipelineData.TryGetValue("skipToCleanup",out var isSkip) && isSkip is bool skip && skip)
+      {
+        await Next.Invoke(env);
+        return;
+      }
+      
       var currentState = env.PipelineData.PipelineStage.CurrentState;
 
       if (currentState != PipelineContinuation.Continue)
@@ -33,6 +39,12 @@ namespace OpenRasta.Pipeline
       catch (Exception e) when (_catchExceptions)
       {
         env.Abort(e);
+      }
+      catch (Exception)
+      {
+        env.PipelineData["skipToCleanup"] = true;
+        await Next.Invoke(env);
+        throw;
       }
 
       await Next.Invoke(env);

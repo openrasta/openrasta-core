@@ -14,13 +14,13 @@ namespace Tests.Pipeline.Initializer.contributor_throwing
   public abstract class pipeline_building_context : initializer_context
   {
     public Type[] Contributors { get; set; }
+    protected InMemoryCommunicationContext Context { get; }
 
     protected pipeline_building_context()
     {
       Context = new InMemoryCommunicationContext();
     }
 
-    protected InMemoryCommunicationContext Context { get; }
 
     protected async Task RunPipeline(Type callGraphGeneratorType)
     {
@@ -28,7 +28,7 @@ namespace Tests.Pipeline.Initializer.contributor_throwing
       {
         typeof(RequestResponseDisposer),
         typeof(PostExecuteMarkerContributor)
-      }).ToArray(), false);
+      }).ToArray(), opt=>opt.OpenRasta.Pipeline.Validate = false);
       await pipeline.RunAsync(Context);
     }
 

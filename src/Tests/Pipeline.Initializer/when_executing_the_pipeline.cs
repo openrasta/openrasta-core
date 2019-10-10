@@ -25,7 +25,7 @@ namespace Tests.Pipeline.Initializer
               typeof(PreExecutingContributor),
               typeof(WasCalledContributor)
           },
-          false);
+          opt=>opt.OpenRasta.Pipeline.Validate = false);
 
       await pipeline.RunAsync(new InMemoryCommunicationContext());
       WasCalledContributor.WasCalled.ShouldBeTrue();

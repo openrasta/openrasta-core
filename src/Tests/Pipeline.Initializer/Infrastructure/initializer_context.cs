@@ -13,7 +13,7 @@ namespace Tests.Pipeline.Initializer.Infrastructure
     protected static IPipelineAsync CreatePipeline(
       Type callGraphGeneratorType,
       Type[] contributorTypes,
-      bool validate = true)
+      Action<StartupProperties> options = null)
     {
       var resolver = new InternalDependencyResolver();
       resolver.AddDependencyInstance<IDependencyResolver>(resolver);
@@ -32,7 +32,9 @@ namespace Tests.Pipeline.Initializer.Infrastructure
       var runner = resolver.Resolve<IPipelineInitializer>();
 
 
-      return runner.Initialize(new StartupProperties {OpenRasta = {Pipeline = {Validate = validate}}});
+      var opt = new StartupProperties {OpenRasta = {Pipeline = {Validate = true}}};
+      options?.Invoke(opt);
+      return runner.Initialize(opt);
     }
   }
 }

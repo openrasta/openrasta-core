@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using OpenRasta.Web;
 
 namespace OpenRasta.Pipeline
@@ -23,9 +24,16 @@ namespace OpenRasta.Pipeline
       {
         env.PipelineData.PipelineStage.CurrentState = PipelineContinuation.Continue;
       }
-      
-      var contribState = await ContributorInvoke(env);
 
+      try
+      {
+        var contribState = await ContributorInvoke(env);
+      }
+      catch (Exception) when _
+      {
+        env.PipelineData["skipToCleanup"] = true;
+        
+      }
 #pragma warning disable 618
       
       switch (contribState)

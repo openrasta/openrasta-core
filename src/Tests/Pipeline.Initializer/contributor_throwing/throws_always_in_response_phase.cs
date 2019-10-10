@@ -7,27 +7,27 @@ using Xunit;
 
 namespace Tests.Pipeline.Initializer.contributor_throwing
 {
-  public class throws_once_in_response_phase : pipeline_building_context
+  public class throws_always_in_response_phase : pipeline_building_context
   {
-    public throws_once_in_response_phase()
+    public throws_always_in_response_phase()
     {
       Contributors = new[]
       {
         typeof(PreExecutingContributor),
         typeof(RequestPhaseContributor),
         typeof(ResponsePhaseContributor),
-        typeof(ContributorThrowingOnceAfter<ResponsePhaseContributor>)
+        typeof(ContributorThrowingAfter<ResponsePhaseContributor>)
       };
     }
 
     [Theory]
     [InlineData(typeof(WeightedCallGraphGenerator))]
     [InlineData(typeof(TopologicalSortCallGraphGenerator))]
-    public async Task not_in_catastrophic_failure(Type callGraphGeneratorType)
+    public async Task is_in_catastrophic_failure(Type callGraphGeneratorType)
     {
       await RunPipeline(callGraphGeneratorType);
 
-      Context.PipelineData.ShouldNotContainKey("skipToCleanup");
+      Context.PipelineData.ShouldContainKey("skipToCleanup");
     }
 
     [Theory]
@@ -37,7 +37,7 @@ namespace Tests.Pipeline.Initializer.contributor_throwing
     {
       await RunPipeline(callGraphGeneratorType);
 
-      Context.ServerErrors.Count.ShouldBe(1);
+      Context.ServerErrors.Count.ShouldBe(2);
     }
   }
 }

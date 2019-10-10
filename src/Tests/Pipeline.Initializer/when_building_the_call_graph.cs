@@ -28,7 +28,7 @@ namespace Tests.Pipeline.Initializer
               typeof(FirstIsAfterBootstrapContributor),
               typeof(PreExecutingContributor)
           },
-          false);
+          opt=>opt.OpenRasta.Pipeline.Validate = false);
 
       pipeline.Contributors.ShouldHaveSameElementsAs(new[]
           {
@@ -51,7 +51,7 @@ namespace Tests.Pipeline.Initializer
               typeof(BeforeContributor<KnownStages.IBegin>),
               typeof(PreExecutingContributor)
           },
-          false);
+          opt=>opt.OpenRasta.Pipeline.Validate = false);
 
       pipeline.Contributors.ShouldHaveSameElementsAs(new[]
           {
@@ -77,7 +77,7 @@ namespace Tests.Pipeline.Initializer
           typeof(PreExecutingContributor),
           typeof(OperationInvokerContributor),
         },
-        false);
+        opt=>opt.OpenRasta.Pipeline.Validate = false);
 
       pipeline.Contributors.ShouldHaveSameElementsAs(new[]
         {
@@ -104,7 +104,7 @@ namespace Tests.Pipeline.Initializer
           typeof(BeforeContributor<KnownStages.IBegin>),
           typeof(BeforeContributor<KnownStages.IOperationExecution>),
         },
-        false);
+        opt=>opt.OpenRasta.Pipeline.Validate = false);
 
       pipeline.Contributors.ShouldHaveSameElementsAs(new[]
         {
@@ -130,7 +130,7 @@ namespace Tests.Pipeline.Initializer
           typeof(BeforeContributor<KnownStages.IBegin>),
           typeof(BeforeContributor<KnownStages.IOperationExecution>)
         },
-        false);
+        opt=>opt.OpenRasta.Pipeline.Validate = false);
 
       pipeline.Contributors.ShouldHaveSameElementsAs(new[]
         {
@@ -154,7 +154,7 @@ namespace Tests.Pipeline.Initializer
               typeof(AfterContributor<KnownStages.IEnd>),
               typeof(RequestResponseDisposer)
           },
-          false);
+          opt=>opt.OpenRasta.Pipeline.Validate = false);
 
       pipeline.Contributors.ShouldHaveSameElementsAs(new[]
           {
@@ -179,7 +179,7 @@ namespace Tests.Pipeline.Initializer
               typeof(FourthIsAfterThirdContributor),
               typeof(PreExecutingContributor)
           },
-          false);
+          opt=>opt.OpenRasta.Pipeline.Validate = false);
 
       pipeline.Contributors.ShouldHaveSameElementsAs(new[]
           {
@@ -204,7 +204,7 @@ namespace Tests.Pipeline.Initializer
                   typeof(RecursiveA),
                   typeof(RecursiveB)
               },
-              false))
+              opt=>opt.OpenRasta.Pipeline.Validate = false))
           .ShouldThrow<RecursionException>();
     }
 
@@ -222,7 +222,7 @@ namespace Tests.Pipeline.Initializer
                   typeof(ContributorB),
                   typeof(ContributorC)
               },
-              false))
+              opt=>opt.OpenRasta.Pipeline.Validate = false))
           .ShouldThrow<RecursionException>();
     }
 

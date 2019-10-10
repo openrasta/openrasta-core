@@ -5,6 +5,7 @@ using OpenRasta.Web.Internal;
 
 namespace OpenRasta.Pipeline
 {
+  
   public class ResponseRetryMiddleware : IPipelineMiddlewareFactory, IPipelineMiddleware
   {
     IPipelineMiddleware _responsePipeline;
