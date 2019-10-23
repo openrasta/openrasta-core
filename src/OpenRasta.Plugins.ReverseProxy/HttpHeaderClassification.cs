@@ -20,7 +20,8 @@ namespace OpenRasta.Plugins.ReverseProxy
 
     static readonly List<string> AppendOnForwardHeader = new List<string>
     {
-      "server-timing"
+      "server-timing",
+      "via"
     };
 
     static readonly List<string> ContentHeaders = new List<string>
