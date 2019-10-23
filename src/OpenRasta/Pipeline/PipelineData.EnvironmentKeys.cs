@@ -17,6 +17,7 @@ namespace OpenRasta.Pipeline
       public const string OPERATIONS_ASYNC = "openrasta.operations";
       public const string LEGACY_KEYS = "openrasta.LegacyKeys";
 
+      public const string OWIN_REQUEST_PROTOCOL = "owin.RequestProtocol";
       public const string OWIN_SSL_CLIENT_CERTIFICATE = "ssl.ClientCertificate";
       public const string OWIN_SSL_CLIENT_CERTIFICATE_LOAD = "ssl.LoadClientCertAsync";
     }

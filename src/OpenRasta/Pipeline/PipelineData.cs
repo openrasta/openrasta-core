@@ -92,5 +92,6 @@ namespace OpenRasta.Pipeline
       get => SafeGet<PipelineStage>(EnvironmentKeys.PIPELINE_STATE);
       set => base[EnvironmentKeys.PIPELINE_STATE] = value;
     }
+
   }
 }

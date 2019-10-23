@@ -26,6 +26,12 @@ namespace OpenRasta.Pipeline
         get => _pipelineData.SafeGet<Func<Task>>(EnvironmentKeys.OWIN_SSL_CLIENT_CERTIFICATE_LOAD);
         set => _pipelineData[EnvironmentKeys.OWIN_SSL_CLIENT_CERTIFICATE_LOAD] = value;
       }
+
+      public string RequestProtocol
+      {
+        get => _pipelineData.SafeGet<string>(EnvironmentKeys.OWIN_REQUEST_PROTOCOL);
+        set => _pipelineData[EnvironmentKeys.OWIN_REQUEST_PROTOCOL] = value ?? "1.1";
+      }
     }
   }
 }
