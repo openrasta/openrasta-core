@@ -12,14 +12,12 @@ namespace OpenRasta.Plugins.ReverseProxy
   public class ReverseProxyResponseCodec : IMediaTypeWriterAsync
   {
     readonly IResponse _response;
-    readonly ICommunicationContext _context;
     public object Configuration { get; set; }
 
 
     public ReverseProxyResponseCodec(ICommunicationContext context)
     {
       _response = context.Response;
-      _context = context;
     }
 
     public async Task WriteTo(object entity, IHttpEntity response, IEnumerable<string> codecParameters)
@@ -29,13 +27,17 @@ namespace OpenRasta.Plugins.ReverseProxy
       {
         _response.StatusCode = proxyResponse.StatusCode;
 
-        response.Headers["via"] = string.Join(response.Headers["via"], $"1.1 {proxyResponse.Via}");
+        if (proxyResponse.Via != null)
+          response.Headers.Add("via", proxyResponse.Via);
 
         if (proxyResponse.ResponseMessage != null)
         {
-          foreach (var header in proxyResponse.ResponseMessage.Headers.Concat(proxyResponse.ResponseMessage.Content
-            .Headers))
+          foreach (var header in
+            proxyResponse.ResponseMessage.Headers.Concat(
+              proxyResponse.ResponseMessage.Content.Headers))
+          {
             SetHeader(response, header);
+          }
 
           await proxyResponse.ResponseMessage.Content.CopyToAsync(response.Stream);
         }
@@ -54,16 +56,17 @@ namespace OpenRasta.Plugins.ReverseProxy
     static void SetHeader(IHttpEntity response, KeyValuePair<string, IEnumerable<string>> header)
     {
       if (HttpHeaderClassification.IsHopByHopHeader(header.Key)) return;
-      
+
       var values = string.Join(", ", header.Value);
 
       if (HttpHeaderClassification.IsAppendedOnForwardHeader(header.Key))
       {
-        if (response.Headers.ContainsKey(header.Key))
-          values = string.Join(",", response.Headers[header.Key], values);
+        response.Headers.Add(header.Key, values);
       }
-
-      response.Headers[header.Key] = values;
+      else
+      {
+        response.Headers[header.Key] = values;
+      }
     }
   }
 }

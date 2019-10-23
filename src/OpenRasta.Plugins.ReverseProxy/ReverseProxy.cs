@@ -44,7 +44,7 @@ namespace OpenRasta.Plugins.ReverseProxy
       PrepareRequestBody(context, requestMessage);
       PrepareRequestHeaders(context, requestMessage, _convertForwardedHeaders);
 
-      var viaIdentifier = PrepareViaHeader(context, requestMessage);
+      var viaIdentifier = AppendViaHeaderToRequest(context, requestMessage);
 
       var httpClient = _httpClient();
 
@@ -65,16 +65,16 @@ namespace OpenRasta.Plugins.ReverseProxy
       catch (TaskCanceledException e) when (timeoutToken.IsCancellationRequested || e.CancellationToken == timeoutToken)
       {
         // Note we check both cancellation token because mono/fullfx/core don't have the same behaviour
-        return new ReverseProxyResponse(requestMessage, via: viaIdentifier, error: e, statusCode: 504);
+        return new ReverseProxyResponse(requestMessage, via: null, error: e, statusCode: 504);
       }
       catch (HttpRequestException e)
       {
         context.ServerErrors.Add(new Error {Exception = e, Title = $"Reverse Proxy failed to connect."});
-        return new ReverseProxyResponse(requestMessage, via: viaIdentifier, error: e, statusCode: 502);
+        return new ReverseProxyResponse(requestMessage, via: null, error: e, statusCode: 502);
       }
     }
 
-    string PrepareViaHeader(ICommunicationContext context, HttpRequestMessage requestMessage)
+    string AppendViaHeaderToRequest(ICommunicationContext context, HttpRequestMessage requestMessage)
     {
       var viaIdentifier = _viaIdentifier ?? $"{context.Request.Uri.Host}:{context.Request.Uri.Port}";
       requestMessage.Headers.Add("via", $"1.1 {viaIdentifier}");
