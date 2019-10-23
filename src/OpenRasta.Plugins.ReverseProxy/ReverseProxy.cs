@@ -77,7 +77,7 @@ namespace OpenRasta.Plugins.ReverseProxy
     string AppendViaHeaderToRequest(ICommunicationContext context, HttpRequestMessage requestMessage)
     {
       var viaIdentifier = _viaIdentifier ?? $"{context.Request.Uri.Host}:{context.Request.Uri.Port}";
-      requestMessage.Headers.Add("via", $"1.1 {viaIdentifier}");
+      requestMessage.Headers.Add("via", $"{context.PipelineData.Owin.RequestProtocol} {viaIdentifier}");
       return viaIdentifier;
     }
 

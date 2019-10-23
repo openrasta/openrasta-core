@@ -12,12 +12,14 @@ namespace OpenRasta.Plugins.ReverseProxy
   public class ReverseProxyResponseCodec : IMediaTypeWriterAsync
   {
     readonly IResponse _response;
+    string _protocol;
     public object Configuration { get; set; }
 
 
     public ReverseProxyResponseCodec(ICommunicationContext context)
     {
       _response = context.Response;
+      _protocol = context.PipelineData.Owin.RequestProtocol;
     }
 
     public async Task WriteTo(object entity, IHttpEntity response, IEnumerable<string> codecParameters)
@@ -28,7 +30,7 @@ namespace OpenRasta.Plugins.ReverseProxy
         _response.StatusCode = proxyResponse.StatusCode;
 
         if (proxyResponse.Via != null)
-          response.Headers.Add("via", proxyResponse.Via);
+          response.Headers.Add("via", $"{_protocol} {proxyResponse.Via}");
 
         if (proxyResponse.ResponseMessage != null)
         {
