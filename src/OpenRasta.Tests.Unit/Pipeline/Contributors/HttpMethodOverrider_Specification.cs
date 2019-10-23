@@ -1,4 +1,5 @@
 #region License
+
 /* Authors:
  *      Sebastien Lambla (seb@serialseb.com)
  * Copyright:
@@ -6,6 +7,7 @@
  * License:
  *      This file is distributed under the terms of the MIT License found at the end of this file.
  */
+
 #endregion
 
 using System;
@@ -18,51 +20,52 @@ using Shouldly;
 
 namespace HttpMethodOverrider_Specification
 {
-    public class when_the_http_method_is_overridden : openrasta_context
+  public class when_the_http_method_is_overridden : openrasta_context
+  {
+    [Test]
+    public void an_original_method_of_get_result_in_an_error()
     {
-        [Test]
-        public void an_original_method_of_get_result_in_an_error()
-        {
-            Context.Request.HttpMethod = "GET";
-            Context.Request.Headers["X-HTTP-Method-Override"] = "PUT";
+      Context.Request.HttpMethod = "GET";
+      Context.Request.Headers["X-HTTP-Method-Override"] = "PUT";
 
-            given_pipeline_contributor<HttpMethodOverriderContributor>();
-            var result = when_sending_notification<KnownStages.IHandlerSelection>();
+      given_pipeline_contributor<HttpMethodOverriderContributor>();
+      var result = when_sending_notification<KnownStages.IHandlerSelection>();
 
-          result.ShouldBe(PipelineContinuation.Abort);
-          Context.ServerErrors[0].ShouldBeAssignableTo<HttpMethodOverriderContributor.MethodIsNotPostError>();
-        }
-
-        [Test]
-        public void the_http_method_in_the_context_is_updated_for_post()
-        {
-            Context.Request.HttpMethod = "POST";
-            Context.Request.Headers["X-HTTP-Method-Override"] = "PUT";
-
-            given_pipeline_contributor<HttpMethodOverriderContributor>();
-            when_sending_notification<KnownStages.IHandlerSelection>();
-
-          Context.Request.HttpMethod.ShouldBe( "PUT");
-        }
+      result.ShouldBe(PipelineContinuation.Abort);
+      Context.ServerErrors[0].ShouldBeAssignableTo<HttpMethodOverriderContributor.MethodIsNotPostError>();
     }
 
-    public class when_there_is_no_override_header : openrasta_context
+    [Test]
+    public void the_http_method_in_the_context_is_updated_for_post()
     {
-        [Test]
-        public void the_contributor_doesnt_do_anything()
-        {
-            Context.Request.HttpMethod = "POST";
+      Context.Request.HttpMethod = "POST";
+      Context.Request.Headers["X-HTTP-Method-Override"] = "PUT";
 
-            given_pipeline_contributor<HttpMethodOverriderContributor>();
-            when_sending_notification<KnownStages.IHandlerSelection>();
+      given_pipeline_contributor<HttpMethodOverriderContributor>();
+      when_sending_notification<KnownStages.IHandlerSelection>();
 
-          Context.Request.HttpMethod.ShouldBe( "POST");
-          Context.ServerErrors.Count.ShouldBe(0);
-        }
+      Context.Request.HttpMethod.ShouldBe("PUT");
     }
+  }
+
+  public class when_there_is_no_override_header : openrasta_context
+  {
+    [Test]
+    public void the_contributor_doesnt_do_anything()
+    {
+      Context.Request.HttpMethod = "POST";
+
+      given_pipeline_contributor<HttpMethodOverriderContributor>();
+      when_sending_notification<KnownStages.IHandlerSelection>();
+
+      Context.Request.HttpMethod.ShouldBe("POST");
+      Context.ServerErrors.Count.ShouldBe(0);
+    }
+  }
 }
 
 #region Full license
+
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -83,4 +86,5 @@ namespace HttpMethodOverrider_Specification
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+
 #endregion
