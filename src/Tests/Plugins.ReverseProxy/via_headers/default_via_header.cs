@@ -14,7 +14,7 @@ namespace Tests.Plugins.ReverseProxy.via_headers
         .FromServer("/proxy")
         .ToServer("/proxied", async ctx => ctx.Request.Headers["Via"])
         .GetAsync("http://source.example/proxy");
-      response.Content.ShouldBe("HTTP/2.0 source.example:80");
+      response.Content.ShouldMatch(@"\S+ source.example:80");
 
       var via = response.Message.Headers.Via.ShouldHaveSingleItem();
       via.ReceivedBy.ShouldBe("source.example:80");
