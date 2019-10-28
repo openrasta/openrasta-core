@@ -12,189 +12,205 @@ namespace OpenRasta.Configuration
 {
   public interface ITypeRegistrationContext
   {
-    ITypeRegistrationOptions Singleton<TConcrete>();
-    ITypeRegistrationOptions Singleton<TConcrete>(Expression<Func<TConcrete>> factory);
-    ITypeRegistrationOptions Singleton<TArg1, TConcrete>(Expression<Func<TArg1, TConcrete>> factory);
-    ITypeRegistrationOptions Singleton<TArg1, TArg2, TConcrete>(Expression<Func<TArg1, TArg2, TConcrete>> factory);
+    ITypeRegistrationOptions<TConcrete> Singleton<TConcrete>();
+    ITypeRegistrationOptions<TConcrete> Singleton<TConcrete>(Expression<Func<TConcrete>> factory);
+    ITypeRegistrationOptions<TConcrete> Singleton<TArg1, TConcrete>(Expression<Func<TArg1, TConcrete>> factory);
 
-    ITypeRegistrationOptions Singleton<TArg1, TArg2, TArg3, TConcrete>(
+    ITypeRegistrationOptions<TConcrete> Singleton<TArg1, TArg2, TConcrete>(
+      Expression<Func<TArg1, TArg2, TConcrete>> factory);
+
+    ITypeRegistrationOptions<TConcrete> Singleton<TArg1, TArg2, TArg3, TConcrete>(
       Expression<Func<TArg1, TArg2, TArg3, TConcrete>> factory);
 
-    ITypeRegistrationOptions Singleton<TArg1, TArg2, TArg3, TArg4, TConcrete>(
+    ITypeRegistrationOptions<TConcrete> Singleton<TArg1, TArg2, TArg3, TArg4, TConcrete>(
       Expression<Func<TArg1, TArg2, TArg3, TArg4, TConcrete>> factory);
 
 
-    ITypeRegistrationOptions Transient<TConcrete>(Expression<Func<TConcrete>> factory);
-    ITypeRegistrationOptions Transient<TArg1, TConcrete>(Expression<Func<TArg1, TConcrete>> factory);
-    ITypeRegistrationOptions Transient<TArg1, TArg2, TConcrete>(Expression<Func<TArg1, TArg2, TConcrete>> factory);
+    ITypeRegistrationOptions<TConcrete> Transient<TConcrete>(Expression<Func<TConcrete>> factory);
+    ITypeRegistrationOptions<TConcrete> Transient<TArg1, TConcrete>(Expression<Func<TArg1, TConcrete>> factory);
 
-    ITypeRegistrationOptions Transient<TArg1, TArg2, TArg3, TConcrete>(
+    ITypeRegistrationOptions<TConcrete> Transient<TArg1, TArg2, TConcrete>(
+      Expression<Func<TArg1, TArg2, TConcrete>> factory);
+
+    ITypeRegistrationOptions<TConcrete> Transient<TArg1, TArg2, TArg3, TConcrete>(
       Expression<Func<TArg1, TArg2, TArg3, TConcrete>> factory);
 
-    ITypeRegistrationOptions Transient<TArg1, TArg2, TArg3, TArg4, TConcrete>(
+    ITypeRegistrationOptions<TConcrete> Transient<TArg1, TArg2, TArg3, TArg4, TConcrete>(
       Expression<Func<TArg1, TArg2, TArg3, TArg4, TConcrete>> factory);
 
 
-    ITypeRegistrationOptions PerRequest<TConcrete>(Expression<Func<TConcrete>> factory);
-    ITypeRegistrationOptions PerRequest<TArg1, TConcrete>(Expression<Func<TArg1, TConcrete>> factory);
-    ITypeRegistrationOptions PerRequest<TArg1, TArg2, TConcrete>(Expression<Func<TArg1, TArg2, TConcrete>> factory);
+    ITypeRegistrationOptions<TConcrete> PerRequest<TConcrete>(Expression<Func<TConcrete>> factory);
+    ITypeRegistrationOptions<TConcrete> PerRequest<TArg1, TConcrete>(Expression<Func<TArg1, TConcrete>> factory);
 
-    ITypeRegistrationOptions PerRequest<TArg1, TArg2, TArg3, TConcrete>(
+    ITypeRegistrationOptions<TConcrete> PerRequest<TArg1, TArg2, TConcrete>(
+      Expression<Func<TArg1, TArg2, TConcrete>> factory);
+
+    ITypeRegistrationOptions<TConcrete> PerRequest<TArg1, TArg2, TArg3, TConcrete>(
       Expression<Func<TArg1, TArg2, TArg3, TConcrete>> factory);
 
-    ITypeRegistrationOptions PerRequest<TArg1, TArg2, TArg3, TArg4, TConcrete>(
+    ITypeRegistrationOptions<TConcrete> PerRequest<TArg1, TArg2, TArg3, TArg4, TConcrete>(
       Expression<Func<TArg1, TArg2, TArg3, TArg4, TConcrete>> factory);
   }
 
-  public interface ITypeRegistrationOptions
+  public interface ITypeRegistrationOptions<TConcrete>
   {
-    ITypeRegistrationOptions As<T>();
+    ITypeRegistrationOptions<TConcrete> As<T>()  where  TConcrete:T;
   }
 
-  class TypeRegistrationContext : ITypeRegistrationContext, ITypeRegistrationOptions
+  class TypeRegistrationOptions<TConcrete> : ITypeRegistrationOptions<TConcrete>
   {
-    public ITypeRegistrationOptions Singleton<TConcrete>()
+    readonly TypeRegistrationContext _context;
+
+    public TypeRegistrationOptions(TypeRegistrationContext context)
+    {
+      _context = context;
+    }
+
+    public ITypeRegistrationOptions<TConcrete> As<T>()
+    {
+      _context.Model.ServiceType = typeof(T);
+      return this;
+    }
+  }
+
+  class TypeRegistrationContext : ITypeRegistrationContext
+  {
+    public ITypeRegistrationOptions<TConcrete> Singleton<TConcrete>()
     {
       Model = new DependencyFactoryModel<TConcrete> {Lifetime = DependencyLifetime.Singleton};
-      return this;
+      return new TypeRegistrationOptions<TConcrete>(this);
     }
 
-    public ITypeRegistrationOptions Singleton<TConcrete>(Expression<Func<TConcrete>> factory)
+    public ITypeRegistrationOptions<TConcrete> Singleton<TConcrete>(Expression<Func<TConcrete>> factory)
     {
       Model = new DependencyFactoryModel<TConcrete>(factory) {Lifetime = DependencyLifetime.Singleton};
-      return this;
+      return new TypeRegistrationOptions<TConcrete>(this);
     }
 
-    public ITypeRegistrationOptions Singleton<TArg1, TConcrete>(Expression<Func<TArg1, TConcrete>> factory)
+    public ITypeRegistrationOptions<TConcrete> Singleton<TArg1, TConcrete>(Expression<Func<TArg1, TConcrete>> factory)
     {
       Model = new DependencyFactoryModel<TArg1, TConcrete>(factory) {Lifetime = DependencyLifetime.Singleton};
-      return this;
+      return new TypeRegistrationOptions<TConcrete>(this);
     }
 
-    public ITypeRegistrationOptions Singleton<TArg1, TArg2, TConcrete>(
+    public ITypeRegistrationOptions<TConcrete> Singleton<TArg1, TArg2, TConcrete>(
       Expression<Func<TArg1, TArg2, TConcrete>> factory)
     {
       Model = new DependencyFactoryModel<TArg1, TArg2, TConcrete>(factory) {Lifetime = DependencyLifetime.Singleton};
-      return this;
+      return new TypeRegistrationOptions<TConcrete>(this);
     }
 
-    public ITypeRegistrationOptions Singleton<TArg1, TArg2, TArg3, TConcrete>(
+    public ITypeRegistrationOptions<TConcrete> Singleton<TArg1, TArg2, TArg3, TConcrete>(
       Expression<Func<TArg1, TArg2, TArg3, TConcrete>> factory)
     {
       Model = new DependencyFactoryModel<TArg1, TArg2, TArg3, TConcrete>(factory)
       {
         Lifetime = DependencyLifetime.Singleton
       };
-      return this;
+      return new TypeRegistrationOptions<TConcrete>(this);
     }
 
-    public ITypeRegistrationOptions Singleton<TArg1, TArg2, TArg3, TArg4, TConcrete>(
+    public ITypeRegistrationOptions<TConcrete> Singleton<TArg1, TArg2, TArg3, TArg4, TConcrete>(
       Expression<Func<TArg1, TArg2, TArg3, TArg4, TConcrete>> factory)
     {
       Model = new DependencyFactoryModel<TArg1, TArg2, TArg3, TArg4, TConcrete>(factory)
       {
         Lifetime = DependencyLifetime.Singleton
       };
-      return this;
+      return new TypeRegistrationOptions<TConcrete>(this);
     }
 
-    public ITypeRegistrationOptions Transient<TConcrete>()
+    public ITypeRegistrationOptions<TConcrete> Transient<TConcrete>()
     {
       Model = new DependencyFactoryModel<TConcrete>() {Lifetime = DependencyLifetime.Transient};
-      return this;
+      return new TypeRegistrationOptions<TConcrete>(this);
     }
 
-    public ITypeRegistrationOptions Transient<TConcrete>(Expression<Func<TConcrete>> factory)
+    public ITypeRegistrationOptions<TConcrete> Transient<TConcrete>(Expression<Func<TConcrete>> factory)
     {
       Model = new DependencyFactoryModel<TConcrete>(factory) {Lifetime = DependencyLifetime.Transient};
-      return this;
+      return new TypeRegistrationOptions<TConcrete>(this);
     }
 
-    public ITypeRegistrationOptions Transient<TArg1, TConcrete>(Expression<Func<TArg1, TConcrete>> factory)
+    public ITypeRegistrationOptions<TConcrete> Transient<TArg1, TConcrete>(Expression<Func<TArg1, TConcrete>> factory)
     {
       Model = new DependencyFactoryModel<TArg1, TConcrete>(factory) {Lifetime = DependencyLifetime.Transient};
-      return this;
+      return new TypeRegistrationOptions<TConcrete>(this);
     }
 
-    public ITypeRegistrationOptions Transient<TArg1, TArg2, TConcrete>(
+    public ITypeRegistrationOptions<TConcrete> Transient<TArg1, TArg2, TConcrete>(
       Expression<Func<TArg1, TArg2, TConcrete>> factory)
     {
       Model = new DependencyFactoryModel<TArg1, TArg2, TConcrete>(factory) {Lifetime = DependencyLifetime.Transient};
-      return this;
+      return new TypeRegistrationOptions<TConcrete>(this);
     }
 
-    public ITypeRegistrationOptions Transient<TArg1, TArg2, TArg3, TConcrete>(
+    public ITypeRegistrationOptions<TConcrete> Transient<TArg1, TArg2, TArg3, TConcrete>(
       Expression<Func<TArg1, TArg2, TArg3, TConcrete>> factory)
     {
       Model = new DependencyFactoryModel<TArg1, TArg2, TArg3, TConcrete>(factory)
       {
         Lifetime = DependencyLifetime.Transient
       };
-      return this;
+      return new TypeRegistrationOptions<TConcrete>(this);
     }
 
-    public ITypeRegistrationOptions Transient<TArg1, TArg2, TArg3, TArg4, TConcrete>(
+    public ITypeRegistrationOptions<TConcrete> Transient<TArg1, TArg2, TArg3, TArg4, TConcrete>(
       Expression<Func<TArg1, TArg2, TArg3, TArg4, TConcrete>> factory)
     {
       Model = new DependencyFactoryModel<TArg1, TArg2, TArg3, TArg4, TConcrete>(factory)
       {
         Lifetime = DependencyLifetime.Transient
       };
-      return this;
+      return new TypeRegistrationOptions<TConcrete>(this);
     }
 
-    public ITypeRegistrationOptions PerRequest<TConcrete>()
+    public ITypeRegistrationOptions<TConcrete> PerRequest<TConcrete>()
     {
       Model = new DependencyFactoryModel<TConcrete>() {Lifetime = DependencyLifetime.PerRequest};
-      return this;
+      return new TypeRegistrationOptions<TConcrete>(this);
     }
 
-    public ITypeRegistrationOptions PerRequest<TConcrete>(Expression<Func<TConcrete>> factory)
+    public ITypeRegistrationOptions<TConcrete> PerRequest<TConcrete>(Expression<Func<TConcrete>> factory)
     {
       Model = new DependencyFactoryModel<TConcrete>(factory) {Lifetime = DependencyLifetime.PerRequest};
-      return this;
+      return new TypeRegistrationOptions<TConcrete>(this);
     }
 
-    public ITypeRegistrationOptions PerRequest<TArg1, TConcrete>(Expression<Func<TArg1, TConcrete>> factory)
+    public ITypeRegistrationOptions<TConcrete> PerRequest<TArg1, TConcrete>(Expression<Func<TArg1, TConcrete>> factory)
     {
       Model = new DependencyFactoryModel<TArg1, TConcrete>(factory) {Lifetime = DependencyLifetime.PerRequest};
-      return this;
+      return new TypeRegistrationOptions<TConcrete>(this);
     }
 
-    public ITypeRegistrationOptions PerRequest<TArg1, TArg2, TConcrete>(
+    public ITypeRegistrationOptions<TConcrete> PerRequest<TArg1, TArg2, TConcrete>(
       Expression<Func<TArg1, TArg2, TConcrete>> factory)
     {
       Model = new DependencyFactoryModel<TArg1, TArg2, TConcrete>(factory) {Lifetime = DependencyLifetime.PerRequest};
-      return this;
+      return new TypeRegistrationOptions<TConcrete>(this);
     }
 
-    public ITypeRegistrationOptions PerRequest<TArg1, TArg2, TArg3, TConcrete>(
+    public ITypeRegistrationOptions<TConcrete> PerRequest<TArg1, TArg2, TArg3, TConcrete>(
       Expression<Func<TArg1, TArg2, TArg3, TConcrete>> factory)
     {
       Model = new DependencyFactoryModel<TArg1, TArg2, TArg3, TConcrete>(factory)
       {
         Lifetime = DependencyLifetime.PerRequest
       };
-      return this;
+      return new TypeRegistrationOptions<TConcrete>(this);
     }
 
-    public ITypeRegistrationOptions PerRequest<TArg1, TArg2, TArg3, TArg4, TConcrete>(
+    public ITypeRegistrationOptions<TConcrete> PerRequest<TArg1, TArg2, TArg3, TArg4, TConcrete>(
       Expression<Func<TArg1, TArg2, TArg3, TArg4, TConcrete>> factory)
     {
       Model = new DependencyFactoryModel<TArg1, TArg2, TArg3, TArg4, TConcrete>(factory)
       {
         Lifetime = DependencyLifetime.PerRequest
       };
-      return this;
+      return new TypeRegistrationOptions<TConcrete>(this);
     }
 
     public DependencyFactoryModel Model { get; set; }
-
-    public ITypeRegistrationOptions As<T>()
-    {
-      Model.ServiceType = typeof(T);
-      return this;
-    }
   }
 
   public static class UsesExtensions
@@ -206,7 +222,8 @@ namespace OpenRasta.Configuration
     /// <typeparam name="TConcrete">The concrete type used when the service type is requested</typeparam>
     /// <param name="anchor"></param>
     /// <param name="lifetime">The lifetime of the object.</param>
-    public static void CustomDependency<TService, TConcrete>(this IUses anchor,
+    public static void CustomDependency<TService, TConcrete>(
+      this IUses anchor,
       DependencyLifetime lifetime = DependencyLifetime.Singleton) where TConcrete : TService
     {
       var fluentTarget = (IFluentTarget) anchor;
@@ -243,28 +260,32 @@ namespace OpenRasta.Configuration
       return anchor;
     }
 
-    public static IUses PipelineContributor<TArg, TPipeline>(this IUses anchor,
+    public static IUses PipelineContributor<TArg, TPipeline>(
+      this IUses anchor,
       Expression<Func<TArg, TPipeline>> factory) where TPipeline : class, IPipelineContributor
     {
       anchor.Dependency(d => d.Singleton(factory).As<IPipelineContributor>());
       return anchor;
     }
 
-    public static IUses PipelineContributor<TArg1, TArg2, TPipeline>(this IUses anchor,
+    public static IUses PipelineContributor<TArg1, TArg2, TPipeline>(
+      this IUses anchor,
       Expression<Func<TArg1, TArg2, TPipeline>> factory) where TPipeline : class, IPipelineContributor
     {
       anchor.Dependency(d => d.Singleton(factory).As<IPipelineContributor>());
       return anchor;
     }
 
-    public static IUses PipelineContributor<TArg1, TArg2, TArg3, TPipeline>(this IUses anchor,
+    public static IUses PipelineContributor<TArg1, TArg2, TArg3, TPipeline>(
+      this IUses anchor,
       Expression<Func<TArg1, TArg2, TArg3, TPipeline>> factory) where TPipeline : class, IPipelineContributor
     {
       anchor.Dependency(d => d.Singleton(factory).As<IPipelineContributor>());
       return anchor;
     }
 
-    public static IUses PipelineContributor<TArg1, TArg2, TArg3, TArg4, TPipeline>(this IUses anchor,
+    public static IUses PipelineContributor<TArg1, TArg2, TArg3, TArg4, TPipeline>(
+      this IUses anchor,
       Expression<Func<TArg1, TArg2, TArg3, TArg4, TPipeline>> factory) where TPipeline : class, IPipelineContributor
     {
       anchor.Dependency(d => d.Singleton(factory).As<IPipelineContributor>());
