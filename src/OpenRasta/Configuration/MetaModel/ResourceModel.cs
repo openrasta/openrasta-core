@@ -28,7 +28,8 @@ namespace OpenRasta.Configuration.MetaModel
       set
       {
         _resourceKey = value;
-        ResourceType = (value as IType)?.StaticType ?? value as Type;
+        if (ResourceType == null)
+          ResourceType = (value as IType)?.StaticType ?? value as Type;
       }
     }
 
@@ -38,11 +39,12 @@ namespace OpenRasta.Configuration.MetaModel
     
     public ClassDefinition ClassDefinition { get; set; }
     public List<ResourceLinkModel> Links { get;  } = new List<ResourceLinkModel>();
+    public string Name { get; set; }
 
     public override string ToString()
     {
       return
-        $"ResourceKey: {ResourceKey}, Uris: {Uris.Aggregate(string.Empty, (str, reg) => str + reg + ";")}, Handlers: {Handlers.Aggregate(string.Empty, (str, reg) => str + reg + ";")}, Codecs: {Codecs.Aggregate(string.Empty, (str, reg) => str + reg + ";")}";
+        $"Key: {ResourceKey}, Uris: {Uris.Aggregate(string.Empty, (str, reg) => str + reg + ";")}, Handlers: {Handlers.Aggregate(string.Empty, (str, reg) => str + reg + ";")}, Codecs: {Codecs.Aggregate(string.Empty, (str, reg) => str + reg + ";")}";
     }
   }
 }
