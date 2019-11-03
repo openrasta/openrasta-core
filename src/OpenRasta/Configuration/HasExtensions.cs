@@ -12,7 +12,9 @@ namespace OpenRasta.Configuration
     {
         public static IResourceDefinition ResourcesNamed(this IHas has, string name)
         {
-            return has.ResourcesWithKey(name);
+          var definition = has.ResourcesWithKey(name);
+          definition.Resource.Name = name;
+          return definition;
         }
         
         public static IResourceDefinition<TResource> ResourcesOfType<TResource>(this IHas has)
