@@ -22,7 +22,7 @@ namespace OpenRasta.Configuration.Fluent
   {
     public static IResourceDefinition<T> Named<T>(this IResourceDefinition<T> resource, string name)
     {
-      resource.Resource.ResourceKey = (name,typeof(T));
+      resource.Resource.ResourceKey = Tuple.Create(name,typeof(T));
       resource.Resource.ResourceType = typeof(T);
       resource.Resource.Name = name;
       return resource;
