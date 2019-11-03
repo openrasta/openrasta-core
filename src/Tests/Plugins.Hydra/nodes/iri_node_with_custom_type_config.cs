@@ -58,7 +58,7 @@ namespace Tests.Plugins.Hydra.nodes
     public void type_is_overridden()
     {
       responseContent.LastIndexOf("@type").ShouldBe(responseContent.IndexOf("@type"));
-      body["@type"].ShouldBe("https://fuck.skype/custom/type/2");
+      body["@type"].ShouldBe("http://localhost/custom/type/2");
     }
 
     public async Task InitializeAsync()
