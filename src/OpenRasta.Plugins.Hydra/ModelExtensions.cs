@@ -17,8 +17,7 @@ namespace OpenRasta.Plugins.Hydra
     public static bool TryGetResourceModel(this IMetaModelRepository metaModelRepository, Type entityType,
       out ResourceModel model)
     {
-      model = metaModelRepository.ResourceRegistrations.FirstOrDefault(r =>
-        Equals(r.ResourceKey, TypeSystems.Default.FromClr(entityType)));
+      model = metaModelRepository.ResourceRegistrations.FirstOrDefault(r => r.ResourceType == entityType);
       return model != null;
     }
   }

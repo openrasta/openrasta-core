@@ -17,4 +17,15 @@ namespace OpenRasta.Configuration.Fluent
 
     IUriDefinition<T> AtUri(Expression<Func<T, string>> uri);
   }
+
+  public static class ResourceNamingExtensions
+  {
+    public static IResourceDefinition<T> Named<T>(this IResourceDefinition<T> resource, string name)
+    {
+      resource.Resource.ResourceKey = (name,typeof(T));
+      resource.Resource.ResourceType = typeof(T);
+      resource.Resource.Name = name;
+      return resource;
+    }
+  }
 }
