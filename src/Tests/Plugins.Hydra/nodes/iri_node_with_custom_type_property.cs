@@ -32,14 +32,14 @@ namespace Tests.Plugins.Hydra.nodes
     }
   }
 
-  public class iri_node_with_custom_type : IAsyncLifetime
+  public class iri_node_with_custom_type_property : IAsyncLifetime
   {
     IResponse response;
     JToken body;
     readonly InMemoryHost server;
     string responseContent;
 
-    public iri_node_with_custom_type()
+    public iri_node_with_custom_type_property()
     {
       server = new InMemoryHost(() =>
         {

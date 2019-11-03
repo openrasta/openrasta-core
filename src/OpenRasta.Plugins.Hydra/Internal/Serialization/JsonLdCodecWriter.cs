@@ -49,7 +49,8 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization
       return serializerFunc(entity, new SerializationContext
       {
         BaseUri = BaseUri,
-        UriGenerator = resource => _uris.CreateUri(resource, _context.ApplicationBaseUri)
+        UriGenerator = resource => _uris.CreateUri(resource, _context.ApplicationBaseUri),
+        TypeGenerator = resourceSelectedByUri.ResourceModel.Hydra().TypeFunc
       }, response.Stream);
     }
 

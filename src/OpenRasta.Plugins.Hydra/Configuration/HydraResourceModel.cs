@@ -14,5 +14,6 @@ namespace OpenRasta.Plugins.Hydra.Configuration
     public Vocabulary Vocabulary { get; set; }
     public List<Operation> SupportedOperations { get; set; } = new List<Operation>();
     public Class ApiClass { get; set; }
+    public Func<object, string> TypeFunc { get; set; }
   }
 }

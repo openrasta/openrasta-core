@@ -25,6 +25,7 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
       IMetaModelRepository models)
     {
       var uriGenerator = options.get_UriGenerator();
+      var typeGenerator = options.get_TypeGenerator();
       var baseUri = options.get_BaseUri().ObjectToString();
       var contextUri = StringMethods.Concat(baseUri, New.Const(".hydra/context.jsonld"));
 
@@ -33,9 +34,11 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
 
       var rootNode = WriteNode(
         jsonWriter,
+        baseUri,
         model,
         resource,
         uriGenerator,
+        typeGenerator,
         models,
         jsonFormatterResolver,
         new[]
@@ -54,9 +57,11 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
 
     static CodeBlock WriteNode(
       Variable<JsonWriter> jsonWriter,
+      TypedExpression<string> baseUri,
       ResourceModel model,
       Expression resource,
       MemberAccess<Func<object, string>> uriGenerator,
+      MemberAccess<Func<object, string>> typeGenerator,
       IMetaModelRepository models,
       Variable<HydraJsonFormatterResolver> jsonFormatterResolver,
       NodeProperty[] existingNodeProperties = null,
@@ -77,8 +82,19 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
       List<NodeProperty> nodeProperties =
         new List<NodeProperty>(existingNodeProperties ?? Enumerable.Empty<NodeProperty>());
 
-      nodeProperties.AddRange(GetNodeProperties(jsonWriter, model, resource, uriGenerator, models, recursionDefender,
-        jsonFormatterResolver, resourceType, resourceUri, resourceRegistrationHydraType));
+      nodeProperties.AddRange(GetNodeProperties(
+        jsonWriter,
+        baseUri,
+        model,
+        resource,
+        uriGenerator,
+        typeGenerator,
+        models,
+        recursionDefender,
+        jsonFormatterResolver,
+        resourceType,
+        resourceUri,
+        resourceRegistrationHydraType));
 
 
       var collectionItemTypes = HydraTextExtensions.CollectionItemTypes(resourceType).ToList();
@@ -106,10 +122,11 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
             resourceRegistrationHydraType = "hydra:Collection";
 
           resourceType = collectionType;
-          
+
           // Remove existing id and type if already defined
           nodeProperties.RemoveAll(p => p.Name == "@id" || p.Name == "@type");
-          nodeProperties.AddRange(GetNodeProperties(jsonWriter, model, resource, uriGenerator, models,
+          nodeProperties.AddRange(GetNodeProperties(jsonWriter, baseUri, model, resource, uriGenerator, typeGenerator,
+            models,
             recursionDefender,
             jsonFormatterResolver, resourceType, resourceUri, resourceRegistrationHydraType));
         }
@@ -165,9 +182,11 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
 
     static IEnumerable<NodeProperty> GetNodeProperties(
       Variable<JsonWriter> jsonWriter,
+      TypedExpression<string> baseUri,
       ResourceModel model,
       Expression resource,
       MemberAccess<Func<object, string>> uriGenerator,
+      MemberAccess<Func<object, string>> typeGenerator,
       IMetaModelRepository models,
       Stack<ResourceModel> recursionDefender,
       Variable<HydraJsonFormatterResolver> jsonFormatterResolver,
@@ -191,7 +210,15 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
 
       if (overridesType == false)
       {
-        yield return WriteType(jsonWriter, resourceRegistrationHydraType);
+        var typePropertyFactory = model.Hydra().TypeFunc;
+        if (typePropertyFactory == null)
+        {
+          yield return WriteType(jsonWriter, resourceRegistrationHydraType);
+        }
+        else
+        {
+          yield return WriteType(jsonWriter, StringMethods.Concat(baseUri, typeGenerator.Invoke(resource)));
+        }
       }
 
 
@@ -199,7 +226,8 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
       {
         if (pi.GetIndexParameters().Any()) continue;
 
-        if (pi.PropertyType == typeof(string) || (pi.PropertyType.IsValueType && Nullable.GetUnderlyingType(pi.PropertyType) == null))
+        if (pi.PropertyType == typeof(string) ||
+            (pi.PropertyType.IsValueType && Nullable.GetUnderlyingType(pi.PropertyType) == null))
         {
           var nodePropertyValue = WriteNodePropertyValue(
             jsonWriter,
@@ -212,7 +240,7 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
         }
 
         yield return WriteNodeProperty(
-          jsonWriter, resource, uriGenerator, models, recursionDefender, pi,
+          jsonWriter, baseUri, resource, uriGenerator, typeGenerator, models, recursionDefender, pi,
           jsonFormatterResolver);
       }
 
@@ -263,13 +291,14 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
 
     static NodeProperty WriteNodeProperty(
       Variable<JsonWriter> jsonWriter,
+      TypedExpression<string> baseUri,
       Expression resource,
       MemberAccess<Func<object, string>> uriGenerator,
+      MemberAccess<Func<object, string>> typeGenerator,
       IMetaModelRepository models,
       Stack<ResourceModel> recursionDefender,
       PropertyInfo pi,
-      Variable<HydraJsonFormatterResolver> jsonFormatterResolver
-    )
+      Variable<HydraJsonFormatterResolver> jsonFormatterResolver)
     {
       // var propertyValue;
       var propertyValue = Expression.Variable(pi.PropertyType, $"val{pi.DeclaringType.Name}{pi.Name}");
@@ -289,20 +318,21 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
           {
             jsonWriter.WritePropertyName(jsonPropertyName),
             jsonWriter.WriteBeginObject(),
-            WriteNode(jsonWriter, propertyResourceModel, propertyValue,
-              uriGenerator, models, jsonFormatterResolver, recursionDefender: recursionDefender),
+            WriteNode(jsonWriter, baseUri, propertyResourceModel, propertyValue, 
+              uriGenerator, typeGenerator,models, jsonFormatterResolver, recursionDefender: recursionDefender),
             jsonWriter.WriteEndObject()
           }),
           Conditional = Expression.NotEqual(propertyValue, Expression.Default(pi.PropertyType))
         };
       }
 
-      var itemTypes = (from i in pi.PropertyType.GetInterfaces().Concat(pi.PropertyType.IsInterface ? new[]{pi.PropertyType} : Array.Empty<Type>())
+      var itemTypes = (from i in pi.PropertyType.GetInterfaces()
+          .Concat(pi.PropertyType.IsInterface ? new[] {pi.PropertyType} : Array.Empty<Type>())
         where i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IEnumerable<>)
         let itemType = i.GetGenericArguments()[0]
         where itemType != typeof(object)
         select itemType).ToList();
-      
+
       // not an iri node itself, but is it a list of nodes?
       var itemResourceRegistrations = (
         from itemType in itemTypes
@@ -328,13 +358,16 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
       }
 
       // it's a list of nodes
-      return WriteNodeList(jsonWriter, uriGenerator, models, recursionDefender, pi, jsonFormatterResolver,
+      return WriteNodeList(jsonWriter, baseUri, uriGenerator, typeGenerator, models, recursionDefender, pi,
+        jsonFormatterResolver,
         itemResourceRegistrations, propertyValue, preamble);
     }
 
     static NodeProperty WriteNodeList(
       Variable<JsonWriter> jsonWriter,
+      TypedExpression<string> baseUri,
       MemberAccess<Func<object, string>> uriGenerator,
+      MemberAccess<Func<object, string>> typeGenerator,
       IMetaModelRepository models,
       Stack<ResourceModel> recursionDefender,
       PropertyInfo pi,
@@ -344,11 +377,11 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
       InlineCode preamble)
     {
       var jsonPropertyName = HydraTextExtensions.GetJsonPropertyName(pi);
-      
-      
+
+
       var itemRegistration = itemResourceRegistrations.First();
       var itemArrayType = itemRegistration.itemType.MakeArrayType();
-      
+
       var itemArray = Expression.Variable(itemArrayType);
       var itemArrayAssignment = Expression.Assign(
         itemArray,
@@ -356,9 +389,10 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
 
       var currentArrayIndex = New.Var<int>("currentArrayIndex");
       var currentArrayElement = Expression.ArrayAccess(itemArray, currentArrayIndex);
-      
-      var renderBlock = WriteNodeWithInheritanceChain(jsonWriter, uriGenerator, models, recursionDefender, resolver,
-        itemRegistration, currentArrayElement);
+
+      var renderBlock = WriteNodeWithInheritanceChain(jsonWriter, uriGenerator, typeGenerator, models,
+        recursionDefender, resolver,
+        itemRegistration, currentArrayElement, baseUri);
 
       return new NodeProperty(jsonPropertyName)
       {
@@ -411,19 +445,21 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
     static InlineCode WriteNodeWithInheritanceChain(
       Variable<JsonWriter> jsonWriter,
       MemberAccess<Func<object, string>> uriGenerator,
+      MemberAccess<Func<object, string>> typeGenerator,
       IMetaModelRepository models,
       Stack<ResourceModel> recursionDefender,
       Variable<HydraJsonFormatterResolver> resolver,
       (Type itemType, List<ResourceModel> models) itemRegistration,
-      Expression resource)
+      Expression resource,
+      TypedExpression<string> baseUri)
     {
       CodeBlock resourceBlock(ResourceModel r, ParameterExpression typed)
       {
         return WriteNode(
-          jsonWriter,
+          jsonWriter, baseUri,
           r,
           typed,
-          uriGenerator,
+          uriGenerator, typeGenerator,
           models,
           resolver,
           recursionDefender: recursionDefender);
@@ -479,6 +515,18 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
     }
 
     public static NodeProperty WriteType(Variable<JsonWriter> jsonWriter, string type)
+    {
+      return new NodeProperty("@type")
+      {
+        Code =
+          new InlineCode(jsonWriter.WriteRaw(Nodes.TypeProperty), jsonWriter.WriteString(type))
+      };
+    }
+
+    public static NodeProperty WriteType(
+      Variable<JsonWriter> jsonWriter,
+      TypedExpression<string> type
+    )
     {
       return new NodeProperty("@type")
       {

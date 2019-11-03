@@ -15,5 +15,7 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
 
     public static MemberAccess<Uri> get_BaseUri(this Variable<SerializationContext> context)
       => context.get_(_ => _.BaseUri);
+    public static MemberAccess<Func<object, string>> get_TypeGenerator(this Variable<SerializationContext> context)
+      => context.get_(_ => _.TypeGenerator);
   }
 }

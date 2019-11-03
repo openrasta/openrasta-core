@@ -52,19 +52,19 @@ namespace OpenRasta.Plugins.Hydra
       has
         .ResourcesOfType<EntryPoint>()
         .Vocabulary(Vocabularies.Hydra)
-        .AtUri(r=>"/")
+        .AtUri(r => "/")
         .HandledBy<EntryPointHandler>();
 
       has
         .ResourcesOfType<Context>()
         .Vocabulary(Vocabularies.Hydra)
-        .AtUri(r=>"/.hydra/context.jsonld")
+        .AtUri(r => "/.hydra/context.jsonld")
         .HandledBy<ContextHandler>();
 
       has
         .ResourcesOfType<ApiDocumentation>()
         .Vocabulary(Vocabularies.Hydra)
-        .AtUri(r=>"/.hydra/documentation.jsonld")
+        .AtUri(r => "/.hydra/documentation.jsonld")
         .HandledBy<ApiDocumentationHandler>();
 
       has.ResourcesOfType<Collection>().Vocabulary(Vocabularies.Hydra);
@@ -88,7 +88,8 @@ namespace OpenRasta.Plugins.Hydra
     }
 
 
-    public static IResourceDefinition<T> SupportedOperation<T>(this IResourceDefinition<T> resource,
+    public static IResourceDefinition<T> SupportedOperation<T>(
+      this IResourceDefinition<T> resource,
       Operation operation)
     {
       resource.Resource.Hydra().SupportedOperations.Add(operation);
@@ -98,6 +99,12 @@ namespace OpenRasta.Plugins.Hydra
     public static IResourceDefinition<T> Vocabulary<T>(this IResourceDefinition<T> resource, Vocabulary vocab)
     {
       resource.Resource.Hydra().Vocabulary = vocab;
+      return resource;
+    }
+
+    public static IResourceDefinition<T> Type<T>(this IResourceDefinition<T> resource, Func<T, string> type)
+    {
+      resource.Resource.Hydra().TypeFunc = obj => type((T) obj);
       return resource;
     }
 
@@ -112,7 +119,9 @@ namespace OpenRasta.Plugins.Hydra
       });
       return resource;
     }
-    public static IUriDefinition<T> EntryPointCollection<T>(this IUriDefinition<T> resource,
+
+    public static IUriDefinition<T> EntryPointCollection<T>(
+      this IUriDefinition<T> resource,
       Action<CollectionEntryPointOptions> options = null)
     {
       var ienum = typeof(T).GetInterfaces()
@@ -144,7 +153,6 @@ namespace OpenRasta.Plugins.Hydra
     {
       return model.Properties.GetOrAdd("openrasta.Hydra.UriModel", () => new HydraUriModel(model));
     }
-
   }
 
   public class SubLink
@@ -174,6 +182,7 @@ namespace OpenRasta.Plugins.Hydra
     {
       Serializer = ctx => ctx.Transient(() => new PreCompiledUtf8JsonSerializer()).As<IMetaModelHandler>();
     }
+
     public IList<Vocabulary> Curies { get; } = new List<Vocabulary>();
     public Vocabulary Vocabulary { get; set; }
     public Action<ITypeRegistrationContext> Serializer { get; set; }
