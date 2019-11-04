@@ -48,11 +48,11 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization
       }
 
       var typeToTypeGen = _models.ResourceRegistrations
-        .Where(res => res.ResourceType != null)
-        .ToDictionary(res => res.ResourceType, res => res.Hydra().TypeFunc);
+        .Where(res => res.ResourceType != null && res.Hydra().TypeFunc != null)
+        .ToLookup(res => res.ResourceType, res => res.Hydra().TypeFunc);
       string renderTypeNode(object resource)
       {
-        return typeToTypeGen[resource.GetType()](resource);
+        return typeToTypeGen[resource.GetType()].First()(resource);
       }
       
       return serializerFunc(entity, new SerializationContext
