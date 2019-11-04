@@ -143,7 +143,11 @@ namespace OpenRasta.TypeSystem.ReflectionBased
                         var allProperties = TargetType.GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static | BindingFlags.FlattenHierarchy);
                         _methodsCache = (from method in TargetType.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static | BindingFlags.FlattenHierarchy)
                                          where !allProperties.Any(x => x.GetGetMethod() == method || x.GetSetMethod() == method)
-                                         select new ReflectionBasedMethod(TypeSystem.FromClr(method.DeclaringType), method) as IMethod)
+                                         select new ReflectionBasedMethod(
+                                           method.DeclaringType == TargetType
+                                             ? (IMember)this
+                                             : TypeSystem.FromClr(method.DeclaringType),
+                                           method) as IMethod)
                             .ToLookup(x => x.Name, StringComparer.OrdinalIgnoreCase);
                     }
                 }
