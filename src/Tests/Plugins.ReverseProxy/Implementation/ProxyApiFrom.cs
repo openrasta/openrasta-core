@@ -10,15 +10,18 @@ namespace Tests.Plugins.ReverseProxy.Implementation
     readonly string from;
     readonly string to;
     readonly ReverseProxyOptions options;
+    readonly string localIpAddress;
 
     public ProxyApiFrom(
       string from,
       string to,
-      ReverseProxyOptions options)
+      ReverseProxyOptions options,
+      string localIpAddress = null)
     {
       this.from = from;
       this.to = to;
       this.options = options;
+      this.localIpAddress = localIpAddress;
     }
 
     public void Configure()
@@ -30,6 +33,8 @@ namespace Tests.Plugins.ReverseProxy.Implementation
 
       ResourceSpace.Uses.ReverseProxy(options);
       ResourceSpace.Uses.PipelineContributor<WriteServerTimingHeader>();
+      
+      ResourceSpace.Uses.PipelineContributor(() => new SetLocalIpAddress(localIpAddress));
     }
   }
 
@@ -43,6 +48,33 @@ namespace Tests.Plugins.ReverseProxy.Implementation
           return PipelineContinuation.Continue;
         })
         .Before<KnownStages.IResponseCoding>();
+    }
+  }
+
+  public class SetLocalIpAddress : IPipelineContributor
+  {
+    readonly string localIpAddress;
+    
+    public SetLocalIpAddress(string localIpAddress)
+    {
+      this.localIpAddress = localIpAddress;
+    }
+    
+    public void Initialize(IPipeline pipelineRunner)
+    {
+      pipelineRunner.Notify(context =>
+        {
+          if (localIpAddress != null)
+          {
+            context.PipelineData["server.localIpAddress"] = localIpAddress;
+          }
+          else
+          {
+            context.PipelineData.Remove("server.localIpAddress");
+          }
+          return PipelineContinuation.Continue;
+        })
+        .Before<KnownStages.IAuthentication>();
     }
   }
 }

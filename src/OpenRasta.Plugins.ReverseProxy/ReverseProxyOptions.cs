@@ -25,6 +25,7 @@ namespace OpenRasta.Plugins.ReverseProxy
     {
       public bool ConvertLegacyHeaders { get; set; }
       public bool RunAsForwardedHost { get; set; }
+      public string ByIdentifierOverride { get; set; }
     }
 
     public class HttpClientOptions

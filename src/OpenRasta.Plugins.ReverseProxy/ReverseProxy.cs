@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Net.Http;
@@ -18,17 +17,19 @@ namespace OpenRasta.Plugins.ReverseProxy
     readonly TimeSpan _timeout;
     readonly bool _convertForwardedHeaders;
     readonly string _viaIdentifier;
+    readonly string _byIdentifierOverride;
 
     public ReverseProxy(TimeSpan requestTimeout, bool convertForwardedHeaders, string viaIdentifier,
       Func<HttpClient> clientFactory,
-      Action<ICommunicationContext, HttpRequestMessage> onSend)
+      Action<ICommunicationContext, HttpRequestMessage> onSend,
+      string byIdentifierOverride = null)
     {
       _timeout = requestTimeout;
       _httpClient = clientFactory;
       _onSend = onSend;
       _convertForwardedHeaders = convertForwardedHeaders;
       _viaIdentifier = viaIdentifier;
-      
+      _byIdentifierOverride = byIdentifierOverride;
     }
 
     public async Task<ReverseProxyResponse> Send(ICommunicationContext context, string target)
@@ -42,7 +43,7 @@ namespace OpenRasta.Plugins.ReverseProxy
 
 
       PrepareRequestBody(context, requestMessage);
-      PrepareRequestHeaders(context, requestMessage, _convertForwardedHeaders);
+      PrepareRequestHeaders(context, requestMessage, _convertForwardedHeaders, _byIdentifierOverride);
 
       var viaIdentifier = AppendViaHeaderToRequest(context, requestMessage);
 
@@ -90,7 +91,7 @@ namespace OpenRasta.Plugins.ReverseProxy
     }
 
     static void PrepareRequestHeaders(ICommunicationContext context, HttpRequestMessage request,
-      bool convertLegacyHeaders)
+      bool convertLegacyHeaders, string byIdentifierOverride = null)
     {
       StringBuilder legacyForward = null;
 
@@ -142,12 +143,19 @@ namespace OpenRasta.Plugins.ReverseProxy
           request.Headers.Add(header.Key, header.Value);
       }
 
+      var byIdentifier = 
+        byIdentifierOverride ?? 
+        (context.PipelineData.ContainsKey("server.localIpAddress")
+          ? context.PipelineData["server.localIpAddress"].ToString() 
+          : $"_{Environment.MachineName}");
+
       if (convertLegacyHeaders && legacyForward?.Length > 0)
       {
+        legacyForward.Append($";by={byIdentifier}");
         request.Headers.Add("forwarded", legacyForward.ToString());
       }
 
-      request.Headers.Add("forwarded", CurrentForwarded(context));
+      request.Headers.Add("forwarded", CurrentForwarded(context, byIdentifier));
     }
 
     static Uri GetProxyTargetUri(TemplatedUriMatch requestUriMatch, string target,
@@ -192,9 +200,9 @@ namespace OpenRasta.Plugins.ReverseProxy
       return proxyTargetUri;
     }
 
-    static string CurrentForwarded(ICommunicationContext context)
+    static string CurrentForwarded(ICommunicationContext context, string byIdentifier)
     {
-      return $"proto={context.Request.Uri.Scheme};host={context.Request.Uri.Host}";
+      return $"proto={context.Request.Uri.Scheme};host={context.Request.Uri.Host};by={byIdentifier}";
     }
   }
 }
