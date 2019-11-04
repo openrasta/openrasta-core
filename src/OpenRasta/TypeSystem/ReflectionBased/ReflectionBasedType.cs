@@ -44,7 +44,7 @@ namespace OpenRasta.TypeSystem.ReflectionBased
       return TargetType.GetInheritanceDistance(other.StaticType);
     }
 
-    public object CreateInstance(IDependencyResolver resolver)
+    public virtual object CreateInstance(IDependencyResolver resolver)
     {
       if (resolver == null) throw new ArgumentNullException("resolver");
       return resolver.Resolve(TargetType, UnregisteredAction.AddAsTransient);
