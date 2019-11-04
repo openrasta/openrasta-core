@@ -35,9 +35,14 @@ namespace Tests.Plugins.Hydra.nodes
 
           ResourceSpace.Has.ResourcesOfType<Person>()
             .Vocabulary("https://schemas.example/schema#")
-            .Type(datum => $"custom/type/{datum.Id}")
-            .AtUri("/data/{id}")
-            .HandledBy<Handler>();
+            .Type(datum => $"event-types/{datum.Id}")
+            .AtUri("/events/{id}/organiser");
+          
+          ResourceSpace.Has.ResourcesOfType<EventWithPerson>()
+            .Vocabulary("https://schemas.example/schema#")
+            .Type(datum => $"CustomEvent")
+            .AtUri("/events/{id}")
+            .HandledBy<PersonHandler>();
         },
         startup: new StartupProperties()
         {
@@ -49,22 +54,23 @@ namespace Tests.Plugins.Hydra.nodes
         });
     }
 
-    class Handler
+    class PersonHandler
     {
-      public Person Get(int id) => new Person() {Id = id};
+      public EventWithPerson Get(int id) => new EventWithPerson() {Id = id, Organiser = new Person(){Id = 666}};
     }
 
     [Fact]
     public void type_is_overridden()
     {
-      responseContent.LastIndexOf("@type").ShouldBe(responseContent.IndexOf("@type"));
-      body["@type"].ShouldBe("http://localhost/custom/type/2");
+      body["@type"].ShouldBe("http://localhost/CustomEvent");
+      body["organiser"]["@type"].ShouldBe("http://localhost/event-types/666");
+      body["organiser"]["@id"].ShouldBe("http://localhost/events/666/organiser");
     }
 
     public async Task InitializeAsync()
     {
-      responseContent = await server.GetJsonLdString("/data/2");
-      (response, body) = await server.GetJsonLd("/data/2");
+      responseContent = await server.GetJsonLdString("/events/2");
+      (response, body) = await server.GetJsonLd("/events/2");
     }
 
     public async Task DisposeAsync() => server.Close();

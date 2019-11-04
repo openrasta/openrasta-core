@@ -104,7 +104,8 @@ namespace OpenRasta.Plugins.Hydra
 
     public static IResourceDefinition<T> Type<T>(this IResourceDefinition<T> resource, Func<T, string> type)
     {
-      resource.Resource.Hydra().TypeFunc = obj => type((T) obj);
+      resource.Resource.Hydra().TypeFunc =
+        obj => type((T) (obj ?? throw new NullReferenceException("current node was null")));
       return resource;
     }
 

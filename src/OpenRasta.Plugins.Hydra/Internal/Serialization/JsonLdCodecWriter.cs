@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using OpenRasta.Codecs;
 using OpenRasta.Configuration.MetaModel;
@@ -45,12 +46,20 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization
         if (serializerFunc == null)
           throw new InvalidOperationException($"Hydra serialiser not found for object of type {entity?.GetType()}");
       }
+
+      var typeToTypeGen = _models.ResourceRegistrations
+        .Where(res => res.ResourceType != null)
+        .ToDictionary(res => res.ResourceType, res => res.Hydra().TypeFunc);
+      string renderTypeNode(object resource)
+      {
+        return typeToTypeGen[resource.GetType()](resource);
+      }
       
       return serializerFunc(entity, new SerializationContext
       {
         BaseUri = BaseUri,
         UriGenerator = resource => _uris.CreateUri(resource, _context.ApplicationBaseUri),
-        TypeGenerator = resourceSelectedByUri.ResourceModel.Hydra().TypeFunc
+        TypeGenerator =  renderTypeNode
       }, response.Stream);
     }
 
