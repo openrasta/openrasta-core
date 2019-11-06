@@ -15,17 +15,20 @@ namespace OpenRasta.Plugins.ReverseProxy
   {
     readonly Func<HttpClient> _httpClient;
     readonly Action<ICommunicationContext, HttpRequestMessage> _onSend;
+    readonly Action<ReverseProxyResponse> _onProxyResponse;
     readonly TimeSpan _timeout;
     readonly bool _convertForwardedHeaders;
     readonly string _viaIdentifier;
 
     public ReverseProxy(TimeSpan requestTimeout, bool convertForwardedHeaders, string viaIdentifier,
       Func<HttpClient> clientFactory,
-      Action<ICommunicationContext, HttpRequestMessage> onSend)
+      Action<ICommunicationContext, HttpRequestMessage> onSend,
+      Action<ReverseProxyResponse> onProxyResponse)
     {
       _timeout = requestTimeout;
       _httpClient = clientFactory;
       _onSend = onSend;
+      _onProxyResponse = onProxyResponse;
       _convertForwardedHeaders = convertForwardedHeaders;
       _viaIdentifier = viaIdentifier;
       
@@ -52,6 +55,7 @@ namespace OpenRasta.Plugins.ReverseProxy
       cts.CancelAfter(_timeout);
       var timeoutToken = cts.Token;
 
+      ReverseProxyResponse reverseProxyResponse;
       try
       {
         _onSend?.Invoke(context, requestMessage);
@@ -60,18 +64,22 @@ namespace OpenRasta.Plugins.ReverseProxy
           HttpCompletionOption.ResponseHeadersRead,
           timeoutToken
         );
-        return new ReverseProxyResponse(requestMessage, responseMessage, viaIdentifier);
+        reverseProxyResponse = new ReverseProxyResponse(requestMessage, responseMessage, viaIdentifier);
+        
       }
       catch (TaskCanceledException e) when (timeoutToken.IsCancellationRequested || e.CancellationToken == timeoutToken)
       {
         // Note we check both cancellation token because mono/fullfx/core don't have the same behaviour
-        return new ReverseProxyResponse(requestMessage, via: null, error: e, statusCode: 504);
+        reverseProxyResponse =  new ReverseProxyResponse(requestMessage, via: null, error: e, statusCode: 504);
       }
       catch (HttpRequestException e)
       {
         context.ServerErrors.Add(new Error {Exception = e, Title = $"Reverse Proxy failed to connect."});
-        return new ReverseProxyResponse(requestMessage, via: null, error: e, statusCode: 502);
+        reverseProxyResponse =  new ReverseProxyResponse(requestMessage, via: null, error: e, statusCode: 502);
       }
+
+      _onProxyResponse?.Invoke(reverseProxyResponse);
+      return reverseProxyResponse;
     }
 
     string AppendViaHeaderToRequest(ICommunicationContext context, HttpRequestMessage requestMessage)

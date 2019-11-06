@@ -43,7 +43,8 @@ namespace OpenRasta.Plugins.ReverseProxy
           options.ForwardedHeaders.ConvertLegacyHeaders,
           options.Via.Pseudonym,
           factory.GetClient,
-          options.OnSend
+          options.OnSend,
+          options.OnProxyResponse
         )));
       }
       else
@@ -53,7 +54,8 @@ namespace OpenRasta.Plugins.ReverseProxy
           options.ForwardedHeaders.ConvertLegacyHeaders,
           options.Via.Pseudonym,
           options.HttpClient.Factory, 
-          options.OnSend
+          options.OnSend,
+          options.OnProxyResponse
         )));
       }
 

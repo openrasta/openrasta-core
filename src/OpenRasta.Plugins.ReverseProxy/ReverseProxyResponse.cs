@@ -11,7 +11,8 @@ namespace OpenRasta.Plugins.ReverseProxy
     public int StatusCode { get; }
     public Exception Error { get; }
 
-    public ReverseProxyResponse(HttpRequestMessage requestMessage,
+    public ReverseProxyResponse(
+      HttpRequestMessage requestMessage,
       HttpResponseMessage responseMessage = null,
       string via = null,
       Exception error = null,
@@ -27,7 +28,7 @@ namespace OpenRasta.Plugins.ReverseProxy
     public void Dispose()
     {
       RequestMessage.Dispose();
-      ResponseMessage?.Dispose();  
+      ResponseMessage?.Dispose();
     }
   }
 }

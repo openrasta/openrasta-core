@@ -8,6 +8,8 @@ namespace OpenRasta.Plugins.ReverseProxy
 {
   public class ReverseProxyOptions
   {
+    public Action<ReverseProxyResponse> OnProxyResponse { get; set; }
+
     public ReverseProxyOptions()
     {
     }
@@ -52,6 +54,7 @@ namespace OpenRasta.Plugins.ReverseProxy
       public bool ClientPerNode { get; set; }
       public Func<string,Task<IPAddress>> DnsResolver { get; set; }
     }
+
   }
 
 }
