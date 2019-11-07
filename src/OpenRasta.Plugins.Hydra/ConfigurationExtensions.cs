@@ -11,17 +11,12 @@ using OpenRasta.Plugins.Hydra.Internal;
 using OpenRasta.Plugins.Hydra.Internal.Serialization;
 using OpenRasta.Plugins.Hydra.Internal.Serialization.JsonNet;
 using OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8Json;
-using OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled;
 using OpenRasta.Plugins.Hydra.Schemas;
 using OpenRasta.Plugins.Hydra.Schemas.Hydra;
 using OpenRasta.Web;
 
 namespace OpenRasta.Plugins.Hydra
 {
-  public class HydraOperationOptions
-  {
-  }
-
   public static class ConfigurationExtensions
   {
     public static IUses Hydra(this IUses uses, Action<HydraOptions> hydraOptions = null)
@@ -154,38 +149,5 @@ namespace OpenRasta.Plugins.Hydra
     {
       return model.Properties.GetOrAdd("openrasta.Hydra.UriModel", () => new HydraUriModel(model));
     }
-  }
-
-  public class SubLink
-  {
-    public string Rel { get; }
-    public Uri Uri { get; }
-
-    public SubLink(string rel, Uri uri, string type = null)
-    {
-      Rel = rel;
-      Uri = uri;
-      Type = type;
-    }
-
-    public string Type { get; set; }
-  }
-
-  public class CollectionEntryPointOptions
-  {
-    public string Uri { get; set; }
-    public IriTemplate Search { get; set; }
-  }
-
-  public class HydraOptions
-  {
-    public HydraOptions()
-    {
-      Serializer = ctx => ctx.Transient(() => new PreCompiledUtf8JsonSerializer()).As<IMetaModelHandler>();
-    }
-
-    public IList<Vocabulary> Curies { get; } = new List<Vocabulary>();
-    public Vocabulary Vocabulary { get; set; }
-    public Action<ITypeRegistrationContext> Serializer { get; set; }
   }
 }
