@@ -10,7 +10,7 @@ namespace OpenRasta.Plugins.Hydra
   {
     public HydraOptions()
     {
-      Serializer = ctx => ctx.Transient(() => new PreCompiledUtf8JsonSerializer()).As<IMetaModelHandler>();
+      Serializer = ctx => ctx.Transient(() => new PreCompiledUtf8JsonHandler()).As<IMetaModelHandler>();
     }
 
     public IList<Vocabulary> Curies { get; } = new List<Vocabulary>();

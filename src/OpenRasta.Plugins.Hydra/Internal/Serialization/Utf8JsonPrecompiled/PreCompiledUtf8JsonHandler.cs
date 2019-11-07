@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
 using System.Threading.Tasks;
 using OpenRasta.Configuration.MetaModel;
 using OpenRasta.Configuration.MetaModel.Handlers;
@@ -12,17 +13,42 @@ using Utf8Json;
 
 namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
 {
-  public class PreCompiledUtf8JsonSerializer : IMetaModelHandler
+  public class PreCompiledUtf8JsonHandler : IMetaModelHandler
   {
     public void PreProcess(IMetaModelRepository repository)
     {
+      foreach (var model in repository.ResourceRegistrations.Where(r => r.ResourceType != null))
+      {
+        PrepareProperties(model);
+      }
+    }
+
+    void PrepareProperties(ResourceModel model)
+    {
+      if (model.ResourceType == null) return;
+      
+      var hydra = model.Hydra();
+      var clrProperties = model.ResourceType
+        .GetProperties(BindingFlags.Public | BindingFlags.Instance)
+        .Where(HydraTextExtensions.IsNotIgnored)
+        .Where(pi=>pi.GetIndexParameters().Any() == false)
+        .Select(pi=>new ResourceProperty
+        {
+          Member = pi,
+          Name = HydraTextExtensions.GetJsonPropertyName(pi),
+          IsValueNode = pi.PropertyType == typeof(string) ||
+                        (pi.PropertyType.IsValueType && Nullable.GetUnderlyingType(pi.PropertyType) == null)
+        })
+        .ToList();
+      hydra.ResourceProperties = clrProperties;
     }
 
     public void Process(IMetaModelRepository repository)
     {
       foreach (var model in repository.ResourceRegistrations.Where(r => r.ResourceType != null))
       {
-        model.Hydra().SerializeFunc = model.ResourceType == typeof(Context)
+        var hydraResourceModel = model.Hydra();
+        hydraResourceModel.SerializeFunc = model.ResourceType == typeof(Context)
           ? CreateContextSerializer()
           : CreateDocumentSerializer(model, repository);
       }
