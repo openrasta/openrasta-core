@@ -9,36 +9,54 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization
   public class FastUriGenerator
   {
     readonly IUriResolver _uris;
-    readonly Dictionary<Type, Func<object, string>> _generators;
+    readonly Dictionary<(Type ResourceType, string resourceName), UriGenerator> _generators;
 
     public FastUriGenerator(IMetaModelRepository repository, IUriResolver uris)
     {
       _uris = uris;
-      var resourceGenerators = (from model in repository.ResourceRegistrations
-        where model.ResourceType != null
-        let generators = model.Uris.Where(uri => uri.Properties.ContainsKey("compiled")).ToList()
-        where generators.Count == 1
-        select new {model.ResourceType, generator = (Func<object, string>) (generators[0].Properties["compiled"])})
+      var resourceGenerators = (
+          from models in repository.ResourceRegistrations.GroupBy(r=>r.ResourceType)
+          where models.Key != null
+          from model in models
+          let resourceName = model.Name
+          let generators = model.Uris.Where(uri => uri.Properties.ContainsKey("compiled")).ToList()
+          where generators.Count == 1
+          select new {model.ResourceType, resourceName, generator = (Func<object, string>) (generators[0].Properties["compiled"])})
         .ToList();
       _generators =
         resourceGenerators
-        .ToDictionary(x => x.ResourceType, x => x.generator);
+          .ToDictionary(x => (x.ResourceType, x.resourceName),
+            x => new UriGenerator(x.generator, x.resourceName));
     }
 
-    public string CreateUri<T>(Uri baseUri)
+    class UriGenerator
     {
-      if (_generators.TryGetValue(typeof(T), out var generator))
+      public string ResourceName { get; }
+      readonly Func<object, string> _generator;
+
+      public UriGenerator(Func<object, string> generator, string resourceName)
       {
-        return baseUri + generator(null).Substring(1);
+        ResourceName = resourceName;
+        _generator = generator;
+      }
+
+      public string Create(object instance) => _generator(instance);
+    }
+
+    public string CreateUri<T>(Uri baseUri, string resourceName)
+    {
+      if (_generators.TryGetValue((typeof(T), resourceName), out var generator))
+      {
+        return baseUri + generator.Create(null).Substring(1);
       }
 
       return _uris.CreateUriFor(baseUri, typeof(T)).ToString();
     }
 
-    public string CreateUri(object instance, Uri baseUri)
+    public string CreateUri(object instance, Uri baseUri, string resourceName)
     {
-      return _generators.TryGetValue(instance.GetType(), out var generator)
-        ? $"{baseUri}{generator(instance).Substring(1)}"
+      return _generators.TryGetValue((instance.GetType(), resourceName), out var generator)
+        ? $"{baseUri}{generator.Create(instance).Substring(1)}"
         : _uris.CreateFrom(instance, baseUri).ToString();
     }
   }

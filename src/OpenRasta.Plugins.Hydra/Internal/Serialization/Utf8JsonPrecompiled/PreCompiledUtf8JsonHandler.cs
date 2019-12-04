@@ -18,7 +18,7 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
   {
     public void PreProcess(IMetaModelRepository repository)
     {
-      EnsureNoDuplicateRegistrations(repository);
+      // EnsureNoDuplicateRegistrations(repository);
 
       foreach (var model in repository.ResourceRegistrations.Where(r => r.ResourceType != null).ToList())
         AnnotateCollectionTypes(repository, model);
@@ -35,7 +35,7 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
         .ToList())
         CreateClass(model);
 
-      EnsureNoDuplicateRegistrations(repository);
+      // EnsureNoDuplicateRegistrations(repository);
     }
 
     static void CreateClass(ResourceModel model)
@@ -63,16 +63,6 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
         ).ToList(),
         SupportedOperations = hydraModel.SupportedOperations 
       };
-      //
-      // hydraClass.SupportedProperties = model.Hydra().ResourceProperties
-      //   .Select(property => new SupportedProperty()
-      //   {
-      //     Property = new Rdf.Property()
-      //     {
-      //       Identifier = $"{model.Hydra().Class.Identifier}#",
-      //       Range = property.RdfRange
-      //     }
-      //   }).ToList();
     }
 
     static void EnsureNoDuplicateRegistrations(IMetaModelRepository repository)

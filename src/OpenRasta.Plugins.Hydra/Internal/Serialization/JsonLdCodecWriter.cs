@@ -20,13 +20,17 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization
     string _apiDocumentationLink;
     static readonly string _apiDocumentationRel = $"{Vocabularies.Hydra.Uri}apiDocumentation";
 
-    public JsonLdCodecWriter(FastUriGenerator uris, ICommunicationContext context, IResponse responseMessage, IMetaModelRepository models)
+    public JsonLdCodecWriter(
+      FastUriGenerator uris,
+      ICommunicationContext context,
+      IResponse responseMessage,
+      IMetaModelRepository models)
     {
       _uris = uris;
       _context = context;
       _responseMessage = responseMessage;
       _models = models;
-      _apiDocumentationLink = uris.CreateUri<ApiDocumentation>(_context.ApplicationBaseUri);
+      _apiDocumentationLink = uris.CreateUri<ApiDocumentation>(_context.ApplicationBaseUri, null);
     }
 
     public object Configuration { get; set; }
@@ -40,7 +44,7 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization
       var resourceSelectedByUri = _context.PipelineData.SelectedResource;
 
       var serializerFunc = resourceSelectedByUri.ResourceModel.Hydra().SerializeFunc;
-      
+
       if (serializerFunc == null)
       {
         serializerFunc = GetFuncFromResponseResourceType(_context.Response.Entity.Instance);
@@ -51,7 +55,7 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization
       var typeToTypeGen = _models.ResourceRegistrations
         .Where(res => res.ResourceType != null && res.Hydra().TypeFunc != null)
         .ToLookup(res => res.ResourceType, res => res.Hydra().TypeFunc);
-      
+
       string renderTypeNode(object resource)
       {
         var convertedString = typeToTypeGen[resource.GetType()].First()(resource);
@@ -59,12 +63,13 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization
           return convertedString;
         return BaseUri + convertedString;
       }
-      
+
       return serializerFunc(entity, new SerializationContext
       {
         BaseUri = BaseUri,
-        UriGenerator = resource => _uris.CreateUri(resource, _context.ApplicationBaseUri),
-        TypeGenerator =  renderTypeNode
+        UriGenerator = resource =>
+          _uris.CreateUri(resource, _context.ApplicationBaseUri, resourceSelectedByUri.ResourceModel.Name),
+        TypeGenerator = renderTypeNode
       }, response.Stream);
     }
 
@@ -74,7 +79,7 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization
     {
       if (entityInstance == null) return null;
 
-      return _models.TryGetResourceModel(entityInstance.GetType(), out var responseEntityResourceModel) 
+      return _models.TryGetResourceModel(entityInstance.GetType(), out var responseEntityResourceModel)
         ? responseEntityResourceModel.Hydra().SerializeFunc
         : null;
     }
