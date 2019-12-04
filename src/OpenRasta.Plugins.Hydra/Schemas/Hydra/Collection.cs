@@ -29,7 +29,7 @@ namespace OpenRasta.Plugins.Hydra.Schemas.Hydra
     public IriTemplate Search { get; set; }
 
     public CollectionManages Manages { get; } = new CollectionManages();
-    public virtual int? TotalItems => 0;
+    public virtual int? TotalItems => null;
 
   }
 
