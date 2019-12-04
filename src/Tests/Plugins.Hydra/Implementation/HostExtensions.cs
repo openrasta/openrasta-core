@@ -36,6 +36,7 @@ namespace Tests.Plugins.Hydra.Implementation
       Console.WriteLine(responseBody);
       return (response,JObject.Parse(responseBody, new JsonLoadSettings(){DuplicatePropertyNameHandling = DuplicatePropertyNameHandling.Error}));
     }
+    
     public static async Task<(IResponse, JToken)> PostJsonLd(this InMemoryHost host, string uri, string content)
     {
       var response = await host.Post(uri, content, contentType: "application/ld+json", accept: "application/ld+json");

@@ -23,16 +23,16 @@ namespace OpenRasta.Configuration.MetaModel
 
     public void Process()
     {
-      var earlyHandlers = _handlers().Where(ManagesDependencies).ToList();
+      var  earlyHandlers = _handlers().Where(ManagesDependencies).ToList();
       ProcessHandlers(earlyHandlers);
-      var handlers = _handlers().Where(handler => !ManagesDependencies(handler)).ToList();
-      ProcessHandlers(handlers);
+      
+      // may have registered handlers in plugins, re-running the types here
+      var lateHandlers = _handlers().Where(handler => !ManagesDependencies(handler)).ToList();
+      ProcessHandlers(lateHandlers);
     }
 
-    bool ManagesDependencies(IMetaModelHandler arg)
-    {
-      return arg is DependencyFactoryHandler || arg is DependencyRegistrationMetaModelHandler;
-    }
+    bool ManagesDependencies(IMetaModelHandler arg) =>
+      arg is DependencyFactoryHandler || arg is DependencyRegistrationMetaModelHandler;
 
     void ProcessHandlers(List<IMetaModelHandler> handlers)
     {

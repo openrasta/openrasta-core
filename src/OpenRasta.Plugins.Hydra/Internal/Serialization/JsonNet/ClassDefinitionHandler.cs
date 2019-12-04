@@ -7,17 +7,9 @@ using OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled;
 
 namespace OpenRasta.Plugins.Hydra.Internal.Serialization.JsonNet
 {
-  public class ClassDefinitionHandler : IMetaModelHandler
+  public class ClassDefinitionHandler//. : IMetaModelHandler
   {
-    public ClassDefinitionHandler()
-    {
-    }
-
-    public void PreProcess(IMetaModelRepository repository)
-    {
-    }
-
-    public void Process(IMetaModelRepository repository)
+    public static void CreateClassDefinitions(IMetaModelRepository repository)
     {
       foreach (var resourceRegistration in repository.ResourceRegistrations.Where(reg=>reg.ResourceType != null))
       {

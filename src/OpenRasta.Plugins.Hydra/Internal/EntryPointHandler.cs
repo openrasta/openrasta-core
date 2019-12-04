@@ -29,24 +29,9 @@ namespace OpenRasta.Plugins.Hydra.Internal
           where uriModel.CollectionItemType != null
           let horridBackwardsIType = TypeSystems.Default.FromClr(uriModel.CollectionItemType)
           let itemModel = _models.ResourceRegistrations.Single(r => Equals(r.ResourceKey, horridBackwardsIType))
-          select new Collection()
-          {
-            Identifier = new Uri(_context.ApplicationBaseUri, new Uri(uriModel.EntryPointUri, UriKind.RelativeOrAbsolute)),
-            Search = uriModel.SearchTemplate,
-            Manages = {Object = GetTypeName(_models, itemModel)}
-          }
+          select Collection.FromModel(_context.ApplicationBaseUri,itemModel, uriModel)
         ).ToList()
       };
-    }
-
-    static string GetTypeName(IMetaModelRepository models, ResourceModel model)
-    {
-      var opts = models.CustomRegistrations.OfType<HydraOptions>().Single();
-      var hydraResourceModel = model.Hydra();
-      return (hydraResourceModel.Vocabulary?.DefaultPrefix == null
-               ? string.Empty
-               : $"{hydraResourceModel.Vocabulary.DefaultPrefix}:") +
-             model.ResourceType.Name;
     }
   }
 }

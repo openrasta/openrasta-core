@@ -64,7 +64,7 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization
       return new Uri(new Uri(current), rel).ToString();
     }
 
-    public static IEnumerable<Type> CollectionItemTypes(Type type)
+    public static IEnumerable<Type> IEnumerableItemTypes(Type type)
     {
       return from i in type.GetInterfaces()
         where i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IEnumerable<>)
@@ -87,7 +87,13 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization
                .SelectMany(a => a.ConstructorArguments)
                .Where(a => a.ArgumentType == typeof(string))
                .Select(a => (string) a.Value)
-               .FirstOrDefault() ?? pi.Name.ToCamelCase();
+               .FirstOrDefault()
+             ?? pi.CustomAttributes.Where(x => x.AttributeType.Name == "DataMemberAttribute")
+               .SelectMany(x => x.NamedArguments)
+               .Where(c => c.MemberName == "Name")
+               .Select(v => v.TypedValue.Value.ToString()).FirstOrDefault()
+             ?? pi.Name.ToCamelCase();
+
     }
   }
 }

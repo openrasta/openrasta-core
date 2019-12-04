@@ -24,6 +24,14 @@ namespace Configuration_Specification
 
       TheUris[0].Uri.ShouldBe("/customer/{Address}");
     }
+    [Test]
+    public void using_resource_func_with_var()
+    {
+      var stringVar = "test";
+      ResourceSpaceHas.ResourcesOfType<Customer>().AtUri(c => $"/customer/{c.Address}/{stringVar}");
+
+      TheUris[0].Uri.ShouldBe("/customer/{Address}/test");
+    }
 
     [Test]
     public void a_null_language_defaults_to_the_inviariant_culture()

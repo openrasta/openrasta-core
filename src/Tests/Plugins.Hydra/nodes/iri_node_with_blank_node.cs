@@ -37,11 +37,11 @@ namespace Tests.Plugins.Hydra.nodes
           ResourceSpace.Uses.Hydra(options =>
           {
             options.Vocabulary = "https://schemas.example/schema#";
-            options.Serializer = ctx =>
-              ctx.Transient(() => new PreCompiledUtf8JsonSerializer()).As<IMetaModelHandler>();
           });
 
-          ResourceSpace.Has.ResourcesOfType<Person>().Vocabulary("https://schemas.example/schema#");
+          ResourceSpace.Has.ResourcesOfType<Person>()
+            .Vocabulary("https://schemas.example/schema#");
+          
           ResourceSpace.Has.ResourcesOfType<EventWithPerson>()
             .Vocabulary("https://schemas.example/schema#")
             .AtUri("/events/{id}")

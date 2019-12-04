@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using OpenRasta.Codecs;
 using OpenRasta.Configuration.MetaModel;
@@ -50,9 +51,13 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization
       var typeToTypeGen = _models.ResourceRegistrations
         .Where(res => res.ResourceType != null && res.Hydra().TypeFunc != null)
         .ToLookup(res => res.ResourceType, res => res.Hydra().TypeFunc);
+      
       string renderTypeNode(object resource)
       {
-        return typeToTypeGen[resource.GetType()].First()(resource);
+        var convertedString = typeToTypeGen[resource.GetType()].First()(resource);
+        if (convertedString.StartsWith("http://") || convertedString.StartsWith("https://") || IsCurie(convertedString))
+          return convertedString;
+        return BaseUri + convertedString;
       }
       
       return serializerFunc(entity, new SerializationContext
@@ -62,6 +67,8 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization
         TypeGenerator =  renderTypeNode
       }, response.Stream);
     }
+
+    static bool IsCurie(string convertedString) => Regex.IsMatch(convertedString, "^\\w+:");
 
     Func<object, SerializationContext, Stream, Task> GetFuncFromResponseResourceType(object entityInstance)
     {

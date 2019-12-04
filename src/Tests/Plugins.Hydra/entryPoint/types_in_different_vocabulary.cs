@@ -26,7 +26,7 @@ namespace Tests.Plugins.Hydra
       server = new InMemoryHost(() =>
       {
         ResourceSpace.Uses.Hydra(opt =>
-            opt.Serializer = ctx => ctx.Transient(() => new PreCompiledUtf8JsonSerializer()).As<IMetaModelHandler>()
+            opt.Serializer = ctx => ctx.Transient(() => new PreCompiledUtf8JsonHandler()).As<IMetaModelHandler>()
           );
 
         ResourceSpace.Has

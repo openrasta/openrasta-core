@@ -23,7 +23,7 @@ namespace OpenRasta.Plugins.Hydra.Internal
 
     Class[] GenerateClasses()
     {
-      return _models.ResourceRegistrations.Select(x => x.Hydra().ApiClass).Where(x => x != null).ToArray();
+      return _models.ResourceRegistrations.Select(x => x.Hydra().Class).Where(x => x != null).ToArray();
     }
   }
 }

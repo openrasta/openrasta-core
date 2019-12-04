@@ -7,5 +7,6 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
     public PropertyInfo Member { get; set; }
     public string Name { get; set; }
     public bool IsValueNode { get; set; }
+    public string RdfRange { get; set; }
   }
 }

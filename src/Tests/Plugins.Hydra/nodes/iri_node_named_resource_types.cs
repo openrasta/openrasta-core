@@ -1,8 +1,8 @@
-using System;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using OpenRasta.Concordia;
 using OpenRasta.Configuration;
+using OpenRasta.Configuration.Fluent;
 using OpenRasta.Configuration.MetaModel.Handlers;
 using OpenRasta.Hosting.InMemory;
 using OpenRasta.Plugins.Hydra;
@@ -15,34 +15,35 @@ using Xunit;
 
 namespace Tests.Plugins.Hydra.nodes
 {
-  public class iri_node_with_custom_type_config : IAsyncLifetime
+  public class iri_node_named_resource_types : IAsyncLifetime
   {
+    
     IResponse response;
     JToken body;
     readonly InMemoryHost server;
-    string responseContent;
 
-    public iri_node_with_custom_type_config()
+    public iri_node_named_resource_types()
     {
       server = new InMemoryHost(() =>
         {
           ResourceSpace.Uses.Hydra(options =>
           {
             options.Vocabulary = "https://schemas.example/schema#";
-            options.Serializer = ctx =>
-              ctx.Transient(() => new PreCompiledUtf8JsonHandler()).As<IMetaModelHandler>();
           });
 
-          ResourceSpace.Has.ResourcesOfType<Person>()
+          ResourceSpace.Has.ResourcesOfType<Event>()
+            .Named("MyEvents")
             .Vocabulary("https://schemas.example/schema#")
-            .Type(datum => $"event-types/{datum.Id}")
-            .AtUri("/events/{id}/organiser");
+            .AtUri(ev=> $"/my-events/{ev.Id}")
+            .HandledBy<EventHandler>();
+
+          ResourceSpace.Has.ResourcesOfType<Event>()
+            .Named("YourEvents")
+            .Vocabulary("https://schemas.example/schema#")
+            .AtUri(ev=> $"/your-events/{ev.Id}")
+            .HandledBy<EventHandler>();
+
           
-          ResourceSpace.Has.ResourcesOfType<EventWithPerson>()
-            .Vocabulary("https://schemas.example/schema#")
-            .Type(datum => $"CustomEvent")
-            .AtUri("/events/{id}")
-            .HandledBy<PersonHandler>();
         },
         startup: new StartupProperties()
         {
@@ -54,23 +55,18 @@ namespace Tests.Plugins.Hydra.nodes
         });
     }
 
-    class PersonHandler
-    {
-      public EventWithPerson Get(int id) => new EventWithPerson() {Id = id, Organiser = new Person(){Id = 666}};
-    }
 
     [Fact]
-    public void type_is_overridden()
+    public void correct_uri_is_selected()
     {
-      body["@type"].ShouldBe("http://localhost/CustomEvent");
-      body["organiser"]["@type"].ShouldBe("http://localhost/event-types/666");
-      body["organiser"]["@id"].ShouldBe("http://localhost/events/666/organiser");
+      body["@id"].ShouldBe("http://localhost/your-events/2");
+      body["@type"].ShouldBe("Event");
+      body["@context"].ShouldBe("http://localhost/.hydra/context.jsonld");
     }
 
     public async Task InitializeAsync()
     {
-      responseContent = await server.GetJsonLdString("/events/2");
-      (response, body) = await server.GetJsonLd("/events/2");
+      (response, body) = await server.GetJsonLd("/your-events/2");
     }
 
     public async Task DisposeAsync() => server.Close();

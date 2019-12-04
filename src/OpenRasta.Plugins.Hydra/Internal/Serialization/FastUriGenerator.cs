@@ -14,11 +14,14 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization
     public FastUriGenerator(IMetaModelRepository repository, IUriResolver uris)
     {
       _uris = uris;
+      var resourceGenerators = (from model in repository.ResourceRegistrations
+        where model.ResourceType != null
+        let generators = model.Uris.Where(uri => uri.Properties.ContainsKey("compiled")).ToList()
+        where generators.Count == 1
+        select new {model.ResourceType, generator = (Func<object, string>) (generators[0].Properties["compiled"])})
+        .ToList();
       _generators =
-        (from model in repository.ResourceRegistrations
-          let generators = model.Uris.Where(uri => uri.Properties.ContainsKey("compiled")).ToList()
-          where generators.Count == 1
-          select new {model.ResourceType, generator = (Func<object, string>) (generators[0].Properties["compiled"])})
+        resourceGenerators
         .ToDictionary(x => x.ResourceType, x => x.generator);
     }
 

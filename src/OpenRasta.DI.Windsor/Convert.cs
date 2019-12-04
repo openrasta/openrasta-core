@@ -13,11 +13,11 @@ namespace OpenRasta.DI.Windsor
           return LifestyleType.Singleton;
         case DependencyLifetime.PerRequest:
           return LifestyleType.Scoped;
-                case DependencyLifetime.Transient:
-                    return LifestyleType.Transient;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(lifetime), lifetime, "The provided lifetime is not recognized.");
-            }
-        }
+        case DependencyLifetime.Transient:
+          return LifestyleType.Transient;
+        default:
+          throw new ArgumentOutOfRangeException(nameof(lifetime), lifetime, "The provided lifetime is not recognized.");
+      }
     }
+  }
 }

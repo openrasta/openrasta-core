@@ -67,14 +67,21 @@ namespace OpenRasta.Configuration.Fluent.Implementation
       return _formatted ?? format[0];
     }
 
+    protected override Expression VisitParameter(ParameterExpression node)
+    {
+      return base.VisitParameter(node);
+    }
+
     protected override Expression VisitMember(MemberExpression node)
     {
       if (node.NodeType == ExpressionType.MemberAccess &&
           node.Member is PropertyInfo property &&
           property.DeclaringType.IsAssignableFrom(_resourceType))
       {
+      
         format.Add($"{{{node.Member.Name}}}");
       }
+//      else if (node.NodeType == ExpressionType.MemberAccess)
 
       return base.VisitMember(node);
     }

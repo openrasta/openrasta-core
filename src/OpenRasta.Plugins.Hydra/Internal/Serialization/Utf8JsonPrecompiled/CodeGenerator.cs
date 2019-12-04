@@ -4,6 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using OpenRasta.Configuration.MetaModel;
+using OpenRasta.Plugins.Hydra.Configuration;
 using OpenRasta.Plugins.Hydra.Internal.Serialization.ExpressionTree;
 using OpenRasta.TypeSystem.ReflectionBased;
 using Utf8Json;
@@ -97,38 +98,55 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
         resourceRegistrationHydraType));
 
 
-      var collectionItemTypes = HydraTextExtensions.CollectionItemTypes(resourceType).ToList();
-      Type collectionItemType = null;
-      var isHydraCollection = collectionItemTypes.Count == 1 &&
-                              models.TryGetResourceModel(collectionItemType = collectionItemTypes.First(), out _);
-
       IEnumerable<AnyExpression> render()
       {
-        if (isHydraCollection)
+        if (model.Hydra().Collection.IsCollection)
         {
-          var collectionType = HydraTypes.Collection.MakeGenericType(collectionItemType);
+          var collectionItemType = model.Hydra().Collection.ItemType;
+          var hydraCollectionType = HydraTypes.Collection.MakeGenericType(collectionItemType);
           var collectionCtor =
-            collectionType.GetConstructor(new[] {typeof(IEnumerable<>).MakeGenericType(collectionItemType)});
-          var collection = Expression.Variable(collectionType);
+            hydraCollectionType.GetConstructor(new[] {typeof(IEnumerable<>).MakeGenericType(collectionItemType)});
+          var collectionWrapper = Expression.Variable(hydraCollectionType);
 
-          yield return collection;
-          var instantiateCollection = Expression.Assign(collection, Expression.New(collectionCtor, resource));
+          yield return collectionWrapper;
+          var instantiateCollection = Expression.Assign(collectionWrapper, Expression.New(collectionCtor, resource));
           yield return (instantiateCollection);
 
-          resource = collection;
+          resource = collectionWrapper;
 
-          // if we have a generic list of sort, we hydra:Collection instead
-          if (resourceType.IsGenericType) // IEnum<T>, List<T> etc
-            resourceRegistrationHydraType = "hydra:Collection";
 
-          resourceType = collectionType;
+          // collection<T> doesn't have a  registration and fails
+          var hydraCollectionModel = models.GetResourceModel(hydraCollectionType);
+//          resourceType = hydraCollectionType;
 
           // Remove existing id and type if already defined
-          nodeProperties.RemoveAll(p => p.Name == "@id" || p.Name == "@type");
-          nodeProperties.AddRange(GetNodeProperties(jsonWriter, baseUri, model, resource, uriGenerator, typeGenerator,
+          // nodeProperties.RemoveAll(p => p.Name == "@id" || p.Name == "@type");
+          var hydraCollectionProperties = GetNodeProperties(
+            jsonWriter,
+            baseUri,
+            hydraCollectionModel,
+            collectionWrapper,
+            uriGenerator,
+            typeGenerator,
             models,
             recursionDefender,
-            jsonFormatterResolver, resourceType, resourceUri, resourceRegistrationHydraType));
+            jsonFormatterResolver,
+            resourceType,
+            resourceUri,
+            resourceRegistrationHydraType).ToList();
+
+          var nodeTypeNode = nodeProperties.FirstOrDefault(x => x.Name == "@type");
+
+          if (nodeTypeNode != null && model.Hydra().Collection.IsFrameworkCollection)
+          {
+            nodeProperties.Clear();
+            nodeProperties.AddRange(hydraCollectionProperties);
+          }
+          else
+          {
+            hydraCollectionProperties.RemoveAll(n => n.Name == "@type");
+            nodeProperties.AddRange(hydraCollectionProperties);
+          }
         }
 
         if (nodeProperties.Any())
@@ -194,12 +212,10 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
       TypedExpression<string> resourceUri,
       string resourceRegistrationHydraType)
     {
-      var publicProperties = resourceType
-        .GetProperties(BindingFlags.Public | BindingFlags.Instance)
-        .Where(HydraTextExtensions.IsNotIgnored)
-        .ToList();
+      var propNames = model
+        .Hydra().ResourceProperties
+        .Select(p => p.Name);
 
-      var propNames = publicProperties.Select(HydraTextExtensions.GetJsonPropertyName);
       var overridesId = propNames.Any(name => name == "@id");
       var overridesType = propNames.Any(name => name == "@type");
 
@@ -217,21 +233,18 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
         }
         else
         {
-          yield return WriteType(jsonWriter, StringMethods.Concat(baseUri, typeGenerator.Invoke(resource)));
+          yield return WriteType(jsonWriter, typeGenerator.Invoke(resource));
         }
       }
 
 
-      foreach (var pi in publicProperties)
+      foreach (var resourceProperty in model.Hydra().ResourceProperties)
       {
-        if (pi.GetIndexParameters().Any()) continue;
-
-        if (pi.PropertyType == typeof(string) ||
-            (pi.PropertyType.IsValueType && Nullable.GetUnderlyingType(pi.PropertyType) == null))
+        if (resourceProperty.IsValueNode)
         {
           var nodePropertyValue = WriteNodePropertyValue(
             jsonWriter,
-            pi,
+            resourceProperty,
             jsonFormatterResolver,
             resource);
 
@@ -240,7 +253,7 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
         }
 
         yield return WriteNodeProperty(
-          jsonWriter, baseUri, resource, uriGenerator, typeGenerator, models, recursionDefender, pi,
+          jsonWriter, baseUri, resource, uriGenerator, typeGenerator, models, recursionDefender, resourceProperty,
           jsonFormatterResolver);
       }
 
@@ -297,9 +310,10 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
       MemberAccess<Func<object, string>> typeGenerator,
       IMetaModelRepository models,
       Stack<ResourceModel> recursionDefender,
-      PropertyInfo pi,
+      ResourceProperty property,
       Variable<HydraJsonFormatterResolver> jsonFormatterResolver)
     {
+      var pi = property.Member;
       // var propertyValue;
       var propertyValue = Expression.Variable(pi.PropertyType, $"val{pi.DeclaringType.Name}{pi.Name}");
 
@@ -318,8 +332,8 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
           {
             jsonWriter.WritePropertyName(jsonPropertyName),
             jsonWriter.WriteBeginObject(),
-            WriteNode(jsonWriter, baseUri, propertyResourceModel, propertyValue, 
-              uriGenerator, typeGenerator,models, jsonFormatterResolver, recursionDefender: recursionDefender),
+            WriteNode(jsonWriter, baseUri, propertyResourceModel, propertyValue,
+              uriGenerator, typeGenerator, models, jsonFormatterResolver, recursionDefender: recursionDefender),
             jsonWriter.WriteEndObject()
           }),
           Conditional = Expression.NotEqual(propertyValue, Expression.Default(pi.PropertyType))
@@ -351,7 +365,7 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
       if (itemResourceRegistrations.Any() == false)
       {
         // not a list of iri or blank nodes
-        var propValue = WriteNodePropertyValue(jsonWriter, pi, jsonFormatterResolver, resource);
+        var propValue = WriteNodePropertyValue(jsonWriter, property, jsonFormatterResolver, resource);
         propValue.Preamble = preamble;
         propValue.Conditional = Expression.NotEqual(propertyValue, Expression.Default(pi.PropertyType));
         return propValue;
@@ -537,10 +551,11 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
 
     static NodeProperty WriteNodePropertyValue(
       Variable<JsonWriter> jsonWriter,
-      PropertyInfo pi,
+      ResourceProperty property,
       Variable<HydraJsonFormatterResolver> jsonFormatterResolver,
       Expression resource)
     {
+      var pi = property.Member;
       var propertyGet = Expression.MakeMemberAccess(resource, pi);
       var propertyName = HydraTextExtensions.GetJsonPropertyName(pi);
       var propertyType = pi.PropertyType;

@@ -31,7 +31,7 @@ namespace Tests.Plugins.Hydra
           ResourceSpace.Uses.Hydra(opt =>
           {
             opt.Vocabulary = ExampleVocabularies.ExampleApp.Uri.ToString();
-            opt.Serializer = ctx => ctx.Transient(() => new PreCompiledUtf8JsonSerializer()).As<IMetaModelHandler>();
+            opt.Serializer = ctx => ctx.Transient(() => new PreCompiledUtf8JsonHandler()).As<IMetaModelHandler>();
           });
 
           ResourceSpace.Has.ResourcesOfType<CreateAction>().Vocabulary(Vocabularies.SchemaDotOrg);

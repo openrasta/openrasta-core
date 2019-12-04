@@ -10,7 +10,7 @@ using OpenRasta.Plugins.Hydra.Configuration;
 using OpenRasta.Plugins.Hydra.Internal;
 using OpenRasta.Plugins.Hydra.Internal.Serialization;
 using OpenRasta.Plugins.Hydra.Internal.Serialization.JsonNet;
-using OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8Json;
+using OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled;
 using OpenRasta.Plugins.Hydra.Schemas;
 using OpenRasta.Plugins.Hydra.Schemas.Hydra;
 using OpenRasta.Web;
@@ -63,6 +63,8 @@ namespace OpenRasta.Plugins.Hydra
         .HandledBy<ApiDocumentationHandler>();
 
       has.ResourcesOfType<Collection>().Vocabulary(Vocabularies.Hydra);
+      has.ResourcesOfType<CollectionWithIdentifier>().Vocabulary(Vocabularies.Hydra).Type(_ => "hydra:Collection");
+      
       has.ResourcesOfType<Class>().Vocabulary(Vocabularies.Hydra);
       has.ResourcesOfType<SupportedProperty>().Vocabulary(Vocabularies.Hydra);
       has.ResourcesOfType<IriTemplate>().Vocabulary(Vocabularies.Hydra);
@@ -72,22 +74,25 @@ namespace OpenRasta.Plugins.Hydra
 
       if (opts.Serializer != null)
         uses.Dependency(opts.Serializer);
-      else
-        uses.CustomDependency<IMetaModelHandler, JsonNetMetaModelHandler>(DependencyLifetime.Transient);
-
+      
       uses.Dependency(ctx => ctx.Singleton<FastUriGenerator>());
-      uses.CustomDependency<IMetaModelHandler, JsonNetApiDocumentationMetaModelHandler>(DependencyLifetime.Transient);
-      uses.CustomDependency<IMetaModelHandler, ClassDefinitionHandler>(DependencyLifetime.Transient);
+
+      
 
       return uses;
     }
-
 
     public static IResourceDefinition<T> SupportedOperation<T>(
       this IResourceDefinition<T> resource,
       Operation operation)
     {
       resource.Resource.Hydra().SupportedOperations.Add(operation);
+      return resource;
+    }
+
+    public static IResourceDefinition Vocabulary(this IResourceDefinition resource, Vocabulary vocab)
+    {
+      resource.Resource.Hydra().Vocabulary = vocab;
       return resource;
     }
 
@@ -103,6 +108,13 @@ namespace OpenRasta.Plugins.Hydra
         obj => type((T) (obj ?? throw new NullReferenceException("current node was null")));
       return resource;
     }
+
+    public static IResourceDefinition Type(this IResourceDefinition resource, string type)
+    {
+      resource.Resource.Hydra().TypeFunc = obj => type;
+      return resource;
+    }
+
 
     public static IResourceDefinition<T> Link<T>(this IResourceDefinition<T> resource, SubLink link)
     {

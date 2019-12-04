@@ -28,7 +28,7 @@ namespace Tests.Plugins.Hydra.nodes
         ResourceSpace.Uses.Hydra(options =>
         {
           options.Vocabulary = "https://schemas.example/schema#";
-          options.Serializer = ctx => ctx.Transient(() => new PreCompiledUtf8JsonSerializer()).As<IMetaModelHandler>();
+          options.Serializer = ctx => ctx.Transient(() => new PreCompiledUtf8JsonHandler()).As<IMetaModelHandler>();
         });
 
         ResourceSpace.Has.ResourcesOfType<List<Event>>()
