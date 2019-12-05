@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using OpenRasta.Concordia;
@@ -39,7 +40,6 @@ namespace Tests.Plugins.Hydra.nodes
             .HandledBy<EventHandler>();
 
           ResourceSpace.Has.ResourcesOfType<Customer>();
-          
         },
         startup: new StartupProperties()
         {
@@ -63,7 +63,13 @@ namespace Tests.Plugins.Hydra.nodes
     [Fact]
     public void null_strings_not_rendered()
     {
-      body.ShouldNotContain("alwaysNullString");
+      body.ShouldNotContain(j => j.Path == "alwaysNullString");
+    }
+
+    [Fact]
+    public void empty_enumerables_not_rendered()
+    {
+      body.ShouldNotContain(j => j.Path == "customers");
     }
 
     public async Task InitializeAsync()

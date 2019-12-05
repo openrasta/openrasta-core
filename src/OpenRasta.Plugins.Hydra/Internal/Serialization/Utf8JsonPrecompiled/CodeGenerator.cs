@@ -18,6 +18,9 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
 
     static readonly MethodInfo EnumerableToArrayMethodInfo = typeof(Enumerable).GetMethod(nameof(Enumerable.ToArray));
 
+    static readonly MethodInfo EnumerableAnyMethodInfo =
+      typeof(Enumerable).GetMethods().Single(m => m.Name == nameof(Enumerable.Any) &&  m.GetParameters().Length == 1);
+
     public static CodeBlock ResourceDocument(
       Variable<JsonWriter> jsonWriter,
       ResourceModel model,
@@ -105,19 +108,20 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
           var collectionItemType = model.Hydra().Collection.ItemType;
           var hydraCollectionType = HydraTypes.Collection.MakeGenericType(collectionItemType);
           var collectionCtor =
-            hydraCollectionType.GetConstructor(new[] {typeof(IEnumerable<>).MakeGenericType(collectionItemType), typeof(string)});
+            hydraCollectionType.GetConstructor(new[]
+              {typeof(IEnumerable<>).MakeGenericType(collectionItemType), typeof(string)});
           var collectionWrapper = Expression.Variable(hydraCollectionType);
 
           yield return collectionWrapper;
           var instantiateCollection = Expression.Assign(
-            collectionWrapper, 
+            collectionWrapper,
             Expression.New(collectionCtor, resource, Expression.Constant(model.Hydra().Collection.ManagesRdfTypeName)));
           yield return (instantiateCollection);
 
           resource = collectionWrapper;
 
           var hydraCollectionModel = models.GetResourceModel(hydraCollectionType);
-          
+
           var hydraCollectionProperties = GetNodeProperties(
             jsonWriter,
             baseUri,
@@ -389,8 +393,12 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
     {
       var jsonPropertyName = HydraTextExtensions.GetJsonPropertyName(pi);
 
-
       var itemRegistration = itemResourceRegistrations.First();
+
+      var conditionalEnumerableAny =
+        Expression.Call(EnumerableAnyMethodInfo.MakeGenericMethod(itemRegistration.itemType), propertyValue);
+
+
       var itemArrayType = itemRegistration.itemType.MakeArrayType();
 
       var itemArray = Expression.Variable(itemArrayType);
@@ -420,7 +428,9 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
           LoopOverArray(jsonWriter, currentArrayIndex, renderBlock, itemArray, itemArrayType),
           jsonWriter.WriteEndArray()
         }),
-        Conditional = Expression.NotEqual(propertyValue, Expression.Default(pi.PropertyType))
+        Conditional = Expression.AndAlso(
+          Expression.NotEqual(propertyValue, Expression.Default(pi.PropertyType)),
+          conditionalEnumerableAny)
       };
     }
 
