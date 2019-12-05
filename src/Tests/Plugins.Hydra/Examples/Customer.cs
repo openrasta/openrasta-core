@@ -1,4 +1,4 @@
-﻿namespace Tests.Plugins.Hydra.Examples
+﻿namespace Tests.Plugins.Hydra
 {
   public class Customer
   {

@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Runtime.Serialization;
 using Newtonsoft.Json;
-using OpenRasta.Plugins.Hydra.Schemas;
 
-namespace Tests.Plugins.Hydra.Examples
+namespace Tests.Plugins.Hydra
 {
   public class Event
   {

@@ -10,10 +10,9 @@ using OpenRasta.Plugins.Hydra;
 using OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled;
 using OpenRasta.Web;
 using Shouldly;
-using Tests.Plugins.Hydra.Examples;
 using Tests.Plugins.Hydra.Implementation;
 using Xunit;
-using Customer = Tests.Plugins.Hydra.Examples.Customer;
+using Customer = Tests.Plugins.Hydra.Customer;
 
 namespace Tests.Plugins.Hydra.nodes
 {

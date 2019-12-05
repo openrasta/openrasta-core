@@ -1,6 +1,6 @@
 ﻿using OpenRasta.Plugins.Hydra;
 
-namespace Tests.Plugins.Hydra.Examples
+namespace Tests.Plugins.Hydra
 {
   public static class ExampleVocabularies
   {

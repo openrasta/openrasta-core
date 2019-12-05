@@ -6,7 +6,6 @@ using OpenRasta.Hosting.InMemory;
 using OpenRasta.Plugins.Hydra;
 using OpenRasta.Web;
 using Shouldly;
-using Tests.Plugins.Hydra.Examples;
 using Tests.Plugins.Hydra.Implementation;
 using Xunit;
 

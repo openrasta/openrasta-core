@@ -10,11 +10,10 @@ using OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled;
 using OpenRasta.Plugins.Hydra.Schemas;
 using OpenRasta.Web;
 using Shouldly;
-using Tests.Plugins.Hydra.Examples;
 using Tests.Plugins.Hydra.Implementation;
 using Xunit;
 
-namespace Tests.Plugins.Hydra
+namespace Tests.Plugins.Hydra.entryPoint
 {
   public class search : IAsyncLifetime
   {

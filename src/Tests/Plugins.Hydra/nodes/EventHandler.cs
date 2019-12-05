@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using Tests.Plugins.Hydra.Examples;
 
 namespace Tests.Plugins.Hydra.nodes
 {
