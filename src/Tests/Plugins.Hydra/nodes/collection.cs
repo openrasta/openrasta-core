@@ -59,6 +59,13 @@ namespace Tests.Plugins.Hydra.nodes
       body["member"][0]["id"].ShouldBe(1);
     }
 
+    [Fact]
+    public void manages_block_is_correct()
+    {
+      body["manages"]["property"].ShouldBe("rdf:type");
+      body["manages"]["object"].ShouldBe("Event");
+    } 
+
     public async Task InitializeAsync()
     {
       (response, body) = await server.GetJsonLd("/events/");

@@ -18,8 +18,7 @@ namespace OpenRasta.Plugins.Hydra.Internal
       _options = metaModel.CustomRegistrations.OfType<HydraOptions>().Single();
       _defaultClasses = (
         from resource in metaModel.ResourceRegistrations
-        where resource.ResourceType != null
-              && resource.Uris.Any(u=>u.Hydra().CollectionItemType == null)
+        where resource.ResourceType != null && !resource.Hydra().Collection.IsCollection
         let hydraModel = resource.Hydra()
         where hydraModel.Vocabulary?.Uri == _options.Vocabulary.Uri
         select (resource, hydraModel)).ToList();

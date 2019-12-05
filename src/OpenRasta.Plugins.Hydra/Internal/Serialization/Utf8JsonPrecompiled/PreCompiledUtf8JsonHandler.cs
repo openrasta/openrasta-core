@@ -31,7 +31,7 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
 
 
       foreach (var model in repository.ResourceRegistrations
-        .Where(r => r.ResourceType != null   && r.Hydra().Vocabulary  != null)
+        .Where(r => r.ResourceType != null && r.Hydra().Vocabulary != null)
         .ToList())
         CreateClass(model);
 
@@ -61,7 +61,7 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
             }
           }
         ).ToList(),
-        SupportedOperations = hydraModel.SupportedOperations 
+        SupportedOperations = hydraModel.SupportedOperations
       };
     }
 
@@ -81,17 +81,23 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
     void AddImplicitCollectionRegistrations(IMetaModelRepository repository, ResourceModel model)
     {
       var hydra = model.Hydra();
-      if (hydra.Collection.IsCollection || typeof(Collection).IsAssignableFrom(model.ResourceType)) return;
+      if (hydra.Collection.IsCollection || hydra.Collection.IsHydraCollectionType) return;
 
       var collectionRm = new ResourceModel
       {
-        ResourceKey = typeof(Schemas.Hydra.Hydra.Collection<>).MakeGenericType(model.ResourceType)
+        ResourceKey = HydraTypes.Collection.MakeGenericType(model.ResourceType)
       };
 
 
       var collectionHydra = collectionRm.Hydra();
       collectionHydra.Vocabulary = Vocabularies.Hydra;
       collectionHydra.TypeFunc = _ => "hydra:Collection";
+
+      collectionHydra.Collection.IsCollection = true;
+      collectionHydra.Collection.IsFrameworkCollection = false;
+      collectionHydra.Collection.ItemType = model.ResourceType;
+      collectionHydra.Collection.ManagesRdfTypeName = HydraTextExtensions.GetHydraTypeName(model);
+      
 
       repository.ResourceRegistrations.Add(collectionRm);
     }
@@ -105,7 +111,9 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
       {
         var hydraResourceModel = model.Hydra();
         hydraResourceModel.Collection.IsCollection = true;
+        
         hydraResourceModel.Collection.ItemType = itemModel.ResourceType;
+        hydraResourceModel.Collection.ManagesRdfTypeName = HydraTextExtensions.GetHydraTypeName(itemModel);
         hydraResourceModel.Collection.IsFrameworkCollection =
           enumerableType == model.ResourceType || (model.ResourceType.IsGenericType &&
                                                    model.ResourceType.GetGenericTypeDefinition() == typeof(List<>));
@@ -143,19 +151,9 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
         hydraResourceModel.SerializeFunc = model.ResourceType == typeof(Context)
           ? CreateContextSerializer()
           : CreateDocumentSerializer(model, repository);
-        hydraResourceModel.ManagesBlockType = GetTypeName(repository, model);
       }
     }
 
-    static string GetTypeName(IMetaModelRepository models, ResourceModel model)
-    {
-      var opts = models.CustomRegistrations.OfType<HydraOptions>().Single();
-      var hydraResourceModel = model.Hydra();
-      return (hydraResourceModel.Vocabulary?.DefaultPrefix == null
-               ? string.Empty
-               : $"{hydraResourceModel.Vocabulary.DefaultPrefix}:") +
-             model.ResourceType.Name;
-    }
 
     Func<object, SerializationContext, Stream, Task> CreateContextSerializer()
     {

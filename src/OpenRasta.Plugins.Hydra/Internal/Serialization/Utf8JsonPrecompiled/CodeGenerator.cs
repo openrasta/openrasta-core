@@ -100,27 +100,24 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
 
       IEnumerable<AnyExpression> render()
       {
-        if (model.Hydra().Collection.IsCollection)
+        if (model.Hydra().Collection.IsCollection && !model.Hydra().Collection.IsHydraCollectionType)
         {
           var collectionItemType = model.Hydra().Collection.ItemType;
           var hydraCollectionType = HydraTypes.Collection.MakeGenericType(collectionItemType);
           var collectionCtor =
-            hydraCollectionType.GetConstructor(new[] {typeof(IEnumerable<>).MakeGenericType(collectionItemType)});
+            hydraCollectionType.GetConstructor(new[] {typeof(IEnumerable<>).MakeGenericType(collectionItemType), typeof(string)});
           var collectionWrapper = Expression.Variable(hydraCollectionType);
 
           yield return collectionWrapper;
-          var instantiateCollection = Expression.Assign(collectionWrapper, Expression.New(collectionCtor, resource));
+          var instantiateCollection = Expression.Assign(
+            collectionWrapper, 
+            Expression.New(collectionCtor, resource, Expression.Constant(model.Hydra().Collection.ManagesRdfTypeName)));
           yield return (instantiateCollection);
 
           resource = collectionWrapper;
 
-
-          // collection<T> doesn't have a  registration and fails
           var hydraCollectionModel = models.GetResourceModel(hydraCollectionType);
-//          resourceType = hydraCollectionType;
-
-          // Remove existing id and type if already defined
-          // nodeProperties.RemoveAll(p => p.Name == "@id" || p.Name == "@type");
+          
           var hydraCollectionProperties = GetNodeProperties(
             jsonWriter,
             baseUri,

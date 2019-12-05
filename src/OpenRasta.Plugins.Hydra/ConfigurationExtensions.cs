@@ -145,7 +145,6 @@ namespace OpenRasta.Plugins.Hydra
       var opts = new CollectionEntryPointOptions();
       options?.Invoke(opts);
 
-      uriModel.CollectionItemType = itemType;
       uriModel.ResourceType = typeof(T);
       uriModel.EntryPointUri = opts.Uri ?? resource.Uri.Uri;
       uriModel.SearchTemplate = opts.Search;
@@ -154,7 +153,7 @@ namespace OpenRasta.Plugins.Hydra
 
     public static HydraResourceModel Hydra(this ResourceModel model)
     {
-      return model.Properties.GetOrAdd<HydraResourceModel>("openrasta.Hydra.ResourceModel");
+      return model.Properties.GetOrAdd("openrasta.Hydra.ResourceModel", ()=>new HydraResourceModel(model));
     }
 
     public static HydraUriModel Hydra(this UriModel model)

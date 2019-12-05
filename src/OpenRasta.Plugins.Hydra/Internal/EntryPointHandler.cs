@@ -24,10 +24,11 @@ namespace OpenRasta.Plugins.Hydra.Internal
       {
         Collections = (
           from resource in _models.ResourceRegistrations
+          let resourceHydra =  resource.Hydra()
+          where resourceHydra.Collection.IsCollection
           from uri in resource.Uris
           let uriModel = uri.Hydra()
-          where uriModel.CollectionItemType != null
-          let horridBackwardsIType = TypeSystems.Default.FromClr(uriModel.CollectionItemType)
+          let horridBackwardsIType = TypeSystems.Default.FromClr(resourceHydra.Collection.ItemType)
           let itemModel = _models.ResourceRegistrations.Single(r => Equals(r.ResourceKey, horridBackwardsIType))
           select Collection.FromModel(_context.ApplicationBaseUri,itemModel, uriModel)
         ).ToList()

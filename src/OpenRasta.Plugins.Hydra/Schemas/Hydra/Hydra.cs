@@ -13,9 +13,10 @@ namespace OpenRasta.Plugins.Hydra.Schemas.Hydra
       {
       }
 
-      public Collection(IEnumerable<T> enumerable)
+      public Collection(IEnumerable<T> enumerable, string managesRdf)
       {
         Member = enumerable.ToArray();
+        Manages = new CollectionManages {Object = managesRdf};
       }
 
       public T[] Member { get; set; }
