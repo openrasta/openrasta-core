@@ -31,7 +31,7 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.JsonNet
            
            */
 
-          if (property.CustomAttributes.Any(x => x.AttributeType.Name == "JsonIgnoreAttribute" || x.AttributeType.Name == "IgnoreDataMemberAttribute"))
+          if (property.CustomAttributes.Any(x => x.AttributeType.Name == "\JsonIgnoreAttribute" || x.AttributeType.Name == "IgnoreDataMemberAttribute"))
             continue;
 
           string propertyName = string.Empty;

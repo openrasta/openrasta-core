@@ -80,7 +80,7 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
 
       recursionDefender.Push(model);
 
-      var resourceRegistrationHydraType = HydraTextExtensions.GetHydraTypeName(model);
+      var resourceRegistrationHydraType = model.Hydra().TypeName;
       var resourceUri = uriGenerator.Invoke(resource);
 
       List<NodeProperty> nodeProperties =
@@ -325,7 +325,7 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
 
       if (models.TryGetResourceModel(pi.PropertyType, out var propertyResourceModel))
       {
-        var jsonPropertyName = HydraTextExtensions.GetJsonPropertyName(pi);
+        var jsonPropertyName = property.Name;
         return new NodeProperty(jsonPropertyName)
         {
           Preamble = preamble,
@@ -373,25 +373,25 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
       }
 
       // it's a list of nodes
-      return WriteNodeList(jsonWriter, baseUri, uriGenerator, typeGenerator, models, recursionDefender, pi,
+      return WriteNodePropertyAsList(jsonWriter, baseUri, uriGenerator, typeGenerator, models, recursionDefender, property,
         jsonFormatterResolver,
         itemResourceRegistrations, propertyValue, preamble);
     }
 
-    static NodeProperty WriteNodeList(
+    static NodeProperty WriteNodePropertyAsList(
       Variable<JsonWriter> jsonWriter,
       TypedExpression<string> baseUri,
       MemberAccess<Func<object, string>> uriGenerator,
       MemberAccess<Func<object, string>> typeGenerator,
       IMetaModelRepository models,
       Stack<ResourceModel> recursionDefender,
-      PropertyInfo pi,
+      ResourceProperty property,
       Variable<HydraJsonFormatterResolver> resolver,
       List<(Type itemType, List<ResourceModel> models)> itemResourceRegistrations,
       ParameterExpression propertyValue,
       InlineCode preamble)
     {
-      var jsonPropertyName = HydraTextExtensions.GetJsonPropertyName(pi);
+      var jsonPropertyName = property.Name;
 
       var itemRegistration = itemResourceRegistrations.First();
 
@@ -429,7 +429,7 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
           jsonWriter.WriteEndArray()
         }),
         Conditional = Expression.AndAlso(
-          Expression.NotEqual(propertyValue, Expression.Default(pi.PropertyType)),
+          Expression.NotEqual(propertyValue, Expression.Default(property.Member.PropertyType)),
           conditionalEnumerableAny)
       };
     }
@@ -564,7 +564,7 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
     {
       var pi = property.Member;
       var propertyGet = Expression.MakeMemberAccess(resource, pi);
-      var propertyName = HydraTextExtensions.GetJsonPropertyName(pi);
+      var propertyName = property.Name;
       var propertyType = pi.PropertyType;
 
       return new NodeProperty(propertyName)

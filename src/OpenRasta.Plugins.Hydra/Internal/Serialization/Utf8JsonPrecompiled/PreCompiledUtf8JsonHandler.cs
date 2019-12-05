@@ -18,27 +18,33 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
   {
     public void PreProcess(IMetaModelRepository repository)
     {
-      // EnsureNoDuplicateRegistrations(repository);
-
-      foreach (var model in repository.ResourceRegistrations.Where(r => r.ResourceType != null).ToList())
-        AnnotateCollectionTypes(repository, model);
-
-      foreach (var model in repository.ResourceRegistrations.Where(r => r.ResourceType != null).ToList())
-        AddImplicitCollectionRegistrations(repository, model);
-
-      foreach (var model in repository.ResourceRegistrations.Where(r => r.ResourceType != null).ToList())
-        PrepareProperties(model);
-
-
-      foreach (var model in repository.ResourceRegistrations
-        .Where(r => r.ResourceType != null && r.Hydra().Vocabulary != null)
-        .ToList())
-        CreateClass(model);
-
-      // EnsureNoDuplicateRegistrations(repository);
+      IterateOverHydraRegistrations(repository,
+        AnnotateCollectionTypes,
+        AddImplicitCollectionRegistrations,
+        AnnotateTypes,
+        PrepareProperties,
+        CreateClass);
     }
 
-    static void CreateClass(ResourceModel model)
+    void AnnotateTypes(IMetaModelRepository repository, ResourceModel model)
+    {
+      model.Hydra().TypeName = HydraTextExtensions.GetHydraTypeName(model);
+    }
+
+    void IterateOverHydraRegistrations(
+      IMetaModelRepository repo,
+      params Action<IMetaModelRepository, ResourceModel>[] handlers)
+    {
+      foreach (var handler in handlers)
+      {
+        foreach (var model in repo.ResourceRegistrations
+          .Where(r => r.ResourceType != null && r.Hydra().Vocabulary != null)
+          .ToList())
+          handler(repo, model);
+      }
+    }
+
+    static void CreateClass(IMetaModelRepository _, ResourceModel model)
     {
       var hydraModel = model.Hydra();
       var hydraClass = hydraModel.Class ?? (hydraModel.Class = new Class());
@@ -95,32 +101,27 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
 
       collectionHydra.Collection.IsCollection = true;
       collectionHydra.Collection.IsFrameworkCollection = false;
-      collectionHydra.Collection.ItemType = model.ResourceType;
-      collectionHydra.Collection.ManagesRdfTypeName = HydraTextExtensions.GetHydraTypeName(model);
-      
 
       repository.ResourceRegistrations.Add(collectionRm);
     }
 
     void AnnotateCollectionTypes(IMetaModelRepository repository, ResourceModel model)
     {
-      var enumerableTypes = HydraTextExtensions.IEnumerableItemTypes(model.ResourceType).ToList();
+      var enumerableTypes = HydraTextExtensions.EnumerableItemTypes(model.ResourceType).ToList();
 
       var enumerableType = enumerableTypes.FirstOrDefault();
       if (enumerableType != null && repository.TryGetResourceModel(enumerableType, out var itemModel))
       {
         var hydraResourceModel = model.Hydra();
         hydraResourceModel.Collection.IsCollection = true;
-        
-        hydraResourceModel.Collection.ItemType = itemModel.ResourceType;
-        hydraResourceModel.Collection.ManagesRdfTypeName = HydraTextExtensions.GetHydraTypeName(itemModel);
+        hydraResourceModel.Collection.ItemModel = itemModel;
         hydraResourceModel.Collection.IsFrameworkCollection =
           enumerableType == model.ResourceType || (model.ResourceType.IsGenericType &&
                                                    model.ResourceType.GetGenericTypeDefinition() == typeof(List<>));
       }
     }
 
-    void PrepareProperties(ResourceModel model)
+    void PrepareProperties(IMetaModelRepository repository, ResourceModel model)
     {
       if (model.ResourceType == null) return;
 

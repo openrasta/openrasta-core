@@ -46,14 +46,13 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization
       }
     }
 
-    public static string ToCamelCase(this string piName)
-    {
-      return Char.ToLowerInvariant(piName[0]) + piName.Substring(1);
-    }
+    public static string ToCamelCase(this string piName) => char.IsLower(piName[0]) ? piName : char.ToLowerInvariant(piName[0]) + piName.Substring(1);
 
     public static bool IsNotIgnored(PropertyInfo pi)
     {
-      return pi.CustomAttributes.Any(a => a.AttributeType.Name == "JsonIgnoreAttribute") == false;
+      return pi.CustomAttributes.Any(a =>
+               a.AttributeType.Name == "JsonIgnoreAttribute" || a.AttributeType.Name == "IgnoreDataMemberAttribute") ==
+             false;
     }
 
     internal static string UriStandardCombine(string current, Uri rel) => new Uri(new Uri(current), rel).ToString();
@@ -64,7 +63,7 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization
       return new Uri(new Uri(current), rel).ToString();
     }
 
-    public static IEnumerable<Type> IEnumerableItemTypes(Type type)
+    public static IEnumerable<Type> EnumerableItemTypes(Type type)
     {
       return from i in type.GetInterfaces()
         where i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IEnumerable<>)
@@ -93,7 +92,6 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization
                .Where(c => c.MemberName == "Name")
                .Select(v => v.TypedValue.Value.ToString()).FirstOrDefault()
              ?? pi.Name.ToCamelCase();
-
     }
   }
 }

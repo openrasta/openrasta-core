@@ -19,15 +19,18 @@ namespace OpenRasta.Plugins.Hydra.Configuration
       ResourceModel = resourceModel;
       Collection = new CollectionModel(this);
     }
-    
-    public Func<object,SerializationContext, Stream,Task> SerializeFunc { get; set; }
+
+    public Func<object, SerializationContext, Stream, Task> SerializeFunc { get; set; }
     public Vocabulary Vocabulary { get; set; }
     public Class Class { get; set; }
     public Func<object, string> TypeFunc { get; set; }
+
     public List<ResourceProperty> ResourceProperties { get; } = new List<ResourceProperty>();
+
     // public string ManagesBlockType { get; set; }
     public CollectionModel Collection { get; }
     public List<Operation> SupportedOperations { get; } = new List<Operation>();
+    public string TypeName { get; set; }
 
     public class CollectionModel
     {
@@ -39,15 +42,14 @@ namespace OpenRasta.Plugins.Hydra.Configuration
       }
 
       public bool IsCollection { get; set; }
-      public Type ItemType { get; set; }
+      public Type ItemType => ItemModel?.ResourceType;
       public bool IsFrameworkCollection { get; set; }
-      public string ManagesRdfTypeName { get; set; }
-      public bool IsHydraCollectionType => CheckIsHydraCollectionType(ResourceHydraModel.ResourceModel.ResourceType);
+      public string ManagesRdfTypeName => ItemModel?.Hydra().TypeName;
 
-      bool CheckIsHydraCollectionType(Type resourceType)
-      {
-        return typeof(Collection).IsAssignableFrom(resourceType);
-      }
+      public bool IsHydraCollectionType => typeof(Collection)
+        .IsAssignableFrom(ResourceHydraModel.ResourceModel.ResourceType);
+
+      public ResourceModel ItemModel { get; set; }
     }
   }
 }
