@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace OpenRasta.Plugins.Hydra.Schemas.Hydra
 {
-  public class EntryPoint : JsonLd.INode
+  public class EntryPoint 
   {
     [JsonProperty("collection")]
     public List<CollectionWithIdentifier> Collections { get; set; }

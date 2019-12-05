@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace OpenRasta.Plugins.Hydra.Schemas.Hydra
 {
-  public class Context : JsonLd.INode
+  public class Context 
   {
     public Dictionary<string, Uri> Curies { get; set; }
     public Dictionary<string, string> Classes { get; set; }

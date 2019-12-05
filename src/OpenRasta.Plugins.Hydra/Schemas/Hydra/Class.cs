@@ -6,7 +6,7 @@ using OpenRasta.Plugins.Hydra.Schemas.Hydra;
 
 namespace OpenRasta.Plugins.Hydra.Internal
 {
-  public class Class : JsonLd.INode
+  public class Class
   {
     public Class()
     {

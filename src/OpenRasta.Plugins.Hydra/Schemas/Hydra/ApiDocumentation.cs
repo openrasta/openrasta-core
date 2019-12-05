@@ -5,7 +5,7 @@ using OpenRasta.Plugins.Hydra.Internal;
 
 namespace OpenRasta.Plugins.Hydra.Schemas.Hydra
 {
-  public class ApiDocumentation : JsonLd.INode
+  public class ApiDocumentation
   {
     [JsonProperty("supportedClass")]
     public Class[] SupportedClasses { get; set; }

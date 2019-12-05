@@ -5,7 +5,7 @@ using OpenRasta.Plugins.Hydra.Schemas;
 
 namespace Tests.Plugins.Hydra.Examples
 {
-  public class Event : JsonLd.INode
+  public class Event
   {
     public Event()
     {

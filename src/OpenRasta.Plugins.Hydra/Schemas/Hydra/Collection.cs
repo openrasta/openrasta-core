@@ -6,7 +6,7 @@ using OpenRasta.Plugins.Hydra.Configuration;
 
 namespace OpenRasta.Plugins.Hydra.Schemas.Hydra
 {
-  public class Collection : JsonLd.INode
+  public class Collection
   {
     public static CollectionWithIdentifier FromModel(Uri appBase, ResourceModel itemModel, HydraUriModel uriModel)
     {
