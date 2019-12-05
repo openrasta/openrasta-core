@@ -15,6 +15,8 @@ namespace Tests.Plugins.Hydra.Examples
     
     public string FirstName { get; set; }
 
+    public string AlwaysNullString { get; set; }
+
     public Customer Customer { get; set; }
 
     public List<Customer> Customers { get; set; }

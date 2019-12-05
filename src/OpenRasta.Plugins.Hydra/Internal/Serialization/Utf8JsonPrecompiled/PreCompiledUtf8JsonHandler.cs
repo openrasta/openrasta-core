@@ -133,8 +133,7 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
         {
           Member = pi,
           Name = HydraTextExtensions.GetJsonPropertyName(pi),
-          IsValueNode = pi.PropertyType == typeof(string) ||
-                        (pi.PropertyType.IsValueType && Nullable.GetUnderlyingType(pi.PropertyType) == null),
+          IsValueNode = pi.PropertyType.IsValueType && Nullable.GetUnderlyingType(pi.PropertyType) == null,
           RdfRange = pi.PropertyType.GetRdfRange()
         })
         .ToList();

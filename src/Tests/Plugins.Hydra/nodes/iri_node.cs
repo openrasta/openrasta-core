@@ -60,6 +60,12 @@ namespace Tests.Plugins.Hydra.nodes
       body["@context"].ShouldBe("http://localhost/.hydra/context.jsonld");
     }
 
+    [Fact]
+    public void null_strings_not_rendered()
+    {
+      body.ShouldNotContain("alwaysNullString");
+    }
+
     public async Task InitializeAsync()
     {
       (response, body) = await server.GetJsonLd("/events/2");
