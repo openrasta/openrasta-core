@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using OpenRasta.Configuration.MetaModel;
-using OpenRasta.Plugins.Hydra.Internal;
+using OpenRasta.Plugins.Hydra.Schemas;
 using OpenRasta.Plugins.Hydra.Internal.Serialization;
 using OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled;
-using OpenRasta.Plugins.Hydra.Schemas.Hydra;
+
 
 namespace OpenRasta.Plugins.Hydra.Configuration
 {
@@ -22,14 +22,14 @@ namespace OpenRasta.Plugins.Hydra.Configuration
 
     public Func<object, SerializationContext, Stream, Task> SerializeFunc { get; set; }
     public Vocabulary Vocabulary { get; set; }
-    public Class Class { get; set; }
+    public HydraCore.Class Class { get; set; }
     public Func<object, string> TypeFunc { get; set; }
 
     public List<ResourceProperty> ResourceProperties { get; } = new List<ResourceProperty>();
 
     // public string ManagesBlockType { get; set; }
     public CollectionModel Collection { get; }
-    public List<Operation> SupportedOperations { get; } = new List<Operation>();
+    public List<HydraCore.Operation> SupportedOperations { get; } = new List<HydraCore.Operation>();
     public string TypeName { get; set; }
 
     public class CollectionModel
@@ -46,7 +46,7 @@ namespace OpenRasta.Plugins.Hydra.Configuration
       public bool IsFrameworkCollection { get; set; }
       public string ManagesRdfTypeName => ItemModel?.Hydra().TypeName;
 
-      public bool IsHydraCollectionType => typeof(Collection)
+      public bool IsHydraCollectionType => typeof(HydraCore.Collection)
         .IsAssignableFrom(ResourceHydraModel.ResourceModel.ResourceType);
 
       public ResourceModel ItemModel { get; set; }

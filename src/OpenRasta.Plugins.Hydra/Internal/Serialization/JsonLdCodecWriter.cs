@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using OpenRasta.Codecs;
 using OpenRasta.Configuration.MetaModel;
-using OpenRasta.Plugins.Hydra.Schemas.Hydra;
+using OpenRasta.Plugins.Hydra.Schemas;
 using OpenRasta.Web;
 
 namespace OpenRasta.Plugins.Hydra.Internal.Serialization
@@ -17,7 +17,7 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization
     readonly ICommunicationContext _context;
     readonly IResponse _responseMessage;
     readonly IMetaModelRepository _models;
-    string _apiDocumentationLink;
+    readonly string _apiDocumentationLink;
     static readonly string _apiDocumentationRel = $"{Vocabularies.Hydra.Uri}apiDocumentation";
 
     public JsonLdCodecWriter(
@@ -30,7 +30,7 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization
       _context = context;
       _responseMessage = responseMessage;
       _models = models;
-      _apiDocumentationLink = uris.CreateUri<ApiDocumentation>(_context.ApplicationBaseUri, null);
+      _apiDocumentationLink = uris.CreateUri<HydraCore.ApiDocumentation>(_context.ApplicationBaseUri, null);
     }
 
     public object Configuration { get; set; }

@@ -7,7 +7,7 @@ using OpenRasta.Configuration.MetaModel.Handlers;
 using OpenRasta.Hosting.InMemory;
 using OpenRasta.Plugins.Hydra;
 using OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled;
-using OpenRasta.Plugins.Hydra.Schemas.Hydra;
+using OpenRasta.Plugins.Hydra.Schemas;
 using OpenRasta.Web;
 using Shouldly;
 using Tests.Plugins.Hydra.Examples;
@@ -38,11 +38,11 @@ namespace Tests.Plugins.Hydra
           .AtUri("/events/")
           .EntryPointCollection(options =>
           {
-            options.Search = new IriTemplate("/events/{?q}")
+            options.Search = new HydraCore.IriTemplate("/events/{?q}")
             {
               Mapping =
               {
-                new IriTemplateMapping("q")
+                new HydraCore.IriTemplateMapping("q")
               }
             };
           });

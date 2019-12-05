@@ -1,7 +1,6 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using OpenRasta.Configuration.MetaModel;
-using OpenRasta.Plugins.Hydra.Schemas.Hydra;
+using OpenRasta.Plugins.Hydra.Schemas;
 using OpenRasta.TypeSystem;
 using OpenRasta.Web;
 
@@ -18,9 +17,9 @@ namespace OpenRasta.Plugins.Hydra.Internal
       _context = context;
     }
 
-    public EntryPoint Get()
+    public HydraCore.EntryPoint Get()
     {
-      return new EntryPoint
+      return new HydraCore.EntryPoint
       {
         Collections = (
           from resource in _models.ResourceRegistrations
@@ -30,7 +29,7 @@ namespace OpenRasta.Plugins.Hydra.Internal
           let uriModel = uri.Hydra()
           let horridBackwardsIType = TypeSystems.Default.FromClr(resourceHydra.Collection.ItemType)
           let itemModel = _models.ResourceRegistrations.Single(r => Equals(r.ResourceKey, horridBackwardsIType))
-          select Collection.FromModel(_context.ApplicationBaseUri,itemModel, uriModel)
+          select HydraCore.Collection.FromModel(_context.ApplicationBaseUri,itemModel, uriModel)
         ).ToList()
       };
     }

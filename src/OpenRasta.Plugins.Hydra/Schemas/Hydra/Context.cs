@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace OpenRasta.Plugins.Hydra.Schemas.Hydra
+namespace OpenRasta.Plugins.Hydra.Schemas
 {
-  public class Context 
+  public static partial class HydraCore
   {
-    public Dictionary<string, Uri> Curies { get; set; }
-    public Dictionary<string, string> Classes { get; set; }
-    public string DefaultVocabulary { get; set; }
+    public class Context
+    {
+      public Dictionary<string, Uri> Curies { get; set; }
+      public Dictionary<string, string> Classes { get; set; }
+      public string DefaultVocabulary { get; set; }
+    }
   }
 }

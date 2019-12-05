@@ -1,9 +1,13 @@
-﻿namespace OpenRasta.Plugins.Hydra.Schemas.Hydra
+﻿namespace OpenRasta.Plugins.Hydra.Schemas
 {
-  public class Operation //: JsonLd.IBlankNode
+
+  public static partial class HydraCore
   {
-    public string Method { get; set; }
-    public string Expects { get; set; }
-    public string Title { get; set; }
+    public class Operation //: JsonLd.IBlankNode
+    {
+      public string Method { get; set; }
+      public string Expects { get; set; }
+      public string Title { get; set; }
+    }
   }
 }

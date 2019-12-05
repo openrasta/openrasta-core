@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using OpenRasta.Collections.Specialized;
 using OpenRasta.Configuration.MetaModel;
-using OpenRasta.Configuration.MetaModel.Handlers;
 using OpenRasta.Plugins.Hydra.Configuration;
-using OpenRasta.Plugins.Hydra.Schemas.Hydra;
+using OpenRasta.Plugins.Hydra.Schemas;
+
 
 namespace OpenRasta.Plugins.Hydra.Internal
 {
@@ -24,9 +23,9 @@ namespace OpenRasta.Plugins.Hydra.Internal
         select (resource, hydraModel)).ToList();
     }
 
-    public Context Get()
+    public HydraCore.Context Get()
     {
-      return new Context
+      return new HydraCore.Context
       {
         DefaultVocabulary = _options.Vocabulary.Uri.ToString(),
         Curies = _options.Curies.ToDictionary(v => v.DefaultPrefix, v => v.Uri),

@@ -1,6 +1,6 @@
 ﻿using System;
 using OpenRasta.Configuration.MetaModel;
-using OpenRasta.Plugins.Hydra.Schemas.Hydra;
+using OpenRasta.Plugins.Hydra.Schemas;
 
 namespace OpenRasta.Plugins.Hydra.Configuration
 {
@@ -14,6 +14,6 @@ namespace OpenRasta.Plugins.Hydra.Configuration
     public UriModel Uri { get; }
     public Type ResourceType { get; set; }
     public string EntryPointUri { get; set; }
-    public IriTemplate SearchTemplate { get; set; }
+    public HydraCore.IriTemplate SearchTemplate { get; set; }
   }
 }

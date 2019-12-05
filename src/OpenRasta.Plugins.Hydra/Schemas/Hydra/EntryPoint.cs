@@ -1,11 +1,15 @@
 ﻿using System.Collections.Generic;
 using Newtonsoft.Json;
 
-namespace OpenRasta.Plugins.Hydra.Schemas.Hydra
+namespace OpenRasta.Plugins.Hydra.Schemas
 {
-  public class EntryPoint 
+
+  public static partial class HydraCore
   {
-    [JsonProperty("collection")]
-    public List<CollectionWithIdentifier> Collections { get; set; }
+    public class EntryPoint
+    {
+      [JsonProperty("collection")]
+      public List<CollectionWithIdentifier> Collections { get; set; }
+    }
   }
 }

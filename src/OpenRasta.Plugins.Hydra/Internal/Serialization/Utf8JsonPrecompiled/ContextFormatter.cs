@@ -1,11 +1,12 @@
-using OpenRasta.Plugins.Hydra.Schemas.Hydra;
+using OpenRasta.Plugins.Hydra.Schemas;
 using Utf8Json;
+
 
 namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
 {
-  public class ContextFormatter : IJsonFormatter<Context>
+  public class ContextFormatter : IJsonFormatter<HydraCore.Context>
   {
-    public void Serialize(ref JsonWriter writer, Context value, IJsonFormatterResolver formatterResolver)
+    public void Serialize(ref JsonWriter writer, HydraCore.Context value, IJsonFormatterResolver formatterResolver)
     {
       writer.WriteBeginObject();
       {
@@ -47,7 +48,7 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
       }
     }
 
-    public Context Deserialize(ref JsonReader reader, IJsonFormatterResolver formatterResolver)
+    public HydraCore.Context Deserialize(ref JsonReader reader, IJsonFormatterResolver formatterResolver)
     {
       throw new System.NotImplementedException();
     }

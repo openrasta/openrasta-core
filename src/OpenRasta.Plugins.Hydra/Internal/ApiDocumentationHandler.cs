@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 using OpenRasta.Configuration.MetaModel;
-using OpenRasta.Plugins.Hydra.Schemas.Hydra;
+using OpenRasta.Plugins.Hydra.Schemas;
 
 namespace OpenRasta.Plugins.Hydra.Internal
 {
@@ -13,15 +13,15 @@ namespace OpenRasta.Plugins.Hydra.Internal
       _models = models;
     }
 
-    public ApiDocumentation Get()
+    public HydraCore.ApiDocumentation Get()
     {
-      return new ApiDocumentation
+      return new HydraCore.ApiDocumentation
       {
         SupportedClasses = GenerateClasses()
       };
     }
 
-    Class[] GenerateClasses()
+    HydraCore.Class[] GenerateClasses()
     {
       return _models.ResourceRegistrations.Select(x => x.Hydra().Class).Where(x => x != null).ToArray();
     }

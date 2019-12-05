@@ -1,4 +1,4 @@
-﻿namespace OpenRasta.Plugins.Hydra.Schemas.Hydra
+﻿namespace OpenRasta.Plugins.Hydra.Schemas
 {
   public interface IResource
   {

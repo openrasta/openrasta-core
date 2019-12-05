@@ -4,16 +4,11 @@ using System.Linq;
 using OpenRasta.Configuration;
 using OpenRasta.Configuration.Fluent;
 using OpenRasta.Configuration.MetaModel;
-using OpenRasta.Configuration.MetaModel.Handlers;
-using OpenRasta.DI;
 using OpenRasta.Plugins.Hydra.Configuration;
 using OpenRasta.Plugins.Hydra.Internal;
 using OpenRasta.Plugins.Hydra.Internal.Serialization;
 using OpenRasta.Plugins.Hydra.Internal.Serialization.JsonNet;
-using OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled;
 using OpenRasta.Plugins.Hydra.Schemas;
-using OpenRasta.Plugins.Hydra.Schemas.Hydra;
-using OpenRasta.Web;
 
 namespace OpenRasta.Plugins.Hydra
 {
@@ -45,46 +40,46 @@ namespace OpenRasta.Plugins.Hydra
         .And.TranscodedBy<JsonLdCodecReader>().ForMediaType("application/ld+json");
 
       has
-        .ResourcesOfType<EntryPoint>()
+        .ResourcesOfType<HydraCore.EntryPoint>()
         .Vocabulary(Vocabularies.Hydra)
         .AtUri(r => "/")
         .HandledBy<EntryPointHandler>();
 
       has
-        .ResourcesOfType<Context>()
+        .ResourcesOfType<HydraCore.Context>()
         .Vocabulary(Vocabularies.Hydra)
         .AtUri(r => "/.hydra/context.jsonld")
         .HandledBy<ContextHandler>();
 
       has
-        .ResourcesOfType<ApiDocumentation>()
+        .ResourcesOfType<HydraCore.ApiDocumentation>()
         .Vocabulary(Vocabularies.Hydra)
         .AtUri(r => "/.hydra/documentation.jsonld")
         .HandledBy<ApiDocumentationHandler>();
 
-      has.ResourcesOfType<Collection>().Vocabulary(Vocabularies.Hydra);
-      has.ResourcesOfType<CollectionWithIdentifier>().Vocabulary(Vocabularies.Hydra).Type(_ => "hydra:Collection");
-      
-      has.ResourcesOfType<Class>().Vocabulary(Vocabularies.Hydra);
-      has.ResourcesOfType<SupportedProperty>().Vocabulary(Vocabularies.Hydra);
-      has.ResourcesOfType<IriTemplate>().Vocabulary(Vocabularies.Hydra);
-      has.ResourcesOfType<IriTemplateMapping>().Vocabulary(Vocabularies.Hydra);
-      has.ResourcesOfType<Operation>().Vocabulary(Vocabularies.Hydra);
+      has.ResourcesOfType<HydraCore.Collection>().Vocabulary(Vocabularies.Hydra);
+      has.ResourcesOfType<HydraCore.CollectionWithIdentifier>().Vocabulary(Vocabularies.Hydra)
+        .Type(_ => "hydra:Collection");
+
+      has.ResourcesOfType<HydraCore.Class>().Vocabulary(Vocabularies.Hydra);
+      has.ResourcesOfType<HydraCore.SupportedProperty>().Vocabulary(Vocabularies.Hydra);
+      has.ResourcesOfType<HydraCore.IriTemplate>().Vocabulary(Vocabularies.Hydra);
+      has.ResourcesOfType<HydraCore.IriTemplateMapping>().Vocabulary(Vocabularies.Hydra);
+      has.ResourcesOfType<HydraCore.Operation>().Vocabulary(Vocabularies.Hydra);
       has.ResourcesOfType<Rdf.Property>().Vocabulary(Vocabularies.Rdf);
 
       if (opts.Serializer != null)
         uses.Dependency(opts.Serializer);
-      
+
       uses.Dependency(ctx => ctx.Singleton<FastUriGenerator>());
 
-      
 
       return uses;
     }
 
     public static IResourceDefinition<T> SupportedOperation<T>(
       this IResourceDefinition<T> resource,
-      Operation operation)
+      HydraCore.Operation operation)
     {
       resource.Resource.Hydra().SupportedOperations.Add(operation);
       return resource;
@@ -138,8 +133,6 @@ namespace OpenRasta.Plugins.Hydra
       if (ienum.Count != 1)
         throw new ArgumentException("The resource definition implements multiple IEnumerable interfaces");
 
-      var itemType = ienum[0].GenericTypeArguments[0];
-
       var uriModel = resource.Uri.Hydra();
 
       var opts = new CollectionEntryPointOptions();
@@ -153,7 +146,7 @@ namespace OpenRasta.Plugins.Hydra
 
     public static HydraResourceModel Hydra(this ResourceModel model)
     {
-      return model.Properties.GetOrAdd("openrasta.Hydra.ResourceModel", ()=>new HydraResourceModel(model));
+      return model.Properties.GetOrAdd("openrasta.Hydra.ResourceModel", () => new HydraResourceModel(model));
     }
 
     public static HydraUriModel Hydra(this UriModel model)

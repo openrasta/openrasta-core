@@ -1,8 +1,10 @@
-﻿using OpenRasta.Plugins.Hydra.Schemas.Hydra;
+﻿
+
+using OpenRasta.Plugins.Hydra.Schemas;
 
 namespace Tests.Plugins.Hydra
 {
-  public class CreateAction : Operation {}
+  public class CreateAction : HydraCore.Operation {}
 
-  public class BuyAction : Operation {}
+  public class BuyAction : HydraCore.Operation {}
 }

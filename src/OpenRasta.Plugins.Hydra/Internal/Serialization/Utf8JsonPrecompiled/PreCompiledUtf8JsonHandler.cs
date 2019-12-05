@@ -9,7 +9,6 @@ using OpenRasta.Configuration.MetaModel;
 using OpenRasta.Configuration.MetaModel.Handlers;
 using OpenRasta.Plugins.Hydra.Internal.Serialization.ExpressionTree;
 using OpenRasta.Plugins.Hydra.Schemas;
-using OpenRasta.Plugins.Hydra.Schemas.Hydra;
 using Utf8Json;
 
 namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
@@ -47,18 +46,18 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
     static void CreateClass(IMetaModelRepository _, ResourceModel model)
     {
       var hydraModel = model.Hydra();
-      var hydraClass = hydraModel.Class ?? (hydraModel.Class = new Class());
+      var hydraClass = hydraModel.Class ?? (hydraModel.Class = new HydraCore.Class());
 
       var vocabPrefix = hydraModel.Vocabulary.DefaultPrefix;
       var className = model.ResourceType.Name;
       var identifier = vocabPrefix != null ? $"{vocabPrefix}:{className}" : className;
 
 
-      hydraModel.Class = new Class
+      hydraModel.Class = new HydraCore.Class
       {
         Identifier = identifier,
         SupportedProperties = hydraModel.ResourceProperties.Select(p =>
-          new SupportedProperty()
+          new HydraCore.SupportedProperty()
           {
             Property = new Rdf.Property()
             {
@@ -71,6 +70,7 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
       };
     }
 
+    // ReSharper disable once UnusedMember.Local
     static void EnsureNoDuplicateRegistrations(IMetaModelRepository repository)
     {
       var duplicateRegistrations = repository.ResourceRegistrations
@@ -148,7 +148,7 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
         var hydraResourceModel = model.Hydra();
 
         if (model.ResourceType?.IsGenericTypeDefinition == true) continue;
-        hydraResourceModel.SerializeFunc = model.ResourceType == typeof(Context)
+        hydraResourceModel.SerializeFunc = model.ResourceType == typeof(HydraCore.Context)
           ? CreateContextSerializer()
           : CreateDocumentSerializer(model, repository);
       }
@@ -159,7 +159,7 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
     {
       // Hack. 3am. meh.
       return (o, context, stream) =>
-        JsonSerializer.SerializeAsync(stream, (Context) o, new HydraJsonFormatterResolver());
+        JsonSerializer.SerializeAsync(stream, (HydraCore.Context) o, new HydraJsonFormatterResolver());
     }
 
     Func<object, SerializationContext, Stream, Task> CreateDocumentSerializer(

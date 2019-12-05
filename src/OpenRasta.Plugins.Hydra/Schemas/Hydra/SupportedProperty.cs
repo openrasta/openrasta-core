@@ -1,7 +1,11 @@
-﻿namespace OpenRasta.Plugins.Hydra.Schemas.Hydra
+﻿namespace OpenRasta.Plugins.Hydra.Schemas
 {
-  public class SupportedProperty //: JsonLd.IBlankNode
+
+  public static partial class HydraCore
   {
-    public Rdf.Property Property { get; set; }
+    public class SupportedProperty //: JsonLd.IBlankNode
+    {
+      public Rdf.Property Property { get; set; }
+    }
   }
 }

@@ -1,13 +1,13 @@
-﻿using System.Collections.Generic;
-using Newtonsoft.Json;
-using OpenRasta.OperationModel;
-using OpenRasta.Plugins.Hydra.Internal;
+﻿using Newtonsoft.Json;
 
-namespace OpenRasta.Plugins.Hydra.Schemas.Hydra
+namespace OpenRasta.Plugins.Hydra.Schemas
 {
-  public class ApiDocumentation
+  public static partial class HydraCore
   {
-    [JsonProperty("supportedClass")]
-    public Class[] SupportedClasses { get; set; }
+    public class ApiDocumentation
+    {
+      [JsonProperty("supportedClass")]
+      public Class[] SupportedClasses { get; set; }
+    }
   }
 }

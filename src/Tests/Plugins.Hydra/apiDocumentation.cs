@@ -8,8 +8,6 @@ using OpenRasta.Configuration.MetaModel.Handlers;
 using OpenRasta.Hosting.InMemory;
 using OpenRasta.Plugins.Hydra;
 using OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled;
-using OpenRasta.Plugins.Hydra.Schemas.Hydra;
-using OpenRasta.Web;
 using Shouldly;
 using Tests.Plugins.Hydra.Examples;
 using Tests.Plugins.Hydra.Implementation;
@@ -38,7 +36,7 @@ namespace Tests.Plugins.Hydra
 
           ResourceSpace.Has.ResourcesOfType<Customer>()
             .Vocabulary(ExampleVocabularies.ExampleApp.Uri.ToString())
-            .SupportedOperation(new Operation {Method = "POST", Expects = "schema:Event"})
+            .SupportedOperation(new OpenRasta.Plugins.Hydra.Schemas.HydraCore.Operation {Method = "POST", Expects = "schema:Event"})
             .SupportedOperation(new CreateAction {Method = "POST", Expects = "schema:Person"});
 
           ResourceSpace.Has.ResourcesOfType<Event>()
