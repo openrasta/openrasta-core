@@ -27,8 +27,8 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
 
     void AnnotateTypes(IMetaModelRepository repository, ResourceModel model)
     {
-      if (model.Hydra().JsonLdType ==  null)
-        model.Hydra().JsonLdType = HydraTextExtensions.GetHydraTypeName(model);
+      if (model.Hydra().JsonLdType == null)
+        model.Hydra().JsonLdType = model.GetJsonLdTypeName();
     }
 
     void IterateOverHydraRegistrations(
@@ -57,16 +57,17 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
       hydraModel.Class = new HydraCore.Class
       {
         Identifier = identifier,
-        SupportedProperties = hydraModel.ResourceProperties.Select(p =>
-          new HydraCore.SupportedProperty()
-          {
-            Property = new Rdf.Property()
+        SupportedProperties = hydraModel.ResourceProperties
+          .Select(p =>
+            new HydraCore.SupportedProperty
             {
-              Identifier = $"{identifier}/{p.Name}",
-              Range = p.RdfRange
+              Property = new Rdf.Property
+              {
+                Identifier = $"{identifier}/{p.Name}",
+                Range = p.RdfRange
+              }
             }
-          }
-        ).ToList(),
+          ).ToList(),
         SupportedOperations = hydraModel.SupportedOperations
       };
     }
@@ -108,7 +109,7 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
 
     void AnnotateCollectionTypes(IMetaModelRepository repository, ResourceModel model)
     {
-      var enumerableTypes = HydraTextExtensions.EnumerableItemTypes(model.ResourceType).ToList();
+      var enumerableTypes = model.ResourceType.EnumerableItemTypes().ToList();
 
       var enumerableType = enumerableTypes.FirstOrDefault();
       if (enumerableType != null && repository.TryGetResourceModel(enumerableType, out var itemModel))
@@ -134,7 +135,7 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
         .Select(pi => new ResourceProperty
         {
           Member = pi,
-          Name = HydraTextExtensions.GetJsonPropertyName(pi),
+          Name = pi.GetJsonPropertyName(),
           IsValueNode = pi.PropertyType.IsValueType && Nullable.GetUnderlyingType(pi.PropertyType) == null,
           RdfRange = pi.PropertyType.GetRdfRange()
         })

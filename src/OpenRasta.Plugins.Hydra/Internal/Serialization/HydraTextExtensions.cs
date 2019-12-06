@@ -48,7 +48,7 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization
 
     public static string ToCamelCase(this string piName) => char.IsLower(piName[0]) ? piName : char.ToLowerInvariant(piName[0]) + piName.Substring(1);
 
-    public static bool IsNotIgnored(PropertyInfo pi)
+    public static bool IsNotIgnored(this PropertyInfo pi)
     {
       return pi.CustomAttributes.Any(a =>
                a.AttributeType.Name == "JsonIgnoreAttribute" || a.AttributeType.Name == "IgnoreDataMemberAttribute") ==
@@ -63,14 +63,14 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization
       return new Uri(new Uri(current), rel).ToString();
     }
 
-    public static IEnumerable<Type> EnumerableItemTypes(Type type)
+    public static IEnumerable<Type> EnumerableItemTypes(this Type type)
     {
       return from i in type.GetInterfaces()
         where i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IEnumerable<>)
         select i.GetGenericArguments()[0];
     }
 
-    public static string GetHydraTypeName(ResourceModel model)
+    public static string GetJsonLdTypeName(this ResourceModel model)
     {
       var hydraResourceModel = model.Hydra();
       return (hydraResourceModel.Vocabulary?.DefaultPrefix == null
@@ -79,7 +79,7 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization
              model.ResourceType.Name;
     }
 
-    public static string GetJsonPropertyName(PropertyInfo pi)
+    public static string GetJsonPropertyName(this PropertyInfo pi)
     {
       return pi.CustomAttributes
                .Where(a => a.AttributeType.Name == "JsonPropertyAttribute")

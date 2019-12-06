@@ -18,7 +18,7 @@ namespace Tests.Hosting.Owin
     {
       server = new TestServer(
           new WebHostBuilder()
-              .Configure(app => app.Map("/api", api => ApplicationBuilderExtensions.UseOpenRasta(api, new TaskApi()))));
+              .Configure(app => app.Map("/api", api => api.UseOpenRasta(new TaskApi()))));
       client = server.CreateClient();
     }
 
