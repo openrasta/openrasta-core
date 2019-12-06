@@ -27,7 +27,7 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
 
     void AnnotateTypes(IMetaModelRepository repository, ResourceModel model)
     {
-      model.Hydra().TypeName = HydraTextExtensions.GetHydraTypeName(model);
+      model.Hydra().JsonLdType = HydraTextExtensions.GetHydraTypeName(model);
     }
 
     void IterateOverHydraRegistrations(

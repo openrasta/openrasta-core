@@ -30,7 +30,8 @@ namespace OpenRasta.Plugins.Hydra.Configuration
     // public string ManagesBlockType { get; set; }
     public CollectionModel Collection { get; }
     public List<HydraCore.Operation> SupportedOperations { get; } = new List<HydraCore.Operation>();
-    public string TypeName { get; set; }
+    
+    public string JsonLdType { get; set; }
 
     public class CollectionModel
     {
@@ -44,7 +45,7 @@ namespace OpenRasta.Plugins.Hydra.Configuration
       public bool IsCollection { get; set; }
       public Type ItemType => ItemModel?.ResourceType;
       public bool IsFrameworkCollection { get; set; }
-      public string ManagesRdfTypeName => ItemModel?.Hydra().TypeName;
+      public string ManagesRdfTypeName => ItemModel?.Hydra().JsonLdType;
 
       public bool IsHydraCollectionType => typeof(HydraCore.Collection)
         .IsAssignableFrom(ResourceHydraModel.ResourceModel.ResourceType);

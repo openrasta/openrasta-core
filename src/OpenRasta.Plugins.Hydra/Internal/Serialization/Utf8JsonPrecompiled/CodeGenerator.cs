@@ -80,7 +80,7 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
 
       recursionDefender.Push(model);
 
-      var resourceRegistrationHydraType = model.Hydra().TypeName;
+      var resourceRegistrationHydraType = model.Hydra().JsonLdType;
       var resourceUri = uriGenerator.Invoke(resource);
 
       List<NodeProperty> nodeProperties =
