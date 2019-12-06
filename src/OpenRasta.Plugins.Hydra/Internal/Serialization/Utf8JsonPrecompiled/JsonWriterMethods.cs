@@ -27,13 +27,6 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
     public static Expression WriteEndArray(this ParameterExpression jsonWriter)
       => Expression.Call(jsonWriter, WriteEndArrayMethodInfo);
 
-    public static Expression WriteString(this ParameterExpression jsonWriter, string value)
-      => Expression.Call(jsonWriter, WriteStringMethodInfo,
-        Expression.Constant(value, typeof(string)));
-
-    public static Expression WriteString(this ParameterExpression jsonWriter, Expression value)
-      => Expression.Call(jsonWriter, WriteStringMethodInfo, value);
-
     public static Expression WritePropertyName(this ParameterExpression jsonWriter, string propertyName)
       => Expression.Call(jsonWriter, WritePropertyNameMethodInfo, Expression.Constant(propertyName));
 
@@ -67,7 +60,7 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
     public static Expression WriteString(this Variable<JsonWriter> jsonWriter, string value)
       => Expression.Call(jsonWriter, WriteStringMethodInfo, Expression.Constant(value, typeof(string)));
 
-    public static Expression WriteString(this Variable<JsonWriter> jsonWriter, Expression value)
+    public static Expression WriteString(this Variable<JsonWriter> jsonWriter, TypedExpression<string> value)
       => Expression.Call(jsonWriter, WriteStringMethodInfo, value);
 
     public static Expression WritePropertyName(this Variable<JsonWriter> jsonWriter, Expression value)

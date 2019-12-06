@@ -19,7 +19,7 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
     static readonly MethodInfo EnumerableToArrayMethodInfo = typeof(Enumerable).GetMethod(nameof(Enumerable.ToArray));
 
     static readonly MethodInfo EnumerableAnyMethodInfo =
-      typeof(Enumerable).GetMethods().Single(m => m.Name == nameof(Enumerable.Any) &&  m.GetParameters().Length == 1);
+      typeof(Enumerable).GetMethods().Single(m => m.Name == nameof(Enumerable.Any) && m.GetParameters().Length == 1);
 
     public static CodeBlock ResourceDocument(
       Variable<JsonWriter> jsonWriter,
@@ -283,10 +283,10 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
           : typeof(HydraTextExtensions).GetMethod(nameof(HydraTextExtensions.UriStandardCombine),
             BindingFlags.Static | BindingFlags.NonPublic);
 
-        var uriCombine = Expression.Call(
+        var uriCombine = new MethodCall<string>(Expression.Call(
           uriCombinationMethodInfo,
           resourceUri,
-          Expression.Constant(linkUri, typeof(Uri)));
+          Expression.Constant(linkUri, typeof(Uri))));
 
         yield return jsonWriter.WriteString(uriCombine);
 
@@ -373,7 +373,8 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
       }
 
       // it's a list of nodes
-      return WriteNodePropertyAsList(jsonWriter, baseUri, uriGenerator, typeGenerator, models, recursionDefender, property,
+      return WriteNodePropertyAsList(jsonWriter, baseUri, uriGenerator, typeGenerator, models, recursionDefender,
+        property,
         jsonFormatterResolver,
         itemResourceRegistrations, propertyValue, preamble);
     }
@@ -535,7 +536,7 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
       };
     }
 
-    public static NodeProperty WriteType(Variable<JsonWriter> jsonWriter, string type)
+    static NodeProperty WriteType(Variable<JsonWriter> jsonWriter, string type)
     {
       return new NodeProperty("@type")
       {
