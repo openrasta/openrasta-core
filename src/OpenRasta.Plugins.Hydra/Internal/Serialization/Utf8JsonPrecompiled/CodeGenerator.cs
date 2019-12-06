@@ -80,7 +80,6 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
 
       recursionDefender.Push(model);
 
-      var resourceRegistrationHydraType = model.Hydra().JsonLdType;
       var resourceUri = uriGenerator.Invoke(resource);
 
       List<NodeProperty> nodeProperties =
@@ -96,9 +95,7 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
         models,
         recursionDefender,
         jsonFormatterResolver,
-        resourceType,
-        resourceUri,
-        resourceRegistrationHydraType));
+        resourceUri));
 
 
       IEnumerable<AnyExpression> render()
@@ -132,9 +129,7 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
             models,
             recursionDefender,
             jsonFormatterResolver,
-            resourceType,
-            resourceUri,
-            resourceRegistrationHydraType).ToList();
+            resourceUri).ToList();
 
           var nodeTypeNode = nodeProperties.FirstOrDefault(x => x.Name == "@type");
 
@@ -209,9 +204,7 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
       IMetaModelRepository models,
       Stack<ResourceModel> recursionDefender,
       Variable<HydraJsonFormatterResolver> jsonFormatterResolver,
-      Type resourceType,
-      TypedExpression<string> resourceUri,
-      string resourceRegistrationHydraType)
+      TypedExpression<string> resourceUri)
     {
       var propNames = model
         .Hydra().ResourceProperties
@@ -227,9 +220,9 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
         ? Enumerable.Empty<NodeProperty>()
         : new[]
         {
-          model.Hydra().TypeFunc != null
+          model.Hydra().JsonLdTypeFunc != null
             ? WriteType(jsonWriter, typeGenerator.Invoke(resource))
-            : WriteType(jsonWriter, resourceRegistrationHydraType)
+            : WriteType(jsonWriter, model.Hydra().JsonLdType)
         };
 
       var linkNodes = model.Links

@@ -23,7 +23,6 @@ namespace OpenRasta.Plugins.Hydra.Configuration
     public Func<object, SerializationContext, Stream, Task> SerializeFunc { get; set; }
     public Vocabulary Vocabulary { get; set; }
     public HydraCore.Class Class { get; set; }
-    public Func<object, string> TypeFunc { get; set; }
 
     public List<ResourceProperty> ResourceProperties { get; } = new List<ResourceProperty>();
 
@@ -31,6 +30,7 @@ namespace OpenRasta.Plugins.Hydra.Configuration
     public CollectionModel Collection { get; }
     public List<HydraCore.Operation> SupportedOperations { get; } = new List<HydraCore.Operation>();
     
+    public Func<object, string> JsonLdTypeFunc { get; set; }
     public string JsonLdType { get; set; }
 
     public class CollectionModel

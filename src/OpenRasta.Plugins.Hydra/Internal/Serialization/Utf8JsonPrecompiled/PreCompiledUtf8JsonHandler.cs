@@ -27,7 +27,8 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
 
     void AnnotateTypes(IMetaModelRepository repository, ResourceModel model)
     {
-      model.Hydra().JsonLdType = HydraTextExtensions.GetHydraTypeName(model);
+      if (model.Hydra().JsonLdType ==  null)
+        model.Hydra().JsonLdType = HydraTextExtensions.GetHydraTypeName(model);
     }
 
     void IterateOverHydraRegistrations(
@@ -97,7 +98,7 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
 
       var collectionHydra = collectionRm.Hydra();
       collectionHydra.Vocabulary = Vocabularies.Hydra;
-      collectionHydra.TypeFunc = _ => "hydra:Collection";
+      collectionHydra.JsonLdTypeFunc = _ => "hydra:Collection";
 
       collectionHydra.Collection.IsCollection = true;
       collectionHydra.Collection.IsFrameworkCollection = false;

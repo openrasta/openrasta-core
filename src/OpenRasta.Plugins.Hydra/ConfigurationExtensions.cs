@@ -58,8 +58,9 @@ namespace OpenRasta.Plugins.Hydra
         .HandledBy<ApiDocumentationHandler>();
 
       has.ResourcesOfType<HydraCore.Collection>().Vocabulary(Vocabularies.Hydra);
-      has.ResourcesOfType<HydraCore.CollectionWithIdentifier>().Vocabulary(Vocabularies.Hydra)
-        .Type(_ => "hydra:Collection");
+      has.ResourcesOfType<HydraCore.CollectionWithIdentifier>()
+        .Vocabulary(Vocabularies.Hydra)
+        .Type("hydra:Collection");
 
       has.ResourcesOfType<HydraCore.Class>().Vocabulary(Vocabularies.Hydra);
       has.ResourcesOfType<HydraCore.SupportedProperty>().Vocabulary(Vocabularies.Hydra);
@@ -99,14 +100,14 @@ namespace OpenRasta.Plugins.Hydra
 
     public static IResourceDefinition<T> Type<T>(this IResourceDefinition<T> resource, Func<T, string> type)
     {
-      resource.Resource.Hydra().TypeFunc =
+      resource.Resource.Hydra().JsonLdTypeFunc =
         obj => type((T) (obj ?? throw new NullReferenceException("current node was null")));
       return resource;
     }
 
     public static IResourceDefinition Type(this IResourceDefinition resource, string type)
     {
-      resource.Resource.Hydra().TypeFunc = obj => type;
+      resource.Resource.Hydra().JsonLdType = type;
       return resource;
     }
 
