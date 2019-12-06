@@ -74,6 +74,13 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
       return jsonWriter.WriteRaw(bytes);
     }
 
+    public static Expression WriteStringRaw(this Variable<JsonWriter> jsonWriter, string value)
+    {
+      var writer = new JsonWriter();
+      writer.WriteString(value);
+      var bytes = writer.ToUtf8ByteArray();
+      return jsonWriter.WriteRaw(bytes);
+    }
     public static Expression WriteRaw(this Variable<JsonWriter> jsonWriter, byte[] rawData)
       => Expression.Call(jsonWriter, WriteRawMethodInfo,
         Expression.Constant(rawData));

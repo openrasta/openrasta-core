@@ -541,7 +541,7 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
       return new NodeProperty("@type")
       {
         Code =
-          new InlineCode(jsonWriter.WriteRaw(Nodes.TypeProperty), jsonWriter.WriteString(type))
+          new InlineCode(jsonWriter.WriteRaw(Nodes.TypeProperty), jsonWriter.WriteStringRaw(type))
       };
     }
 
