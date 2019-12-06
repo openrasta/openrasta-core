@@ -35,7 +35,7 @@ namespace TemplatedUriResolver_Specification
       when_matching_uri("https://localhost/Valinor/One Olorin");
 
       matching_result.ShouldNotBeNull();
-      
+
       matching_result.ResourceKey.ShouldBeAssignableTo<IType>()
         .Equals<Gandalf>().ShouldBeTrue();
     }
@@ -116,6 +116,7 @@ namespace TemplatedUriResolver_Specification
 
       Result.ToString().ShouldBe("http://localhost/test#beforeinjected1after");
     }
+
     [Test]
     public void uris_with_names_are_not_selected_by_default()
     {

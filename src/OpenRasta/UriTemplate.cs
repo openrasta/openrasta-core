@@ -28,7 +28,8 @@ namespace OpenRasta
       QueryStringVariableNames =
         new ReadOnlyCollection<string>(new List<string>(GetQueryStringVariableNames(_queryStringSegments)));
       FragmentVariableNames =
-        new ReadOnlyCollection<string>(Fragment.Where(f => f.Type == SegmentType.Variable).Select(f => f.Text).ToList());
+        new ReadOnlyCollection<string>(Fragment.Where(f => f.Type == SegmentType.Variable).Select(f => f.Text)
+          .ToList());
     }
 
     public List<FragmentSegment> Fragment { get; set; }
@@ -211,7 +212,7 @@ namespace OpenRasta
     public Uri BindByName(Uri baseAddress, NameValueCollection parameters)
     {
       if (baseAddress == null)
-        throw new ArgumentNullException("baseAddress", "The base Uri needs to be provided for a Uri to be generated.");
+        throw new ArgumentNullException(nameof(baseAddress), "The base Uri needs to be provided for a Uri to be generated.");
 
 
       baseAddress = SanitizeUriAsBaseUri(baseAddress);
@@ -257,8 +258,8 @@ namespace OpenRasta
     {
       var builder = new UriBuilder(address)
       {
-        Fragment = null,
-        Query = null
+        Fragment = string.Empty,
+        Query = string.Empty
       };
       if (!builder.Path.EndsWith("/"))
         builder.Path += "/";
@@ -404,7 +405,8 @@ namespace OpenRasta
       };
     }
 
-    static bool QuerySegmentValueIsDifferent(Dictionary<string, QuerySegment> requestUriQuerySegments,
+    static bool QuerySegmentValueIsDifferent(
+      Dictionary<string, QuerySegment> requestUriQuerySegments,
       QuerySegment templateQuerySegment)
     {
       return requestUriQuerySegments[templateQuerySegment.Key].Value != templateQuerySegment.Value;
@@ -443,13 +445,10 @@ namespace OpenRasta
         {
           case SegmentType.Wildcard:
             return "*";
-            break;
           case SegmentType.Variable:
             return $"{Key}={{{Value}}}";
-            break;
           case SegmentType.Literal:
             return Value == null ? Key : $"{Key}={Value}";
-            break;
           default:
             throw new ArgumentOutOfRangeException();
         }
