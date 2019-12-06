@@ -215,53 +215,38 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
     {
       var propNames = model
         .Hydra().ResourceProperties
-        .Select(p => p.Name);
+        .Select(p => p.Name)
+        .ToArray();
 
-      var overridesId = propNames.Any(name => name == "@id");
-      var overridesType = propNames.Any(name => name == "@type");
-
-      if (overridesId == false && model.Uris.Any())
-      {
-        yield return WriteId(jsonWriter, resourceUri);
-      }
-
-      if (overridesType == false)
-      {
-        var typePropertyFactory = model.Hydra().TypeFunc;
-        if (typePropertyFactory == null)
+      var generatedIdNode = 
+        propNames.All(name => name != "@id") && model.Uris.Any()
+        ? new[] { WriteId(jsonWriter, resourceUri) }
+        : Enumerable.Empty<NodeProperty>();
+      
+      var generatedTypeNode = propNames.Any(name => name == "@type")
+        ? Enumerable.Empty<NodeProperty>()
+        : new[]
         {
-          yield return WriteType(jsonWriter, resourceRegistrationHydraType);
-        }
-        else
-        {
-          yield return WriteType(jsonWriter, typeGenerator.Invoke(resource));
-        }
-      }
+          model.Hydra().TypeFunc != null
+            ? WriteType(jsonWriter, typeGenerator.Invoke(resource))
+            : WriteType(jsonWriter, resourceRegistrationHydraType)
+        };
 
+      var linkNodes = model.Links
+        .Select(link => WriteNodeLink(jsonWriter, link.Relationship, link.Uri, resourceUri, link));
+      
+      var valueNodes = model.Hydra()
+        .ResourceProperties
+        .Where(resProperty => resProperty.IsValueNode)
+        .Select(resProperty => WriteNodePropertyValue(jsonWriter, resProperty, jsonFormatterResolver, resource));
+      
+      var propNodes = model.Hydra()
+        .ResourceProperties
+        .Where(resProperty => !resProperty.IsValueNode)
+        .Select(resProperty =>  WriteNodeProperty(jsonWriter, baseUri, resource, uriGenerator, typeGenerator, models, recursionDefender,
+            resProperty, jsonFormatterResolver));
 
-      foreach (var resourceProperty in model.Hydra().ResourceProperties)
-      {
-        if (resourceProperty.IsValueNode)
-        {
-          var nodePropertyValue = WriteNodePropertyValue(
-            jsonWriter,
-            resourceProperty,
-            jsonFormatterResolver,
-            resource);
-
-          yield return nodePropertyValue;
-          continue;
-        }
-
-        yield return WriteNodeProperty(
-          jsonWriter, baseUri, resource, uriGenerator, typeGenerator, models, recursionDefender, resourceProperty,
-          jsonFormatterResolver);
-      }
-
-      foreach (var link in model.Links)
-      {
-        yield return WriteNodeLink(jsonWriter, link.Relationship, link.Uri, resourceUri, link);
-      }
+      return generatedIdNode.Concat(generatedTypeNode).Concat(propNodes).Concat(valueNodes).Concat(linkNodes).ToList();
     }
 
     static NodeProperty WriteNodeLink(
