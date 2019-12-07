@@ -160,12 +160,13 @@ namespace OpenRasta
 
     static List<UrlSegment> ParsePathSegments(Uri templateUri)
     {
-      var pasedSegments = new List<UrlSegment>();
+      var passedSegments = new List<UrlSegment>();
       var originalSegments = templateUri.Segments;
       foreach (var segmentText in originalSegments)
       {
         UrlSegment parsedSegment;
         var unescapedSegment = Uri.UnescapeDataString(segmentText);
+        //  TODO: Check we don't double decode the wrong / here, potential issue
         var sanitizedSegment = unescapedSegment.Replace("/", string.Empty);
         var trailingSeparator = unescapedSegment.Length - sanitizedSegment.Length > 0;
         string variableName;
@@ -187,10 +188,10 @@ namespace OpenRasta
             TrailingSeparator = trailingSeparator
           };
 
-        pasedSegments.Add(parsedSegment);
+        passedSegments.Add(parsedSegment);
       }
 
-      return pasedSegments;
+      return passedSegments;
     }
 
     static string GetVariableName(string segmentText)
@@ -347,14 +348,19 @@ namespace OpenRasta
       {
         var segment = candidateSegments[i];
 
-        var candidateSegment = new {Text = segment, ProposedSegment = _segments[i]};
+        var candidateSegment = new
+        {
+          Text = segment,
+          UnescapedText = Uri.UnescapeDataString(segment),
+          ProposedSegment = _segments[i]
+        };
 
         candidateSegments[i] = candidateSegment.Text;
 
         switch (candidateSegment.ProposedSegment.Type)
         {
-          case SegmentType.Literal when string.Compare(candidateSegment.ProposedSegment.Text, segment,
-                                          StringComparison.OrdinalIgnoreCase) != 0:
+          case SegmentType.Literal when
+            string.CompareOrdinal(candidateSegment.ProposedSegment.Text, candidateSegment.UnescapedText) != 0:
             return null;
           case SegmentType.Wildcard:
             throw new NotImplementedException("Not finished wildcards implementation yet");

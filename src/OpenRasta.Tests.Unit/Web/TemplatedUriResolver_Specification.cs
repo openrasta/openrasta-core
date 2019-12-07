@@ -28,7 +28,19 @@ namespace TemplatedUriResolver_Specification
         .Equals<Gandalf>().ShouldBeTrue();
     }
 
-    [Test, Ignore("Not fixed yet, see #189")]
+    [Test]
+    public void https_uris_with_encodced_spaces_are_supported()
+    {
+      given_uri_mapping("/Valinor/One Olorin", typeof(Gandalf), CultureInfo.CurrentCulture, null);
+      when_matching_uri("https://localhost/Valinor/One%20Olorin");
+
+      matching_result.ShouldNotBeNull();
+
+      matching_result.ResourceKey.ShouldBeAssignableTo<IType>()
+        .Equals<Gandalf>().ShouldBeTrue();
+    }
+
+    [Test]
     public void https_uris_with_spaces_are_supported()
     {
       given_uri_mapping("/Valinor/One Olorin", typeof(Gandalf), CultureInfo.CurrentCulture, null);
