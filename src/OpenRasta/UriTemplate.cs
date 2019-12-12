@@ -226,7 +226,12 @@ namespace OpenRasta
           path.Append(segment.Text);
         else if (segment.Type == SegmentType.Variable)
         {
-          path.Append(parameters[segment.Text.ToUpperInvariant()]);
+          var value = parameters[segment.Text.ToUpperInvariant()];
+          
+          
+          path.Append(value.Replace("/", "%2F")
+            .Replace("?", "%3F")
+            .Replace("#", "%23"));
         }
 
         if (segment.TrailingSeparator)
@@ -238,7 +243,12 @@ namespace OpenRasta
         path.Append('?');
         foreach (var querySegment in _queryStringSegments)
         {
-          path.Append(querySegment.Value.Key).Append("=").Append(parameters[querySegment.Value.Value]).Append("&");
+          var qsValue = parameters[querySegment.Value.Value]
+            .Replace("&", "%25")
+            .Replace("#", "%23");
+          
+          path.Append(querySegment.Value.Key).Append("=")
+            .Append(qsValue).Append("&");
         }
 
         path.Remove(path.Length - 1, 1);

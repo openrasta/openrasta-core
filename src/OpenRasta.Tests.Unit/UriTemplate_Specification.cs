@@ -17,9 +17,10 @@ namespace UriTemplate_Specification
 
     protected IEnumerable<string> BindingUriByName(string template, object values)
     {
-      return BaseUris
+      var boundUris = BaseUris
         .Select(baseUri => new UriTemplate(template)
-          .BindByName(baseUri, values.ToNameValueCollection()).ToString());
+          .BindByName(baseUri, values.ToNameValueCollection()));
+      return boundUris.Select(uri=>uri.ToString());
     }
 
     protected void GivenBaseUris(params string[] uris)
@@ -56,14 +57,21 @@ namespace UriTemplate_Specification
         .ShouldAllBe(item => item == "http://localhost/test?first=1&second=2");
     }
 
-    [Test, Ignore("Issue #46")]
+    [Test]
     public void qs_value_is_encoded()
     {
-      BindingUriByName("/?value={value}", new {value = "?query"})
-        .ShouldAllBe(item => item == "http://localhost/value=%3Fquery");
+      BindingUriByName("/?value={value}", new {value = "&query"})
+        .ShouldAllBe(item => item == "http://localhost/?value=%25query");
     }
 
-    [Test, Ignore("Issue #46")]
+    [Test]
+    public void qs_previous_separators_not_encoded()
+    {
+      BindingUriByName("/?value={value}", new {value = "/?query"})
+        .ShouldAllBe(item => item == "http://localhost/?value=/?query");
+    }
+
+    [Test]
     public void segment_value_is_encoded()
     {
       BindingUriByName("/{value}", new {value = "?query"}).ShouldAllBe(item => item == "http://localhost/%3Fquery");
