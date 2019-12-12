@@ -76,6 +76,18 @@ namespace UriTemplate_Specification
     {
       BindingUriByName("/{value}", new {value = "?query"}).ShouldAllBe(item => item == "http://localhost/%3Fquery");
     }
+    
+    [Test(Description="See https://github.com/openrasta/openrasta-core/issues/180")]
+    public void braces_are_present_in_segments()
+    {
+      BindingUriByName("/{value}", new {value = "{query}"}).ShouldAllBe(item => item == "http://localhost/{query}");
+    }
+    
+    [Test(Description="See https://github.com/openrasta/openrasta-core/issues/180")]
+    public void braces_are_present_in_qs()
+    {
+      BindingUriByName("/?query={value}", new {value = "{query}"}).ShouldAllBe(item => item == "http://localhost/?query={query}");
+    }
   }
 
   [TestFixture]
@@ -165,6 +177,21 @@ namespace UriTemplate_Specification
     {
       GivenAMatching("/users/{username}", "http://localhost/users/sebastien.lambla");
       ThenTheMatch.PathSegmentVariables.ShouldBe(new NameValueCollection().With("username", "sebastien.lambla"));
+    }
+    
+    
+    [Test(Description="See https://github.com/openrasta/openrasta-core/issues/180")]
+    public void qs_match_includes_braces()
+    {
+      GivenAMatching("parties?cvrcpr={cvrcpr}&cvr_p={cvr_p}", "http://localhost/parties?cvrcpr={cvrcpr}&cvr_p={cvr_p}");
+      ThenTheMatch.QueryStringVariables["CVRCPR"].ShouldBe("{cvrcpr}");
+    }
+    
+    [Test(Description="See https://github.com/openrasta/openrasta-core/issues/180")]
+    public void seg_match_includes_braces()
+    {
+      GivenAMatching("parties/{cvrcpr}", "http://localhost/parties/{cvrcpr}");
+      ThenTheMatch.PathSegmentVariables["CVRCPR"].ShouldBe("{cvrcpr}");
     }
 
     [Test]

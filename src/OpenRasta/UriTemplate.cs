@@ -126,11 +126,11 @@ namespace OpenRasta
 
     public static IEnumerable<QuerySegment> ParseQueryStringSegments(string query)
     {
-      var pairs = query.Split('&');
+      var kvPairs = query.Split('&');
 
-      for (var pairIndex = 0; pairIndex < pairs.Length; pairIndex++)
+      foreach (var kvPair in kvPairs)
       {
-        var unescapedString = Uri.UnescapeDataString(pairs[pairIndex].Replace('+', ' '));
+        var unescapedString = Uri.UnescapeDataString(kvPair.Replace('+', ' '));
         if (unescapedString.Length == 0)
           continue;
         var variableStart = unescapedString[0] == '?' ? 1 : 0;
@@ -147,6 +147,7 @@ namespace OpenRasta
           {
             Key = key,
             Value = valAsVariable ?? val,
+            RawValue = val,
             Type = valAsVariable == null ? SegmentType.Literal : SegmentType.Variable
           };
           yield return (segment);
@@ -392,14 +393,13 @@ namespace OpenRasta
 
         switch (templateQuerySegment.Type)
         {
+          case SegmentType.Literal when requestUriHasQueryStringKey == false ||
+                                        QuerySegmentValueIsDifferent(requestUriQuerySegments, templateQuerySegment):
+            return null;
           case SegmentType.Literal:
-            if (requestUriHasQueryStringKey == false ||
-                QuerySegmentValueIsDifferent(requestUriQuerySegments, templateQuerySegment))
-              return null;
-
             break;
           case SegmentType.Variable when requestUriHasQueryStringKey:
-            queryStringVariables[templateQuerySegment.Value] = requestUriQuerySegments[templateQuerySegment.Key].Value;
+            queryStringVariables[templateQuerySegment.Value] = requestUriQuerySegments[templateQuerySegment.Key].RawValue;
             break;
         }
 
@@ -454,6 +454,7 @@ namespace OpenRasta
       public string Key { get; set; }
       public string Value { get; set; }
       public SegmentType Type { get; set; }
+      public string RawValue { get; set; }
 
       public override string ToString()
       {
