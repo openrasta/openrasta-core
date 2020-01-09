@@ -160,8 +160,9 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
     Func<object, SerializationContext, Stream, Task> CreateContextSerializer()
     {
       // Hack. 3am. meh.
+      var hydraJsonFormatterResolver = new HydraJsonFormatterResolver();
       return (o, context, stream) =>
-        JsonSerializer.SerializeAsync(stream, (HydraCore.Context) o, new HydraJsonFormatterResolver());
+        JsonSerializer.SerializeAsync(stream, (HydraCore.Context) o, hydraJsonFormatterResolver);
     }
 
     Func<object, SerializationContext, Stream, Task> CreateDocumentSerializer(
