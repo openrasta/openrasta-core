@@ -16,9 +16,9 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
     public BinaryExpression Conditional { get; set; }
     public InlineCode Preamble { get; set; }
     
-    public InlineCode ToCode(InlineCode separatorCode = null)
+    public InlineCode ToCode(InlineCode separatorCode)
     {
-      var code = (separatorCode != null) ? separatorCode + Code : Code;
+      var code = separatorCode + Code;
 
       if (Conditional != null) 
         code = new InlineCode(
@@ -26,7 +26,7 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
             Conditional, 
             new CodeBlock(code)));
 
-      return Preamble + code;
+      return (Preamble + code);
     }
   }
 }

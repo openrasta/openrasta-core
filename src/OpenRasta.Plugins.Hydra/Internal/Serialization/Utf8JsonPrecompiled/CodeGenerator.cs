@@ -107,7 +107,7 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
           var collectionCtor =
             hydraCollectionType.GetConstructor(new[]
               {typeof(IEnumerable<>).MakeGenericType(collectionItemType), typeof(string)});
-          var collectionWrapper = Expression.Variable(hydraCollectionType);
+          var collectionWrapper = Expression.Variable(hydraCollectionType, "hydraCollectionType");
 
           yield return collectionWrapper;
           var instantiateCollection = Expression.Assign(
@@ -164,31 +164,35 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
       IEnumerable<AnyExpression> renderNode()
       {
         InlineCode separator;
+
+        var sortedProperties = alwaysWrittenProperties.Concat(conditionalProperties).ToArray();
+        
+        // tricky code ahead. If there are always written props, we optimise by simply always writing the separator
+        // except for the first.
+        // If not, we generate the tracking var.
         if (alwaysWrittenProperties.Any())
         {
-          separator = new InlineCode(jsonWriter.WriteValueSeparator());
+          for (var index = 0; index < sortedProperties.Length; index++)
+          {
+            yield return sortedProperties[index].ToCode(index == 0
+              ? null
+              : new InlineCode(jsonWriter.WriteValueSeparator()));
+          }
         }
         else
         {
-          var firstWrite = New.Var<bool>("firstWrite");
-
-          yield return firstWrite;
-          yield return firstWrite.Assign(true);
+          var propAlreadyWritten = New.Var<bool>("propAlreadyWritten");
+          yield return propAlreadyWritten;
+          yield return propAlreadyWritten.Assign(false);
 
           separator = new InlineCode(
-            If.Then(
-              firstWrite.EqualTo(true),
-              Expression.Block(
-                jsonWriter.WriteValueSeparator(),
-                firstWrite.Assign(false))
-            ));
-        }
-
-        var sortedProperties = alwaysWrittenProperties.Concat(conditionalProperties).ToArray();
-
-        for (var index = 0; index < sortedProperties.Length; index++)
-        {
-          yield return sortedProperties[index].ToCode(index == 0 ? null : separator);
+            If.ThenElse(
+              propAlreadyWritten.EqualTo(true),
+              Expression.Block(jsonWriter.WriteValueSeparator()),
+              propAlreadyWritten.Assign(true))
+          );
+          foreach (var nodeProp in sortedProperties)
+            yield return nodeProp.ToCode(separator);
         }
       }
 
@@ -212,11 +216,11 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
         .Select(p => p.Name)
         .ToArray();
 
-      var generatedIdNode = 
+      var generatedIdNode =
         propNames.All(name => name != "@id") && model.Uris.Any()
-        ? new[] { WriteId(jsonWriter, resourceUri) }
-        : Enumerable.Empty<NodeProperty>();
-      
+          ? new[] {WriteId(jsonWriter, resourceUri)}
+          : Enumerable.Empty<NodeProperty>();
+
       var generatedTypeNode = propNames.Any(name => name == "@type")
         ? Enumerable.Empty<NodeProperty>()
         : new[]
@@ -228,18 +232,19 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
 
       var linkNodes = model.Links
         .Select(link => WriteNodeLink(jsonWriter, link.Relationship, link.Uri, resourceUri, link));
-      
+
       var valueNodes = model.Hydra()
         .ResourceProperties
         .Where(resProperty => resProperty.IsValueNode)
         .Select(resProperty => CreateNodePropertyValue(jsonWriter, resProperty, jsonFormatterResolver, resource))
         .ToList();
-      
+
       var propNodes = model.Hydra()
         .ResourceProperties
         .Where(resProperty => !resProperty.IsValueNode)
-        .Select(resProperty =>  CreateNodeProperty(jsonWriter, baseUri, resource, uriGenerator, typeGenerator, models, recursionDefender,
-            resProperty, jsonFormatterResolver))
+        .Select(resProperty => CreateNodeProperty(jsonWriter, baseUri, resource, uriGenerator, typeGenerator, models,
+          recursionDefender,
+          resProperty, jsonFormatterResolver))
         .ToList();
 
       return generatedIdNode.Concat(generatedTypeNode).Concat(propNodes).Concat(valueNodes).Concat(linkNodes).ToList();
@@ -349,7 +354,7 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
           property,
           jsonFormatterResolver,
           itemResourceRegistrations, propertyValue, preamble);
-      
+
       // not a list of iri or blank nodes
       var propValue = CreateNodePropertyValue(jsonWriter, property, jsonFormatterResolver, resource);
       propValue.Preamble = preamble;
@@ -382,7 +387,7 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
 
       var itemArrayType = itemRegistration.itemType.MakeArrayType();
 
-      var itemArray = Expression.Variable(itemArrayType);
+      var itemArray = Expression.Variable(itemArrayType, "itemArray");
       var itemArrayAssignment = Expression.Assign(
         itemArray,
         Expression.Call(EnumerableToArrayMethodInfo.MakeGenericMethod(itemRegistration.itemType), propertyValue));
@@ -570,7 +575,7 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
         var serializeMethod = jsonFormatterType.GetMethod("Serialize",
           new[] {typeof(JsonWriter).MakeByRefType(), propertyType, typeof(IJsonFormatterResolver)});
 
-        var formatterInstance = Expression.Variable(jsonFormatterType);
+        var formatterInstance = Expression.Variable(jsonFormatterType, "formatter");
         return new AnyExpression[]
         {
           formatterInstance,
