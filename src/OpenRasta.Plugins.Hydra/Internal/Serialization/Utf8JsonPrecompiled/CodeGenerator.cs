@@ -170,16 +170,17 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
         }
         else
         {
-          var hasProp = New.Var<bool>("hasProp");
+          var firstWrite = New.Var<bool>("firstWrite");
 
-          yield return hasProp;
-          yield return hasProp.Assign(false);
+          yield return firstWrite;
+          yield return firstWrite.Assign(true);
 
           separator = new InlineCode(
             If.Then(
-              hasProp.EqualTo(false),
-              Expression.Block(jsonWriter.WriteValueSeparator(),
-                hasProp.Assign(true))
+              firstWrite.EqualTo(true),
+              Expression.Block(
+                jsonWriter.WriteValueSeparator(),
+                firstWrite.Assign(false))
             ));
         }
 
@@ -231,13 +232,15 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
       var valueNodes = model.Hydra()
         .ResourceProperties
         .Where(resProperty => resProperty.IsValueNode)
-        .Select(resProperty => WriteNodePropertyValue(jsonWriter, resProperty, jsonFormatterResolver, resource));
+        .Select(resProperty => CreateNodePropertyValue(jsonWriter, resProperty, jsonFormatterResolver, resource))
+        .ToList();
       
       var propNodes = model.Hydra()
         .ResourceProperties
         .Where(resProperty => !resProperty.IsValueNode)
-        .Select(resProperty =>  WriteNodeProperty(jsonWriter, baseUri, resource, uriGenerator, typeGenerator, models, recursionDefender,
-            resProperty, jsonFormatterResolver));
+        .Select(resProperty =>  CreateNodeProperty(jsonWriter, baseUri, resource, uriGenerator, typeGenerator, models, recursionDefender,
+            resProperty, jsonFormatterResolver))
+        .ToList();
 
       return generatedIdNode.Concat(generatedTypeNode).Concat(propNodes).Concat(valueNodes).Concat(linkNodes).ToList();
     }
@@ -281,7 +284,7 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
       return new NodeProperty(linkRelationship) {Code = new InlineCode(getNodeLink())};
     }
 
-    static NodeProperty WriteNodeProperty(
+    static NodeProperty CreateNodeProperty(
       Variable<JsonWriter> jsonWriter,
       TypedExpression<string> baseUri,
       Expression resource,
@@ -341,23 +344,22 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
             select possible).ToList()
         )).ToList<(Type itemType, List<ResourceModel> models)>();
 
-      if (itemResourceRegistrations.Any() == false)
-      {
-        // not a list of iri or blank nodes
-        var propValue = WriteNodePropertyValue(jsonWriter, property, jsonFormatterResolver, resource);
-        propValue.Preamble = preamble;
-        propValue.Conditional = Expression.NotEqual(propertyValue, Expression.Default(pi.PropertyType));
-        return propValue;
-      }
+      if (itemResourceRegistrations.Any())
+        return CreateNodePropertyAsList(jsonWriter, baseUri, uriGenerator, typeGenerator, models, recursionDefender,
+          property,
+          jsonFormatterResolver,
+          itemResourceRegistrations, propertyValue, preamble);
+      
+      // not a list of iri or blank nodes
+      var propValue = CreateNodePropertyValue(jsonWriter, property, jsonFormatterResolver, resource);
+      propValue.Preamble = preamble;
+      propValue.Conditional = Expression.NotEqual(propertyValue, Expression.Default(pi.PropertyType));
+      return propValue;
 
       // it's a list of nodes
-      return WriteNodePropertyAsList(jsonWriter, baseUri, uriGenerator, typeGenerator, models, recursionDefender,
-        property,
-        jsonFormatterResolver,
-        itemResourceRegistrations, propertyValue, preamble);
     }
 
-    static NodeProperty WriteNodePropertyAsList(
+    static NodeProperty CreateNodePropertyAsList(
       Variable<JsonWriter> jsonWriter,
       TypedExpression<string> baseUri,
       MemberAccess<Func<object, string>> uriGenerator,
@@ -535,7 +537,7 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
       };
     }
 
-    static NodeProperty WriteNodePropertyValue(
+    static NodeProperty CreateNodePropertyValue(
       Variable<JsonWriter> jsonWriter,
       ResourceProperty property,
       Variable<HydraJsonFormatterResolver> jsonFormatterResolver,
