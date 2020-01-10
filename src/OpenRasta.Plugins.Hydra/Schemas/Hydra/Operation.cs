@@ -3,7 +3,7 @@
 
   public static partial class HydraCore
   {
-    public class Operation //: JsonLd.IBlankNode
+    public class Operation
     {
       public string Method { get; set; }
       public string Expects { get; set; }
