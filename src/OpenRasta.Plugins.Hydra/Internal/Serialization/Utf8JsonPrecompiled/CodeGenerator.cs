@@ -29,7 +29,6 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
         compilerContext,
         codeGenContext,
         baseUri,
-        codeGenContext.ResourceInstance,
         uriGenerator,
         typeGenerator,
         codeGenContext.JsonFormatterResolver,
@@ -49,21 +48,26 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
       CompilerContext compilerContext,
       CodeGenerationContext codeGenContext,
       TypedExpression<string> baseUri,
-      Expression resource,
       MemberAccess<Func<object, string>> uriGenerator,
       MemberAccess<Func<object, string>> typeGenerator,
       Variable<HydraJsonFormatterResolver> jsonFormatterResolver,
       NodeProperty[] existingNodeProperties = null)
-    {      if (codeGenContext.ResourceInstance != resource) throw new InvalidOperationException("yo backtrack");
-
-      var resourceUri = uriGenerator.Invoke(resource);
+    {
+      var resourceUri = uriGenerator.Invoke(codeGenContext.ResourceInstance);
 
       var nodeProperties =
         new List<NodeProperty>(existingNodeProperties ?? Enumerable.Empty<NodeProperty>());
 
-      nodeProperties.AddRange(GetNodeProperties(compilerContext, codeGenContext, baseUri, resource, uriGenerator,
-        typeGenerator, jsonFormatterResolver, resourceUri));
-
+      nodeProperties.AddRange(
+        GetNodeProperties(
+          compilerContext,
+          codeGenContext,
+          baseUri,
+          codeGenContext.ResourceInstance,
+          uriGenerator,
+          typeGenerator,
+          jsonFormatterResolver,
+          resourceUri));
 
       IEnumerable<AnyExpression> render()
       {
@@ -80,11 +84,9 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
           yield return collectionWrapper;
           var instantiateCollection = Expression.Assign(
             collectionWrapper,
-            Expression.New(collectionCtor, resource,
+            Expression.New(collectionCtor, codeGenContext.ResourceInstance,
               Expression.Constant(compilerContext.Resource.Hydra().Collection.ManagesRdfTypeName)));
           yield return (instantiateCollection);
-
-          resource = collectionWrapper;
 
           var hydraCollectionModel = compilerContext.MetaModel.GetResourceModel(hydraCollectionType);
 
@@ -115,7 +117,7 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
     }
 
     static InlineCode WriteNodeProperties(
-      CodeGenerationContext codeGenContext, 
+      CodeGenerationContext codeGenContext,
       List<NodeProperty> nodeProperties)
     {
       nodeProperties = nodeProperties.OrderBy(p => p.Name).ToList();
@@ -124,8 +126,6 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
 
       IEnumerable<AnyExpression> renderNode()
       {
-        InlineCode separator;
-
         var sortedProperties = alwaysWrittenProperties.Concat(conditionalProperties).ToArray();
 
         // tricky code ahead. If there are always written props, we optimise by simply always writing the separator
@@ -146,7 +146,7 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
           yield return propAlreadyWritten;
           yield return propAlreadyWritten.Assign(false);
 
-          separator = new InlineCode(
+          var separator = new InlineCode(
             If.ThenElse(
               propAlreadyWritten.EqualTo(true),
               Expression.Block(codeGenContext.JsonWriter.WriteValueSeparator()),
@@ -198,13 +198,15 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
       var propNodes = compilerContext.Resource.Hydra()
         .ResourceProperties
         .Where(resProperty => !resProperty.IsValueNode)
-        .Select(resProperty => CreateNodeProperty(compilerContext, codeGenContext, baseUri, resource, uriGenerator, typeGenerator, resProperty, jsonFormatterResolver))
+        .Select(resProperty => CreateNodeProperty(compilerContext, codeGenContext, baseUri, resource, uriGenerator,
+          typeGenerator, resProperty, jsonFormatterResolver))
         .ToList();
 
       return generatedIdNode.Concat(generatedTypeNode).Concat(propNodes).Concat(valueNodes).Concat(linkNodes).ToList();
     }
 
-    static NodeProperty WriteNodeLink(CodeGenerationContext codeGenContext, string linkRelationship, Uri linkUri, TypedExpression<string> resourceUri, ResourceLinkModel link)
+    static NodeProperty WriteNodeLink(CodeGenerationContext codeGenContext, string linkRelationship, Uri linkUri,
+      TypedExpression<string> resourceUri, ResourceLinkModel link)
     {
       Variable<JsonWriter> jsonWriter = codeGenContext.JsonWriter;
 
@@ -240,7 +242,10 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
       return new NodeProperty(linkRelationship) {Code = new InlineCode(getNodeLink())};
     }
 
-    static NodeProperty CreateNodeProperty(CompilerContext compilerContext, CodeGenerationContext codeGenContext, TypedExpression<string> baseUri, Expression resource, MemberAccess<Func<object, string>> uriGenerator, MemberAccess<Func<object, string>> typeGenerator, ResourceProperty property, Variable<HydraJsonFormatterResolver> jsonFormatterResolver)
+    static NodeProperty CreateNodeProperty(CompilerContext compilerContext, CodeGenerationContext codeGenContext,
+      TypedExpression<string> baseUri, Expression resource, MemberAccess<Func<object, string>> uriGenerator,
+      MemberAccess<Func<object, string>> typeGenerator, ResourceProperty property,
+      Variable<HydraJsonFormatterResolver> jsonFormatterResolver)
     {
       if (codeGenContext.ResourceInstance != resource) throw new InvalidOperationException("yo backtrack");
 
@@ -265,9 +270,8 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
             codeGenContext.JsonWriter.WriteBeginObject(),
             WriteNode(
               compilerContext.Push(propertyResourceModel),
-              codeGenContext.Push(propertyValue), 
+              codeGenContext.Push(propertyValue),
               baseUri,
-              propertyValue,
               uriGenerator,
               typeGenerator,
               jsonFormatterResolver),
@@ -300,7 +304,8 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
         )).ToList<(Type itemType, List<ResourceModel> models)>();
 
       if (itemResourceRegistrations.Any())
-        return CreateNodePropertyAsList(compilerContext, codeGenContext, baseUri, uriGenerator, typeGenerator, property, jsonFormatterResolver, itemResourceRegistrations, propertyValue, preamble);
+        return CreateNodePropertyAsList(compilerContext, codeGenContext, baseUri, uriGenerator, typeGenerator, property,
+          jsonFormatterResolver, itemResourceRegistrations, propertyValue, preamble);
 
       // not a list of iri or blank nodes
       var propValue = CreateNodePropertyValue(codeGenContext, property, resource);
@@ -314,12 +319,13 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
     static NodeProperty CreateNodePropertyAsList(
       CompilerContext compilerContext,
       CodeGenerationContext codeGenContext,
-      TypedExpression<string> baseUri, 
+      TypedExpression<string> baseUri,
       MemberAccess<Func<object, string>> uriGenerator,
-      MemberAccess<Func<object, string>> typeGenerator, 
+      MemberAccess<Func<object, string>> typeGenerator,
       ResourceProperty property,
       Variable<HydraJsonFormatterResolver> resolver,
-      List<(Type itemType, List<ResourceModel> models)> itemResourceRegistrations, ParameterExpression propertyValue, InlineCode preamble)
+      List<(Type itemType, List<ResourceModel> models)> itemResourceRegistrations, ParameterExpression propertyValue,
+      InlineCode preamble)
     {
       var jsonPropertyName = property.Name;
 
@@ -346,7 +352,7 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
         typeGenerator,
         resolver,
         itemRegistration,
-        currentArrayElement, 
+        currentArrayElement,
         baseUri);
 
       return new NodeProperty(jsonPropertyName)
@@ -416,7 +422,6 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
           compilerContext.Push(r),
           codeGenContext.Push(typed),
           baseUri,
-          typed,
           uriGenerator, typeGenerator,
           resolver);
       }
@@ -491,8 +496,10 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
       };
     }
 
-    static NodeProperty CreateNodePropertyValue(CodeGenerationContext codeGenContext, ResourceProperty property, Expression resource)
-    {      if (codeGenContext.ResourceInstance != resource) throw new InvalidOperationException("yo backtrack");
+    static NodeProperty CreateNodePropertyValue(CodeGenerationContext codeGenContext, ResourceProperty property,
+      Expression resource)
+    {
+      if (codeGenContext.ResourceInstance != resource) throw new InvalidOperationException("yo backtrack");
 
       if (codeGenContext.ResourceInstance != resource) throw new InvalidOperationException("yo backtrack");
       var pi = property.Member;
@@ -509,10 +516,9 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
     }
 
 
-    static InlineCode GetFormatter(CodeGenerationContext codeGenContext, Type propertyType, MemberExpression propertyGet)
+    static InlineCode GetFormatter(CodeGenerationContext codeGenContext, Type propertyType,
+      MemberExpression propertyGet)
     {
-      Variable<HydraJsonFormatterResolver> jsonFormatterResolver = codeGenContext.JsonFormatterResolver;
-
       IEnumerable<AnyExpression> getFormatter()
       {
         var resolverGetFormatter = Reflection.HydraJsonFormatterResolver.GetFormatter.MakeGenericMethod(propertyType);
@@ -525,14 +531,16 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
         {
           formatterInstance,
 
-          Expression.Assign(formatterInstance, Expression.Call(jsonFormatterResolver, resolverGetFormatter)),
+          Expression.Assign(formatterInstance,
+            Expression.Call(codeGenContext.JsonFormatterResolver, resolverGetFormatter)),
 
           Expression.IfThen(
             Expression.Equal(formatterInstance,
               Expression.Default(jsonFormatterType)),
             Expression.Throw(Expression.New(typeof(ArgumentNullException)))),
 
-          Expression.Call(formatterInstance, serializeMethod, codeGenContext.JsonWriter, propertyGet, jsonFormatterResolver)
+          Expression.Call(formatterInstance, serializeMethod, codeGenContext.JsonWriter, propertyGet,
+            codeGenContext.JsonFormatterResolver)
         };
       }
 
