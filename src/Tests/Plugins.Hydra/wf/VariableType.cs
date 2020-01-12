@@ -2,7 +2,7 @@
 
 namespace Tests.Plugins.Hydra.wf
 {
-  public class VariableType
+  public class  VariableType
   {
     public string Scheme { get; set; }
     public string Taxonomy { get; set; }

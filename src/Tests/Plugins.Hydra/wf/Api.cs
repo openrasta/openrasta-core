@@ -8,12 +8,6 @@ using OpenRasta.Web;
 
 namespace Tests.Plugins.Hydra.wf
 {
-
-  public static class Ontologies
-  {
-    public const string WhenFreshApi = "https://api.whenfresh.com/ontologies/wf/api/#";
-  }
-
   public class Api : IConfigurationSource
   {
     public void Configure()
@@ -36,6 +30,10 @@ namespace Tests.Plugins.Hydra.wf
         .AtUri(s => $"/ontologies/{s.Scheme}/{s.Taxonomy}#{s.Classification}/{s.Name}");
 
       ResourceSpace.Has
+        .ResourcesOfType<VariableTypeGrouping>()
+        .Vocabulary(Ontologies.WhenFreshApi);
+
+      ResourceSpace.Has
         .ResourcesOfType<Provenance>()
         .Vocabulary(Ontologies.WhenFreshApi)
         .AtUri(p => $"/vars/{p.Provider}/{p.Source}");
@@ -44,6 +42,42 @@ namespace Tests.Plugins.Hydra.wf
         .ResourcesOfType<Variable>()
         .Vocabulary(Ontologies.WhenFreshApi)
         .AtUri(v => $"/vars/{v.Provider}/{v.Source}#{v.Scheme}/{v.Taxonomy}/{v.Classification}/{v.Name}");
+
+
+
+      ResourceSpace.Has
+        .ResourcesOfType<LandRegDatum>()
+        .Vocabulary(Ontologies.WhenFreshApi)
+        .AtUri("/datum")
+        .HandledBy<LandRegDatumHandler>();
+      
+      
+      ResourceSpace.Has
+        .ResourcesOfType<LandRegAddressCatalog>()
+        .Vocabulary(Ontologies.WhenFreshApi)
+        .AtUri(x => $"/internal/gb-eaw/addresses/{x.ResourceIdentifier}/catalogs/title")
+        .HandledBy<LandRegAddressCatalogHandler>();
+    }
+  }
+
+  public class LandRegDatumHandler
+  {
+    public LandRegDatum Get()
+    {
+      return new LandRegDatum("kjsdfhkjfsd0", "kfdsjkhfsd", "ksjdhfkjhs", "name")
+      {
+        Variable = new Variable()
+        {
+          Scheme = "scheme",
+          Taxonomy = "blah",
+          Classification = "blah",
+          Name = "foff",
+          Provider = "prov",
+          Source = "source"
+        },
+        Price = new MonetaryAmount(0.1m, "GBP"),
+        Value = "12"
+      };
     }
   }
 }
