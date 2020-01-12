@@ -204,11 +204,38 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
 
       yield return Expression.Assign(jsonWriter, Expression.New(typeof(JsonWriter)));
 
-      yield return CodeGenerator.ResourceDocument(compilerContext, jsonWriter, resource, options);
+      var jsonFormatterResolver = New.Var<HydraJsonFormatterResolver>("resolver");
+      var assignResolver = jsonFormatterResolver.Assign(New.Instance<HydraJsonFormatterResolver>());
+      yield return jsonFormatterResolver;
+      yield return assignResolver;
+      
+      var codeGenContext = new CodeGenerationContext(jsonWriter, resource, options, jsonFormatterResolver);
+
+      yield return CodeGenerator.ResourceDocument(compilerContext, codeGenContext);
 
       yield return Expression.Assign(buffer, jsonWriter.GetBuffer());
       yield return Expression.Assign(retVal, stream.WriteAsync(buffer));
       yield return retVal;
+    }
+  }
+
+  public class CodeGenerationContext
+  {
+    public Variable<JsonWriter> JsonWriter { get; }
+    public ParameterExpression ResourceInstance { get; }
+    public Variable<SerializationContext> SerializationContext { get; }
+    public Variable<HydraJsonFormatterResolver> JsonFormatterResolver { get; }
+
+    public CodeGenerationContext(
+      Variable<JsonWriter> jsonWriter,
+      ParameterExpression resourceInstance,
+      Variable<SerializationContext> serializationContext,
+      Variable<HydraJsonFormatterResolver> jsonFormatterResolver)
+    {
+      JsonWriter = jsonWriter;
+      ResourceInstance = resourceInstance;
+      SerializationContext = serializationContext;
+      JsonFormatterResolver = jsonFormatterResolver;
     }
   }
 }
