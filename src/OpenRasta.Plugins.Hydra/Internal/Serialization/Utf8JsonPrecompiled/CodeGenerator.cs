@@ -13,7 +13,9 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
 {
   public static class CodeGenerator
   {
-    public static CodeBlock ResourceDocument(CompilerContext compilerContext, Variable<JsonWriter> jsonWriter,
+    public static CodeBlock ResourceDocument(
+      CompilerContext compilerContext,
+      Variable<JsonWriter> jsonWriter,
       Expression resource,
       Variable<SerializationContext> options)
     {
@@ -75,7 +77,6 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
       nodeProperties.AddRange(GetNodeProperties(compilerContext,
         jsonWriter,
         baseUri,
-        model,
         resource,
         uriGenerator,
         typeGenerator,
@@ -109,7 +110,6 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
             compilerContext,
             jsonWriter,
             baseUri,
-            hydraCollectionModel,
             collectionWrapper,
             uriGenerator,
             typeGenerator,
@@ -187,7 +187,6 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
 
     static IEnumerable<NodeProperty> GetNodeProperties(CompilerContext compilerContext, Variable<JsonWriter> jsonWriter,
       TypedExpression<string> baseUri,
-      ResourceModel model,
       Expression resource,
       MemberAccess<Func<object, string>> uriGenerator,
       MemberAccess<Func<object, string>> typeGenerator,
@@ -195,13 +194,13 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
       Variable<HydraJsonFormatterResolver> jsonFormatterResolver,
       TypedExpression<string> resourceUri)
     {
-      var propNames = model
+      var propNames = compilerContext.Resource
         .Hydra().ResourceProperties
         .Select(p => p.Name)
         .ToArray();
 
       var generatedIdNode =
-        propNames.All(name => name != "@id") && model.Uris.Any()
+        propNames.All(name => name != "@id") && compilerContext.Resource.Uris.Any()
           ? new[] {WriteId(jsonWriter, resourceUri)}
           : Enumerable.Empty<NodeProperty>();
 
@@ -209,21 +208,21 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
         ? Enumerable.Empty<NodeProperty>()
         : new[]
         {
-          model.Hydra().JsonLdTypeFunc != null
+          compilerContext.Resource.Hydra().JsonLdTypeFunc != null
             ? WriteType(jsonWriter, typeGenerator.Invoke(resource))
-            : WriteType(jsonWriter, model.Hydra().JsonLdType)
+            : WriteType(jsonWriter, compilerContext.Resource.Hydra().JsonLdType)
         };
 
-      var linkNodes = model.Links
+      var linkNodes = compilerContext.Resource.Links
         .Select(link => WriteNodeLink(jsonWriter, link.Relationship, link.Uri, resourceUri, link));
 
-      var valueNodes = model.Hydra()
+      var valueNodes = compilerContext.Resource.Hydra()
         .ResourceProperties
         .Where(resProperty => resProperty.IsValueNode)
         .Select(resProperty => CreateNodePropertyValue(jsonWriter, resProperty, jsonFormatterResolver, resource))
         .ToList();
 
-      var propNodes = model.Hydra()
+      var propNodes = compilerContext.Resource.Hydra()
         .ResourceProperties
         .Where(resProperty => !resProperty.IsValueNode)
         .Select(resProperty => CreateNodeProperty(compilerContext, jsonWriter, baseUri, resource, uriGenerator,
@@ -556,6 +555,7 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
           new[] {typeof(JsonWriter).MakeByRefType(), propertyType, typeof(IJsonFormatterResolver)});
 
         var formatterInstance = Expression.Variable(jsonFormatterType, "formatter");
+        
         return new AnyExpression[]
         {
           formatterInstance,
