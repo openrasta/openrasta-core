@@ -1,10 +1,8 @@
-using System.Linq;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using OpenRasta.Concordia;
 using OpenRasta.Configuration;
 using OpenRasta.Configuration.MetaModel.Handlers;
-using OpenRasta.DI;
 using OpenRasta.Hosting.InMemory;
 using OpenRasta.Plugins.Hydra;
 using OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled;
@@ -12,7 +10,6 @@ using OpenRasta.Web;
 using Shouldly;
 using Tests.Plugins.Hydra.Implementation;
 using Xunit;
-using Customer = Tests.Plugins.Hydra.Customer;
 
 namespace Tests.Plugins.Hydra.nodes
 {
