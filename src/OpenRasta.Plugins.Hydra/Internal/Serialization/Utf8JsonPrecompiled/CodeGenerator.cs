@@ -13,14 +13,6 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
 {
   public static class CodeGenerator
   {
-    static readonly MethodInfo ResolverGetFormatterMethodInfo =
-      typeof(HydraJsonFormatterResolver).GetMethod(nameof(IJsonFormatterResolver.GetFormatter));
-
-    static readonly MethodInfo EnumerableToArrayMethodInfo = typeof(Enumerable).GetMethod(nameof(Enumerable.ToArray));
-
-    static readonly MethodInfo EnumerableAnyMethodInfo =
-      typeof(Enumerable).GetMethods().Single(m => m.Name == nameof(Enumerable.Any) && m.GetParameters().Length == 1);
-
     public static CodeBlock ResourceDocument(
       Variable<JsonWriter> jsonWriter,
       ResourceModel model,
@@ -382,7 +374,7 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
       var itemRegistration = itemResourceRegistrations.First();
 
       var conditionalEnumerableAny =
-        Expression.Call(EnumerableAnyMethodInfo.MakeGenericMethod(itemRegistration.itemType), propertyValue);
+        Expression.Call(Reflection.Enumerable.Any.MakeGenericMethod(itemRegistration.itemType), propertyValue);
 
 
       var itemArrayType = itemRegistration.itemType.MakeArrayType();
@@ -390,7 +382,7 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
       var itemArray = Expression.Variable(itemArrayType, "itemArray");
       var itemArrayAssignment = Expression.Assign(
         itemArray,
-        Expression.Call(EnumerableToArrayMethodInfo.MakeGenericMethod(itemRegistration.itemType), propertyValue));
+        Expression.Call(Reflection.Enumerable.ToArray.MakeGenericMethod(itemRegistration.itemType), propertyValue));
 
       var currentArrayIndex = New.Var<int>("currentArrayIndex");
       var currentArrayElement = Expression.ArrayAccess(itemArray, currentArrayIndex);
@@ -570,7 +562,7 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
     {
       IEnumerable<AnyExpression> getFormatter()
       {
-        var resolverGetFormatter = ResolverGetFormatterMethodInfo.MakeGenericMethod(propertyType);
+        var resolverGetFormatter = Reflection.HydraJsonFormatterResolver.GetFormatter.MakeGenericMethod(propertyType);
         var jsonFormatterType = typeof(IJsonFormatter<>).MakeGenericType(propertyType);
         var serializeMethod = jsonFormatterType.GetMethod("Serialize",
           new[] {typeof(JsonWriter).MakeByRefType(), propertyType, typeof(IJsonFormatterResolver)});

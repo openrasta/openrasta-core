@@ -7,64 +7,52 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
 {
   public static class JsonWriterMethods
   {
-    static readonly MethodInfo WriteBeginObjectMethodInfo = typeof(JsonWriter).GetMethod(nameof(JsonWriter.WriteBeginObject));
-    static readonly MethodInfo WriteBeginArrayMethodInfo = typeof(JsonWriter).GetMethod(nameof(JsonWriter.WriteBeginArray));
-    static readonly MethodInfo WriteEndArrayMethodInfo = typeof(JsonWriter).GetMethod(nameof(JsonWriter.WriteEndArray));
-    static readonly MethodInfo WriteStringMethodInfo = typeof(JsonWriter).GetMethod(nameof(JsonWriter.WriteString));
-    static readonly MethodInfo WritePropertyNameMethodInfo = typeof(JsonWriter).GetMethod(nameof(JsonWriter.WritePropertyName));
-    static readonly MethodInfo WriteRawMethodInfo = typeof(JsonWriter).GetMethod(nameof(JsonWriter.WriteRaw), new[] {typeof(byte[])});
-    static readonly MethodInfo WriteValueSeparatorMethodInfo = typeof(JsonWriter).GetMethod(nameof(JsonWriter.WriteValueSeparator));
-    static readonly MethodInfo WriteNameSeparatorMethodInfo = typeof(JsonWriter).GetMethod(nameof(JsonWriter.WriteNameSeparator));
-    static readonly MethodInfo WriteEndObjectMethodInfo = typeof(JsonWriter).GetMethod(nameof(JsonWriter.WriteEndObject));
-    static readonly MethodInfo GetBufferMethodInfo = typeof(JsonWriter).GetMethod(nameof(JsonWriter.GetBuffer));
-
     public static Expression WriteBeginObject(this ParameterExpression jsonWriter)
-      => Expression.Call(jsonWriter, WriteBeginObjectMethodInfo);
+      => Expression.Call(jsonWriter, Reflection.JsonWriter.WriteBeginObject);
 
     public static Expression WriteBeginArray(this ParameterExpression jsonWriter)
-      => Expression.Call(jsonWriter, WriteBeginArrayMethodInfo);
+      => Expression.Call(jsonWriter, Reflection.JsonWriter.WriteBeginArray);
     
     public static Expression WriteEndArray(this ParameterExpression jsonWriter)
-      => Expression.Call(jsonWriter, WriteEndArrayMethodInfo);
+      => Expression.Call(jsonWriter, Reflection.JsonWriter.WriteEndArray);
 
     public static Expression WritePropertyName(this ParameterExpression jsonWriter, string propertyName)
-      => Expression.Call(jsonWriter, WritePropertyNameMethodInfo, Expression.Constant(propertyName));
+      => Expression.Call(jsonWriter, Reflection.JsonWriter.WritePropertyName, Expression.Constant(propertyName));
 
     public static Expression WriteRaw(this ParameterExpression jsonWriter, byte[] rawData)
-      => Expression.Call(jsonWriter,
-        WriteRawMethodInfo,
+      => Expression.Call(jsonWriter, Reflection.JsonWriter.WriteRaw,
         Expression.Constant(rawData));
 
     public static Expression WriteValueSeparator(this ParameterExpression jsonWriter)
-      => Expression.Call(jsonWriter, WriteValueSeparatorMethodInfo);
+      => Expression.Call(jsonWriter, Reflection.JsonWriter.WriteValueSeparator);
 
     public static Expression WriteNameSeparator(this ParameterExpression jsonWriter)
-      => Expression.Call(jsonWriter, WriteNameSeparatorMethodInfo);
+      => Expression.Call(jsonWriter, Reflection.JsonWriter.WriteNameSeparator);
 
     public static Expression WriteEndObject(this ParameterExpression jsonWriter)
-      => Expression.Call(jsonWriter, WriteEndObjectMethodInfo);
+      => Expression.Call(jsonWriter, Reflection.JsonWriter.WriteEndObject);
 
     public static Expression GetBuffer(this ParameterExpression jsonWriter)
-      => Expression.Call(jsonWriter, GetBufferMethodInfo);
+      => Expression.Call(jsonWriter, Reflection.JsonWriter.GetBuffer);
     
     
     public static Expression WriteBeginObject(this Variable<JsonWriter> jsonWriter)
-      => Expression.Call(jsonWriter, WriteBeginObjectMethodInfo);
+      => Expression.Call(jsonWriter, Reflection.JsonWriter.WriteBeginObject);
 
     public static Expression WriteBeginArray(this Variable<JsonWriter> jsonWriter)
-      => Expression.Call(jsonWriter, WriteBeginArrayMethodInfo);
+      => Expression.Call(jsonWriter, Reflection.JsonWriter.WriteBeginArray);
     
     public static Expression WriteEndArray(this Variable<JsonWriter> jsonWriter)
-      => Expression.Call(jsonWriter, WriteEndArrayMethodInfo);
+      => Expression.Call(jsonWriter, Reflection.JsonWriter.WriteEndArray);
 
     public static Expression WriteString(this Variable<JsonWriter> jsonWriter, string value)
-      => Expression.Call(jsonWriter, WriteStringMethodInfo, Expression.Constant(value, typeof(string)));
+      => Expression.Call(jsonWriter, Reflection.JsonWriter.WriteString, Expression.Constant(value, typeof(string)));
 
     public static Expression WriteString(this Variable<JsonWriter> jsonWriter, TypedExpression<string> value)
-      => Expression.Call(jsonWriter, WriteStringMethodInfo, value);
+      => Expression.Call(jsonWriter, Reflection.JsonWriter.WriteString, value);
 
     public static Expression WritePropertyName(this Variable<JsonWriter> jsonWriter, Expression value)
-      => Expression.Call(jsonWriter, WritePropertyNameMethodInfo, value);
+      => Expression.Call(jsonWriter, Reflection.JsonWriter.WritePropertyName, value);
 
     public static Expression WritePropertyName(this Variable<JsonWriter> jsonWriter, string propertyName)
     {
@@ -82,19 +70,19 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
       return jsonWriter.WriteRaw(bytes);
     }
     public static Expression WriteRaw(this Variable<JsonWriter> jsonWriter, byte[] rawData)
-      => Expression.Call(jsonWriter, WriteRawMethodInfo,
+      => Expression.Call(jsonWriter, Reflection.JsonWriter.WriteRaw,
         Expression.Constant(rawData));
 
     public static Expression WriteValueSeparator(this Variable<JsonWriter> jsonWriter)
-      => Expression.Call(jsonWriter, WriteValueSeparatorMethodInfo);
+      => Expression.Call(jsonWriter, Reflection.JsonWriter.WriteValueSeparator);
 
     public static Expression WriteNameSeparator(this Variable<JsonWriter> jsonWriter)
-      => Expression.Call(jsonWriter, WriteNameSeparatorMethodInfo);
+      => Expression.Call(jsonWriter, Reflection.JsonWriter.WriteNameSeparator);
 
     public static Expression WriteEndObject(this Variable<JsonWriter> jsonWriter)
-      => Expression.Call(jsonWriter, WriteEndObjectMethodInfo);
+      => Expression.Call(jsonWriter, Reflection.JsonWriter.WriteEndObject);
 
     public static Expression GetBuffer(this Variable<JsonWriter> jsonWriter)
-      => Expression.Call(jsonWriter, GetBufferMethodInfo);
+      => Expression.Call(jsonWriter, Reflection.JsonWriter.GetBuffer);
   }
 }
