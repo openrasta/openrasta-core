@@ -150,9 +150,11 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
         var hydraResourceModel = model.Hydra();
 
         if (model.ResourceType?.IsGenericTypeDefinition == true) continue;
+
+        var compilationContext = new CompilerContext(repository, model);
         hydraResourceModel.SerializeFunc = model.ResourceType == typeof(HydraCore.Context)
           ? CreateContextSerializer()
-          : CreateDocumentSerializer(model, repository);
+          : CreateDocumentSerializer(compilationContext);
       }
     }
 
@@ -165,11 +167,9 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
         JsonSerializer.SerializeAsync(stream, (HydraCore.Context) o, hydraJsonFormatterResolver);
     }
 
-    Func<object, SerializationContext, Stream, Task> CreateDocumentSerializer(
-      ResourceModel model,
-      IMetaModelRepository repository)
+    Func<object, SerializationContext, Stream, Task> CreateDocumentSerializer(CompilerContext context)
     {
-      var block = new CodeBlock(RendererBlock(model, repository));
+      var block = new CodeBlock(RendererBlock(context));
 
       var lambda =
         Expression.Lambda<Func<object, SerializationContext, Stream, Task>>(
@@ -179,9 +179,7 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
       return lambda.Compile();
     }
 
-    static IEnumerable<AnyExpression> RendererBlock(
-      ResourceModel model,
-      IMetaModelRepository repository)
+    static IEnumerable<AnyExpression> RendererBlock(CompilerContext context)
     {
       var resourceIn = New.Parameter<object>("resource");
       var options = New.Parameter<SerializationContext>("options");
@@ -193,10 +191,10 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
 
       var retVal = New.Var<Task>("retVal");
 
-      var resource = Expression.Variable(model.ResourceType, "typedResource");
+      var resource = Expression.Variable(context.Resource.ResourceType, "typedResource");
       yield return resource;
 
-      yield return Expression.Assign(resource, Expression.Convert(resourceIn, model.ResourceType));
+      yield return Expression.Assign(resource, Expression.Convert(resourceIn, context.Resource.ResourceType));
 
       var jsonWriter = New.Var<JsonWriter>("jsonWriter");
       var buffer = New.Var<ArraySegment<byte>>("buffer");
@@ -206,7 +204,7 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
 
       yield return Expression.Assign(jsonWriter, Expression.New(typeof(JsonWriter)));
 
-      yield return CodeGenerator.ResourceDocument(jsonWriter, model, resource, options, repository);
+      yield return CodeGenerator.ResourceDocument(jsonWriter, resource, options, context);
 
       yield return Expression.Assign(buffer, jsonWriter.GetBuffer());
       yield return Expression.Assign(retVal, stream.WriteAsync(buffer));

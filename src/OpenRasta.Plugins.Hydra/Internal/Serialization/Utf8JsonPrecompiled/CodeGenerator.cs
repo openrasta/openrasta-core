@@ -13,12 +13,10 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
 {
   public static class CodeGenerator
   {
-    public static CodeBlock ResourceDocument(
-      Variable<JsonWriter> jsonWriter,
-      ResourceModel model,
+    public static CodeBlock ResourceDocument(Variable<JsonWriter> jsonWriter,
       Expression resource,
-      Variable<SerializationContext> options,
-      IMetaModelRepository models)
+      Variable<SerializationContext> options, 
+      CompilerContext context)
     {
       var uriGenerator = options.get_UriGenerator();
       var typeGenerator = options.get_TypeGenerator();
@@ -31,11 +29,11 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
       var rootNode = WriteNode(
         jsonWriter,
         baseUri,
-        model,
+        context.Resource,
         resource,
         uriGenerator,
         typeGenerator,
-        models,
+        context.MetaModel,
         jsonFormatterResolver,
         new[]
         {
