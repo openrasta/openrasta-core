@@ -236,7 +236,17 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
       ResourceInstance = resourceInstance;
       SerializationContext = serializationContext;
       JsonFormatterResolver = jsonFormatterResolver;
+      
+      UriGenerator = SerializationContext.get_UriGenerator();
+      TypeGenerator = SerializationContext.get_TypeGenerator();
+      BaseUri = SerializationContext.get_BaseUri().ObjectToString();
     }
+
+    public MethodCall<string> BaseUri { get; }
+
+    public MemberAccess<Func<object, string>> TypeGenerator { get; }
+
+    public MemberAccess<Func<object, string>> UriGenerator { get; }
 
 
     public CodeGenerationContext Push(Expression resourceInstance)
