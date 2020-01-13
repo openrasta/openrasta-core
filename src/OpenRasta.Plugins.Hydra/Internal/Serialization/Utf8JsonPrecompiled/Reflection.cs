@@ -60,5 +60,14 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
       public static readonly MethodInfo WriteEndObject = typeof(Utf8Json.JsonWriter).GetMethod(nameof(Utf8Json.JsonWriter.WriteEndObject));
       public static readonly MethodInfo GetBuffer = typeof(Utf8Json.JsonWriter).GetMethod(nameof(Utf8Json.JsonWriter.GetBuffer));
     }
+
+    public static class HydraTextExtensions
+    {
+      public static readonly MethodInfo UriSubResourceCombine = typeof(HydraTextExtensions).GetMethod(
+        nameof(HydraTextExtensions.UriSubResourceCombine),
+        BindingFlags.Static | BindingFlags.NonPublic);
+      public static readonly MethodInfo UriStandardCombine = typeof(HydraTextExtensions).GetMethod(nameof(HydraTextExtensions.UriStandardCombine),
+        BindingFlags.Static | BindingFlags.NonPublic);
+    }
   }
 }
