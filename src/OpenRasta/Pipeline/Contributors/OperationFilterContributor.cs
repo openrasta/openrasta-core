@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using OpenRasta.DI;
 using OpenRasta.OperationModel;
 using OpenRasta.Web;
 
@@ -9,6 +10,11 @@ namespace OpenRasta.Pipeline.Contributors
   public class OperationFilterContributor : KnownStages.IOperationFiltering
   {
     readonly Func<IEnumerable<IOperationFilter>> _createFilters;
+
+    public OperationFilterContributor(IDependencyResolver resolver)
+      : this(resolver.ResolveAll<IOperationFilter>)
+    {
+    }
 
     public OperationFilterContributor(Func<IEnumerable<IOperationFilter>> createFilters)
     {

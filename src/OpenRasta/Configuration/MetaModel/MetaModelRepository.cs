@@ -11,6 +11,11 @@ namespace OpenRasta.Configuration.MetaModel
   {
     readonly Func<IEnumerable<IMetaModelHandler>> _handlers;
 
+    public MetaModelRepository(IDependencyResolver resolver)
+      :this(resolver.ResolveAll<IMetaModelHandler>)
+    {
+    }
+
     public MetaModelRepository(Func<IEnumerable<IMetaModelHandler>> handlers)
     {
       _handlers = handlers;
