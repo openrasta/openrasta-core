@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using OpenRasta.DI;
 using OpenRasta.OperationModel;
 using OpenRasta.Web;
 
@@ -10,6 +11,11 @@ namespace OpenRasta.Pipeline.Contributors
     : KnownStages.ICodecRequestSelection
   {
     readonly Func<IEnumerable<IOperationCodecSelector>> _codecSelectors;
+
+    public RequestCodecSelector(IDependencyResolver resolver)
+      : this(resolver.ResolveAll<IOperationCodecSelector>)
+    {
+    }
 
     public RequestCodecSelector(Func<IEnumerable<IOperationCodecSelector>> codecs)
     {
