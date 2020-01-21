@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -42,15 +41,16 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization
       _responseMessage.Headers.Add("link", $"<{_apiDocumentationLink}>; rel=\"{_apiDocumentationRel}\"");
 
       var resourceSelectedByUri = _context.PipelineData.SelectedResource;
+      var resourceModel = resourceSelectedByUri.ResourceModel;
 
-      var serializerFunc = resourceSelectedByUri.ResourceModel.Hydra().SerializeFunc;
-
-      if (serializerFunc == null)
+      if (resourceModel.ResourceType.IsInstanceOfType(entity) == false)
       {
-        serializerFunc = GetFuncFromResponseResourceType(_context.Response.Entity.Instance);
-        if (serializerFunc == null)
-          throw new InvalidOperationException($"Hydra serialiser not found for object of type {entity?.GetType()}");
+        if (!_models.TryGetResourceModel(entity.GetType(), out resourceModel))
+          throw new InvalidOperationException($"Hydra serialiser not found for object of type {entity.GetType()}");
       }
+
+      var currentResourceModelName = resourceModel.Name;
+      var serializerFunc = resourceModel.Hydra().SerializeFunc;
 
       var typeToTypeGen = _models.ResourceRegistrations
         .Where(res => res.ResourceType != null && res.Hydra().JsonLdTypeFunc != null)
@@ -67,21 +67,11 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization
       return serializerFunc(entity, new SerializationContext
       {
         BaseUri = BaseUri,
-        UriGenerator = resource =>
-          _uris.CreateUri(resource, _context.ApplicationBaseUri, resourceSelectedByUri.ResourceModel.Name),
+        UriGenerator = resource => _uris.CreateUri(resource, _context.ApplicationBaseUri, currentResourceModelName),
         TypeGenerator = renderTypeNode
       }, response.Stream);
     }
 
     static bool IsCurie(string convertedString) => Regex.IsMatch(convertedString, "^\\w+:");
-
-    Func<object, SerializationContext, Stream, Task> GetFuncFromResponseResourceType(object entityInstance)
-    {
-      if (entityInstance == null) return null;
-
-      return _models.TryGetResourceModel(entityInstance.GetType(), out var responseEntityResourceModel)
-        ? responseEntityResourceModel.Hydra().SerializeFunc
-        : null;
-    }
   }
 }
