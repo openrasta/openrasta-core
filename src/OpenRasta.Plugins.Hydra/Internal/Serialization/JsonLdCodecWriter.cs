@@ -40,6 +40,8 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization
     {
       _responseMessage.Headers.Add("link", $"<{_apiDocumentationLink}>; rel=\"{_apiDocumentationRel}\"");
 
+      if (entity == null) return Task.CompletedTask;
+      
       var resourceSelectedByUri = _context.PipelineData.SelectedResource;
       var resourceModel = resourceSelectedByUri.ResourceModel;
 
