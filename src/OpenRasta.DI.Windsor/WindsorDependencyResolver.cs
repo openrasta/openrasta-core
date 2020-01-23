@@ -221,7 +221,12 @@ namespace OpenRasta.DI.Windsor
 
     static Func<IKernel,T> GetResolver<T>()
     {
-      return kernel => { return kernel.Resolve<T>(); };
+      var ienumtype = new[]{typeof(T)}.Concat(typeof(T).GetInterfaces())
+        .FirstOrDefault(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IEnumerable<>));
+      
+      var isEnumerable = ienumtype != null;
+      var itemType = isEnumerable ? ienumtype.GetGenericArguments()[0] : null;
+      return kernel => { return isEnumerable ? (T)(object)kernel.ResolveAll(itemType) : kernel.Resolve<T>(); };
     }
     class FactoryRegistration<TService, TArg, TConcrete> : IRegisterFactories
       where TService : class where TConcrete : TService

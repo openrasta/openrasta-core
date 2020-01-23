@@ -133,12 +133,11 @@ namespace WindsorDependencyResolver_Specification
 
     public registration_profiles_with_the_castle_resolver()
     {
-      _container = new WindsorContainer();
     }
 
     public override IDependencyResolver CreateResolver()
     {
-      return new WindsorDependencyResolver(_container);
+      return new WindsorDependencyResolver( new WindsorContainer());
     }
 
     [Test]
@@ -152,8 +151,9 @@ namespace WindsorDependencyResolver_Specification
       
       typeRegistration = new TypeRegistrationContext();
       typeRegistration.Singleton((IEnumerable<AnotherSimple> simples) => new Complex(simples));
+      modelAware.Register(typeRegistration.Model);
 
-      var simples2 = Should.NotThrow(() => _container.Resolve<IEnumerable<AnotherSimple>>());
+      var simples2 = Should.NotThrow(() => Resolver.Resolve<IEnumerable<AnotherSimple>>());
       simples2.ShouldHaveSingleItem().ShouldNotBeNull();
 
       var complex = Should.NotThrow(() => Resolver.Resolve<Complex>());

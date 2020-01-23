@@ -26,6 +26,7 @@ namespace OpenRasta.Tests.Unit.DI
     [Test]
     public void resolving_enums()
     {
+      Resolver.AddDependency<Simple>();
       Should.NotThrow(() => Resolver.Resolve<IEnumerable<Simple>>().ShouldHaveSingleItem().ShouldNotBeNull());
     }
     [Test]
