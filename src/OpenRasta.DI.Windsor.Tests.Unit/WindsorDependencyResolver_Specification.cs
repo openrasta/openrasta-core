@@ -147,24 +147,25 @@ namespace WindsorDependencyResolver_Specification
       var modelAware = (IModelDrivenDependencyRegistration) Resolver;
 
       var typeRegistration = new TypeRegistrationContext();
-      typeRegistration.Singleton(() => new Simple());
+      typeRegistration.Singleton(() => new AnotherSimple());
       modelAware.Register(typeRegistration.Model);
       
       typeRegistration = new TypeRegistrationContext();
-      typeRegistration.Singleton((IEnumerable<Simple> simples) => new Complex(simples));
+      typeRegistration.Singleton((IEnumerable<AnotherSimple> simples) => new Complex(simples));
 
-      var simples2 = Should.NotThrow(() => Resolver.Resolve<IEnumerable<Simple>>());
+      var simples2 = Should.NotThrow(() => _container.Resolve<IEnumerable<AnotherSimple>>());
       simples2.ShouldHaveSingleItem().ShouldNotBeNull();
 
       var complex = Should.NotThrow(() => Resolver.Resolve<Complex>());
       complex.Simple.ShouldHaveSingleItem().ShouldNotBeNull();
     }
+    public class AnotherSimple{}
 
     public class Complex
     {
-      public IEnumerable<Simple> Simple { get; }
+      public IEnumerable<AnotherSimple> Simple { get; }
 
-      public Complex(IEnumerable<Simple> simple)
+      public Complex(IEnumerable<AnotherSimple> simple)
       {
         Simple = simple;
       }

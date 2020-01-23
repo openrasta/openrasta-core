@@ -219,17 +219,21 @@ namespace OpenRasta.DI.Windsor
       }
     }
 
+    static Func<IKernel,T> GetResolver<T>()
+    {
+      return kernel => { return kernel.Resolve<T>(); };
+    }
     class FactoryRegistration<TService, TArg, TConcrete> : IRegisterFactories
       where TService : class where TConcrete : TService
     {
       public void Register(string componentName, IWindsorContainer container, DependencyFactoryModel registration)
       {
+        var resolver = GetResolver<TArg>();
         var factoryMethod = ((Expression<Func<TArg, TConcrete>>) registration.Factory).Compile();
         container.Register(
           Component.For<TService>()
             .Named(componentName)
-            .UsingFactoryMethod(kernel => factoryMethod(
-              kernel.Resolve<TArg>()))
+            .UsingFactoryMethod(kernel => factoryMethod(resolver(kernel)))
             .LifeStyle.Is(ConvertLifestyles.ToLifestyleType(registration.Lifetime)));
       }
     }
@@ -239,13 +243,16 @@ namespace OpenRasta.DI.Windsor
     {
       public void Register(string componentName, IWindsorContainer container, DependencyFactoryModel registration)
       {
+        var arg1 = GetResolver<TArg1>();
+        var arg2 = GetResolver<TArg2>();
+
         var factoryMethod = ((Expression<Func<TArg1, TArg2, TConcrete>>) registration.Factory).Compile();
         container.Register(
           Component.For<TService>()
             .Named(componentName)
             .UsingFactoryMethod(kernel => factoryMethod(
-              kernel.Resolve<TArg1>(),
-              kernel.Resolve<TArg2>()))
+              arg1(kernel),
+              arg2(kernel)))
             .LifeStyle.Is(ConvertLifestyles.ToLifestyleType(registration.Lifetime)));
       }
     }
@@ -255,14 +262,18 @@ namespace OpenRasta.DI.Windsor
     {
       public void Register(string componentName, IWindsorContainer container, DependencyFactoryModel registration)
       {
+        
+        var arg1 = GetResolver<TArg1>();
+        var arg2 = GetResolver<TArg2>();
+        var arg3 = GetResolver<TArg3>();
         var factoryMethod = ((Expression<Func<TArg1, TArg2, TArg3, TConcrete>>) registration.Factory).Compile();
         container.Register(
           Component.For<TService>()
             .Named(componentName)
             .UsingFactoryMethod(kernel => factoryMethod(
-              kernel.Resolve<TArg1>(),
-              kernel.Resolve<TArg2>(),
-              kernel.Resolve<TArg3>()))
+              arg1(kernel),
+              arg2(kernel),
+              arg3(kernel)))
             .LifeStyle.Is(ConvertLifestyles.ToLifestyleType(registration.Lifetime)));
       }
     }
@@ -272,15 +283,19 @@ namespace OpenRasta.DI.Windsor
     {
       public void Register(string componentName, IWindsorContainer container, DependencyFactoryModel registration)
       {
+        var arg1 = GetResolver<TArg1>();
+        var arg2 = GetResolver<TArg2>();
+        var arg3 = GetResolver<TArg3>();
+        var arg4 = GetResolver<TArg4>();
         var factoryMethod = ((Expression<Func<TArg1, TArg2, TArg3, TArg4, TConcrete>>) registration.Factory).Compile();
         container.Register(
           Component.For<TService>()
             .Named(componentName)
             .UsingFactoryMethod(kernel => factoryMethod(
-              kernel.Resolve<TArg1>(),
-              kernel.Resolve<TArg2>(),
-              kernel.Resolve<TArg3>(),
-              kernel.Resolve<TArg4>()))
+              arg1(kernel),
+              arg2(kernel),
+              arg3(kernel),
+              arg4(kernel)))
             .LifeStyle.Is(ConvertLifestyles.ToLifestyleType(registration.Lifetime)));
       }
     }
