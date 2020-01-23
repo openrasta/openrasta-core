@@ -19,6 +19,7 @@ using Castle.Windsor;
 using InternalDependencyResolver_Specification;
 using NUnit.Framework;
 using OpenRasta.Concordia;
+using OpenRasta.Configuration;
 using OpenRasta.DI;
 using OpenRasta.DI.Windsor;
 using OpenRasta.Hosting;
@@ -42,7 +43,6 @@ namespace WindsorDependencyResolver_Specification
   [TestFixture]
   public class when_registering_dependencies_with_the_castle_resolver : when_registering_dependencies
   {
-
     readonly WindsorContainer _container = new WindsorContainer();
 
 
@@ -112,7 +112,7 @@ namespace WindsorDependencyResolver_Specification
       return new WindsorDependencyResolver(new WindsorContainer());
     }
   }
-  
+
   [TestFixture]
   public class
     registration_depending_on_enum_of_unregistered_after_registration_with_the_castle_resolver :
@@ -129,9 +129,45 @@ namespace WindsorDependencyResolver_Specification
     registration_profiles_with_the_castle_resolver :
       registration_profiles
   {
+    WindsorContainer _container;
+
+    public registration_profiles_with_the_castle_resolver()
+    {
+      _container = new WindsorContainer();
+    }
+
     public override IDependencyResolver CreateResolver()
     {
-      return new WindsorDependencyResolver(new WindsorContainer());
+      return new WindsorDependencyResolver(_container);
+    }
+
+    [Test]
+    public void resolve_factory_enums()
+    {
+      var modelAware = (IModelDrivenDependencyRegistration) Resolver;
+
+      var typeRegistration = new TypeRegistrationContext();
+      typeRegistration.Singleton(() => new Simple());
+      modelAware.Register(typeRegistration.Model);
+      
+      typeRegistration = new TypeRegistrationContext();
+      typeRegistration.Singleton((IEnumerable<Simple> simples) => new Complex(simples));
+
+      var simples2 = Should.NotThrow(() => Resolver.Resolve<IEnumerable<Simple>>());
+      simples2.ShouldHaveSingleItem().ShouldNotBeNull();
+
+      var complex = Should.NotThrow(() => Resolver.Resolve<Complex>());
+      complex.Simple.ShouldHaveSingleItem().ShouldNotBeNull();
+    }
+
+    public class Complex
+    {
+      public IEnumerable<Simple> Simple { get; }
+
+      public Complex(IEnumerable<Simple> simple)
+      {
+        Simple = simple;
+      }
     }
   }
 
@@ -148,7 +184,6 @@ namespace WindsorDependencyResolver_Specification
 
       windsorContainer.Resolve<IDependencyResolver>().ShouldBeAssignableTo<FakeResolver>();
       windsorContainer.Resolve<IModelDrivenDependencyRegistration>().ShouldBeAssignableTo<WindsorDependencyResolver>();
-
     }
   }
 

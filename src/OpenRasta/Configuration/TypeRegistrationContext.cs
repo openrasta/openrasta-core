@@ -5,7 +5,7 @@ using OpenRasta.DI;
 
 namespace OpenRasta.Configuration
 {
-  class TypeRegistrationContext : ITypeRegistrationContext
+  public class TypeRegistrationContext : ITypeRegistrationContext
   {
     public ITypeRegistrationOptions<TConcrete> Singleton<TConcrete>()
     {

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using InternalDependencyResolver_Specification;
 using NUnit.Framework;
 using OpenRasta.DI;
+using OpenRasta.TypeSystem;
 using Shouldly;
 
 namespace OpenRasta.Tests.Unit.DI
@@ -21,13 +22,12 @@ namespace OpenRasta.Tests.Unit.DI
       });
     }
     
+
     [Test]
     public void resolving_enums()
     {
-      Resolver.AddDependency<Simple>();
       Should.NotThrow(() => Resolver.Resolve<IEnumerable<Simple>>().ShouldHaveSingleItem().ShouldNotBeNull());
     }
-
     [Test]
     public void resolving_func_of_enums()
     {
