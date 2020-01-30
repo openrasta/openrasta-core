@@ -47,6 +47,15 @@ namespace KeyedValuesBinder_Specification
       customer.Username.ShouldBe("johndoe");
       customer.FirstName.ShouldBe("john");
     }
+    
+    [Test]
+    public void cannot_set_readonly()
+    {
+      var binder = new KeyedValuesBinder(TypeOf<Person>(), "aPerson");
+      var canSet = binder.SetProperty("readOnlyId", new[] {"3"}, (str, type) => BindingResult.Success(str));
+
+      canSet.ShouldBeFalse();
+    }
 
     [Test]
     public void enumerables_are_initialized_as_empty_by_default()

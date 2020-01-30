@@ -20,6 +20,8 @@ namespace OpenRasta.Tests.Unit.Fakes
         public DateTime DateOfBirth { get; set; }
         public string Username { get; set; }
         public Address Address { get; set; }
+
+        public int ReadOnlyId => 3;
     }
     public class Customer : Person
     {

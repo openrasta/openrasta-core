@@ -81,8 +81,10 @@ namespace OpenRasta.TypeSystem
                     }
                 }
             }
-            object newValue;
-            var success = Property.Type.TryCreateInstance(values, converter, out newValue);
+
+            if (!Property.CanWrite) return false;
+
+            var success = Property.Type.TryCreateInstance(values, converter, out var newValue);
             if (success)
                 _cachedValue = newValue;
             return success;
