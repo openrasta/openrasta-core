@@ -26,9 +26,14 @@ namespace OpenRasta.OperationModel.CodecSelectors
 
         public ILogger Logger { get; set; }
 
+        bool HasBody
+        {
+          get { return _request.Entity.ContentLength > 0; }
+        }
+
         public IEnumerable<IOperationAsync> Process(IEnumerable<IOperationAsync> operations)
         {
-            if (_request.Entity.ContentLength == 0)
+            if (HasBody)
                 return LogSelected(operations.Where(operation => operation.Inputs.AllReady()));
 
             var requestMediaType = _request.Entity.ContentType ?? DetectMediaType();
