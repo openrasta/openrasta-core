@@ -24,15 +24,18 @@ namespace Configuration_Specification
 
       TheUris[0].Uri.ShouldBe("/customer/{Address}");
     }
-    [Test, Ignore("TODO: Not implemented yet")]
+    [Test]
     public void using_resource_func_with_var()
     {
       // TODO:Implement this correctly
       var stringVar = "test";
-      ResourceSpaceHas.ResourcesOfType<Customer>().AtUri(c => $"/customer/{c.Address}/{stringVar}");
+      const string stringConst = "test2";
+      ResourceSpaceHas.ResourcesOfType<Customer>().AtUri(c => $"/customer/{c.Address}/{stringVar}/{stringConst}/{UriFuncProp}");
 
-      TheUris[0].Uri.ShouldBe("/customer/{Address}/test");
+      TheUris[0].Uri.ShouldBe("/customer/{Address}/test/test2/test3");
     }
+
+    public string UriFuncProp => "test3";
 
     [Test]
     public void a_null_language_defaults_to_the_inviariant_culture()

@@ -78,11 +78,24 @@ namespace OpenRasta.Configuration.Fluent.Implementation
           node.Member is PropertyInfo property &&
           property.DeclaringType.IsAssignableFrom(_resourceType))
       {
-      
         format.Add($"{{{node.Member.Name}}}");
       }
-//      else if (node.NodeType == ExpressionType.MemberAccess)
-
+      else if (node.NodeType == ExpressionType.MemberAccess &&
+               node.Expression is ConstantExpression fieldTarget &&
+               node.Member is FieldInfo field &&
+               field.DeclaringType.IsAssignableFrom(_resourceType) == false)
+      {
+        var fieldValue = field.GetValue(fieldTarget.Value);
+        format.Add((string)fieldValue);
+      }
+      else if (node.NodeType == ExpressionType.MemberAccess &&
+               node.Expression is ConstantExpression propTarget &&
+               node.Member is PropertyInfo p &&
+               p.DeclaringType.IsAssignableFrom(_resourceType) == false)
+      {
+        var fieldValue = p.GetValue(propTarget.Value);
+        format.Add((string)fieldValue);
+      }
       return base.VisitMember(node);
     }
 
