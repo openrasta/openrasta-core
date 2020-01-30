@@ -33,7 +33,7 @@ namespace OpenRasta.Tests.Unit.OperationModel.CodecSelectors
       codec_is_not_assigned("Get");
       then_operation_should_be_selected("GetWithOptionalValue");
     }
-    
+
     [Test]
     public void only_operations_already_ready_for_invocation_get_returned_for_no_content_length()
     {
@@ -63,23 +63,6 @@ namespace OpenRasta.Tests.Unit.OperationModel.CodecSelectors
       then_operation_should_be_selected("Trace");
       codec_is_not_assigned("Trace");
     }
-    
-    [Test]
-    public void only_operations_already_ready_for_invocation_get_returned_for_TransferEncoding_requests()
-    {
-      Context.Request.Headers.Add("transfer-encoding","");
-      given_request_httpmethod("POST");
-      given_request_entity_body("hello world");
-      given_filter();
-      given_operations();
-
-      when_filtering_operations();
-
-      FilteredOperations.Count().ShouldBe(3);
-
-      then_operation_should_be_selected("Post");
-      codec_is_not_assigned("Post");
-    }
 
     void then_operation_should_be_selected(string methodName)
     {
@@ -108,6 +91,27 @@ namespace OpenRasta.Tests.Unit.OperationModel.CodecSelectors
       given_registration_codec<ApplicationOctetStreamCodec>();
       given_request_httpmethod("POST");
       given_request_entity_body(new byte[] {0});
+
+      when_filtering_operations();
+
+      var selectedCodec = FilteredOperations.First(x => x.Name == "PostForStream");
+      selectedCodec.GetRequestCodec().CodecRegistration.MediaType.Matches(MediaType.ApplicationOctetStream)
+        .ShouldBeTrue();
+    }
+  }
+  public class when_transfer_encoding : requestcodecselector_context
+  {
+    [Test]
+    public void the_content_type_is_set_to_application_octet_stream()
+    {
+      given_filter();
+      given_operations();
+      given_request_header_content_type((string) null);
+      given_registration_codec<ApplicationOctetStreamCodec>();
+      given_request_httpmethod("POST");
+      given_request_entity_body(new byte[] {0});
+      Request.Entity.ContentLength = null;
+      Request.Headers.Add("transfer-encoding", "chunked");
 
       when_filtering_operations();
 
