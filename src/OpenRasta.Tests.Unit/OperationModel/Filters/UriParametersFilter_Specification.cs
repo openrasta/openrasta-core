@@ -73,6 +73,20 @@ namespace OpenRasta.Tests.Unit.OperationModel.Filters
         FilteredOperations.Count().ShouldBe(0);
         Errors.Errors.Count.ShouldNotBe(0);
       }
+      
+      [Test]
+      public void operations_only_selected_when_writeable_properties()
+      {
+        given_operations();
+        given_uri_registration(new object(), "/");
+        given_first_resource_selected();
+        given_pipeline_uriparams(new NameValueCollection {{"id", "3"}});
+        given_filter();
+
+        when_filtering_operations();
+
+        FilteredOperations.Count().ShouldBe(1);
+      }
     }
   }
 
@@ -90,5 +104,13 @@ namespace OpenRasta.Tests.Unit.OperationModel.Filters
     {
       return null;
     }
+
+    public object PutWithId(int id) => null;
+    public object PutWithType(TypeWithReadOnlyId type) => null;
+  }
+
+  public class TypeWithReadOnlyId
+  {
+    public int Id => 2;
   }
 }
