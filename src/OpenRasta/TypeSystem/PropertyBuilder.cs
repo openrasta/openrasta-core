@@ -28,27 +28,15 @@ namespace OpenRasta.TypeSystem
 
         public int IndexAtCreation { get; set; }
 
-        public IProperty Property
-        {
-            get { return Member as IProperty; }
-        }
+        public IProperty Property => Member as IProperty;
 
-        public override bool CanWrite
-        {
-            get { return Property.CanWrite; }
-        }
+        public override bool CanWrite => Property.CanWrite;
 
-        public IMemberBuilder Owner { get; private set; }
+        public IMemberBuilder Owner { get; }
 
-        public override object Value
-        {
-            get { return _cachedValue; }
-        }
+        public override object Value => _cachedValue;
 
-        public override bool HasValue
-        {
-            get { return _cachedValue != null; }
-        }
+        public override bool HasValue => _cachedValue != null;
 
         public override bool TrySetValue(object value)
         {
