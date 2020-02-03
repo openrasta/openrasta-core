@@ -26,11 +26,13 @@ namespace OpenRasta.Configuration.Fluent.Implementation
     public IUriDefinition<T> AtUri(Expression<Func<T, string>> uri)
     {
       if (uri == null) throw new ArgumentNullException(nameof(uri));
+      var visited = new UriExpressionVisitor().GenerateUri(typeof(T), uri);
+      
       var compiled = uri.Compile();
       string compiledUntyped(object resource) => compiled((T) resource);
       var uriModel = new UriModel
       {
-        Uri = new UriExpressionVisitor().GenerateUri(typeof(T), uri),
+        Uri = visited.UriTemplate,
         ResourceModel = Resource,
         Properties = { ["compiled"] = (Func<object, string>) compiledUntyped }
       };

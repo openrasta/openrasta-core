@@ -24,6 +24,14 @@ namespace Configuration_Specification
 
       TheUris[0].Uri.ShouldBe("/customer/{Address}");
     }
+
+    [Test]
+    public void using_nested_func()
+    {
+      ResourceSpaceHas.ResourcesOfType<Customer>().AtUri(c => $"/customer/{c.Address.City}");
+
+      TheUris[0].Uri.ShouldBe("/customer/{AddressCity}");
+    }
     [Test]
     public void using_resource_func_with_var()
     {
