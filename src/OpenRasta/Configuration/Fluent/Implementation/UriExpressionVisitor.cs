@@ -9,6 +9,8 @@ namespace OpenRasta.Configuration.Fluent.Implementation
   public class UriExpressionVisitor : MethodArgumentVisitor
   {
     Type _resourceType;
+    List<object> _stringFormatArgs;
+    List<MemberInfo> _memberAccess;
 
     public ParsedUri GenerateUri(Type resourceType, Expression uri)
     {
@@ -54,8 +56,6 @@ namespace OpenRasta.Configuration.Fluent.Implementation
       return visitedExpression;
     }
 
-    List<object> _stringFormatArgs;
-    List<MemberInfo> _memberAccess;
 
     protected override Expression VisitArgument(int position, Expression arg)
     {
@@ -97,6 +97,12 @@ namespace OpenRasta.Configuration.Fluent.Implementation
       throw new InvalidOperationException($"Unrecognized expression {arg2}");
     }
 
+    protected override Expression VisitConstant(ConstantExpression node)
+    {
+      if (node.Type == typeof(string) && _stringFormatArgs == null)
+        _stringFormatArgs = new List<object>{node.Value};
+      return base.VisitConstant(node);
+    }
 
     protected override Expression VisitMethodCall(MethodCallExpression node)
     {

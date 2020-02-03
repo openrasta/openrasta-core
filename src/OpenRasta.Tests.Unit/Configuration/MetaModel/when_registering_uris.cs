@@ -32,6 +32,7 @@ namespace Configuration_Specification
 
       TheUris[0].Uri.ShouldBe("/customer/{AddressCity}");
     }
+    
     [Test]
     public void using_resource_func_with_var()
     {
@@ -41,6 +42,22 @@ namespace Configuration_Specification
       ResourceSpaceHas.ResourcesOfType<Customer>().AtUri(c => $"/customer/{c.Address}/{stringVar}/{stringConst}/{UriFuncProp}");
 
       TheUris[0].Uri.ShouldBe("/customer/{Address}/test/test2/test3");
+    }
+    [Test]
+    public void using_resource_func_no_args()
+    {
+      // ReSharper disable once RedundantStringInterpolation
+      ResourceSpaceHas.ResourcesOfType<Customer>().AtUri(c => $"/customer/");
+
+      TheUris[0].Uri.ShouldBe("/customer/");
+    }
+
+    [Test]
+    public void using_resource_func_no_format()
+    {
+      ResourceSpaceHas.ResourcesOfType<Customer>().AtUri(c => "/customer/");
+
+      TheUris[0].Uri.ShouldBe("/customer/");
     }
 
     public string UriFuncProp => "test3";
