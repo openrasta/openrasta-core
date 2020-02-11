@@ -18,7 +18,6 @@ namespace Tests.Pipeline.Initializer
     [InlineData(typeof(TopologicalSortCallGraphGenerator))]
     public async Task contributors_get_executed(Type callGraphGeneratorType)
     {
-      System.Diagnostics.Debug.WriteLine("yo");
       var pipeline = CreatePipeline(callGraphGeneratorType,
           new[]
           {

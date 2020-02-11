@@ -13,8 +13,16 @@ namespace OpenRasta.Hosting.Katana
 
     bool _headersCommitted;
 
+    Dictionary<string, Action<IOwinResponse, string>> _nativeAssignements;
+
     public OwinResponse(IOwinContext context)
     {
+      _nativeAssignements = new Dictionary<string, Action<IOwinResponse, string>>(StringComparer.OrdinalIgnoreCase)
+      {
+        ["content-type"] = (r, val) => r.ContentType = val,
+        ["content-length"] = (r, val) => r.ContentLength = Headers.ContentLength
+      };
+      
       var response = context.Response;
 
       context.Response.OnSendingHeaders(r => r.NativeHeadersSent = true, this);
@@ -51,8 +59,10 @@ namespace OpenRasta.Hosting.Katana
       NativeContext.StatusCode = _statusCode;
       foreach (var header in Headers)
       {
-        NativeContext.Headers.Remove(header.Key);
-        NativeContext.Headers.Append(header.Key, header.Value);
+        if (_nativeAssignements.TryGetValue(header.Key, out var setter))
+          setter(NativeContext, header.Value);
+        else
+          NativeContext.Headers.Set(header.Key, header.Value);
       }
 
       _headersCommitted = true;
