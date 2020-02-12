@@ -13,7 +13,7 @@ namespace OpenRasta.Hosting.Katana
 
     bool _headersCommitted;
 
-    Dictionary<string, Action<IOwinResponse, string>> _nativeAssignements;
+    readonly Dictionary<string, Action<IOwinResponse, string>> _nativeAssignements;
 
     public OwinResponse(IOwinContext context)
     {
