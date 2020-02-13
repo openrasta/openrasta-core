@@ -36,6 +36,7 @@ namespace OpenRasta.Hosting.AspNet
     public void WriteHeaders()
     {
       if (_headersSent) throw new InvalidOperationException("HTTP Headers have been sent");
+      
       if (Headers.ContentType != null)
       {
         NativeContext.Response.AppendHeader("Content-Type", Headers.ContentType.MediaType);

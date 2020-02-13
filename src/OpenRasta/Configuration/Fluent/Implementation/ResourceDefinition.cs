@@ -1,9 +1,6 @@
 using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Reflection;
 using OpenRasta.Codecs;
 using OpenRasta.Configuration.Fluent.Extensions;
 using OpenRasta.Configuration.MetaModel;
@@ -29,11 +26,13 @@ namespace OpenRasta.Configuration.Fluent.Implementation
     public IUriDefinition<T> AtUri(Expression<Func<T, string>> uri)
     {
       if (uri == null) throw new ArgumentNullException(nameof(uri));
+      var visited = new UriExpressionVisitor().GenerateUri(typeof(T), uri);
+      
       var compiled = uri.Compile();
       string compiledUntyped(object resource) => compiled((T) resource);
       var uriModel = new UriModel
       {
-        Uri = new UriExpressionVisitor().GenerateUri(typeof(T), uri),
+        Uri = visited.UriTemplate,
         ResourceModel = Resource,
         Properties = { ["compiled"] = (Func<object, string>) compiledUntyped }
       };
@@ -51,58 +50,6 @@ namespace OpenRasta.Configuration.Fluent.Implementation
       }
 
       public new IResourceDefinition<TResource> And => _resourceDefinition;
-    }
-  }
-
-  public class UriExpressionVisitor : ExpressionVisitor
-  {
-    readonly List<string> format = new List<string>();
-    Type _resourceType;
-    string _formatted;
-
-    public string GenerateUri(Type resourceType, Expression uri)
-    {
-      _resourceType = resourceType;
-      Visit(uri);
-      return _formatted ?? format[0];
-    }
-
-    protected override Expression VisitParameter(ParameterExpression node)
-    {
-      return base.VisitParameter(node);
-    }
-
-    protected override Expression VisitMember(MemberExpression node)
-    {
-      if (node.NodeType == ExpressionType.MemberAccess &&
-          node.Member is PropertyInfo property &&
-          property.DeclaringType.IsAssignableFrom(_resourceType))
-      {
-      
-        format.Add($"{{{node.Member.Name}}}");
-      }
-//      else if (node.NodeType == ExpressionType.MemberAccess)
-
-      return base.VisitMember(node);
-    }
-
-    protected override Expression VisitMethodCall(MethodCallExpression node)
-    {
-      if (node.Method.DeclaringType == typeof(string) && node.Method.Name == nameof(string.Format))
-      {
-        var e = base.VisitMethodCall(node);
-        _formatted = string.Format(format[0], format.Skip(1).Cast<object>().ToArray());
-        return e;
-      }
-
-      return base.VisitMethodCall(node);
-    }
-
-    protected override Expression VisitConstant(ConstantExpression node)
-    {
-      if (node.Type == typeof(string))
-        format.Add((string)node.Value);
-      return base.VisitConstant(node);
     }
   }
 
@@ -219,21 +166,5 @@ namespace OpenRasta.Configuration.Fluent.Implementation
 
       public UriModel Uri => _uriModel;
     }
-  }
-
-  public abstract class TargetWrapper : IResourceTarget
-  {
-    readonly ResourceDefinition _target;
-
-    protected TargetWrapper(ResourceDefinition target)
-    {
-      _target = target;
-    }
-
-    public ResourceModel Resource => _target.Resource;
-
-    public ITypeSystem TypeSystem => _target.TypeSystem;
-
-    public IMetaModelRepository Repository => _target.Repository;
   }
 }
