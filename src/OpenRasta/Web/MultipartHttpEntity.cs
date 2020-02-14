@@ -15,12 +15,6 @@ using OpenRasta.Diagnostics;
 
 namespace OpenRasta.Web
 {
-    public interface IMultipartHttpEntity : IHttpEntity
-    {
-        void SwapStream(string filepath);
-        void SwapStream(Stream stream);
-    }
-
     public class MultipartHttpEntity : IMultipartHttpEntity
     {
         ILogger Log { get; set; }
