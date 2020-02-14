@@ -287,5 +287,12 @@ namespace OpenRasta.Web
       {
       }
     }
+
+    public class TooManyRequests : OperationResult
+    {
+      public TooManyRequests() : base(429)
+      {
+      }
+    }
   }
 }
