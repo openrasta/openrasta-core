@@ -88,6 +88,8 @@ namespace OpenRasta.Hosting.AspNet.Tests.Integration
       {
         Assert.Fail($"{nameof(TheResponse)} is null");
       }
+
+      Console.WriteLine("Content length:" + TheResponse.ContentLength);
       var data = new byte[TheResponse.ContentLength];
 
       var payload = TheResponse.GetResponseStream()?.Read(data, 0, data.Length);

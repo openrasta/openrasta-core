@@ -28,8 +28,8 @@ namespace OpenRasta.Hosting.AspNet.Tests.Integration
       GivenATextRequest("PATCH", "/3", "new customer name", "UTF-16");
       GivenTheResponseIsInEncoding(Encoding.ASCII);
 
-      TheResponseAsString.ShouldBe("new customer name");
       TheResponse.StatusCode.ShouldBe(HttpStatusCode.OK);
+      TheResponseAsString.ShouldBe("new customer name");
       TheResponse.Headers["Location"].ShouldBe("http://127.0.0.1:6688/3");
 
       TheResponse.ContentType.ShouldContain("text/plain");
