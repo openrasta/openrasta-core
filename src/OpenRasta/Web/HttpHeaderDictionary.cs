@@ -24,7 +24,7 @@ namespace OpenRasta.Web
     public HttpHeaderDictionary(NameValueCollection sourceDictionary)
     {
       foreach (string key in sourceDictionary.Keys)
-        _base.AddFieldValues(key, sourceDictionary.GetValues(key));
+       AddValues(key, sourceDictionary.GetValues(key));
     }
 
     public MediaType ContentType
@@ -109,11 +109,13 @@ namespace OpenRasta.Web
 
     public void Add(KeyValuePair<string, string> item)
     {
-      _base.AddFieldValues(item.Key, item.Value);
+      Add(item.Key, item.Value);
     }
 
     public void Clear()
     {
+      foreach(var fieldName in _base.FieldNames)
+        UpdateValue(fieldName, null);
       _base.Clear();
     }
 
@@ -170,15 +172,18 @@ namespace OpenRasta.Web
     void UpdateValue(string headerName, string value)
     {
       if (headerName.Equals(HttpHeaderNames.ContentType, StringComparison.OrdinalIgnoreCase))
-        _contentType = new MediaType(value);
+        _contentType = value == null ? null : new MediaType(value);
       else if (headerName.Equals(HttpHeaderNames.ContentLength, StringComparison.OrdinalIgnoreCase))
       {
-        if (long.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out var contentLength))
+        if (value != null &&
+            long.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out var contentLength))
           _contentLength = contentLength;
+        else
+          _contentLength = null;
       }
       else if (headerName.Equals(HttpHeaderNames.ContentDisposition, StringComparison.OrdinalIgnoreCase))
       {
-        _contentDisposition = new ContentDispositionHeader(value);
+        _contentDisposition = value == null ? null : new ContentDispositionHeader(value);
       }
     }
 
