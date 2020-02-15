@@ -27,7 +27,7 @@ namespace OpenRasta.Hosting.AspNet.Tests.Integration
 
     void SelectPort()
     {
-      _port = 6688;
+      _port = new Random().Next(49152,65535);
     }
 
     [OneTimeTearDown]
@@ -65,9 +65,10 @@ namespace OpenRasta.Hosting.AspNet.Tests.Integration
       WebRequest request = WebRequest.Create(destinationUri);
       request.Timeout = Debugger.IsAttached ? int.MaxValue :  (int)TimeSpan.FromSeconds(30).TotalMilliseconds;
       request.Method = verb;
-      request.ContentLength = content?.Length ?? 0;
-      if (request.ContentLength > 0)
+      
+      if (content?.Length > 0)
       {
+        request.ContentLength = content.Length;
         request.ContentType = contentType.ToString();
         using (var requestStream = request.GetRequestStream())
           requestStream.Write(content, 0, content.Length);
