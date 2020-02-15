@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Globalization;
+using System.Linq;
 
 namespace OpenRasta.Web
 {
@@ -11,13 +12,10 @@ namespace OpenRasta.Web
   /// </summary>
   public class HttpHeaderDictionary : IDictionary<string, string>
   {
-    readonly IDictionary<string, string> _base = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
     ContentDispositionHeader _contentDisposition;
     long? _contentLength;
     MediaType _contentType;
-    string HDR_CONTENT_DISPOSITION = "Content-Disposition";
-    string HDR_CONTENT_LENGTH = "Content-Length";
-    string HDR_CONTENT_TYPE = "Content-Type";
+    readonly HttpHeaderStore _base = new HttpHeaderStore();
 
     public HttpHeaderDictionary()
     {
@@ -26,80 +24,92 @@ namespace OpenRasta.Web
     public HttpHeaderDictionary(NameValueCollection sourceDictionary)
     {
       foreach (string key in sourceDictionary.Keys)
-        this[key] = sourceDictionary[key];
+        _base.AddFieldValues(key, sourceDictionary.GetValues(key));
     }
 
     public MediaType ContentType
     {
       get => _contentType;
-      set {
+      set
+      {
         _contentType = value;
-        _base[HDR_CONTENT_TYPE] = value == null ? null : value.ToString();
+        _base.SetFieldValue(HttpHeaderNames.ContentType, value == null ? null : value.ToString());
       }
     }
 
     public long? ContentLength
     {
       get => _contentLength;
-      set {
+      set
+      {
         _contentLength = value;
-        
-        _base[HDR_CONTENT_LENGTH] = value == null ? null : value.ToString();
+
+        _base.SetFieldValue(HttpHeaderNames.ContentLength, value == null ? null : value.ToString());
       }
     }
 
     public ContentDispositionHeader ContentDisposition
     {
       get => _contentDisposition;
-      set {
+      set
+      {
         _contentDisposition = value;
-        _base[HDR_CONTENT_DISPOSITION] = value?.ToString();
+        _base.SetFieldValue(HttpHeaderNames.ContentDisposition, value?.ToString());
       }
     }
 
     public void Add(string key, string value)
     {
-      if (_base.ContainsKey(key))
-        _base[key] = _base[key] + "," + value;
-      else
-        _base.Add(key, value);
+      _base.AddFieldValues(key, value);
       UpdateValue(key, value);
+    }
+    public void AddValues(string key, IEnumerable<string> values)
+    {
+      _base.AddFieldValues(key, values);
+      foreach(var value in values)
+        UpdateValue(key, value);
     }
 
     public bool Remove(string key)
     {
-      bool result = _base.Remove(key);
+      bool containedHeader = _base.ContainsHeaderField(key);
+      if (containedHeader)
+        _base.RemoveHeaderField(key);
       UpdateValue(key, null);
-      return result;
+      return containedHeader;
     }
 
     public string this[string key]
     {
-      get => _base.TryGetValue(key, out var result) ? result : null;
+      get => _base.ContainsHeaderField(key) ? _base.CombineFieldValues(key) : null;
       set
       {
-        _base[key] = value;
+        _base.SetFieldValue(key, value);
         UpdateValue(key, value);
       }
     }
 
     public bool ContainsKey(string key)
     {
-      return _base.ContainsKey(key);
+      return _base.ContainsHeaderField(key);
     }
 
-    public ICollection<string> Keys => _base.Keys;
+    public ICollection<string> Keys => _base.FieldNames;
 
     public bool TryGetValue(string key, out string value)
     {
-      return _base.TryGetValue(key, out value);
+      value = null;
+
+      if (!_base.ContainsHeaderField(key)) return false;
+      value = _base.CombineFieldValues(key);
+      return true;
     }
 
-    public ICollection<string> Values => _base.Values;
+    public ICollection<string> Values => _base.FieldNames.Select(n => _base.CombineFieldValues(n)).ToList();
 
     public void Add(KeyValuePair<string, string> item)
     {
-      _base.Add(item.Key, item.Value);
+      _base.AddFieldValues(item.Key, item.Value);
     }
 
     public void Clear()
@@ -109,26 +119,47 @@ namespace OpenRasta.Web
 
     public bool Contains(KeyValuePair<string, string> item)
     {
-      return _base.ContainsKey(item.Key);
+      return _base.TryGetFieldValues(item.Key, out var values)
+             && values.Any(v => v.Contains(item.Value));
     }
 
     public void CopyTo(KeyValuePair<string, string>[] array, int arrayIndex)
     {
-      (_base).CopyTo(array, arrayIndex);
+      int position = 0;
+      foreach (var kv in this)
+        array[arrayIndex + (position++)] = kv;
     }
 
-    public int Count => _base.Count;
+    public int Count => _base.FieldNames.Count;
 
     public bool IsReadOnly => false;
 
     public bool Remove(KeyValuePair<string, string> item)
     {
-      return Remove(item.Key);
+      if (!_base.TryGetFieldValues(item.Key, out var vals))
+        return false;
+
+      LinkedListNode<IEnumerable<string>> node = vals.First;
+      do
+      {
+        if (!node.Value.Contains(item.Value)) continue;
+
+        var newValue = node.Value.Where(v => v != item.Value).ToList();
+        if (newValue.Count > 0)
+          node.Value = newValue;
+        else
+          vals.Remove(node);
+        
+        return true;
+      } while ((node = node.Next) != null);
+
+      return false;
     }
 
     public IEnumerator<KeyValuePair<string, string>> GetEnumerator()
     {
-      return _base.GetEnumerator();
+      foreach (var key in Keys)
+        yield return new KeyValuePair<string, string>(key, _base.CombineFieldValues(key));
     }
 
     IEnumerator IEnumerable.GetEnumerator()
@@ -138,17 +169,29 @@ namespace OpenRasta.Web
 
     void UpdateValue(string headerName, string value)
     {
-      if (headerName.Equals(HDR_CONTENT_TYPE, StringComparison.OrdinalIgnoreCase))
+      if (headerName.Equals(HttpHeaderNames.ContentType, StringComparison.OrdinalIgnoreCase))
         _contentType = new MediaType(value);
-      else if (headerName.Equals(HDR_CONTENT_LENGTH, StringComparison.OrdinalIgnoreCase))
+      else if (headerName.Equals(HttpHeaderNames.ContentLength, StringComparison.OrdinalIgnoreCase))
       {
         if (long.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out var contentLength))
           _contentLength = contentLength;
       }
-      else if (headerName.Equals(HDR_CONTENT_DISPOSITION, StringComparison.OrdinalIgnoreCase))
+      else if (headerName.Equals(HttpHeaderNames.ContentDisposition, StringComparison.OrdinalIgnoreCase))
       {
         _contentDisposition = new ContentDispositionHeader(value);
       }
+    }
+
+    public bool TryGetValues(string headerName, out IEnumerable<string> values)
+    {
+      if (_base.TryGetFieldValues(headerName, out var valueList))
+      {
+        values = valueList.SelectMany(_ => _);
+        return true;
+      }
+
+      values = default;
+      return false;
     }
   }
 }
