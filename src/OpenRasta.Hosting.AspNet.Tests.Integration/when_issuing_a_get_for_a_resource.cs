@@ -30,7 +30,7 @@ namespace OpenRasta.Hosting.AspNet.Tests.Integration
 
       TheResponseAsString.ShouldBe("new customer name");
       TheResponse.StatusCode.ShouldBe(HttpStatusCode.OK);
-      TheResponse.Headers["Location"].ShouldBe("http://127.0.0.1:6688/3");
+      TheResponse.Headers["Location"].ShouldBe($"http://127.0.0.1:{_port}/3");
 
       TheResponse.ContentType.ShouldContain("text/plain");
     }
