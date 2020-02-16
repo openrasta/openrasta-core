@@ -41,7 +41,7 @@ namespace Tests.Plugins.ReverseProxy.LoadBalancingHttpClientFactory
         });
       });
       var handlerIndex = 0;
-      var factory = new RoundRobinHttpClientFactory(2, () => handlerIndex++ *2 == 0 ? activeHandler : retryHandler);
+      var factory = new RoundRobinHttpClientFactory(2, () => handlerIndex++ *2 == 0 ? activeHandler : retryHandler, TimeSpan.FromMinutes(2));
 
       var responsesBefore = await execute();
       await Task.Delay(TimeSpan.FromSeconds(6));

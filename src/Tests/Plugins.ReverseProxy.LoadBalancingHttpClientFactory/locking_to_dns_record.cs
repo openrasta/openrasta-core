@@ -21,6 +21,7 @@ namespace Tests.Plugins.ReverseProxy.LoadBalancingHttpClientFactory
       var delegateHandler = new LockToIPAddress(simulator, resolver);
       client = new HttpClient(delegateHandler);
     }
+    
     [Fact]
     public async Task request_uri_is_rewritten()
     {

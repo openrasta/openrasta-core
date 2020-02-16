@@ -8,7 +8,6 @@ namespace OpenRasta.Plugins.ReverseProxy
 {
   public class ReverseProxyOptions
   {
-    public Action<ReverseProxyResponse> OnProxyResponse { get; set; }
 
     public ReverseProxyOptions()
     {
@@ -18,6 +17,7 @@ namespace OpenRasta.Plugins.ReverseProxy
     public TimeSpan Timeout { get; set; } = TimeSpan.FromSeconds(30);
     public HttpClientOptions HttpClient { get; set; } = new HttpClientOptions();
     public Action<ICommunicationContext,HttpRequestMessage> OnSend { get; set; }
+    public Action<ReverseProxyResponse> OnProxyResponse { get; set; }
 
     public class ViaOptions
     {
@@ -52,9 +52,16 @@ namespace OpenRasta.Plugins.ReverseProxy
       public int ClientCount { get; set; }
       public TimeSpan LeaseTime { get; set; }
       public bool ClientPerNode { get; set; }
-      public Func<string,Task<IPAddress>> DnsResolver { get; set; }
+      public Func<string,Task<IPAddress[]>> DnsResolver { get; set; }
+      public DnsResolverResponseType DnsResolverResponseType { get; set; } = DnsResolverResponseType.Partial;
+      
     }
 
+    public enum DnsResolverResponseType
+    {
+      Partial,
+      All
+    }
   }
 
 }

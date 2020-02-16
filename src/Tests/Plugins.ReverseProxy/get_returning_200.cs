@@ -71,7 +71,8 @@ namespace Tests.Plugins.ReverseProxy
         .GetAsync("http://localhost/proxy"))
       {
         var timing = response.Message.Headers.GetValues("server-timing");
-        timing.First().ShouldBe("from;dur=1,to;dur=1");
+        timing.ElementAt(0).ShouldBe("from;dur=1");
+        timing.ElementAt(1).ShouldBe("to;dur=1");
       }
     }
   }

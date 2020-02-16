@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading;
+using System.Threading.Tasks;
 using OpenRasta.Configuration;
 using OpenRasta.Configuration.Fluent;
 using OpenRasta.Configuration.Fluent.Extensions;
@@ -30,13 +32,26 @@ namespace OpenRasta.Plugins.ReverseProxy
       if (options.HttpClient.RoundRobin.Enabled)
       {
         var handler = options.HttpClient.Handler;
+        Func<ActiveHandler, bool> shouldEvict = null;
         if (options.HttpClient.RoundRobin.ClientPerNode)
-          handler = () => new LockToIPAddress(options.HttpClient.Handler(), options.HttpClient.RoundRobin.DnsResolver);
+        {
+          var hostResolver = new ServiceResolver(options.HttpClient.RoundRobin.DnsResolver, TimeSpan.FromSeconds(10));
+          
+          handler = () => new LockToIPAddress(
+            options.HttpClient.Handler(),
+            hostResolver.GetIPAddressAsync);
+
+          if (options.HttpClient.RoundRobin.DnsResolverResponseType == ReverseProxyOptions.DnsResolverResponseType.All)
+          {
+            shouldEvict = ShouldEvict(hostResolver);
+          }
+        }
 
         var factory = new RoundRobinHttpClientFactory(
           options.HttpClient.RoundRobin.ClientCount,
           handler,
-          options.HttpClient.RoundRobin.LeaseTime);
+          options.HttpClient.RoundRobin.LeaseTime,
+          shouldEvict);
 
         uses.Dependency(d => d.Singleton(() => new ReverseProxy(
           options.Timeout,
@@ -53,7 +68,7 @@ namespace OpenRasta.Plugins.ReverseProxy
           options.Timeout,
           options.ForwardedHeaders.ConvertLegacyHeaders,
           options.Via.Pseudonym,
-          options.HttpClient.Factory, 
+          options.HttpClient.Factory,
           options.OnSend,
           options.OnProxyResponse
         )));
@@ -69,6 +84,15 @@ namespace OpenRasta.Plugins.ReverseProxy
         uses.PipelineContributor<RewriteAppBaseUsingForwardedHeaders>();
 
       return uses;
+    }
+
+    static Func<ActiveHandler, bool> ShouldEvict(ServiceResolver resolver)
+    {
+      return handler =>
+      {
+        var ipHandler = ((LockToIPAddress) handler.InnerHandler);
+        return resolver.Contains(ipHandler.Host, ipHandler.Address) == false;
+      };
     }
   }
 }

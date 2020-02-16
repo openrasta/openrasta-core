@@ -106,31 +106,32 @@ namespace OpenRasta.Plugins.ReverseProxy
         legacyForward.Append(key).Append("=").Append(value);
       }
 
-      foreach (var headerKey in context.Request.Headers.Keys)
+      var orRequest = context.Request;
+      foreach (var headerKey in orRequest.Headers.Keys)
       {
         if (convertLegacyHeaders)
         {
           if (headerKey.Equals("X-Forwarded-Host", StringComparison.OrdinalIgnoreCase))
           {
-            appendParameter("host", context.Request.Headers[headerKey]);
+            appendParameter("host", orRequest.Headers[headerKey]);
             continue;
           }
 
           if (headerKey.Equals("X-Forwarded-For", StringComparison.OrdinalIgnoreCase))
           {
-            appendParameter("for", context.Request.Headers[headerKey]);
+            appendParameter("for", orRequest.Headers[headerKey]);
             continue;
           }
 
           if (headerKey.Equals("X-Forwarded-Proto", StringComparison.OrdinalIgnoreCase))
           {
-            appendParameter("proto", context.Request.Headers[headerKey]);
+            appendParameter("proto", orRequest.Headers[headerKey]);
             continue;
           }
 
           if (headerKey.Equals("X-Forwarded-Base", StringComparison.OrdinalIgnoreCase))
           {
-            var baseHeaderValue = context.Request.Headers[headerKey];
+            var baseHeaderValue = orRequest.Headers[headerKey];
             var baseVal = $"\"{(baseHeaderValue[0] != '/' ? "/" + baseHeaderValue : baseHeaderValue)}\"";
             appendParameter("base", baseVal);
             continue;
@@ -143,10 +144,10 @@ namespace OpenRasta.Plugins.ReverseProxy
         {
           if (request.Content == null) continue;
 
-          request.Content.Headers.Add(headerKey, request.Headers.GetValues(headerKey));
+          request.Content.Headers.Add(headerKey, orRequest.Headers.GetValues(headerKey));
         }
         else if (!HttpHeaderClassification.IsHopByHopHeader(headerKey))
-          request.Headers.Add(headerKey, request.Headers.GetValues(headerKey));
+          request.Headers.Add(headerKey, orRequest.Headers.GetValues(headerKey));
       }
 
       if (convertLegacyHeaders && legacyForward?.Length > 0)

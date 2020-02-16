@@ -11,24 +11,25 @@ namespace OpenRasta.Plugins.ReverseProxy.HttpMessageHandlers
   {
     readonly Func<string, Task<IPAddress>> _dnsResolver;
     readonly SemaphoreSlim _dnsResolverLock = new SemaphoreSlim(1);
-    IPAddress _ipAddress;
-    string _rewrittenHost;
+    public IPAddress Address { get; private set; }
+    public string Host { get; private set; }
 
     public LockToIPAddress(
-      HttpMessageHandler inner, 
-      Func<string,Task<IPAddress>> dnsResolver = null) : base(inner)
+      HttpMessageHandler inner,
+      Func<string, Task<IPAddress>> dnsResolver) : base(inner)
     {
-      _dnsResolver = dnsResolver ?? (async name => (await Dns.GetHostEntryAsync(name)).AddressList.First());
+      _dnsResolver = dnsResolver;
     }
 
+    
     protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
     {
       var host = request.RequestUri.Host;
       await EnsureLockOnIPAddress(request, cancellationToken, host);
 
-      if (string.Equals(host, _rewrittenHost, StringComparison.OrdinalIgnoreCase))
+      if (string.Equals(host, Host, StringComparison.OrdinalIgnoreCase))
       {
-        request.RequestUri = new UriBuilder(request.RequestUri) {Host = _ipAddress.ToString()}.Uri;
+        request.RequestUri = new UriBuilder(request.RequestUri) {Host = Address.ToString()}.Uri;
         request.Headers.Host = host;
       }
       
@@ -37,18 +38,18 @@ namespace OpenRasta.Plugins.ReverseProxy.HttpMessageHandlers
 
     async Task EnsureLockOnIPAddress(HttpRequestMessage request, CancellationToken cancellationToken, string host)
     {
-      if (_ipAddress == null)
+      if (Address == null)
       {
         await _dnsResolverLock.WaitAsync(cancellationToken);
         try
         {
-          if (_ipAddress == null)
+          if (Address == null)
           {
-            _rewrittenHost = request.RequestUri.Host;
+            Host = request.RequestUri.Host;
             if (IPAddress.TryParse(host, out var ip))
-              _ipAddress = ip;
+              Address = ip;
             else
-              _ipAddress = await _dnsResolver(host);
+              Address = await _dnsResolver(host);
           }
         }
         finally
