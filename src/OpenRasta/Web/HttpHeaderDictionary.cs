@@ -24,7 +24,7 @@ namespace OpenRasta.Web
     public HttpHeaderDictionary(NameValueCollection sourceDictionary)
     {
       foreach (string key in sourceDictionary.Keys)
-       AddValues(key, sourceDictionary.GetValues(key));
+        AddValues(key, sourceDictionary.GetValues(key));
     }
 
     public MediaType ContentType
@@ -63,10 +63,11 @@ namespace OpenRasta.Web
       _base.AddFieldValues(key, value);
       UpdateValue(key, value);
     }
+
     public void AddValues(string key, IEnumerable<string> values)
     {
       _base.AddFieldValues(key, values);
-      foreach(var value in values)
+      foreach (var value in values)
         UpdateValue(key, value);
     }
 
@@ -114,7 +115,7 @@ namespace OpenRasta.Web
 
     public void Clear()
     {
-      foreach(var fieldName in _base.FieldNames)
+      foreach (var fieldName in _base.FieldNames)
         UpdateValue(fieldName, null);
       _base.Clear();
     }
@@ -151,7 +152,7 @@ namespace OpenRasta.Web
           node.Value = newValue;
         else
           vals.Remove(node);
-        
+
         return true;
       } while ((node = node.Next) != null);
 
@@ -185,6 +186,16 @@ namespace OpenRasta.Web
       {
         _contentDisposition = value == null ? null : new ContentDispositionHeader(value);
       }
+    }
+
+    public IEnumerable<string> GetValues(string headerName)
+    {
+      if (_base.TryGetFieldValues(headerName, out var valueList))
+      {
+        return valueList.SelectMany(_ => _);
+      }
+
+      throw new ArgumentException($"Header '{headerName}' is not present");
     }
 
     public bool TryGetValues(string headerName, out IEnumerable<string> values)

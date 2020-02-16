@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using OpenRasta.Codecs;
@@ -34,12 +35,8 @@ namespace OpenRasta.Plugins.ReverseProxy
 
         if (proxyResponse.ResponseMessage != null)
         {
-          foreach (var header in
-            proxyResponse.ResponseMessage.Headers.Concat(
-              proxyResponse.ResponseMessage.Content.Headers))
-          {
-            SetHeader(response, header);
-          }
+          SetHeaders(response.Headers, proxyResponse.ResponseMessage.Headers);
+          SetHeaders(response.Headers, proxyResponse.ResponseMessage.Content.Headers);
 
           await proxyResponse.ResponseMessage.Content.CopyToAsync(response.Stream);
         }
@@ -55,19 +52,30 @@ namespace OpenRasta.Plugins.ReverseProxy
       }
     }
 
-    static void SetHeader(IHttpEntity response, KeyValuePair<string, IEnumerable<string>> header)
+    void SetHeaders(HttpHeaderDictionary headers, HttpContentHeaders responseMessageHeaders)
     {
-      if (HttpHeaderClassification.IsHopByHopHeader(header.Key)) return;
+      foreach (var header in responseMessageHeaders)
+        SetHeader(headers, header.Key, header.Value);
+    }
 
-      var values = string.Join(", ", header.Value);
+    void SetHeaders(HttpHeaderDictionary headers, HttpResponseHeaders responseMessageHeaders)
+    {
+      foreach (var header in responseMessageHeaders)
+        SetHeader(headers, header.Key, header.Value);
+    }
 
-      if (HttpHeaderClassification.IsAppendedOnForwardHeader(header.Key))
+    static void SetHeader(HttpHeaderDictionary headers, string fieldName, IEnumerable<string> fieldValues)
+    {
+      if (HttpHeaderClassification.IsHopByHopHeader(fieldName)) return;
+
+      if (HttpHeaderClassification.IsAppendedOnForwardHeader(fieldName))
       {
-        response.Headers.Add(header.Key, values);
+        headers.AddValues(fieldName, fieldValues);
       }
       else
       {
-        response.Headers[header.Key] = values;
+        headers.Remove(fieldName);
+        headers.AddValues(fieldName, fieldValues);
       }
     }
   }
