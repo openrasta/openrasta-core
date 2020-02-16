@@ -18,7 +18,7 @@ namespace OpenRasta.Hosting.Katana
       string applicationVirtualPath = "/")
     {
       ConfigurationSource = configuration;
-      ResolverAccessor = resolverAccesor;
+      ResolverAccessor = resolverAccesor ?? configuration as IDependencyResolverAccessor;
       ApplicationVirtualPath = applicationVirtualPath;
     }
 
