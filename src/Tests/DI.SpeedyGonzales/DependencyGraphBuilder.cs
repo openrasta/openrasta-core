@@ -29,7 +29,7 @@ namespace Tests.DI.SpeedyGonzales
         TypeAttributes.AutoLayout,
         null);
       Nodes = Build(tb).ToList();
-      
+
       RewrittenNodes = RewriteNodes();
       CompileNodes();
       DoStuff();
@@ -48,7 +48,6 @@ namespace Tests.DI.SpeedyGonzales
 
     void DoStuff()
     {
-
       //
       //
       // var singletonNodes = RewrittenNodes
@@ -73,16 +72,16 @@ namespace Tests.DI.SpeedyGonzales
       //   fields.Select(f => Expression.Assign(Expression.Field(null, f.field), f.node.FactoryExpression.Body));
       //
       // var init = Expression.Lambda(Expression.Block(initializers));
-      
     }
 
-    
+
     public List<GraphNode> RewrittenNodes { get; }
 
     GraphNode FoldTransients(GraphNode node)
     {
       var inputs = node.Inputs.Select(FoldTransients).ToList();
 
+      
       var injectable = node.Inputs
         .Where(x => x.Model.Lifetime == DependencyLifetime.Transient
                     && x.Inputs.Any() == false);
@@ -107,13 +106,15 @@ namespace Tests.DI.SpeedyGonzales
     IEnumerable<GraphNode> Build(TypeBuilder tb)
     {
       var transients = _models
-        .Where(m=>m.Lifetime == DependencyLifetime.Transient)
+        .Where(m => m.Lifetime == DependencyLifetime.Transient)
         .Select(model => new TransientNode(model, (LambdaExpression) model.Factory)).ToList();
+
       var singletons = _models
         .Where(m => m.Lifetime == DependencyLifetime.Singleton)
-        .GroupBy(m => m.ServiceType)
-        .SelectMany(svc =>
-          svc.Select((model, position) => new SingletonNode(model, position, tb, (LambdaExpression) model.Factory)));
+        .GroupBy(m => (m.ServiceType, m.ConcreteType))
+        .SelectMany((models) => models
+          .Select((m, serviceTypeIndex) => new SingletonNode(m, serviceTypeIndex, tb, (LambdaExpression) m.Factory)));
+
 
       var nodes = transients.Cast<GraphNode>().Concat(singletons).ToList();
       foreach (var node in nodes)
