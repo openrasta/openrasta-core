@@ -16,7 +16,20 @@ namespace Tests.DI.SpeedyGonzales
     public DependencyGraphBuilder(IEnumerable<DependencyFactoryModel> models)
     {
       this._models = models;
-      Nodes = Build().ToList();
+      var an = new AssemblyName("SpeedyGonzalesStaticTypes");
+      var assemblyBuilder =
+        AssemblyBuilder.DefineDynamicAssembly(new AssemblyName(Guid.NewGuid().ToString()), AssemblyBuilderAccess.Run);
+      var moduleBuilder = assemblyBuilder.DefineDynamicModule("MainModule");
+      var tb = moduleBuilder.DefineType("Singletons",
+        TypeAttributes.Public |
+        TypeAttributes.Class |
+        TypeAttributes.AutoClass |
+        TypeAttributes.AnsiClass |
+        TypeAttributes.BeforeFieldInit |
+        TypeAttributes.AutoLayout,
+        null);
+      Nodes = Build(tb).ToList();
+      
       RewrittenNodes = RewriteNodes();
       CompileNodes();
       DoStuff();
@@ -35,36 +48,31 @@ namespace Tests.DI.SpeedyGonzales
 
     void DoStuff()
     {
-      var typeSignature = "MyDynamicType";
-      var an = new AssemblyName("SpeedyGonzalesStaticTypes");
-      var assemblyBuilder =
-        AssemblyBuilder.DefineDynamicAssembly(new AssemblyName(Guid.NewGuid().ToString()), AssemblyBuilderAccess.Run);
-      var moduleBuilder = assemblyBuilder.DefineDynamicModule("MainModule");
-      var tb = moduleBuilder.DefineType("Singletons",
-        TypeAttributes.Public |
-        TypeAttributes.Class |
-        TypeAttributes.AutoClass |
-        TypeAttributes.AnsiClass |
-        TypeAttributes.BeforeFieldInit |
-        TypeAttributes.AutoLayout,
-        null);
 
-      var singletonNodes = RewrittenNodes.Where(node =>
-        node.Model.Lifetime == DependencyLifetime.Singleton && node.FactoryExpression.Parameters.Any() == false);
-
-      var fields = singletonNodes.Select(node => new
-      {
-        node,
-        field = tb.DefineField(
-          node.Model.ServiceType.Name + node.Model.ConcreteType.Name, node.Model.ServiceType,
-          FieldAttributes.Static | FieldAttributes.Private)
-      }).ToList();
-
-      var type = tb.CreateType();
-      var initializers =
-        fields.Select(f => Expression.Assign(Expression.Field(null, f.field), f.node.FactoryExpression.Body));
-
-      var init = Expression.Lambda(Expression.Block(initializers));
+      //
+      //
+      // var singletonNodes = RewrittenNodes
+      //   .Where(node => node.Model.Lifetime == DependencyLifetime.Singleton)
+      //   .GroupBy(node=>node.Model.ServiceType)
+      //   .SelectMany(nodes => nodes.Select((node, pos) => new
+      //   {
+      //     node,
+      //     pos,
+      //     field = tb.DefineField(
+      //       node.Model.ServiceType.Name + pos, 
+      //       node.Model.ServiceType,
+      //       FieldAttributes.Static | FieldAttributes.Private)
+      //   }));
+      // return new SingletonDefinition
+      // {
+      //   Type = tb.CreateType(),
+      //   
+      // }
+      // var type = tb.CreateType();
+      // var initializers =
+      //   fields.Select(f => Expression.Assign(Expression.Field(null, f.field), f.node.FactoryExpression.Body));
+      //
+      // var init = Expression.Lambda(Expression.Block(initializers));
       
     }
 
@@ -96,9 +104,18 @@ namespace Tests.DI.SpeedyGonzales
       return (LambdaExpression) rewrittenFactory;
     }
 
-    IEnumerable<GraphNode> Build()
+    IEnumerable<GraphNode> Build(TypeBuilder tb)
     {
-      var nodes = _models.Select(model => new GraphNode(model, (LambdaExpression) model.Factory)).ToList();
+      var transients = _models
+        .Where(m=>m.Lifetime == DependencyLifetime.Transient)
+        .Select(model => new TransientNode(model, (LambdaExpression) model.Factory)).ToList();
+      var singletons = _models
+        .Where(m => m.Lifetime == DependencyLifetime.Singleton)
+        .GroupBy(m => m.ServiceType)
+        .SelectMany(svc =>
+          svc.Select((model, position) => new SingletonNode(model, position, tb, (LambdaExpression) model.Factory)));
+
+      var nodes = transients.Cast<GraphNode>().Concat(singletons).ToList();
       foreach (var node in nodes)
       {
         node.Inputs = node.Model.Arguments

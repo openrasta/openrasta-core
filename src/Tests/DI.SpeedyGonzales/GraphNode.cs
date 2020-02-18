@@ -2,10 +2,28 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection.Emit;
 using OpenRasta.Configuration.MetaModel;
 
 namespace Tests.DI.SpeedyGonzales
 {
+  public class TransientNode : GraphNode
+  {
+    public TransientNode(DependencyFactoryModel model, LambdaExpression factoryExpression) : base(model, factoryExpression)
+    {
+    }
+  }
+
+  public class SingletonNode : GraphNode
+  {
+
+    public SingletonNode(DependencyFactoryModel model, int index, TypeBuilder tb, LambdaExpression factoryExpression) 
+      : base(model, factoryExpression)
+    {
+      throw new NotImplementedException();
+    }
+  }
+
   public class GraphNode
   {
     public GraphNode(DependencyFactoryModel model, LambdaExpression factoryExpression)
@@ -24,11 +42,5 @@ namespace Tests.DI.SpeedyGonzales
     
     public LambdaExpression FactoryExpression { get;  }
 
-    public void CompileFactory()
-    {
-      if (FactoryExpression.Parameters.Any() == false)
-        Factory = (Func<object>) FactoryExpression.Compile();
-      
-    }
   }
 }
