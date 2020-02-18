@@ -47,6 +47,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenRastaDemo.Benchmark", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenRastaDemo.Shared", "src\OpenRasta.Benchmarks\OpenRastaDemo.Shared\OpenRastaDemo.Shared.csproj", "{D0389498-4624-4D02-93C5-69F02E678273}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpeedyGonzales", "Benchmarks\SpeedyGonzales\SpeedyGonzales.csproj", "{7CFBA3DA-E5FA-470C-A2DE-11A182189669}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -121,6 +123,10 @@ Global
 		{D0389498-4624-4D02-93C5-69F02E678273}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D0389498-4624-4D02-93C5-69F02E678273}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D0389498-4624-4D02-93C5-69F02E678273}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7CFBA3DA-E5FA-470C-A2DE-11A182189669}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7CFBA3DA-E5FA-470C-A2DE-11A182189669}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7CFBA3DA-E5FA-470C-A2DE-11A182189669}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7CFBA3DA-E5FA-470C-A2DE-11A182189669}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -132,5 +138,6 @@ Global
 		{B262A705-C1B2-4C1A-AE34-3B15119F609E} = {F29C9EB9-4B9A-4D8D-A776-6A849CA73DA6}
 		{D5566579-4803-4CF6-AC60-25D7EC075F6C} = {F29C9EB9-4B9A-4D8D-A776-6A849CA73DA6}
 		{D0389498-4624-4D02-93C5-69F02E678273} = {F29C9EB9-4B9A-4D8D-A776-6A849CA73DA6}
+		{7CFBA3DA-E5FA-470C-A2DE-11A182189669} = {F29C9EB9-4B9A-4D8D-A776-6A849CA73DA6}
 	EndGlobalSection
 EndGlobal
