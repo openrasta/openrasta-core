@@ -54,6 +54,8 @@ namespace OpenRasta.Plugins.ReverseProxy
       public bool ClientPerNode { get; set; }
       public Func<string,Task<IPAddress[]>> DnsResolver { get; set; }
       public DnsResolverResponseType DnsResolverResponseType { get; set; } = DnsResolverResponseType.Partial;
+      public Action<Exception,string> OnHostEvicted { get; set; } = (e,h)=>{};
+      public Action<Exception> OnError { get; set; } = (e)=>{};
       
     }
 

@@ -33,18 +33,20 @@ namespace OpenRasta.Plugins.ReverseProxy
       {
         var handler = options.HttpClient.Handler;
         Func<ActiveHandler, bool> shouldEvict = null;
+        
         if (options.HttpClient.RoundRobin.ClientPerNode)
         {
-          var hostResolver = new ServiceResolver(options.HttpClient.RoundRobin.DnsResolver, TimeSpan.FromSeconds(10));
-          
-          handler = () => new LockToIPAddress(
-            options.HttpClient.Handler(),
-            hostResolver.GetIPAddressAsync);
+          var hostResolver = new ServiceResolver(
+            options.HttpClient.RoundRobin.DnsResolver,
+            options.HttpClient.RoundRobin.OnHostEvicted,
+            TimeSpan.FromSeconds(10));
 
-          if (options.HttpClient.RoundRobin.DnsResolverResponseType == ReverseProxyOptions.DnsResolverResponseType.All)
-          {
-            shouldEvict = ShouldEvict(hostResolver);
-          }
+          handler = () => new OverrideHostNameResolver(
+            options.HttpClient.Handler(),
+            hostResolver.Resolve,
+            options.HttpClient.RoundRobin.OnError);
+
+          // shouldEvict = ShouldEvict(hostResolver);
         }
 
         var factory = new RoundRobinHttpClientFactory(
@@ -84,15 +86,6 @@ namespace OpenRasta.Plugins.ReverseProxy
         uses.PipelineContributor<RewriteAppBaseUsingForwardedHeaders>();
 
       return uses;
-    }
-
-    static Func<ActiveHandler, bool> ShouldEvict(ServiceResolver resolver)
-    {
-      return handler =>
-      {
-        var ipHandler = ((LockToIPAddress) handler.InnerHandler);
-        return resolver.Contains(ipHandler.Host, ipHandler.Address) == false;
-      };
     }
   }
 }
