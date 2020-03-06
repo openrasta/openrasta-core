@@ -31,15 +31,15 @@ namespace OpenRasta.Plugins.ReverseProxy
 
     public class HttpClientOptions
     {
-      Func<HttpClient> _factory;
+      Func<string,HttpClient> _factory;
       public Func<HttpMessageHandler> Handler { get; set; } = () => new HttpClientHandler()
       {
         AllowAutoRedirect = false
       };
 
-      public Func<HttpClient> Factory
+      public Func<string, HttpClient> Factory
       {
-        get => _factory ?? (()=>new HttpClient(Handler()));
+        get => _factory ?? ((domain)=>new HttpClient(Handler()));
         set => _factory = value;
       }
 
@@ -53,17 +53,15 @@ namespace OpenRasta.Plugins.ReverseProxy
       public TimeSpan LeaseTime { get; set; }
       public bool ClientPerNode { get; set; }
       public Func<string,Task<IPAddress[]>> DnsResolver { get; set; }
-      public DnsResolverResponseType DnsResolverResponseType { get; set; } = DnsResolverResponseType.Partial;
-      public Action<Exception,string> OnHostEvicted { get; set; } = (e,h)=>{};
+      public Func<Exception,string,HostEvictionAction> OnHostEvicted { get; set; } = (e,h)=>HostEvictionAction.Evict;
       public Action<Exception> OnError { get; set; } = (e)=>{};
       
     }
-
-    public enum DnsResolverResponseType
-    {
-      Partial,
-      All
-    }
   }
 
+  public enum HostEvictionAction
+  {
+    None,
+    Evict
+  }
 }

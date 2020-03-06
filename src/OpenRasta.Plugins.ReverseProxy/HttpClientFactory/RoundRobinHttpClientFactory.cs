@@ -34,7 +34,7 @@ namespace OpenRasta.Plugins.ReverseProxy.HttpClientFactory
       _cleanupTimer = new Timer(state => Cleanup(), null, Timeout.InfiniteTimeSpan, Timeout.InfiniteTimeSpan);
     }
 
-    public HttpClient GetClient()
+    public HttpClient GetClient(string host = null)
     {
       ActiveHandler handler;
       int tries = 0;

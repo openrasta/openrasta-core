@@ -13,7 +13,7 @@ namespace OpenRasta.Plugins.ReverseProxy
 {
   public class ReverseProxy
   {
-    readonly Func<HttpClient> _httpClient;
+    readonly Func<string, HttpClient> _httpClient;
     readonly Action<ICommunicationContext, HttpRequestMessage> _onSend;
     readonly Action<ReverseProxyResponse> _onProxyResponse;
     readonly TimeSpan _timeout;
@@ -21,7 +21,7 @@ namespace OpenRasta.Plugins.ReverseProxy
     readonly string _viaIdentifier;
 
     public ReverseProxy(TimeSpan requestTimeout, bool convertForwardedHeaders, string viaIdentifier,
-      Func<HttpClient> clientFactory,
+      Func<string, HttpClient> clientFactory,
       Action<ICommunicationContext, HttpRequestMessage> onSend,
       Action<ReverseProxyResponse> onProxyResponse)
     {
@@ -47,16 +47,18 @@ namespace OpenRasta.Plugins.ReverseProxy
 
       var viaIdentifier = AppendViaHeaderToRequest(context, requestMessage);
 
-      var httpClient = _httpClient();
 
       var cts = new CancellationTokenSource();
       cts.CancelAfter(_timeout);
       var timeoutToken = cts.Token;
 
+
       ReverseProxyResponse reverseProxyResponse;
+      
       try
       {
         _onSend?.Invoke(context, requestMessage);
+        var httpClient = _httpClient(requestMessage.RequestUri.Host);
         var responseMessage = await httpClient.SendAsync(
           requestMessage,
           HttpCompletionOption.ResponseHeadersRead,

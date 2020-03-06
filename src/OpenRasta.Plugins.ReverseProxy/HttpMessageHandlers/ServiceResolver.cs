@@ -10,18 +10,18 @@ namespace OpenRasta.Plugins.ReverseProxy.HttpMessageHandlers
   public class ServiceResolver : IDisposable
   {
     readonly Func<string, Task<IPAddress[]>> _dnsResolver;
-    readonly Action<Exception, string> _onHostEvicted;
+    readonly Func<Exception, string, HostEvictionAction> _onHostEviction;
     readonly TimeSpan _refreshTime;
     readonly ConcurrentDictionary<string, IPAddress[]> _ipCache = new ConcurrentDictionary<string, IPAddress[]>();
     readonly CancellationTokenSource _stopRefresh;
 
     public ServiceResolver(
       Func<string, Task<IPAddress[]>> dnsResolver,
-      Action<Exception,string> onHostEvicted,
+      Func<Exception, string, HostEvictionAction> onHostEviction,
       TimeSpan refreshTime)
     {
       _dnsResolver = dnsResolver;
-      _onHostEvicted = onHostEvicted;
+      _onHostEviction = onHostEviction;
       _refreshTime = refreshTime;
       _stopRefresh = new CancellationTokenSource();
 
@@ -41,8 +41,8 @@ namespace OpenRasta.Plugins.ReverseProxy.HttpMessageHandlers
           }
           catch(Exception e)
           {
-            _ipCache.TryRemove(domain, out _);
-            _onHostEvicted(e, domain);
+            if (_onHostEviction(e, domain) == HostEvictionAction.Evict)
+              _ipCache.TryRemove(domain, out _);
           }
         }
 
