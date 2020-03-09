@@ -346,8 +346,7 @@ namespace OpenRasta
       if (baseLeft != uri.GetLeftPart(UriPartial.Authority))
         return null;
 
-      var segments = uri.Segments;
-      var candidateSegments = baseSegments.ToList();
+      var candidateSegments = uri.Segments.Select(RemoveTrailingSlash).ToList();
       foreach (var baseUriSegment in baseSegments)
         if (baseUriSegment == candidateSegments[0])
           candidateSegments.RemoveAt(0);
@@ -362,19 +361,25 @@ namespace OpenRasta
       for (var i = 0; i < _segments.Count; i++)
       {
         var segment = candidateSegments[i];
-        var unescapedText = Uri.UnescapeDataString(segment);
 
-        candidateSegments[i] = segment;
+        var candidateSegment = new
+        {
+          Text = segment,
+          UnescapedText = Uri.UnescapeDataString(segment),
+          ProposedSegment = _segments[i]
+        };
 
-        switch (_segments[i].Type)
+        candidateSegments[i] = candidateSegment.Text;
+
+        switch (candidateSegment.ProposedSegment.Type)
         {
           case SegmentType.Literal when
-            string.CompareOrdinal(_segments[i].Text, unescapedText) != 0:
+            string.CompareOrdinal(candidateSegment.ProposedSegment.Text, candidateSegment.UnescapedText) != 0:
             return null;
           case SegmentType.Wildcard:
             throw new NotImplementedException("Not finished wildcards implementation yet");
           case SegmentType.Variable:
-            boundVariables.Add(_segments[i].Text, Uri.UnescapeDataString(segment));
+            boundVariables.Add(candidateSegment.ProposedSegment.Text, Uri.UnescapeDataString(candidateSegment.Text));
             break;
         }
       }
