@@ -119,9 +119,15 @@ namespace OpenRasta
 
     static Dictionary<string, QuerySegment> ParseQueryStringSegments(IEnumerable<QuerySegment> queryString)
     {
-      return queryString
-        .GroupBy(qs => qs.Key, StringComparer.OrdinalIgnoreCase)
-        .ToDictionary(qs => qs.Key, qs => qs.First(), StringComparer.OrdinalIgnoreCase);
+      var result = new Dictionary<string, QuerySegment>(StringComparer.OrdinalIgnoreCase);
+      foreach (var qs in queryString)
+      {
+        if (!result.ContainsKey(qs.Key))
+        {
+          result.Add(qs.Key, qs);
+        }
+      }
+      return result;
     }
 
     public static IEnumerable<QuerySegment> ParseQueryStringSegments(string query)
@@ -228,8 +234,8 @@ namespace OpenRasta
         else if (segment.Type == SegmentType.Variable)
         {
           var value = parameters[segment.Text.ToUpperInvariant()];
-          
-          
+
+
           path.Append(value.Replace("/", "%2F")
             .Replace("?", "%3F")
             .Replace("#", "%23"));
@@ -247,7 +253,7 @@ namespace OpenRasta
           var qsValue = parameters[querySegment.Value.Value]
             .Replace("&", "%25")
             .Replace("#", "%23");
-          
+
           path.Append(querySegment.Value.Key).Append("=")
             .Append(qsValue).Append("&");
         }
