@@ -228,8 +228,8 @@ namespace OpenRasta
         else if (segment.Type == SegmentType.Variable)
         {
           var value = parameters[segment.Text.ToUpperInvariant()];
-          
-          
+
+
           path.Append(value.Replace("/", "%2F")
             .Replace("?", "%3F")
             .Replace("#", "%23"));
@@ -247,7 +247,7 @@ namespace OpenRasta
           var qsValue = parameters[querySegment.Value.Value]
             .Replace("&", "%25")
             .Replace("#", "%23");
-          
+
           path.Append(querySegment.Value.Key).Append("=")
             .Append(qsValue).Append("&");
         }
@@ -333,18 +333,22 @@ namespace OpenRasta
 
       return true;
     }
-
     public UriTemplateMatch Match(Uri baseAddress, Uri uri)
     {
-      if (baseAddress == null || uri == null)
+      var baseLeft = baseAddress.GetLeftPart(UriPartial.Authority);
+      var baseSegments = baseAddress.Segments.Select(RemoveTrailingSlash).ToArray();
+      return Match(baseAddress, baseLeft, baseSegments, uri);
+    }
+    public UriTemplateMatch Match(Uri baseAddress, string baseLeft, string[] baseSegments, Uri uri)
+    {
+      if (uri == null)
         return null;
-      if (baseAddress.GetLeftPart(UriPartial.Authority) != uri.GetLeftPart(UriPartial.Authority))
+      if (baseLeft != uri.GetLeftPart(UriPartial.Authority))
         return null;
 
-      var baseUriSegments = baseAddress.Segments.Select(RemoveTrailingSlash);
-      var candidateSegments = new List<string>(uri.Segments.Select(RemoveTrailingSlash));
-
-      foreach (var baseUriSegment in baseUriSegments)
+      var segments = uri.Segments;
+      var candidateSegments = baseSegments.ToList();
+      foreach (var baseUriSegment in baseSegments)
         if (baseUriSegment == candidateSegments[0])
           candidateSegments.RemoveAt(0);
 
@@ -358,31 +362,25 @@ namespace OpenRasta
       for (var i = 0; i < _segments.Count; i++)
       {
         var segment = candidateSegments[i];
+        var unescapedText = Uri.UnescapeDataString(segment);
 
-        var candidateSegment = new
-        {
-          Text = segment,
-          UnescapedText = Uri.UnescapeDataString(segment),
-          ProposedSegment = _segments[i]
-        };
+        candidateSegments[i] = segment;
 
-        candidateSegments[i] = candidateSegment.Text;
-
-        switch (candidateSegment.ProposedSegment.Type)
+        switch (_segments[i].Type)
         {
           case SegmentType.Literal when
-            string.CompareOrdinal(candidateSegment.ProposedSegment.Text, candidateSegment.UnescapedText) != 0:
+            string.CompareOrdinal(_segments[i].Text, unescapedText) != 0:
             return null;
           case SegmentType.Wildcard:
             throw new NotImplementedException("Not finished wildcards implementation yet");
           case SegmentType.Variable:
-            boundVariables.Add(candidateSegment.ProposedSegment.Text, Uri.UnescapeDataString(candidateSegment.Text));
+            boundVariables.Add(_segments[i].Text, Uri.UnescapeDataString(segment));
             break;
         }
       }
 
       var queryStringVariables = new NameValueCollection();
-      var uriQuery = ParseQueryStringSegments(uri.Query).ToList();
+      var uriQuery = ParseQueryStringSegments(uri.Query);
       var requestUriQuerySegments = ParseQueryStringSegments(uriQuery);
 
       var queryParams = new Collection<string>();

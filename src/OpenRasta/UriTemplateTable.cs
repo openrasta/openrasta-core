@@ -51,39 +51,48 @@ namespace OpenRasta
       IsReadOnly = true;
       _keyValuePairsReadOnly = _keyValuePairs.AsReadOnly();
     }
-
+    string RemoveTrailingSlash(string str)
+    {
+      return str.LastIndexOf('/') == str.Length - 1 ? str.Substring(0, str.Length - 1) : str;
+    }
     public Collection<UriTemplateMatch> Match(Uri uri)
     {
       var lastMaxLiteralSegmentCount = 0;
       var matches = new Collection<UriTemplateMatch>();
-      foreach (var template in KeyValuePairs)
+      if (BaseAddress != null)
       {
-        // TODO: discard uri templates with fragment identifiers until tests are implemented
-        if (template.Key.Fragment.Any()) continue;
-        var potentialMatch = template.Key.Match(BaseAddress, uri);
-
-        if (potentialMatch == null) continue;
-
-        // this calculates and keep only what matches the maximum possible amount of literal segments
-        var currentMaxLiteralSegmentCount = potentialMatch.RelativePathSegments.Count
-                                            - potentialMatch.WildcardPathSegments.Count;
-        for (var i = 0; i < potentialMatch.PathSegmentVariables.Count; i++)
-          if (potentialMatch.QueryParameters == null ||
-              potentialMatch.QueryStringVariables[potentialMatch.PathSegmentVariables.GetKey(i)] == null)
-            currentMaxLiteralSegmentCount -= 1;
-
-        potentialMatch.Data = template.Value;
-
-        if (currentMaxLiteralSegmentCount > lastMaxLiteralSegmentCount)
+        var baseLeft = BaseAddress.GetLeftPart(UriPartial.Authority);
+        var baseSegments = BaseAddress.Segments.Select(RemoveTrailingSlash).ToArray();
+        foreach (var template in KeyValuePairs)
         {
-          lastMaxLiteralSegmentCount = currentMaxLiteralSegmentCount;
-        }
-        else if (currentMaxLiteralSegmentCount < lastMaxLiteralSegmentCount)
-        {
-          continue;
-        }
+          // TODO: discard uri templates with fragment identifiers until tests are implemented
+          if (template.Key.Fragment.Any()) continue;
 
-        matches.Add(potentialMatch);
+          UriTemplateMatch potentialMatch = template.Key.Match(BaseAddress, baseLeft, baseSegments, uri);
+
+          if (potentialMatch == null) continue;
+
+          // this calculates and keep only what matches the maximum possible amount of literal segments
+          var currentMaxLiteralSegmentCount = potentialMatch.RelativePathSegments.Count
+                                              - potentialMatch.WildcardPathSegments.Count;
+          for (var i = 0; i < potentialMatch.PathSegmentVariables.Count; i++)
+            if (potentialMatch.QueryParameters == null ||
+                potentialMatch.QueryStringVariables[potentialMatch.PathSegmentVariables.GetKey(i)] == null)
+              currentMaxLiteralSegmentCount -= 1;
+
+          potentialMatch.Data = template.Value;
+
+          if (currentMaxLiteralSegmentCount > lastMaxLiteralSegmentCount)
+          {
+            lastMaxLiteralSegmentCount = currentMaxLiteralSegmentCount;
+          }
+          else if (currentMaxLiteralSegmentCount < lastMaxLiteralSegmentCount)
+          {
+            continue;
+          }
+
+          matches.Add(potentialMatch);
+        }
       }
 
       return SortByMatchQuality(matches).ToCollection();
@@ -103,15 +112,20 @@ namespace OpenRasta
     public UriTemplateMatch MatchSingle(Uri uri)
     {
       UriTemplateMatch singleMatch = null;
-      foreach (var segmentKey in KeyValuePairs)
+      if (BaseAddress != null)
       {
-        UriTemplateMatch potentialMatch = segmentKey.Key.Match(BaseAddress, uri);
-        if (potentialMatch != null && singleMatch != null)
-          throw new UriTemplateMatchException("Several matching templates were found.");
-        if (potentialMatch != null)
+        var baseLeft = BaseAddress.GetLeftPart(UriPartial.Authority);
+        var baseSegments = BaseAddress.Segments.Select(RemoveTrailingSlash).ToArray();
+        foreach (var segmentKey in KeyValuePairs)
         {
-          singleMatch = potentialMatch;
-          singleMatch.Data = segmentKey.Value;
+          UriTemplateMatch potentialMatch = segmentKey.Key.Match(BaseAddress, baseLeft, baseSegments, uri);
+          if (potentialMatch != null && singleMatch != null)
+            throw new UriTemplateMatchException("Several matching templates were found.");
+          if (potentialMatch != null)
+          {
+            singleMatch = potentialMatch;
+            singleMatch.Data = segmentKey.Value;
+          }
         }
       }
 
