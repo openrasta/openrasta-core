@@ -20,6 +20,7 @@
   <ItemGroup>
     <ProjectReference Include="..\OpenRasta.Codecs.Newtonsoft.Json\OpenRasta.Codecs.Newtonsoft.Json.csproj" />
     <ProjectReference Include="..\OpenRasta\OpenRasta.csproj" />
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.0" PrivateAssets="All" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'net461'">
     <Reference Include="System.Net.Http" />

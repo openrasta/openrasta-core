@@ -19,6 +19,7 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\OpenRasta\OpenRasta.csproj" />
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.0" PrivateAssets="All" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System.Configuration" />
