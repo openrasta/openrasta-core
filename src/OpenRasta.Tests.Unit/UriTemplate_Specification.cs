@@ -149,6 +149,13 @@ namespace UriTemplate_Specification
     }
 
     [Test]
+    public void matching_urls_with_different_casing_returns_match()
+    {
+      GivenAMatching("/weather", "http://localhost/Weather");
+      ThenTheMatch.BaseUri.ShouldBe(BaseUris.First());
+    }
+
+    [Test]
     public void the_base_uri_is_the_one_provided_in_the_match()
     {
       GivenAMatching("/weather/{state}/{city}", "http://localhost/weather/Washington/Seattle");
