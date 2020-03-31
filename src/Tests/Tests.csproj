@@ -28,4 +28,7 @@
   <ItemGroup>
     <Folder Include="Plugins.Caching\attributes\client" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="Plugins.ReverseProxy\testCert.pfx" CopyToOutputDirectory="Always" CopyToPublishDirectory="Always" />
+  </ItemGroup>
 </Project>
