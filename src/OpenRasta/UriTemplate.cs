@@ -371,7 +371,8 @@ namespace OpenRasta
         switch (candidateSegment.ProposedSegment.Type)
         {
           case SegmentType.Literal when
-            !string.Equals(candidateSegment.ProposedSegment.Text, candidateSegment.UnescapedText, StringComparison.OrdinalIgnoreCase):
+            string.Equals(candidateSegment.ProposedSegment.Text, candidateSegment.UnescapedText, StringComparison.OrdinalIgnoreCase) == false:
+
             return null;
           case SegmentType.Wildcard:
             throw new NotImplementedException("Not finished wildcards implementation yet");
