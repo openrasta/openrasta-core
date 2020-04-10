@@ -367,27 +367,21 @@ namespace OpenRasta
       var boundVariables = new NameValueCollection(_pathSegmentVariables.Count);
       for (var i = 0; i < _segments.Count; i++)
       {
-        var segment = candidateSegments[i];
-
-        var candidateSegment = new
-        {
-          Text = segment,
-          UnescapedText = Uri.UnescapeDataString(segment),
-          ProposedSegment = _segments[i]
-        };
-
-        candidateSegments[i] = candidateSegment.Text;
-
-        switch (candidateSegment.ProposedSegment.Type)
+        var candidateSegment = candidateSegments[i];
+        var proposedSegment = _segments[i];
+        
+        var proposedSegmentText = proposedSegment.Text;
+        var candidateSegmentTextUnescaped = Uri.UnescapeDataString(candidateSegment);
+        
+        switch (proposedSegment.Type)
         {
           case SegmentType.Literal when
-            string.Equals(candidateSegment.ProposedSegment.Text, candidateSegment.UnescapedText, StringComparison.OrdinalIgnoreCase) == false:
-
+            string.Equals(proposedSegmentText, candidateSegmentTextUnescaped, StringComparison.OrdinalIgnoreCase) == false:
             return null;
           case SegmentType.Wildcard:
             throw new NotImplementedException("Not finished wildcards implementation yet");
           case SegmentType.Variable:
-            boundVariables.Add(candidateSegment.ProposedSegment.Text, Uri.UnescapeDataString(candidateSegment.Text));
+            boundVariables.Add(proposedSegmentText, candidateSegmentTextUnescaped);
             break;
         }
       }
