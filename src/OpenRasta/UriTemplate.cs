@@ -119,9 +119,19 @@ namespace OpenRasta
 
     static Dictionary<string, QuerySegment> ParseQueryStringSegments(IEnumerable<QuerySegment> queryString)
     {
-      return queryString
-        .GroupBy(qs => qs.Key, StringComparer.OrdinalIgnoreCase)
-        .ToDictionary(qs => qs.Key, qs => qs.First(), StringComparer.OrdinalIgnoreCase);
+      var result = new Dictionary<string, QuerySegment>(StringComparer.OrdinalIgnoreCase);
+      foreach (var qs in queryString)
+      {
+        if (!result.ContainsKey(qs.Key))
+        {
+          result.Add(qs.Key, qs);
+        }
+      }
+
+      return result;
+      // return queryString
+      //   .GroupBy(qs => qs.Key, StringComparer.OrdinalIgnoreCase)
+      //   .ToDictionary(qs => qs.Key, qs => qs.First(), StringComparer.OrdinalIgnoreCase);
     }
 
     public static IEnumerable<QuerySegment> ParseQueryStringSegments(string query)
