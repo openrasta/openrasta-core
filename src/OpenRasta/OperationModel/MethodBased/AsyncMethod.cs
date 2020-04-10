@@ -21,7 +21,7 @@ namespace OpenRasta.OperationModel.MethodBased
       var instance = CreateInstance(OwnerType, Resolver);
       var parameters = GetParameters();
 
-      return ((Task) Method.Invoke(instance, parameters).Single())
+      return ((Task) Method.Invoke(instance, parameters))
         .ContinueWith(task => Enumerable.Empty<OutputMember>());
     }
   }
@@ -40,7 +40,7 @@ namespace OpenRasta.OperationModel.MethodBased
       var instance = CreateInstance(OwnerType, Resolver);
       var parameters = GetParameters();
 
-      var result = await (Task<T>) Method.Invoke(instance, parameters).Single();
+      var result = await (Task<T>) Method.Invoke(instance, parameters);
       return new[]
       {
         new OutputMember

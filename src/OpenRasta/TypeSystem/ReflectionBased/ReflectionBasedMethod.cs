@@ -47,9 +47,9 @@ namespace OpenRasta.TypeSystem.ReflectionBased
             return _methodInfo.GetCustomAttributes(typeof(T), true).Cast<T>();
         }
 
-        public IEnumerable<object> Invoke(object target, params object[] members)
+        public object Invoke(object target, params object[] members)
         {
-            return new[]{ _methodInfo.Invoke(target, members) };
+            return _methodInfo.Invoke(target, members);
         }
 
         void EnsureInputMembersExist()
