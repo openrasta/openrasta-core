@@ -113,13 +113,10 @@ namespace OpenRasta
     /// <exception cref="InvalidOperationException">Two equivalent templates were found.</exception>
     void EnsureAllTemplatesAreDifferent()
     {
-      // highly unoptimized, but good enough for now. It's an O(n!) in all cases
-      // if you want to implement a sort algorithm on this, be my guest. It's only called
-      // once per application lifecycle so not sure there's much value.
       for (int i = 0; i < _keyValuePairs.Count; i++)
       {
-        KeyValuePair<UriTemplate, object> rootKey = _keyValuePairs[i];
-        for (int j = i + 1; j < _keyValuePairs.Count; j++)
+        var rootKey = _keyValuePairs[i];
+        for (var j = i + 1; j < _keyValuePairs.Count; j++)
           if (rootKey.Key.IsEquivalentTo(_keyValuePairs[j].Key))
             throw new InvalidOperationException("Two equivalent templates were found.");
       }

@@ -116,7 +116,7 @@ namespace OpenRasta.Web
     {
       if (uriToMatch == null)
         return null;
-      var tableMatches = _templates.Match(uriToMatch.IgnoreSchemePortAndAuthority());
+      var tableMatches = _templates.Match(uriToMatch);
       if (tableMatches == null || tableMatches.Count == 0)
         return null;
       var urlDescriptor = (UrlDescriptor) tableMatches[0].Data;
