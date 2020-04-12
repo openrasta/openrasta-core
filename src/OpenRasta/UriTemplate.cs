@@ -464,7 +464,7 @@ namespace OpenRasta
 
       var queryParams = new Collection<string>();
 
-      foreach (var templateQuerySegment in _queryStringSegments.Values)
+      foreach (var templateQuerySegment in QueryString)
       {
         var requestUriHasQueryStringKey = requestUriQuerySegments.ContainsKey(templateQuerySegment.Key);
 
