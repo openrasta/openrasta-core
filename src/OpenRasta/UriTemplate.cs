@@ -146,7 +146,11 @@ namespace OpenRasta
       End
     }
 
+    // Preserved for compatibility
     public static IEnumerable<QuerySegment> ParseQueryStringSegments(string query)
+      => ParseQueryStringSegmentsInternal(query, true);
+
+    static LinkedList<QuerySegment> ParseQueryStringSegmentsInternal(string query, bool isTemplate)
     {
       var nodeList = new LinkedList<QuerySegment>();
 
@@ -157,16 +161,16 @@ namespace OpenRasta
 
       void append()
       {
-        nodeList.AddLast(ToQueryStringSegment(currentKey));
+        nodeList.AddLast(ToQueryStringSegment(currentKey, isTemplate));
         currentKey = new QSParseResult();
       }
 
       for (var pos = 0; pos < query.Length; pos++)
       {
         var c = query[pos];
-        
+
         bool atEnd() => pos == query.Length - 1;
-        
+
         void commit()
         {
           if (state == ParseState.QSKey)
@@ -181,7 +185,7 @@ namespace OpenRasta
           boundary = 1;
           continue;
         }
-        
+
         if (atEnd())
         {
           pos++;
@@ -191,7 +195,7 @@ namespace OpenRasta
           break;
         }
 
-        if (c == '=' && state ==ParseState.QSKey)
+        if (c == '=' && state == ParseState.QSKey)
         {
           commit();
           state = ParseState.QSValue;
@@ -208,7 +212,7 @@ namespace OpenRasta
       return nodeList;
     }
 
-    static QuerySegment ToQueryStringSegment(in QSParseResult entry)
+    static QuerySegment ToQueryStringSegment(in QSParseResult entry, bool isTemplate)
     {
       string rawValue = null, value = null;
       var type = SegmentType.Literal;
@@ -216,18 +220,12 @@ namespace OpenRasta
       if (entry.Value.HasValue)
       {
         value = rawValue = Uri.UnescapeDataString(entry.Value.Value.Replace('+', ' '));
-        
-        if (rawValue[0] != '{' || rawValue[rawValue.Length - 1] != '}')
-          return new QuerySegment
-          {
-            Key = entry.Key.Value,
-            Value = value,
-            RawValue = rawValue,
-            Type = type
-          };
-        
-        type = SegmentType.Variable;
-        value = rawValue.Substring(1, rawValue.Length - 2);
+
+        if (isTemplate && rawValue[0] == '{' && rawValue[rawValue.Length - 1] == '}')
+        {
+          type = SegmentType.Variable;
+          value = rawValue.Substring(1, rawValue.Length - 2);
+        }
       }
       else if (entry.Value.Buffer != null && entry.Value.Count == 0)
       {
@@ -469,7 +467,7 @@ namespace OpenRasta
       }
 
       var queryStringVariables = new NameValueCollection();
-      var uriQuery = ParseQueryStringSegments(uri.Query).ToList();
+      var uriQuery = ParseQueryStringSegmentsInternal(uri.Query, false);
       var requestUriQuerySegments = ParseQueryStringSegments(uriQuery);
 
       var queryParams = new Collection<string>();
