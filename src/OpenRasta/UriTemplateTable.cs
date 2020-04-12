@@ -8,32 +8,24 @@ namespace OpenRasta
 {
   public class UriTemplateTable
   {
+    public static readonly Uri DefaultBaseAddress = new Uri("http://localhost");
     readonly List<KeyValuePair<UriTemplate, object>> _keyValuePairs;
     ReadOnlyCollection<KeyValuePair<UriTemplate, object>> _keyValuePairsReadOnly;
 
-    public UriTemplateTable() : this(null, null)
+    public UriTemplateTable(Uri baseAddress = null, IEnumerable<KeyValuePair<UriTemplate, object>> keyValuePairs = null)
     {
-    }
-
-    public UriTemplateTable(IEnumerable<KeyValuePair<UriTemplate, object>> keyValuePairs)
-      : this(null, keyValuePairs)
-    {
-    }
-
-    public UriTemplateTable(Uri baseAddress)
-      : this(baseAddress, null)
-    {
-    }
-
-    public UriTemplateTable(Uri baseAddress, IEnumerable<KeyValuePair<UriTemplate, object>> keyValuePairs)
-    {
-      BaseAddress = baseAddress;
+      BaseAddress = baseAddress == null 
+        ? DefaultBaseAddress
+        : baseAddress.Equals(DefaultBaseAddress) 
+          ? DefaultBaseAddress 
+          : baseAddress;
+      
       _keyValuePairs = keyValuePairs != null
         ? new List<KeyValuePair<UriTemplate, object>>(keyValuePairs)
         : new List<KeyValuePair<UriTemplate, object>>();
     }
 
-    public Uri BaseAddress { get; set; }
+    public Uri BaseAddress { get; }
 
     public bool IsReadOnly { get; private set; }
 

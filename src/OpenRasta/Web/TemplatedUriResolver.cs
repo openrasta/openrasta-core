@@ -12,7 +12,7 @@ namespace OpenRasta.Web
 {
   public class TemplatedUriResolver : IUriResolver, IUriTemplateParser
   {
-    UriTemplateTable _templates = new UriTemplateTable();
+    UriTemplateTable _templates = new UriTemplateTable(UriTemplateTable.DefaultBaseAddress);
     public ITypeSystem TypeSystem { get; set; }
     public int Count => _templates.KeyValuePairs.Count;
     public IDictionary<object, HashSet<string>> UriNames { get; } = new Dictionary<object, HashSet<string>>();
@@ -41,7 +41,7 @@ namespace OpenRasta.Web
         Registration = registration
       };
       _templates.KeyValuePairs.Add(new KeyValuePair<UriTemplate, object>(descriptor.Uri, descriptor));
-      _templates.BaseAddress = new Uri("http://localhost/").IgnoreAuthority();
+      
       var keys = UriNamesForKey(resourceKey);
 
       if (registration.UriName != null)
@@ -152,9 +152,8 @@ namespace OpenRasta.Web
     static bool CompatibleKeys(object requestResourceKey, object templateResourceKey)
     {
       var requestType = requestResourceKey as IType;
-      var templateType = templateResourceKey as IType;
       return (requestType != null &&
-              templateType != null &&
+              templateResourceKey is IType templateType &&
               requestType.IsAssignableTo(templateType)) ||
              requestResourceKey.Equals(templateResourceKey);
     }

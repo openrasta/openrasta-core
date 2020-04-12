@@ -224,7 +224,8 @@ namespace OpenRasta
     public Uri BindByName(Uri baseAddress, NameValueCollection parameters)
     {
       if (baseAddress == null)
-        throw new ArgumentNullException(nameof(baseAddress), "The base Uri needs to be provided for a Uri to be generated.");
+        throw new ArgumentNullException(nameof(baseAddress),
+          "The base Uri needs to be provided for a Uri to be generated.");
 
 
       baseAddress = SanitizeUriAsBaseUri(baseAddress);
@@ -238,8 +239,8 @@ namespace OpenRasta
         else if (segment.Type == SegmentType.Variable)
         {
           var value = parameters[segment.Text.ToUpperInvariant()];
-          
-          
+
+
           path.Append(value.Replace("/", "%2F")
             .Replace("?", "%3F")
             .Replace("#", "%23"));
@@ -257,7 +258,7 @@ namespace OpenRasta
           var qsValue = parameters[querySegment.Value.Value]
             .Replace("&", "%25")
             .Replace("#", "%23");
-          
+
           path.Append(querySegment.Value.Key).Append("=")
             .Append(qsValue).Append("&");
         }
@@ -348,7 +349,7 @@ namespace OpenRasta
     {
       if (baseAddress == null || uri == null)
         return null;
-      if (baseAddress.GetLeftPart(UriPartial.Authority) != uri.GetLeftPart(UriPartial.Authority))
+      if (ReferenceEquals(baseAddress, UriTemplateTable.DefaultBaseAddress) == false && baseAddress.GetLeftPart(UriPartial.Authority) != uri.GetLeftPart(UriPartial.Authority))
         return null;
 
       var baseUriSegments = baseAddress.Segments.Select(RemoveTrailingSlash);
@@ -365,6 +366,7 @@ namespace OpenRasta
         return null;
 
       var boundVariables = new NameValueCollection(_pathSegmentVariables.Count);
+      
       for (var i = 0; i < _segments.Count; i++)
       {
         var candidateSegment = candidateSegments[i];
@@ -404,7 +406,8 @@ namespace OpenRasta
           case SegmentType.Literal:
             break;
           case SegmentType.Variable when requestUriHasQueryStringKey:
-            queryStringVariables[templateQuerySegment.Value] = requestUriQuerySegments[templateQuerySegment.Key].RawValue;
+            queryStringVariables[templateQuerySegment.Value] =
+              requestUriQuerySegments[templateQuerySegment.Key].RawValue;
             break;
         }
 
