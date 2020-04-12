@@ -136,38 +136,110 @@ namespace OpenRasta
       //   .ToDictionary(qs => qs.Key, qs => qs.First(), StringComparer.OrdinalIgnoreCase);
     }
 
+    // static IEnumerable<QSFast> ParseQS(string query)
+    // {
+    //   var linkedList = new LinkedList<QSFast>();
+    //   
+    //   
+    // }
+    struct QSParseResult
+    {
+      public StringSegment Key;
+      public StringSegment Value;
+    }
+
+    enum ParseState
+    {
+      QSKey,
+      QSValue,
+      End
+    }
+
     public static IEnumerable<QuerySegment> ParseQueryStringSegments(string query)
     {
-      var kvPairs = query.Split('&');
+      var nodeList = new LinkedList<QSParseResult>();
 
-      foreach (var kvPair in kvPairs)
+      var boundary = 0;
+      var state = ParseState.QSKey;
+
+      QSParseResult currentKey = default;
+
+      void append()
       {
-        var unescapedString = Uri.UnescapeDataString(kvPair.Replace('+', ' '));
-        if (unescapedString.Length == 0)
+        nodeList.AddLast(currentKey);
+        currentKey = new QSParseResult();
+      }
+
+      for (var pos = 0; pos < query.Length; pos++)
+      {
+        var c = query[pos];
+
+        void commit()
+        {
+          if (state == ParseState.QSKey)
+            currentKey.Key = new StringSegment(query, boundary, pos - boundary);
+          else if (state == ParseState.QSValue)
+            currentKey.Value = new StringSegment(query, boundary, pos - boundary);
+          boundary = pos + 1;
+        }
+
+        if (pos == 0 && c == '?')
+        {
+          boundary = 1;
           continue;
-        var variableStart = unescapedString[0] == '?' ? 1 : 0;
-
-        var equalSignPosition = unescapedString.IndexOf('=');
-        if (equalSignPosition != -1)
+        }
+        
+        if (pos == query.Length - 1)
         {
-          var key = unescapedString.Substring(variableStart, equalSignPosition - variableStart);
-          var val = unescapedString.Substring(equalSignPosition + 1);
+          pos++;
+          commit();
+          append();
+          state = ParseState.End;
+          break;
+        }
+
+        if (c == '=' && state ==ParseState.QSKey)
+        {
+          commit();
+          state = ParseState.QSValue;
+          boundary = pos + 1;
+        }
+        else if (c == '&')
+        {
+          commit();
+          append();
+          state = ParseState.QSKey;
+        }
+      }
 
 
-          var valAsVariable = GetVariableName(val);
-          var segment = new QuerySegment
+      foreach (var entry in nodeList)
+      {
+        string rawValue = null, value = null;
+        var type = SegmentType.Literal;
+        
+        if (entry.Value.HasValue)
+        {
+          value = rawValue = Uri.UnescapeDataString(entry.Value.Value.Replace('+', ' '));
+          if (rawValue[0] == '{' && rawValue[rawValue.Length - 1] == '}')
           {
-            Key = key,
-            Value = valAsVariable ?? val,
-            RawValue = val,
-            Type = valAsVariable == null ? SegmentType.Literal : SegmentType.Variable
-          };
-          yield return (segment);
+            type = SegmentType.Variable;
+            value = rawValue.Substring(1, rawValue.Length - 2);
+          }
         }
-        else
+        else if (entry.Value.Buffer != null && entry.Value.Count == 0)
         {
-          yield return new QuerySegment {Key = unescapedString, Value = null, Type = SegmentType.Literal};
+          value = string.Empty;
+          rawValue = string.Empty;
         }
+
+        yield return new QuerySegment
+        {
+          Key = entry.Key.Value,
+          Value = value,
+          RawValue = rawValue,
+          Type = type
+        };
       }
     }
 
@@ -351,7 +423,8 @@ namespace OpenRasta
     {
       if (baseAddress == null || uri == null)
         return null;
-      if (ReferenceEquals(baseAddress, UriTemplateTable.DefaultBaseAddress) == false && baseAddress.GetLeftPart(UriPartial.Authority) != uri.GetLeftPart(UriPartial.Authority))
+      if (ReferenceEquals(baseAddress, UriTemplateTable.DefaultBaseAddress) == false &&
+          baseAddress.GetLeftPart(UriPartial.Authority) != uri.GetLeftPart(UriPartial.Authority))
         return null;
 
       var baseUriSegments = baseAddress.Segments.Select(RemoveTrailingSlash).ToArray();
@@ -366,21 +439,21 @@ namespace OpenRasta
 
       if (candidateOffset < candidateSegments.Length - 1 && candidateSegments[candidateOffset].HasValue == false)
         candidateOffset++;
-      
-      if (candidateSegments.Length  - candidateOffset != _segments.Count)
+
+      if (candidateSegments.Length - candidateOffset != _segments.Count)
         return null;
 
       var boundVariables = new NameValueCollection(_pathSegmentVariables.Count);
-      
+
       for (var i = 0; i < _segments.Count; i++)
       {
-        var candidateSegment = candidateSegments[i+candidateOffset];
+        var candidateSegment = candidateSegments[i + candidateOffset];
         var proposedSegment = _segments[i];
-        
+
         var proposedSegmentText = proposedSegment.Text;
 
         string unescapeSegment() => Uri.UnescapeDataString(candidateSegment.ToString());
-        
+
         switch (proposedSegment.Type)
         {
           case SegmentType.Wildcard:
@@ -428,7 +501,7 @@ namespace OpenRasta
         QueryString = uriQuery,
         QueryParameters = queryParams,
         QueryStringVariables = queryStringVariables,
-        RelativePathSegments = candidateSegments.Skip(candidateOffset).Select(s=>s.Value).ToCollection(),
+        RelativePathSegments = candidateSegments.Skip(candidateOffset).Select(s => s.Value).ToCollection(),
         RequestUri = uri,
         Template = this,
         WildcardPathSegments = new Collection<string>()
@@ -444,9 +517,9 @@ namespace OpenRasta
 
     static StringSegment RemoveTrailingSlash(string str)
     {
-      return str.Length > 0 && str[str.Length - 1] == '/' 
-        ? new StringSegment(str, 0, str.Length - 1) 
-        : new StringSegment(str,0,str.Length);
+      return str.Length > 0 && str[str.Length - 1] == '/'
+        ? new StringSegment(str, 0, str.Length - 1)
+        : new StringSegment(str, 0, str.Length);
     }
 
     public override int GetHashCode()
