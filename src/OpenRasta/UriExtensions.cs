@@ -15,11 +15,7 @@ namespace OpenRasta.Web
 {
     public static class UriExtensions
     {
-        public static string[] GetSegments(this Uri uri)
-        {
-            return uri.Segments;
-        }
-        public static Uri IgnoreAuthority(this Uri uri)
+      public static Uri IgnoreAuthority(this Uri uri)
         {
             UriBuilder builder = new UriBuilder(uri);
             builder.Host = "uritemplate";

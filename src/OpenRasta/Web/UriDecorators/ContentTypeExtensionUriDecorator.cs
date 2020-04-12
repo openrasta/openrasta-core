@@ -59,7 +59,7 @@ namespace OpenRasta.Web.UriDecorators
                 .MakeRelativeUri(uri)
                 .MakeAbsolute(fakeBaseUri);
             // find the resource type for the uri
-            string lastUriSegment = uriRelativeToAppBase.GetSegments()[uriRelativeToAppBase.GetSegments().Length - 1];
+            string lastUriSegment = uriRelativeToAppBase.Segments[uriRelativeToAppBase.Segments.Length - 1];
 
             int lastDot = lastUriSegment.LastIndexOf(".");
 

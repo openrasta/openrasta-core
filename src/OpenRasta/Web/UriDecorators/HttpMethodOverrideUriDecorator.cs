@@ -22,7 +22,7 @@ namespace OpenRasta.Web.UriDecorators
 
         public bool Parse(Uri uri, out Uri processedUri)
         {
-            string[] uriSegments = uri.GetSegments();
+            string[] uriSegments = uri.Segments;
             string lastSegment = uriSegments[uriSegments.Length - 1];
             var match = segmentRegex.Match(lastSegment);
             if (match.Success)
