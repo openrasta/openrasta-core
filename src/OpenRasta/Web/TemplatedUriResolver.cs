@@ -5,7 +5,6 @@ using System.Collections.Specialized;
 using System.Globalization;
 using System.Linq;
 using OpenRasta.Collections;
-using OpenRasta.Configuration.MetaModel;
 using OpenRasta.TypeSystem;
 
 namespace OpenRasta.Web
@@ -208,20 +207,6 @@ namespace OpenRasta.Web
       public object ResourceKey { get; set; }
       public UriTemplate Uri { get; set; }
       public string UriName { get; set; }
-    }
-  }
-
-  public class TemplatedUriMatch
-  {
-    public ResourceModel ResourceModel { get; }
-    public UriModel UriModel { get; }
-    public UriTemplateMatch Match { get; }
-
-    public TemplatedUriMatch(ResourceModel resourceModel, UriModel uriModel, UriTemplateMatch match)
-    {
-      ResourceModel = resourceModel;
-      UriModel = uriModel;
-      Match = match;
     }
   }
 }
