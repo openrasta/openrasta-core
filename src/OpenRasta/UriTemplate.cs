@@ -426,28 +426,30 @@ namespace OpenRasta
       var candidateSegments = ParsePathSegments(uri.AbsolutePath);
 
       var currentBaseUriSegment = baseUriSegments.segments.First;
-      var currentCandidateSegment = candidateSegments.segments.First;
+      
 
       var candidateOffset = 0;
       while (true)
       {
-        if (currentBaseUriSegment != null && currentCandidateSegment != null &&
-            currentBaseUriSegment.Value.Equals(currentCandidateSegment.Value, StringComparison.Ordinal))
+        if (currentBaseUriSegment != null && candidateSegments.segments.First != null &&
+            currentBaseUriSegment.Value.Equals(candidateSegments.segments.First.Value, StringComparison.Ordinal))
         {
+          candidateSegments.segments.RemoveFirst();
+          
           currentBaseUriSegment = currentBaseUriSegment.Next;
-          currentCandidateSegment = currentCandidateSegment.Next;
-          candidateOffset++;
         }
         else
           break;
       }
 
-      if (candidateSegments.count - candidateOffset != _segments.Count)
+      if (candidateSegments.segments.Count != _segments.Count)
         return null;
 
       var boundVariables = new NameValueCollection(_pathSegmentVariables.Count);
 
-      var firstCandidateSegment = currentCandidateSegment;
+      var firstCandidateSegment = candidateSegments.segments.First;
+      var currentCandidateSegment = firstCandidateSegment;
+      
       for (var i = 0; i < _segments.Count; i++)
       {
         if (currentCandidateSegment == null) break;
@@ -500,47 +502,43 @@ namespace OpenRasta
 
       return new UriTemplateMatch
       {
+        
         BaseUri = baseAddress,
         Data = 0,
         PathSegmentVariables = boundVariables,
         QueryString = uriQuery,
         QueryParameters = queryParams,
         QueryStringVariables = queryStringVariables,
-        RelativePathSegments = From(firstCandidateSegment, node => node.Value.Value,
-          candidateSegments.count - candidateOffset),
+        RelativePathSegments = From(candidateSegments.segments, segment => segment.Value),
         RequestUri = uri,
         Template = this,
         WildcardPathSegments = new Collection<string>()
       };
     }
 
-    public static IReadOnlyCollection<TValue> From<T, TValue>(LinkedListNode<T> node,
-      Func<LinkedListNode<T>, TValue> select, int count)
+    public static IReadOnlyCollection<TValue> From<T, TValue>(
+      LinkedList<T> nodes,
+      Func<T, TValue> select)
     {
-      return new LinkedListEnumerator<T, TValue>(count, node, select);
+      return new LinkedListAdapter<T, TValue>(nodes, select);
     }
 
-    public class LinkedListEnumerator<T, TValue> : IReadOnlyCollection<TValue>
+    public class LinkedListAdapter<T, TValue> : IReadOnlyCollection<TValue>
     {
-      public int Count { get; }
+      public int Count => _node.Count;
 
-      readonly LinkedListNode<T> _node;
-      readonly Func<LinkedListNode<T>, TValue> _select;
+      readonly LinkedList<T> _node;
+      readonly Func<T, TValue> _select;
 
-      public LinkedListEnumerator(int count, LinkedListNode<T> node, Func<LinkedListNode<T>, TValue> select)
+      public LinkedListAdapter(LinkedList<T> node, Func<T, TValue> select)
       {
-        Count = count;
         _node = node;
         _select = @select;
       }
 
       public IEnumerator<TValue> GetEnumerator()
       {
-        var node = _node;
-        do
-        {
-          yield return _select(node);
-        } while ((node = node.Next) != null);
+        return _node.Select(arg => _select(arg)).GetEnumerator();
       }
 
       IEnumerator IEnumerable.GetEnumerator()
