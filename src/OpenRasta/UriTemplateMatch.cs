@@ -12,7 +12,7 @@ namespace OpenRasta
     public object Data { get; set; }
     public Collection<string> QueryParameters { get; set; }
     public NameValueCollection QueryStringVariables { get; internal set; }
-    public Collection<string> RelativePathSegments { get; internal set; }
+    public IReadOnlyCollection<string> RelativePathSegments { get; internal set; }
     public Uri RequestUri { get; set; }
     public UriTemplate Template { get; set; }
     public Collection<string> WildcardPathSegments { get; internal set; }

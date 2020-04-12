@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
@@ -424,8 +425,8 @@ namespace OpenRasta
       var baseUriSegments = ParsePathSegments(baseAddress.AbsolutePath);
       var candidateSegments = ParsePathSegments(uri.AbsolutePath);
 
-      var currentBaseUriSegment = baseUriSegments.First;
-      var currentCandidateSegment = candidateSegments.First;
+      var currentBaseUriSegment = baseUriSegments.segments.First;
+      var currentCandidateSegment = candidateSegments.segments.First;
 
       var candidateOffset = 0;
       while (true)
@@ -441,11 +442,12 @@ namespace OpenRasta
           break;
       }
 
-      if (candidateSegments.Count - candidateOffset != _segments.Count)
+      if (candidateSegments.count - candidateOffset != _segments.Count)
         return null;
 
       var boundVariables = new NameValueCollection(_pathSegmentVariables.Count);
 
+      var firstCandidateSegment = currentCandidateSegment;
       for (var i = 0; i < _segments.Count; i++)
       {
         if (currentCandidateSegment == null) break;
@@ -504,11 +506,47 @@ namespace OpenRasta
         QueryString = uriQuery,
         QueryParameters = queryParams,
         QueryStringVariables = queryStringVariables,
-        RelativePathSegments = candidateSegments.Skip(candidateOffset).Select(s => s.Value).ToCollection(),
+        RelativePathSegments = From(firstCandidateSegment, node => node.Value.Value,
+          candidateSegments.count - candidateOffset),
         RequestUri = uri,
         Template = this,
         WildcardPathSegments = new Collection<string>()
       };
+    }
+
+    public static IReadOnlyCollection<TValue> From<T, TValue>(LinkedListNode<T> node,
+      Func<LinkedListNode<T>, TValue> select, int count)
+    {
+      return new LinkedListEnumerator<T, TValue>(count, node, select);
+    }
+
+    public class LinkedListEnumerator<T, TValue> : IReadOnlyCollection<TValue>
+    {
+      public int Count { get; }
+
+      readonly LinkedListNode<T> _node;
+      readonly Func<LinkedListNode<T>, TValue> _select;
+
+      public LinkedListEnumerator(int count, LinkedListNode<T> node, Func<LinkedListNode<T>, TValue> select)
+      {
+        Count = count;
+        _node = node;
+        _select = @select;
+      }
+
+      public IEnumerator<TValue> GetEnumerator()
+      {
+        var node = _node;
+        do
+        {
+          yield return _select(node);
+        } while ((node = node.Next) != null);
+      }
+
+      IEnumerator IEnumerable.GetEnumerator()
+      {
+        return GetEnumerator();
+      }
     }
 
     static bool QuerySegmentValueIsDifferent(
@@ -518,9 +556,10 @@ namespace OpenRasta
       return requestUriQuerySegments[templateQuerySegment.Key].Value != templateQuerySegment.Value;
     }
 
-    static LinkedList<StringSegment> ParsePathSegments(string path)
+    static (LinkedList<StringSegment> segments, int count) ParsePathSegments(string path)
     {
-      var boundary = 0;//path.Length > 0 && path[0] == '/' ? 1 : 0;
+      int count = 0;
+      var boundary = 0; //path.Length > 0 && path[0] == '/' ? 1 : 0;
       var segments = new LinkedList<StringSegment>();
 
       for (var pos = boundary; pos < path.Length; pos++)
@@ -528,23 +567,18 @@ namespace OpenRasta
         if (path[pos] == '/')
         {
           segments.AddLast(new StringSegment(path, boundary, pos - boundary));
+          count++;
           boundary = pos + 1;
         }
         else if (pos == path.Length - 1 || path[pos] == '?')
         {
+          count++;
           segments.AddLast(new StringSegment(path, boundary, pos - boundary + 1));
           break;
         }
       }
 
-      return segments;
-    }
-
-    static StringSegment RemoveTrailingSlash(string str)
-    {
-      return str.Length > 0 && str[str.Length - 1] == '/'
-        ? new StringSegment(str, 0, str.Length - 1)
-        : new StringSegment(str, 0, str.Length);
+      return (segments, count);
     }
 
     public override int GetHashCode()
