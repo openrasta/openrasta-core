@@ -4,6 +4,8 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
+using LibOwin.Infrastructure;
+using OpenRasta.Collections;
 
 namespace OpenRasta
 {
@@ -352,39 +354,43 @@ namespace OpenRasta
       if (ReferenceEquals(baseAddress, UriTemplateTable.DefaultBaseAddress) == false && baseAddress.GetLeftPart(UriPartial.Authority) != uri.GetLeftPart(UriPartial.Authority))
         return null;
 
-      var baseUriSegments = baseAddress.Segments.Select(RemoveTrailingSlash);
-      var candidateSegments = new List<string>(uri.Segments.Select(RemoveTrailingSlash));
+      var baseUriSegments = baseAddress.Segments.Select(RemoveTrailingSlash).ToArray();
+      var candidateSegments = uri.Segments.Select(RemoveTrailingSlash).ToArray();
 
+      var skipSegments = 0;
       foreach (var baseUriSegment in baseUriSegments)
-        if (baseUriSegment == candidateSegments[0])
-          candidateSegments.RemoveAt(0);
+        if (baseUriSegment.Equals(candidateSegments[skipSegments], StringComparison.Ordinal))
+          skipSegments++;
+        else
+          break;
 
-      if (candidateSegments.Count > 0 && candidateSegments[0] == string.Empty)
-        candidateSegments.RemoveAt(0);
-
-      if (candidateSegments.Count != _segments.Count)
+      if (skipSegments < candidateSegments.Length - 1 && candidateSegments[skipSegments].HasValue == false)
+        skipSegments++;
+      
+      if (candidateSegments.Length  - skipSegments != _segments.Count)
         return null;
 
       var boundVariables = new NameValueCollection(_pathSegmentVariables.Count);
       
       for (var i = 0; i < _segments.Count; i++)
       {
-        var candidateSegment = candidateSegments[i];
+        var candidateSegment = candidateSegments[i+skipSegments];
         var proposedSegment = _segments[i];
         
         var proposedSegmentText = proposedSegment.Text;
-        var candidateSegmentTextUnescaped = Uri.UnescapeDataString(candidateSegment);
+
+        string unescapeSegment() => Uri.UnescapeDataString(candidateSegment.ToString());
         
         switch (proposedSegment.Type)
         {
-          case SegmentType.Literal when
-            string.Equals(proposedSegmentText, candidateSegmentTextUnescaped, StringComparison.OrdinalIgnoreCase) == false:
-            return null;
           case SegmentType.Wildcard:
             throw new NotImplementedException("Not finished wildcards implementation yet");
           case SegmentType.Variable:
-            boundVariables.Add(proposedSegmentText, candidateSegmentTextUnescaped);
+            boundVariables.Add(proposedSegmentText, unescapeSegment());
             break;
+          case SegmentType.Literal when
+            string.Equals(proposedSegmentText, unescapeSegment(), StringComparison.OrdinalIgnoreCase) == false:
+            return null;
         }
       }
 
@@ -422,7 +428,7 @@ namespace OpenRasta
         QueryString = uriQuery,
         QueryParameters = queryParams,
         QueryStringVariables = queryStringVariables,
-        RelativePathSegments = new Collection<string>(candidateSegments),
+        RelativePathSegments = candidateSegments.Skip(skipSegments).Select(s=>s.Value).ToCollection(),
         RequestUri = uri,
         Template = this,
         WildcardPathSegments = new Collection<string>()
@@ -436,9 +442,11 @@ namespace OpenRasta
       return requestUriQuerySegments[templateQuerySegment.Key].Value != templateQuerySegment.Value;
     }
 
-    string RemoveTrailingSlash(string str)
+    static StringSegment RemoveTrailingSlash(string str)
     {
-      return str.LastIndexOf('/') == str.Length - 1 ? str.Substring(0, str.Length - 1) : str;
+      return str.Length > 0 && str[str.Length - 1] == '/' 
+        ? new StringSegment(str, 0, str.Length - 1) 
+        : new StringSegment(str,0,str.Length);
     }
 
     public override int GetHashCode()
