@@ -7,12 +7,10 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="BenchmarkDotNet" Version="0.11.5" />
+      <PackageReference Include="BenchmarkDotNet" Version="0.12.1" />
       <PackageReference Include="Microsoft.AspNetCore.Hosting" Version="2.1.1" />
       <PackageReference Include="Microsoft.AspNetCore.TestHost" Version="2.1.1" />
-<!--      <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.1.1" />-->
-<!--      <PackageReference Include="xunit" Version="2.4.1" />-->
-<!--      <PackageReference Include="xunit.runner.visualstudio" Version="2.4.1" />-->
+      <PackageReference Include="xunit.extensibility.core" Version="2.4.1" />
     </ItemGroup>
 
     <ItemGroup>
@@ -23,10 +21,6 @@
       <None Update="large.json">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Serialization" />
     </ItemGroup>
 
 </Project>
