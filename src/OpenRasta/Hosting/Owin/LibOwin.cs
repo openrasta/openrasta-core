@@ -494,6 +494,23 @@ namespace LibOwin.Infrastructure
 
             return string.Compare(_buffer, _offset + _count - textLength, text, 0, textLength, comparisonType) == 0;
         }
+        public bool Equals(StringSegment text, StringComparison comparisonType)
+        {
+          if (text == null)
+          {
+            throw new ArgumentNullException(nameof(text));
+          }
+          int textLength = text.Count;
+          
+          if (_count != textLength)
+          {
+            return false;
+          }
+          
+          if (!HasValue) return true;          
+
+          return string.Compare(_buffer, _offset, text._buffer, text._offset, textLength, comparisonType) == 0;
+        }
 
         public bool Equals(string text, StringComparison comparisonType)
         {
