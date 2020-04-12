@@ -20,7 +20,7 @@ namespace UriTemplate_Specification
       var boundUris = BaseUris
         .Select(baseUri => new UriTemplate(template)
           .BindByName(baseUri, values.ToNameValueCollection()));
-      return boundUris.Select(uri=>uri.ToString());
+      return boundUris.Select(uri=>uri.ToString()).ToList();
     }
 
     protected void GivenBaseUris(params string[] uris)
@@ -54,7 +54,7 @@ namespace UriTemplate_Specification
     public void a_query_string_with_separator_is_injected()
     {
       BindingUriByName("/test?first={first}&?second={second}", new {first = "1", second = "2"})
-        .ShouldAllBe(item => item == "http://localhost/test?first=1&second=2");
+        .ShouldAllBe(item => item == "http://localhost/test?first=1&?second=2");
     }
 
     [Test]
@@ -202,6 +202,21 @@ namespace UriTemplate_Specification
     }
 
     [Test]
+    public void qs_value_with_equal_matched()
+    {
+      GivenAMatching("/?q={where}&order={order}", "http://localhost/?q=value=123&order=law");
+      ThenTheMatch.QueryStringVariables["where"].ShouldBe("value=123");
+      ThenTheMatch.QueryStringVariables["order"].ShouldBe("law");
+    }
+    [Test]
+    public void qs_value_with_encoded_equal_matched()
+    {
+      GivenAMatching("/?q={where}&order={order}", "http://localhost/?q=value%3D123&order=law");
+      ThenTheMatch.QueryStringVariables["where"].ShouldBe("value=123");
+      ThenTheMatch.QueryStringVariables["order"].ShouldBe("law");
+    }
+    
+    [Test]
     public void the_template_matches_when_in_a_virtual_directory()
     {
       GivenAMatching("http://localhost/vdir/", "/test/", "http://localhost/vdir/test/");
@@ -264,7 +279,7 @@ namespace UriTemplate_Specification
     public void a_wildcard_is_not_generated()
     {
       var baseUri = new Uri("http://localhost");
-      NameValueCollection variableValues = new NameValueCollection().With("state", "washington").With("CitY",
+      var variableValues = new NameValueCollection().With("state", "washington").With("CitY",
         "seattle");
 
       new UriTemplate("weather/{state}/{city}/*").BindByName(baseUri, variableValues)
@@ -275,7 +290,7 @@ namespace UriTemplate_Specification
     public void the_variable_names_are_not_case_sensitive()
     {
       var baseUri = new Uri("http://localhost");
-      NameValueCollection variableValues = new NameValueCollection().With("StAte", "washington").With("CitY",
+      var variableValues = new NameValueCollection().With("StAte", "washington").With("CitY",
         "seattle");
 
       new UriTemplate("weather/{state}/{city}/").BindByName(baseUri, variableValues)
@@ -285,7 +300,7 @@ namespace UriTemplate_Specification
     [Test]
     public void the_variables_are_replaced_in_the_generated_uri()
     {
-      NameValueCollection variableValues = new NameValueCollection().With("state", "washington").With("city",
+      var variableValues = new NameValueCollection().With("state", "washington").With("city",
         "seattle");
 
       new UriTemplate("weather/{state}/{city}/").BindByName("http://localhost".ToUri(), variableValues)
@@ -306,7 +321,7 @@ namespace UriTemplate_Specification
     public void a_url_matching_result_in_the_query_value_variable_being_set()
     {
       var table = new UriTemplate("/test?query={queryValue}");
-      UriTemplateMatch match =
+      var match =
         table.Match(new Uri("http://localhost"), new Uri("http://localhost/test?query=search"));
 
       match.ShouldNotBeNull();
@@ -318,7 +333,7 @@ namespace UriTemplate_Specification
     public void a_url_not_matching_a_literal_query_string_will_not_match()
     {
       var table = new UriTemplate("/test?query=literal");
-      UriTemplateMatch match = table.Match(new Uri("http://localhost"),
+      var match = table.Match(new Uri("http://localhost"),
         new Uri("http://localhost/test?query=notliteral"));
       match.ShouldBeNull();
     }
@@ -388,7 +403,7 @@ namespace UriTemplate_Specification
     public void a_url_matching_three_query_string_parameters_will_match()
     {
       var table = new UriTemplate("/test?q={searchTerm}&p={pageNumber}&s={pageSize}");
-      UriTemplateMatch match =
+      var match =
         table.Match(new Uri("http://localhost"), new Uri("http://localhost/test?q=&p=1&s=10"));
       match.ShouldNotBeNull();
       match.QueryStringVariables["searchTerm"].ShouldBe(string.Empty);
@@ -400,7 +415,7 @@ namespace UriTemplate_Specification
     public void a_url_with_extra_query_string_parameters_will_match()
     {
       var template = new UriTemplate("/test?q={searchTerm}&p={pageNumber}&s={pageSize}");
-      UriTemplateMatch match = template.Match(new Uri("http://localhost/"),
+      var match = template.Match(new Uri("http://localhost/"),
         new Uri("http://localhost/test?q=test&p=1&s=10&contentType=json"));
       match.ShouldNotBeNull();
     }

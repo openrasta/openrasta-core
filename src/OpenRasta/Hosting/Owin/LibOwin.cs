@@ -502,12 +502,13 @@ namespace LibOwin.Infrastructure
           }
           int textLength = text.Count;
           
+          if (!HasValue && !text.HasValue) return true;
           if (_count != textLength)
           {
             return false;
           }
           
-          if (!HasValue) return true;          
+          if (_count == 0 ) return true;          
 
           return string.Compare(_buffer, _offset, text._buffer, text._offset, textLength, comparisonType) == 0;
         }
