@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using BenchmarkDotNet.Running;
 using OpenRasta.Collections;
+using OpenRastaDemo.Benchmark.Uris;
 
 namespace OpenRastaDemo.Benchmark
 {
@@ -22,7 +23,7 @@ namespace OpenRastaDemo.Benchmark
 //
 //#else
 
-     BenchmarkRunner.Run<SerializationBenchmark>();
+     BenchmarkRunner.Run<Matching>();
 //      new BenchmarkSwitcher(typeof(Program).Assembly).RunAll();
 //#endif
     }
