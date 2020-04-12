@@ -37,7 +37,7 @@ namespace OpenRasta.Web
 
     [Obsolete("Use the Results property, as this is inaccurate.")]
     public IList<NameValueCollection> UriTemplateParameters => 
-        _uriTemplateParameters ?? (_uriTemplateParameters = GenerateLegacyResults());
+        _uriTemplateParameters ??= GenerateLegacyResults();
 
     List<NameValueCollection> GenerateLegacyResults()
     {
