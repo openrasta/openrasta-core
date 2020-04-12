@@ -357,24 +357,24 @@ namespace OpenRasta
       var baseUriSegments = baseAddress.Segments.Select(RemoveTrailingSlash).ToArray();
       var candidateSegments = uri.Segments.Select(RemoveTrailingSlash).ToArray();
 
-      var skipSegments = 0;
+      var candidateOffset = 0;
       foreach (var baseUriSegment in baseUriSegments)
-        if (baseUriSegment.Equals(candidateSegments[skipSegments], StringComparison.Ordinal))
-          skipSegments++;
+        if (baseUriSegment.Equals(candidateSegments[candidateOffset], StringComparison.Ordinal))
+          candidateOffset++;
         else
           break;
 
-      if (skipSegments < candidateSegments.Length - 1 && candidateSegments[skipSegments].HasValue == false)
-        skipSegments++;
+      if (candidateOffset < candidateSegments.Length - 1 && candidateSegments[candidateOffset].HasValue == false)
+        candidateOffset++;
       
-      if (candidateSegments.Length  - skipSegments != _segments.Count)
+      if (candidateSegments.Length  - candidateOffset != _segments.Count)
         return null;
 
       var boundVariables = new NameValueCollection(_pathSegmentVariables.Count);
       
       for (var i = 0; i < _segments.Count; i++)
       {
-        var candidateSegment = candidateSegments[i+skipSegments];
+        var candidateSegment = candidateSegments[i+candidateOffset];
         var proposedSegment = _segments[i];
         
         var proposedSegmentText = proposedSegment.Text;
@@ -428,7 +428,7 @@ namespace OpenRasta
         QueryString = uriQuery,
         QueryParameters = queryParams,
         QueryStringVariables = queryStringVariables,
-        RelativePathSegments = candidateSegments.Skip(skipSegments).Select(s=>s.Value).ToCollection(),
+        RelativePathSegments = candidateSegments.Skip(candidateOffset).Select(s=>s.Value).ToCollection(),
         RequestUri = uri,
         Template = this,
         WildcardPathSegments = new Collection<string>()
