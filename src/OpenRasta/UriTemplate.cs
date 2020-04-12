@@ -21,7 +21,10 @@ namespace OpenRasta
     {
       _templateUri = ParseTemplate(template);
       _segments = ParsePathSegments(_templateUri);
-      _pathSegmentVariables = ParsePathSegments(_segments);
+      
+      _pathSegmentVariables = _segments.Where(segment => segment.Type == SegmentType.Variable)
+        .ToDictionary(segment => segment.Text.ToUpperInvariant(), StringComparer.OrdinalIgnoreCase);
+      
       QueryString = ParseQueryStringSegments(_templateUri.Query).ToList();
       Fragment = ParseFragment(_templateUri.Fragment).ToList();
       _queryStringSegments = ParseQueryStringSegments(QueryString);
@@ -38,7 +41,7 @@ namespace OpenRasta
     const string LBRACE = "%7B";
     const string RBRACE = "%7D";
 
-    IEnumerable<FragmentSegment> ParseFragment(string templateUriFragment)
+    static IEnumerable<FragmentSegment> ParseFragment(string templateUriFragment)
     {
       if (templateUriFragment.Length == 0) yield break;
       int openBraceFragmentPos = templateUriFragment.IndexOf(LBRACE, StringComparison.OrdinalIgnoreCase);
@@ -102,21 +105,10 @@ namespace OpenRasta
 
     IEnumerable<string> GetQueryStringVariableNames(Dictionary<string, QuerySegment> valueCollection)
     {
-      foreach (var qsegment in valueCollection)
-        if (qsegment.Value.Type == SegmentType.Variable)
-          yield return qsegment.Value.Value;
-    }
-
-    static Dictionary<string, UrlSegment> ParsePathSegments(List<UrlSegment> segments)
-    {
-      var returnDic = new Dictionary<string, UrlSegment>(StringComparer.OrdinalIgnoreCase);
-      foreach (var segment in segments)
-      {
-        if (segment.Type == SegmentType.Variable)
-          returnDic.Add(segment.Text.ToUpperInvariant(), segment);
-      }
-
-      return returnDic;
+      return 
+        from qsegment in valueCollection 
+        where qsegment.Value.Type == SegmentType.Variable
+        select qsegment.Value.Value;
     }
 
     static Dictionary<string, QuerySegment> ParseQueryStringSegments(IEnumerable<QuerySegment> queryString)
