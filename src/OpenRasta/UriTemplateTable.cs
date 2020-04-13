@@ -47,7 +47,7 @@ namespace OpenRasta
     public Collection<UriTemplateMatch> Match(Uri uri)
     {
       var lastMaxLiteralSegmentCount = 0;
-      var matches = new Collection<UriTemplateMatch>();
+      var matches = new List<UriTemplateMatch>();
       foreach (var template in KeyValuePairs)
       {
         // TODO: discard uri templates with fragment identifiers until tests are implemented
@@ -74,14 +74,21 @@ namespace OpenRasta
         {
           continue;
         }
-
+        var missingQueryStringParameters = Math.Abs(potentialMatch.QueryStringVariables.Count - potentialMatch.QueryParameters.Count);
+        var matchedVariables = potentialMatch.PathSegmentVariables.Count + potentialMatch.QueryStringVariables.Count;
+        var literalSegments = potentialMatch.RelativePathSegments.Count - potentialMatch.PathSegmentVariables.Count;
+        potentialMatch.Score =
+          literalSegments << 24
+          | matchedVariables << 16
+          | ((1 << 8) - missingQueryStringParameters);
         matches.Add(potentialMatch);
       }
 
-      return SortByMatchQuality(matches).ToCollection();
+      matches.Sort((left, right) => left.Score.CompareTo(right.Score)*-1);
+      return matches.ToCollection();
     }
 
-    IEnumerable<UriTemplateMatch> SortByMatchQuality(Collection<UriTemplateMatch> matches)
+    IEnumerable<UriTemplateMatch> SortByMatchQuality(IEnumerable<UriTemplateMatch> matches)
     {
       return from m in matches
         let missingQueryStringParameters = Math.Abs(m.QueryStringVariables.Count - m.QueryParameters.Count)
