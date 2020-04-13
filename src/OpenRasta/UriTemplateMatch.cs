@@ -32,7 +32,7 @@ namespace OpenRasta
     /// <summary>
     /// All segments matched by the wildcard variable
     /// </summary>
-    public Collection<string> WildcardPathSegments { get; internal set; }
+    public IReadOnlyCollection<string> WildcardPathSegments { get; internal set; }
     public IEnumerable<UriTemplate.QuerySegment> QueryString { get; set; }
     public int Score { get; set; }
   }

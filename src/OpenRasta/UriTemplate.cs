@@ -448,11 +448,11 @@ namespace OpenRasta
         return null;
 
       var baseUriPathAndQuery = PathAndQuery(baseAddress);
-      var requestUriPathAndQuery = PathAndQuery(uri);
+      var requestPathAndQuery = PathAndQuery(uri);
 
       var baseUriSegments = ParsePathSegments(baseUriPathAndQuery);
 
-      var candidateSegments = ParsePathSegments(requestUriPathAndQuery);
+      var candidateSegments = ParsePathSegments(requestPathAndQuery);
       var queryPosition = candidateSegments.Last.Value.Offset + candidateSegments.Last.Value.Count;
 
       var currentBaseUriSegment = baseUriSegments.First;
@@ -503,31 +503,31 @@ namespace OpenRasta
 
       var queryStringVariables = new NameValueCollection();
 
-      LinkedList<QuerySegment> uriQuery = null;
+      LinkedList<QuerySegment> requestQuerySegments = null;
 
-      if (queryPosition != -1 && queryPosition < requestUriPathAndQuery.Buffer.Length - 1)
+      if (queryPosition != -1 && queryPosition < requestPathAndQuery.Buffer.Length - 1)
       {
-        var requestUriQuery = new StringSegment(requestUriPathAndQuery.Buffer, queryPosition,
-          requestUriPathAndQuery.Buffer.Length - queryPosition);
+        var requestQuery = new StringSegment(requestPathAndQuery.Buffer, queryPosition,
+          requestPathAndQuery.Buffer.Length - queryPosition);
 
-        uriQuery = ParseQueryStringSegmentsInternal(requestUriQuery, false);
+        requestQuerySegments = ParseQueryStringSegmentsInternal(requestQuery, false);
 
-        var requestUriQuerySegments = ParseQueryStringSegments(uriQuery);
+        var requestQuerySegmentsByName = ParseQueryStringSegments(requestQuerySegments);
 
         foreach (var templateQuerySegment in QueryString)
         {
-          var requestUriHasQueryStringKey = requestUriQuerySegments.ContainsKey(templateQuerySegment.Key);
+          var requestUriHasQueryStringKey = requestQuerySegmentsByName.ContainsKey(templateQuerySegment.Key);
 
           switch (templateQuerySegment.Type)
           {
             case SegmentType.Literal when requestUriHasQueryStringKey == false ||
-                                          QuerySegmentValueIsDifferent(requestUriQuerySegments, templateQuerySegment):
+                                          QuerySegmentValueIsDifferent(requestQuerySegmentsByName, templateQuerySegment):
               return null;
             case SegmentType.Literal:
               break;
             case SegmentType.Variable when requestUriHasQueryStringKey:
               queryStringVariables[templateQuerySegment.Value] =
-                requestUriQuerySegments[templateQuerySegment.Key].RawValue;
+                requestQuerySegmentsByName[templateQuerySegment.Key].RawValue;
               break;
           }
         }
@@ -538,16 +538,17 @@ namespace OpenRasta
         BaseUri = baseAddress,
         Data = 0,
         PathSegmentVariables = boundVariables,
-        QueryString = uriQuery ?? Enumerable.Empty<QuerySegment>(),
+        QueryString = requestQuerySegments ?? Enumerable.Empty<QuerySegment>(),
         QueryParameters = _cachedQueryStringKeyNames,
         QueryStringVariables = queryStringVariables,
         RelativePathSegments = From(candidateSegments, segment => segment.Value),
         RequestUri = uri,
         Template = this,
-        WildcardPathSegments = new Collection<string>()
+        WildcardPathSegments = EmptyStrings
       };
     }
 
+    static readonly IReadOnlyCollection<string> EmptyStrings = new List<string>().AsReadOnly();
     public static IReadOnlyCollection<TValue> From<T, TValue>(
       LinkedList<T> nodes,
       Func<T, TValue> select)
@@ -827,17 +828,5 @@ namespace OpenRasta
     {
       return Value ?? string.Empty;
     }
-
-    //
-    // public enum UriSegmentType
-    // {
-    //   QsKey,
-    //   QsValue,
-    //   PathSegment
-    // }
-    // public static class UriParser
-    // {
-    //   public static LinkedList< 
-    // }
   }
 }
