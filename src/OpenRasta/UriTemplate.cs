@@ -134,7 +134,8 @@ namespace OpenRasta
     {
       QsKey,
       QsValue,
-      End
+      End,
+      Begin
     }
 
 
@@ -148,7 +149,7 @@ namespace OpenRasta
       var nodeList = new LinkedList<QuerySegment>();
 
       var boundary = 0;
-      var state = ParseState.QsKey;
+      var state = ParseState.Begin;
 
       QsParseResult currentKey = default;
 
@@ -167,7 +168,7 @@ namespace OpenRasta
           switch (state)
           {
             case ParseState.QsKey:
-              currentKey.Key = q.Subsegment( boundary, pos - boundary);
+              currentKey.Key = q.Subsegment(boundary, pos - boundary);
               break;
             case ParseState.QsValue:
               currentKey.Value = q.Subsegment(boundary, pos - boundary);
@@ -177,9 +178,14 @@ namespace OpenRasta
           boundary = pos + 1;
         }
 
-        if (pos == 0 && c == '?')
+        if (state == ParseState.Begin)
         {
-          boundary = 1;
+          if (c == '?')
+          {
+            state = ParseState.QsKey;
+            boundary = pos + 1;
+          }
+          // ignore it all till the ?
           continue;
         }
 
@@ -250,7 +256,7 @@ namespace OpenRasta
         //  TODO: Check we don't double decode the wrong / here, potential issue
         var sanitizedSegment = unescapedSegment.Replace("/", string.Empty);
         var trailingSeparator = unescapedSegment.Length - sanitizedSegment.Length > 0;
-        
+
         string variableName;
         if (sanitizedSegment == string.Empty) // this is the '/' returned by Uri which we don't care much for
           continue;
@@ -422,8 +428,9 @@ namespace OpenRasta
       var str = uri.ToString();
       var idx = str.IndexOf('/', 8); // covers http://x and https://
       if (idx == -1) idx = str.Length - 1;
-      return new StringSegment(str, idx, str.Length-idx);
+      return new StringSegment(str, idx, str.Length - idx);
     }
+
     public UriTemplateMatch Match(Uri baseAddress, Uri uri)
     {
       if (baseAddress == null || uri == null)
@@ -437,7 +444,7 @@ namespace OpenRasta
 
       var baseUriPathAndQuery = PathAndQuery(baseAddress);
       var requestUriPathAndQuery = PathAndQuery(uri);
-      
+
       var baseUriSegments = ParsePathSegments(baseUriPathAndQuery);
       var candidateSegments = ParsePathSegments(requestUriPathAndQuery);
 
@@ -488,7 +495,7 @@ namespace OpenRasta
       }
 
       var queryStringVariables = new NameValueCollection();
-      var uriQuery = ParseQueryStringSegmentsInternal(new StringSegment(uri.Query), false);
+      var uriQuery = ParseQueryStringSegmentsInternal(requestUriPathAndQuery, false);
       var requestUriQuerySegments = ParseQueryStringSegments(uriQuery);
 
       var queryParams = new Collection<string>();
@@ -567,6 +574,7 @@ namespace OpenRasta
     }
 
     static LinkedList<StringSegment> ParsePathSegments(string path) => ParsePathSegments(new StringSegment(path));
+
     static LinkedList<StringSegment> ParsePathSegments(in StringSegment path)
     {
       var boundary = 0;
@@ -581,12 +589,13 @@ namespace OpenRasta
         }
         else if (pos == path.Count - 1)
         {
-          segments.AddLast(path.Subsegment( boundary, pos - boundary + 1));
+          segments.AddLast(path.Subsegment(boundary, pos - boundary + 1));
           break;
         }
-        else if(path[pos] == '?')
+        else if (path[pos] == '?')
         {
-          segments.AddLast(path.Subsegment(boundary, pos - boundary));
+          if (pos-boundary > 0)
+            segments.AddLast(path.Subsegment(boundary, pos - boundary));
           break;
         }
       }
@@ -671,12 +680,14 @@ namespace OpenRasta
       _offset = offset;
       _count = count;
     }
+
     public StringSegment(string buffer)
     {
       _buffer = buffer;
       _offset = buffer == null ? -1 : 0;
       _count = buffer?.Length ?? 0;
     }
+
     public string Buffer => _buffer;
 
     public int Offset => _offset;
@@ -686,7 +697,7 @@ namespace OpenRasta
     public string Value => _offset == -1 ? null : _buffer.Substring(_offset, _count);
 
     public bool HasValue => _offset != -1 && _count != 0 && _buffer != null;
-    
+
     public char this[in int index] => _buffer[_offset + index];
 
     public bool Equals(StringSegment other)
@@ -803,6 +814,7 @@ namespace OpenRasta
     {
       return Value ?? string.Empty;
     }
+
     //
     // public enum UriSegmentType
     // {
