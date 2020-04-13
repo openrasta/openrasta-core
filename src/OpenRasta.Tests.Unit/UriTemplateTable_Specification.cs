@@ -31,7 +31,7 @@ namespace UriTemplateTable_Specification
         new KeyValuePair<UriTemplate, object>(new UriTemplate("resource1?query={queryText}"), null),
         new KeyValuePair<UriTemplate, object>(new UriTemplate("resource1?query2={queryText}"), null)
       });
-      Collection<UriTemplateMatch> match = table.Match(new Uri("http://localhost/resource1?query=testing a query"));
+      var match = table.Match(new Uri("http://localhost/resource1?query=testing a query"));
       match.Count.ShouldBe(2);
       
       match[0].QueryStringVariables.Count.ShouldBe(1);
@@ -50,7 +50,7 @@ namespace UriTemplateTable_Specification
         new KeyValuePair<UriTemplate, object>(new UriTemplate("resource1"), null),
         new KeyValuePair<UriTemplate, object>(new UriTemplate("resource1?query={queryText}"), null)
       });
-      Collection<UriTemplateMatch> match = table.Match(new Uri("http://localhost/resource1"));
+      var match = table.Match(new Uri("http://localhost/resource1"));
 
       match.Count.ShouldBe(3);
       match[0].PathSegmentVariables.Count.ShouldBe(0);
@@ -67,7 +67,7 @@ namespace UriTemplateTable_Specification
         new KeyValuePair<UriTemplate, object>(new UriTemplate("resource1"), null),
         new KeyValuePair<UriTemplate, object>(new UriTemplate("resource1?query={quasiText}"), null)
       });
-      Collection<UriTemplateMatch> match =
+      var match =
         table.Match(new Uri("http://localhost/resource1?query=ceci_nest_pas_un_value"));
 
       match.Count.ShouldBe(3);
@@ -88,7 +88,7 @@ namespace UriTemplateTable_Specification
         new KeyValuePair<UriTemplate, object>(new UriTemplate("resource1"), null),
         new KeyValuePair<UriTemplate, object>(new UriTemplate("resource1?query={quasiText}"), null)
       });
-      Collection<UriTemplateMatch> match =
+      var match =
         table.Match(new Uri("http://localhost/resource1?query=ceci_nest_pas_un_value&irrelevant=value"));
 
       match.Count.ShouldBe(4);
@@ -107,7 +107,7 @@ namespace UriTemplateTable_Specification
           new UriTemplate("resource1/{resourceId}?query={queryText}&query2={queryiestText}"), null),
       });
 
-      Collection<UriTemplateMatch> match =
+      var match =
         table.Match(new Uri("http://localhost/resource1/123?query=ceci_nest_pas_un_value"));
 
       match.Count.ShouldBe(2);
