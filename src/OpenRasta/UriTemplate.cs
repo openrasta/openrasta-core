@@ -15,9 +15,9 @@ namespace OpenRasta
     readonly Dictionary<string, UrlSegment> _pathSegmentVariables;
     readonly List<UrlSegment> _segments;
     readonly Dictionary<string, QuerySegment> _queryStringSegments;
-    
+
     readonly Uri _templateUri;
-    Collection<string> _cachedQueryStringKeyNames;
+    readonly ReadOnlyCollection<string> _cachedQueryStringKeyNames;
 
     public UriTemplate(string template)
     {
@@ -30,7 +30,7 @@ namespace OpenRasta
       QueryString = ParseQueryStringSegments(_templateUri.Query).ToList();
       Fragment = ParseFragment(_templateUri.Fragment).ToList();
       _queryStringSegments = ParseQueryStringSegments(QueryString);
-      _cachedQueryStringKeyNames = _queryStringSegments.Keys.ToCollection();
+      _cachedQueryStringKeyNames = new ReadOnlyCollection<string>(_queryStringSegments.Keys.ToCollection());
 
       PathSegmentVariableNames = new ReadOnlyCollection<string>(new List<string>(_pathSegmentVariables.Keys));
       QueryStringVariableNames =
@@ -189,6 +189,7 @@ namespace OpenRasta
             state = ParseState.QsKey;
             boundary = pos + 1;
           }
+
           // ignore it all till the ?
           continue;
         }
@@ -450,7 +451,7 @@ namespace OpenRasta
       var requestUriPathAndQuery = PathAndQuery(uri);
 
       var baseUriSegments = ParsePathSegments(baseUriPathAndQuery);
-      
+
       var candidateSegments = ParsePathSegments(requestUriPathAndQuery);
       var queryPosition = candidateSegments.Last.Value.Offset + candidateSegments.Last.Value.Count;
 
@@ -501,11 +502,10 @@ namespace OpenRasta
       }
 
       var queryStringVariables = new NameValueCollection();
-      
+
       LinkedList<QuerySegment> uriQuery = null;
-      // var queryParams = new Collection<string>();
-      
-      if (queryPosition != -1 && queryPosition < requestUriPathAndQuery.Buffer.Length-1)
+
+      if (queryPosition != -1 && queryPosition < requestUriPathAndQuery.Buffer.Length - 1)
       {
         var requestUriQuery = new StringSegment(requestUriPathAndQuery.Buffer, queryPosition,
           requestUriPathAndQuery.Buffer.Length - queryPosition);
@@ -607,7 +607,7 @@ namespace OpenRasta
         }
         else if (path[pos] == '?')
         {
-          if (pos-boundary > 0)
+          if (pos - boundary > 0)
             segments.AddLast(path.Subsegment(boundary, pos - boundary));
           break;
         }
