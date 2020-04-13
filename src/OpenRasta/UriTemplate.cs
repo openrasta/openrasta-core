@@ -16,8 +16,10 @@ namespace OpenRasta
     readonly List<UrlSegment> _segments;
     readonly Dictionary<string, QuerySegment> _queryStringSegments;
 
+
     readonly Uri _templateUri;
     readonly ReadOnlyCollection<string> _cachedQueryStringKeyNames;
+    readonly int _cachedQsLiteralSegments;
 
     public UriTemplate(string template)
     {
@@ -28,6 +30,7 @@ namespace OpenRasta
         .ToDictionary(segment => segment.Text.ToUpperInvariant(), StringComparer.OrdinalIgnoreCase);
 
       QueryString = ParseQueryStringSegments(_templateUri.Query).ToList();
+      _cachedQsLiteralSegments = QueryString.Count(qs => qs.Type == SegmentType.Literal);
       Fragment = ParseFragment(_templateUri.Fragment).ToList();
       _queryStringSegments = ParseQueryStringSegments(QueryString);
       _cachedQueryStringKeyNames = new ReadOnlyCollection<string>(_queryStringSegments.Keys.ToCollection());
@@ -501,12 +504,14 @@ namespace OpenRasta
         currentCandidateSegment = currentCandidateSegment.Next;
       }
 
-      var queryStringVariables = new NameValueCollection();
+      NameValueCollection queryStringVariables = null;
 
       LinkedList<QuerySegment> requestQuerySegments = null;
 
       if (queryPosition != -1 && queryPosition < requestPathAndQuery.Buffer.Length - 1)
       {
+        queryStringVariables = new NameValueCollection();
+        
         var requestQuery = new StringSegment(requestPathAndQuery.Buffer, queryPosition,
           requestPathAndQuery.Buffer.Length - queryPosition);
 
@@ -514,23 +519,34 @@ namespace OpenRasta
 
         var requestQuerySegmentsByName = ParseQueryStringSegments(requestQuerySegments);
 
-        foreach (var templateQuerySegment in QueryString)
+        var matchingLiteralQsSegments = 0;
+        foreach (var requestQsSegment in requestQuerySegments)
         {
-          var requestUriHasQueryStringKey = requestQuerySegmentsByName.ContainsKey(templateQuerySegment.Key);
-
-          switch (templateQuerySegment.Type)
+          if (_queryStringSegments.TryGetValue(requestQsSegment.Key, out var templateQsSegment) == false)
+            continue;
+          switch (templateQsSegment.Type)
           {
-            case SegmentType.Literal when requestUriHasQueryStringKey == false ||
-                                          QuerySegmentValueIsDifferent(requestQuerySegmentsByName, templateQuerySegment):
+            case SegmentType.Variable:
+              queryStringVariables[templateQsSegment.Value] =
+                requestQuerySegmentsByName[templateQsSegment.Key].RawValue;
+              break;
+            case SegmentType.Literal when templateQsSegment.Value != requestQsSegment.Value:
               return null;
             case SegmentType.Literal:
-              break;
-            case SegmentType.Variable when requestUriHasQueryStringKey:
-              queryStringVariables[templateQuerySegment.Value] =
-                requestQuerySegmentsByName[templateQuerySegment.Key].RawValue;
+              matchingLiteralQsSegments++;
               break;
           }
         }
+        //  are there any literal querystring names (not vars) not present above
+        // we've matched each variable in queryStringVariables, and we increase literal
+        // when we encounter one.
+
+        var totalMatching = queryStringVariables.Count + matchingLiteralQsSegments;
+
+        // invalid or unmatching scenarios have been covered. If we discover duplicate qs keys, ah well,
+        // who knows what happens. Long as we have enough, we finish,
+        if (totalMatching < _cachedQsLiteralSegments)
+          return null;
       }
 
       return new UriTemplateMatch
@@ -540,7 +556,7 @@ namespace OpenRasta
         PathSegmentVariables = boundVariables,
         QueryString = requestQuerySegments ?? Enumerable.Empty<QuerySegment>(),
         QueryParameters = _cachedQueryStringKeyNames,
-        QueryStringVariables = queryStringVariables,
+        QueryStringVariables = queryStringVariables ?? new NameValueCollection(),
         RelativePathSegments = From(candidateSegments, segment => segment.Value),
         RequestUri = uri,
         Template = this,
@@ -548,7 +564,9 @@ namespace OpenRasta
       };
     }
 
+
     static readonly IReadOnlyCollection<string> EmptyStrings = new List<string>().AsReadOnly();
+
     public static IReadOnlyCollection<TValue> From<T, TValue>(
       LinkedList<T> nodes,
       Func<T, TValue> select)
