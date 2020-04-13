@@ -417,6 +417,13 @@ namespace OpenRasta
       return true;
     }
 
+    static StringSegment PathAndQuery(in Uri uri)
+    {
+      var str = uri.ToString();
+      var idx = str.IndexOf('/', 8); // covers http://x and https://
+      if (idx == -1) idx = str.Length - 1;
+      return new StringSegment(str, idx, str.Length-idx);
+    }
     public UriTemplateMatch Match(Uri baseAddress, Uri uri)
     {
       if (baseAddress == null || uri == null)
@@ -428,8 +435,11 @@ namespace OpenRasta
           baseAddress.GetLeftPart(UriPartial.Authority) != uri.GetLeftPart(UriPartial.Authority))
         return null;
 
-      var baseUriSegments = ParsePathSegments(baseAddress.AbsolutePath);
-      var candidateSegments = ParsePathSegments(uri.AbsolutePath);
+      var baseUriPathAndQuery = PathAndQuery(baseAddress);
+      var requestUriPathAndQuery = PathAndQuery(uri);
+      
+      var baseUriSegments = ParsePathSegments(baseUriPathAndQuery);
+      var candidateSegments = ParsePathSegments(requestUriPathAndQuery);
 
       var currentBaseUriSegment = baseUriSegments.First;
 
@@ -569,9 +579,14 @@ namespace OpenRasta
           segments.AddLast(path.Subsegment(boundary, pos - boundary));
           boundary = pos + 1;
         }
-        else if (pos == path.Count - 1 || path[pos] == '?')
+        else if (pos == path.Count - 1)
         {
           segments.AddLast(path.Subsegment( boundary, pos - boundary + 1));
+          break;
+        }
+        else if(path[pos] == '?')
+        {
+          segments.AddLast(path.Subsegment(boundary, pos - boundary));
           break;
         }
       }
