@@ -6,7 +6,6 @@ using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
 using LibOwin.Infrastructure;
-using OpenRasta.Collections;
 
 namespace OpenRasta
 {
@@ -126,7 +125,7 @@ namespace OpenRasta
       return result;
     }
 
-    struct QSParseResult
+    struct QsParseResult
     {
       public StringSegment Key;
       public StringSegment Value;
@@ -134,8 +133,8 @@ namespace OpenRasta
 
     enum ParseState
     {
-      QSKey,
-      QSValue,
+      QsKey,
+      QsValue,
       End
     }
 
@@ -148,14 +147,14 @@ namespace OpenRasta
       var nodeList = new LinkedList<QuerySegment>();
 
       var boundary = 0;
-      var state = ParseState.QSKey;
+      var state = ParseState.QsKey;
 
-      QSParseResult currentKey = default;
+      QsParseResult currentKey = default;
 
       void append()
       {
         nodeList.AddLast(ToQueryStringSegment(currentKey, isTemplate));
-        currentKey = new QSParseResult();
+        currentKey = new QsParseResult();
       }
 
       for (var pos = 0; pos < query.Length; pos++)
@@ -166,10 +165,16 @@ namespace OpenRasta
 
         void commit()
         {
-          if (state == ParseState.QSKey)
-            currentKey.Key = new StringSegment(query, boundary, pos - boundary);
-          else if (state == ParseState.QSValue)
-            currentKey.Value = new StringSegment(query, boundary, pos - boundary);
+          switch (state)
+          {
+            case ParseState.QsKey:
+              currentKey.Key = new StringSegment(query, boundary, pos - boundary);
+              break;
+            case ParseState.QsValue:
+              currentKey.Value = new StringSegment(query, boundary, pos - boundary);
+              break;
+          }
+
           boundary = pos + 1;
         }
 
@@ -188,24 +193,24 @@ namespace OpenRasta
           break;
         }
 
-        if (c == '=' && state == ParseState.QSKey)
+        if (c == '=' && state == ParseState.QsKey)
         {
           commit();
-          state = ParseState.QSValue;
+          state = ParseState.QsValue;
           boundary = pos + 1;
         }
         else if (c == '&')
         {
           commit();
           append();
-          state = ParseState.QSKey;
+          state = ParseState.QsKey;
         }
       }
 
       return nodeList;
     }
 
-    static QuerySegment ToQueryStringSegment(in QSParseResult entry, bool isTemplate)
+    static QuerySegment ToQueryStringSegment(in QsParseResult entry, bool isTemplate)
     {
       string rawValue = null, value = null;
       var type = SegmentType.Literal;
@@ -426,16 +431,13 @@ namespace OpenRasta
       var candidateSegments = ParsePathSegments(uri.AbsolutePath);
 
       var currentBaseUriSegment = baseUriSegments.segments.First;
-      
 
-      var candidateOffset = 0;
       while (true)
       {
         if (currentBaseUriSegment != null && candidateSegments.segments.First != null &&
             currentBaseUriSegment.Value.Equals(candidateSegments.segments.First.Value, StringComparison.Ordinal))
         {
           candidateSegments.segments.RemoveFirst();
-          
           currentBaseUriSegment = currentBaseUriSegment.Next;
         }
         else
@@ -449,7 +451,7 @@ namespace OpenRasta
 
       var firstCandidateSegment = candidateSegments.segments.First;
       var currentCandidateSegment = firstCandidateSegment;
-      
+
       for (var i = 0; i < _segments.Count; i++)
       {
         if (currentCandidateSegment == null) break;
@@ -502,7 +504,6 @@ namespace OpenRasta
 
       return new UriTemplateMatch
       {
-        
         BaseUri = baseAddress,
         Data = 0,
         PathSegmentVariables = boundVariables,
@@ -533,7 +534,7 @@ namespace OpenRasta
       public LinkedListAdapter(LinkedList<T> node, Func<T, TValue> select)
       {
         _node = node;
-        _select = @select;
+        _select = select;
       }
 
       public IEnumerator<TValue> GetEnumerator()
