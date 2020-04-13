@@ -5,6 +5,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
+using OpenRasta.Collections;
 
 namespace OpenRasta
 {
@@ -14,7 +15,9 @@ namespace OpenRasta
     readonly Dictionary<string, UrlSegment> _pathSegmentVariables;
     readonly List<UrlSegment> _segments;
     readonly Dictionary<string, QuerySegment> _queryStringSegments;
+    
     readonly Uri _templateUri;
+    Collection<string> _cachedQueryStringKeyNames;
 
     public UriTemplate(string template)
     {
@@ -27,6 +30,7 @@ namespace OpenRasta
       QueryString = ParseQueryStringSegments(_templateUri.Query).ToList();
       Fragment = ParseFragment(_templateUri.Fragment).ToList();
       _queryStringSegments = ParseQueryStringSegments(QueryString);
+      _cachedQueryStringKeyNames = _queryStringSegments.Keys.ToCollection();
 
       PathSegmentVariableNames = new ReadOnlyCollection<string>(new List<string>(_pathSegmentVariables.Keys));
       QueryStringVariableNames =
@@ -499,7 +503,7 @@ namespace OpenRasta
       var queryStringVariables = new NameValueCollection();
       
       LinkedList<QuerySegment> uriQuery = null;
-      var queryParams = new Collection<string>();
+      // var queryParams = new Collection<string>();
       
       if (queryPosition != -1 && queryPosition < requestUriPathAndQuery.Buffer.Length-1)
       {
@@ -526,8 +530,6 @@ namespace OpenRasta
                 requestUriQuerySegments[templateQuerySegment.Key].RawValue;
               break;
           }
-
-          queryParams.Add(templateQuerySegment.Key);
         }
       }
 
@@ -537,7 +539,7 @@ namespace OpenRasta
         Data = 0,
         PathSegmentVariables = boundVariables,
         QueryString = uriQuery ?? Enumerable.Empty<QuerySegment>(),
-        QueryParameters = queryParams,
+        QueryParameters = _cachedQueryStringKeyNames,
         QueryStringVariables = queryStringVariables,
         RelativePathSegments = From(candidateSegments, segment => segment.Value),
         RequestUri = uri,
