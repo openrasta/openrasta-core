@@ -118,10 +118,10 @@ namespace OpenRasta.Web
       var tableMatches = _templates.Match(uriToMatch);
       if (tableMatches == null || tableMatches.Count == 0)
         return null;
-      var urlDescriptor = (UrlDescriptor) tableMatches[0].Data;
 
 
-      var allResults = tableMatches.Select(m =>
+      var allResults = tableMatches
+        .Select(m =>
       {
         var descriptor = (UrlDescriptor) m.Data;
         return new TemplatedUriMatch(
@@ -131,8 +131,8 @@ namespace OpenRasta.Web
       }).ToList();
 
       return new UriRegistration(
-        urlDescriptor.Registration.ResourceModel,
-        urlDescriptor.Registration.UriModel)
+        allResults[0].ResourceModel,
+        allResults[0].UriModel)
       {
         Results = allResults
       };

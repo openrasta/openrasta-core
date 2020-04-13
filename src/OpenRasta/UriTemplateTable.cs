@@ -85,17 +85,7 @@ namespace OpenRasta
       }
 
       matches.Sort((left, right) => left.Score.CompareTo(right.Score)*-1);
-      return matches.ToCollection();
-    }
-
-    IEnumerable<UriTemplateMatch> SortByMatchQuality(IEnumerable<UriTemplateMatch> matches)
-    {
-      return from m in matches
-        let missingQueryStringParameters = Math.Abs(m.QueryStringVariables.Count - m.QueryParameters.Count)
-        let matchedVariables = m.PathSegmentVariables.Count + m.QueryStringVariables.Count
-        let literalSegments = m.RelativePathSegments.Count - m.PathSegmentVariables.Count
-        orderby literalSegments descending, matchedVariables descending, missingQueryStringParameters
-        select m;
+      return new Collection<UriTemplateMatch>(matches);
     }
 
     /// <exception cref="UriTemplateMatchException">Several matching templates were found.</exception>
