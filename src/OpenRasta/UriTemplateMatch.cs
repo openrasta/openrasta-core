@@ -17,7 +17,7 @@ namespace OpenRasta
     /// <summary>
     /// A collection of all query string parameters. ?key=value would contain [key]
     /// </summary>
-    public Collection<string> QueryParameters { get; set; }
+    public IReadOnlyCollection<string> QueryParameters { get; set; }
     /// <summary>
     /// A collection of all query string variables. ?key={id} contains [id=input]
     /// </summary>
