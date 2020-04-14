@@ -15,7 +15,7 @@ namespace OpenRasta
     public NameValueCollection PathSegmentVariables { get; internal set; }
     public object Data { get; set; }
     /// <summary>
-    /// A collection of all query string parameters. ?key=value would contain [key]
+    /// A collection of all query string parameters in the template. ?key=value would contain [key]
     /// </summary>
     public IReadOnlyCollection<string> QueryParameters { get; set; }
     /// <summary>
