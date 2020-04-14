@@ -23,7 +23,7 @@ namespace OpenRastaDemo.Benchmark
 //
 //#else
 
-     BenchmarkRunner.Run<Matching>();
+     BenchmarkRunner.Run<EndToEnd.SimpleHealthCheckBenchmark>();
 //      new BenchmarkSwitcher(typeof(Program).Assembly).RunAll();
 //#endif
     }
