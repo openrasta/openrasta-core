@@ -11,18 +11,21 @@ namespace OpenRasta
     public static readonly Uri DefaultBaseAddress = new Uri("http://localhost");
     readonly List<KeyValuePair<UriTemplate, object>> _keyValuePairs;
     ReadOnlyCollection<KeyValuePair<UriTemplate, object>> _keyValuePairsReadOnly;
+    IEnumerable<KeyValuePair<UriTemplate, object>> _resolvablePairs;
 
     public UriTemplateTable(Uri baseAddress = null, IEnumerable<KeyValuePair<UriTemplate, object>> keyValuePairs = null)
     {
-      BaseAddress = baseAddress == null 
+      BaseAddress = baseAddress == null
         ? DefaultBaseAddress
-        : baseAddress.Equals(DefaultBaseAddress) 
-          ? DefaultBaseAddress 
+        : baseAddress.Equals(DefaultBaseAddress)
+          ? DefaultBaseAddress
           : baseAddress;
-      
+
       _keyValuePairs = keyValuePairs != null
         ? new List<KeyValuePair<UriTemplate, object>>(keyValuePairs)
         : new List<KeyValuePair<UriTemplate, object>>();
+
+      _resolvablePairs = _keyValuePairs.Where(pair => pair.Key.Fragment.Any() == false);
     }
 
     public Uri BaseAddress { get; }
@@ -48,35 +51,52 @@ namespace OpenRasta
     {
       var lastMaxLiteralSegmentCount = 0;
       var matches = new List<UriTemplateMatch>();
-      foreach (var template in KeyValuePairs)
+      foreach (var template in _resolvablePairs)
       {
         // TODO: discard uri templates with fragment identifiers until tests are implemented
-        if (template.Key.Fragment.Any()) continue;
+
         var potentialMatch = template.Key.Match(BaseAddress, uri);
 
         if (potentialMatch == null) continue;
 
+        // WARNING, CODE THAT MAKES NO SENSE MAKES NO SENSE AT ALL!
+        // What it used to say, and it's not matching the code:
+        //
         // this calculates and keep only what matches the maximum possible amount of literal segments
-        var currentMaxLiteralSegmentCount = potentialMatch.RelativePathSegments.Count
-                                            - potentialMatch.WildcardPathSegments.Count;
-        for (var i = 0; i < potentialMatch.PathSegmentVariables.Count; i++)
-          if (potentialMatch.QueryParameters == null ||
-              potentialMatch.QueryStringVariables[potentialMatch.PathSegmentVariables.GetKey(i)] == null)
-            currentMaxLiteralSegmentCount -= 1;
+        // var currentLiteralSegmentCount = potentialMatch.RelativePathSegments.Count
+        //                       - potentialMatch.WildcardPathSegments.Count;
+
+        // for (var i = 0; i < potentialMatch.PathSegmentVariables.Count; i++)
+        // {
+        //   // I have no idea why that code does what it does. ????
+        //   var pathSegmentVarName = potentialMatch.PathSegmentVariables.GetKey(i);
+        //   
+        //   if (potentialMatch.QueryParameters == null ||
+        //       potentialMatch.QueryStringVariables[pathSegmentVarName] == null)
+        //   {
+        //     currentMaxLiteralSegmentCount -= 1;
+        //   }
+        // }
+
+        //
+        // if (currentLiteralSegmentCount > lastMaxLiteralSegmentCount)
+        // {
+        //   lastMaxLiteralSegmentCount = currentLiteralSegmentCount;
+        // }
+        // else if (currentLiteralSegmentCount < lastMaxLiteralSegmentCount)
+        // {
+        //   continue;
+        // }
+
+        var missingQueryStringParameters =
+          Math.Abs(potentialMatch.QueryStringVariables.Count - potentialMatch.QueryParameters.Count);
+        var matchedVariables = potentialMatch.PathSegmentVariables.Count + potentialMatch.QueryStringVariables.Count;
+
+        var literalSegments = potentialMatch.RelativePathSegments.Count
+                              - potentialMatch.PathSegmentVariables.Count
+                              - potentialMatch.WildcardPathSegments.Count;
 
         potentialMatch.Data = template.Value;
-
-        if (currentMaxLiteralSegmentCount > lastMaxLiteralSegmentCount)
-        {
-          lastMaxLiteralSegmentCount = currentMaxLiteralSegmentCount;
-        }
-        else if (currentMaxLiteralSegmentCount < lastMaxLiteralSegmentCount)
-        {
-          continue;
-        }
-        var missingQueryStringParameters = Math.Abs(potentialMatch.QueryStringVariables.Count - potentialMatch.QueryParameters.Count);
-        var matchedVariables = potentialMatch.PathSegmentVariables.Count + potentialMatch.QueryStringVariables.Count;
-        var literalSegments = potentialMatch.RelativePathSegments.Count - potentialMatch.PathSegmentVariables.Count;
         potentialMatch.Score =
           literalSegments << 24
           | matchedVariables << 16
@@ -84,7 +104,7 @@ namespace OpenRasta
         matches.Add(potentialMatch);
       }
 
-      matches.Sort((left, right) => left.Score.CompareTo(right.Score)*-1);
+      matches.Sort((left, right) => left.Score.CompareTo(right.Score) * -1);
       return new Collection<UriTemplateMatch>(matches);
     }
 
