@@ -16,7 +16,6 @@ namespace OpenRasta
     readonly List<UrlSegment> _segments;
     readonly Dictionary<string, QuerySegment> _queryStringSegments;
 
-
     readonly Uri _templateUri;
     readonly ReadOnlyCollection<string> _cachedQueryStringKeyNames;
     readonly int _cachedQsLiteralSegments;
@@ -475,7 +474,7 @@ namespace OpenRasta
       if (candidateSegments.Count != _segments.Count)
         return null;
 
-      var boundVariables = new NameValueCollection(_pathSegmentVariables.Count);
+      var pathSegmentVariables = new NameValueCollection(_pathSegmentVariables.Count);
 
       var firstCandidateSegment = candidateSegments.First;
       var currentCandidateSegment = firstCandidateSegment;
@@ -494,7 +493,7 @@ namespace OpenRasta
           case SegmentType.Wildcard:
             throw new NotImplementedException("Not finished wildcards implementation yet");
           case SegmentType.Variable:
-            boundVariables.Add(proposedSegmentText, unescapeSegment());
+            pathSegmentVariables.Add(proposedSegmentText, unescapeSegment());
             break;
           case SegmentType.Literal when
             string.Equals(proposedSegmentText, unescapeSegment(), StringComparison.OrdinalIgnoreCase) == false:
@@ -517,8 +516,6 @@ namespace OpenRasta
 
         requestQuerySegments = ParseQueryStringSegmentsInternal(requestQuery, false);
 
-        var requestQuerySegmentsByName = ParseQueryStringSegments(requestQuerySegments);
-
         var matchingLiteralQsSegments = 0;
         foreach (var requestQsSegment in requestQuerySegments)
         {
@@ -527,8 +524,7 @@ namespace OpenRasta
           switch (templateQsSegment.Type)
           {
             case SegmentType.Variable:
-              queryStringVariables[templateQsSegment.Value] =
-                requestQuerySegmentsByName[templateQsSegment.Key].RawValue;
+              queryStringVariables[templateQsSegment.Value] = requestQsSegment.RawValue;
               break;
             case SegmentType.Literal when templateQsSegment.Value != requestQsSegment.Value:
               return null;
@@ -553,7 +549,7 @@ namespace OpenRasta
       {
         BaseUri = baseAddress,
         Data = 0,
-        PathSegmentVariables = boundVariables,
+        PathSegmentVariables = pathSegmentVariables,
         QueryString = requestQuerySegments ?? Enumerable.Empty<QuerySegment>(),
         QueryParameters = _cachedQueryStringKeyNames,
         QueryStringVariables = queryStringVariables ?? new NameValueCollection(),
