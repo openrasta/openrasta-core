@@ -15,7 +15,7 @@ namespace OpenRasta.Concordia
       Properties = properties;
     }
 
-    protected T Get<T>(string key, T defaultValue = default(T))
+    protected T Get<T>(string key, T defaultValue = default)
     {
 
       if (Properties.ContainsKey(key) == false) return (T)(Properties[key] = defaultValue);
@@ -67,7 +67,7 @@ namespace OpenRasta.Concordia
 
       public bool TracePipelineExecution
       {
-        get => Get("openrasta.diagnostics.TracePipelineExecution", true);
+        get => Get("openrasta.diagnostics.TracePipelineExecution", false);
         set => Set("openrasta.diagnostics.TracePipelineExecution", value);
       }
     }
