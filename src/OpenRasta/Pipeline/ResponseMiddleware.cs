@@ -10,20 +10,20 @@ namespace OpenRasta.Pipeline
     {
     }
 
-    public override async Task Invoke(ICommunicationContext env)
+    public override Task Invoke(ICommunicationContext env)
     {
       if (env.PipelineData.TryGetValue("skipToCleanup",out var isSkip) && isSkip is bool skip && skip)
-      {
-         await Next.Invoke(env);
-         return;
-      }
-      
-      
+        return Next.Invoke(env);
+
+
       if (env.PipelineData.PipelineStage.CurrentState == PipelineContinuation.RenderNow)
-      {
         env.PipelineData.PipelineStage.CurrentState = PipelineContinuation.Continue;
-      }
-      
+
+      return InvokeCore(env);
+    }
+    
+    async Task InvokeCore(ICommunicationContext env)
+    {
       var contribState = await ContributorInvoke(env);
 
 #pragma warning disable 618
