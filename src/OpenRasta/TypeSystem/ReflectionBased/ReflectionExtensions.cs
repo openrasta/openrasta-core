@@ -119,6 +119,7 @@ namespace OpenRasta.TypeSystem.ReflectionBased
           return values;
         throw new NotSupportedException("Could not convert he values to an array");
       }
+
       // IEnumerable<>
       if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(IEnumerable<>))
       {
@@ -157,6 +158,7 @@ namespace OpenRasta.TypeSystem.ReflectionBased
         {
           list.Add(item);
         }
+
         return list;
       }
 
@@ -232,9 +234,9 @@ namespace OpenRasta.TypeSystem.ReflectionBased
     /// <exception cref="ArgumentException">The type is not an interface</exception>
     public static Type FindInterface(this Type type, Type interfaceType)
     {
-      if (type == null) throw new ArgumentNullException("type");
-      if (interfaceType == null) throw new ArgumentNullException("interfaceType");
-      if (!interfaceType.IsInterface) throw new ArgumentException("The type is not an interface", "interfaceType");
+      if (type == null) throw new ArgumentNullException(nameof(type));
+      if (interfaceType == null) throw new ArgumentNullException(nameof(interfaceType));
+      if (!interfaceType.IsInterface) throw new ArgumentException("The type is not an interface", nameof(interfaceType));
       if (type == interfaceType)
         return type;
 
@@ -441,7 +443,7 @@ namespace OpenRasta.TypeSystem.ReflectionBased
       {
         return Activator.CreateInstance(type);
       }
-      
+
       if (type.IsPrimitive)
       {
         try
@@ -455,7 +457,7 @@ namespace OpenRasta.TypeSystem.ReflectionBased
 
       if (propertyValue.IsNullOrEmpty() && type.IsValueType && Nullable.GetUnderlyingType(type) != null)
         return null;
-      
+
       recursionDefender = recursionDefender ?? new Stack<Type>();
       foreach (var constructor in type.GetConstructors())
       {
@@ -490,7 +492,7 @@ namespace OpenRasta.TypeSystem.ReflectionBased
       {
         return Activator.CreateInstance(type);
       }
-      
+
       throw new InvalidCastException($"Cannot convert the string \"{propertyValue}\" to type {type.Name}");
     }
 
@@ -514,6 +516,7 @@ namespace OpenRasta.TypeSystem.ReflectionBased
           return false;
         }
       }
+
       return true;
     }
   }
