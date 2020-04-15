@@ -1,14 +1,14 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>netcoreapp2.1</TargetFramework>
+        <TargetFrameworks>netcoreapp2.1;net48</TargetFrameworks>
     </PropertyGroup>
-    
+
     <ItemGroup>
       <ProjectReference Include="..\..\OpenRasta.Codecs.Newtonsoft.Json\OpenRasta.Codecs.Newtonsoft.Json.csproj" />
       <ProjectReference Include="..\..\OpenRasta.Hosting.AspNetCore\OpenRasta.Hosting.AspNetCore.csproj" />
       <ProjectReference Include="..\..\OpenRasta.Plugins.Hydra\OpenRasta.Plugins.Hydra.csproj" />
       <ProjectReference Include="..\..\OpenRasta.Plugins.ReverseProxy\OpenRasta.Plugins.ReverseProxy.csproj" />
     </ItemGroup>
-    
+
 </Project>
