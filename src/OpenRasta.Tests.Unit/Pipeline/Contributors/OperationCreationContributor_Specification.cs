@@ -2,6 +2,7 @@
 using System.Linq;
 using Moq;
 using NUnit.Framework;
+using OpenRasta.Configuration.MetaModel;
 using OpenRasta.DI;
 using OpenRasta.OperationModel;
 using OpenRasta.Pipeline.Contributors;
@@ -96,6 +97,8 @@ namespace OperationCreationContributor_Specification
         .Select(i => CreateMockOperation(i))
         .ToList() : null;
       mock.Setup(x => x.CreateOperations(It.IsAny<IEnumerable<IType>>()))
+        .Returns(Operations);
+      mock.Setup(x => x.CreateOperations(It.IsAny<IEnumerable<OperationModel>>()))
         .Returns(Operations);
       Resolver.AddDependencyInstance(typeof(IOperationCreator), mock.Object, DependencyLifetime.Singleton);
     }
