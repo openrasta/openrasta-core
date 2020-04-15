@@ -1,11 +1,13 @@
 using System;
 using BenchmarkDotNet.Attributes;
+using BenchmarkDotNet.Jobs;
 using OpenRasta.Web;
-using Xunit;
 
 namespace OpenRastaDemo.Benchmark.Uris
 {
-  [HtmlExporter, InProcess, MemoryDiagnoser]
+  [SimpleJob(RuntimeMoniker.Net48)]
+  [SimpleJob(RuntimeMoniker.NetCoreApp21)]
+  [HtmlExporter,MemoryDiagnoser]
   public class Matching
   {
     TemplatedUriResolver _templatedUriResolver;
@@ -16,7 +18,7 @@ namespace OpenRastaDemo.Benchmark.Uris
       {
         new UriRegistration("/events/", new object()),
         new UriRegistration("/events/{id}", new object()),
-        new UriRegistration("/events/?by={by}", new object())        
+        new UriRegistration("/events/?by={by}", new object())
       };
     }
 
