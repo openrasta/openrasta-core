@@ -14,13 +14,30 @@ namespace OpenRasta.Configuration.MetaModel.Handlers
   // WIP
   public class OperationModelCreator : IMetaModelHandler
   {
+    readonly IEnumerable<IMethodFilter> _methodFilters;
     readonly Func<IEnumerable<IOperationInterceptorAsync>> _asyncInterceptors;
-    readonly Func<IEnumerable<IMethod>, IEnumerable<IMethod>> _filters;
     readonly IObjectBinderLocator _binderLocator;
     readonly IDependencyResolver _resolver;
-    
-    #pragma warning disable once 618
+
+#pragma warning disable once 618
     readonly Func<IOperation, IEnumerable<IOperationInterceptor>> _syncInterceptors;
+
+    public OperationModelCreator(
+      IEnumerable<IMethodFilter> methodFilters,
+      Func<IEnumerable<IOperationInterceptorAsync>> asyncInterceptors,
+      IObjectBinderLocator binderLocator,
+      IDependencyResolver resolver,
+      IOperationInterceptorProvider syncInterceptorProvider = null)
+    {
+      _asyncInterceptors = asyncInterceptors;
+      _binderLocator = binderLocator;
+      _resolver = resolver;
+      _methodFilters = methodFilters.DefaultIfEmpty(new TypeExclusionMethodFilter<object>());
+      if (syncInterceptorProvider != null)
+        _syncInterceptors = syncInterceptorProvider.GetInterceptors;
+      else
+        _syncInterceptors = op => Enumerable.Empty<IOperationInterceptor>();
+    }
 
     public void PreProcess(IMetaModelRepository repository)
     {
@@ -33,18 +50,24 @@ namespace OpenRasta.Configuration.MetaModel.Handlers
       var operations = MethodBasedOperationCreator.CreateOperationDescriptors(
         resourceModel.Handlers.Select(h => h.Type),
         _asyncInterceptors,
-        _filters,
+        FilterMethods,
         _syncInterceptors,
         _binderLocator,
         _resolver).ToList();
-      foreach(var uri in resourceModel.Uris)
+      
+      foreach (var uri in resourceModel.Uris)
       foreach (var operation in operations)
         uri.Operations.Add(ToOperationModel(operation));
     }
 
+    IEnumerable<IMethod> FilterMethods(IEnumerable<IMethod> arg)
+    {
+      return _methodFilters.Aggregate(arg, (methods, filter) => filter.Filter(methods));
+    }
+
     OperationModel ToOperationModel(OperationDescriptor operation)
     {
-      return new OperationModel()
+      return new OperationModel
       {
         Factory = operation.Create,
         HttpMethod = GetHttpMethodForOperation(operation),
@@ -56,8 +79,8 @@ namespace OpenRasta.Configuration.MetaModel.Handlers
     {
       if (operation.HttpOperationAttribute != null)
         return operation.HttpOperationAttribute.Method;
-      
-      var match = Regex.Match(operation.Name,"^[A-Z][a-z]*");
+
+      var match = Regex.Match(operation.Name, "^[A-Z][a-z]*");
       if (match.Success) return match.Value.ToUpperInvariant();
       return operation.Name.ToUpperInvariant();
     }

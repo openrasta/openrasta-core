@@ -47,6 +47,11 @@ namespace OpenRasta.OperationModel.MethodBased
         .ToArray();
     }
 
+    public IEnumerable<IOperationAsync> CreateOperations(IEnumerable<Configuration.MetaModel.OperationModel> uriModel)
+    {
+      return uriModel.Select(o => o.Factory()).ToArray();
+    }
+
 
     public static IEnumerable<OperationDescriptor> CreateOperationDescriptors(IEnumerable<IType> handlers,
       Func<IEnumerable<IOperationInterceptorAsync>> asyncInterceptors,
@@ -55,7 +60,7 @@ namespace OpenRasta.OperationModel.MethodBased
       IObjectBinderLocator binderLocator = null,
       IDependencyResolver resolver = null)
     {
-      filters = filters ?? new TypeExclusionMethodFilter<object>().Filter;
+      filters ??= new TypeExclusionMethodFilter<object>().Filter;
 
       return from handler in handlers
         from method in filters(handler.GetMethods())
@@ -68,7 +73,7 @@ namespace OpenRasta.OperationModel.MethodBased
       IObjectBinderLocator binderLocator = null,
       IDependencyResolver resolver = null)
     {
-      asyncInterceptors = asyncInterceptors ?? Enumerable.Empty<IOperationInterceptorAsync>;
+      asyncInterceptors ??= Enumerable.Empty<IOperationInterceptorAsync>;
       return CreateTaskDescriptor(method, binderLocator, resolver, asyncInterceptors)
              ?? CreateTaskOfTDescriptor(method, binderLocator, resolver, asyncInterceptors)
              ?? CreateSyncDescriptor(method,
