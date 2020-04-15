@@ -48,6 +48,7 @@ namespace OpenRasta.Plugins.ReverseProxy
       var viaIdentifier = AppendViaHeaderToRequest(context, requestMessage);
 
 
+      
       var cts = new CancellationTokenSource();
       cts.CancelAfter(_timeout);
       var timeoutToken = cts.Token;
@@ -65,6 +66,7 @@ namespace OpenRasta.Plugins.ReverseProxy
           timeoutToken
         );
         reverseProxyResponse = new ReverseProxyResponse(requestMessage, responseMessage, viaIdentifier);
+        cts.Dispose();
       }
       catch (TaskCanceledException e) when (timeoutToken.IsCancellationRequested || e.CancellationToken == timeoutToken)
       {
