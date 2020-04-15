@@ -8,33 +8,24 @@ namespace OpenRasta.Pipeline.Contributors
 {
   public class OperationFilterContributor : KnownStages.IOperationFiltering
   {
-    readonly Func<IEnumerable<IOperationFilter>> _createFilters;
+    readonly Func<IOperationFilter> _createFilters;
 
-    public OperationFilterContributor(Func<IEnumerable<IOperationFilter>> createFilters)
+    public OperationFilterContributor(Func<IOperationFilter> createFilters)
     {
       _createFilters = createFilters;
     }
 
     PipelineContinuation ProcessOperations(ICommunicationContext context)
     {
-      var ops = ProcessOperations(context.PipelineData.OperationsAsync.ToList());
+      var filters = _createFilters();
+      
+      var ops = filters.Process(context.PipelineData.OperationsAsync).ToList();
+      
       context.PipelineData.OperationsAsync = ops;
 
       return !ops.Any()
         ? OnOperationsEmpty(context)
         : PipelineContinuation.Continue;
-    }
-
-    List<IOperationAsync> ProcessOperations(List<IOperationAsync> operations)
-    {
-      var filters = _createFilters();
-      return filters
-        .Distinct()
-        .Aggregate(
-          operations,
-          (ops, filter) => ops.Any() ? filter.Process(ops).ToList() : ops)
-        .Distinct()
-        .ToList();
     }
 
     public void Initialize(IPipeline pipelineRunner)

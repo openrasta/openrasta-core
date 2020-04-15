@@ -27,12 +27,9 @@ namespace OpenRasta.OperationModel
 
     public IEnumerable<IOperationAsync> Process(IEnumerable<IOperationAsync> operations)
     {
-      var operationsForMethod = _httpMethodFilter.Process(operations).ToList();
-      if (operationsForMethod.Count == 0) return Enumerable.Empty<IOperationAsync>();
-      var operationsForUriName = _uriNameFilter.Process(operationsForMethod).ToList();
-      return operationsForUriName.Count == 0 
-        ? Enumerable.Empty<IOperationAsync>() 
-        : _uriParametersFilter.Process(operationsForUriName).ToList();
+      return _uriParametersFilter.Process(
+        _uriNameFilter.Process(
+          _httpMethodFilter.Process(operations))).ToList();
     }
   }
 }
