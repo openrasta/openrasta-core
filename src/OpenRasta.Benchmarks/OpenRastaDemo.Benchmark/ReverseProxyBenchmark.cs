@@ -1,6 +1,7 @@
 using System.Net.Http;
 using System.Threading.Tasks;
 using BenchmarkDotNet.Attributes;
+using BenchmarkDotNet.Jobs;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
@@ -9,7 +10,8 @@ using OpenRastaDemo.Shared;
 
 namespace OpenRastaDemo.Benchmark
 {
-  [CoreJob]
+  [SimpleJob(RuntimeMoniker.Net48)]
+  [SimpleJob(RuntimeMoniker.NetCoreApp21)]
   public class ReverseProxyBenchmark
   {
     HttpClient client;
@@ -19,7 +21,7 @@ namespace OpenRastaDemo.Benchmark
     public void Setup()
     {
       var configurationSource = new DemoConfigurationSource(1);
-      
+
       server = new TestServer(new WebHostBuilder()
         .ConfigureServices(s => s.AddSingleton<IConfigurationSource>(configurationSource))
         .UseStartup<Startup>()

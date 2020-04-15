@@ -1,13 +1,15 @@
 using System;
-using System.Diagnostics;
 using BenchmarkDotNet.Attributes;
+using BenchmarkDotNet.Jobs;
 using OpenRasta.Configuration.MetaModel;
 using OpenRasta.DI;
 using OpenRasta.Hosting.InMemory;
 using OpenRasta.Web;
 namespace OpenRastaDemo.Benchmark.UriTemplates
 {
-  [HtmlExporter, InProcess, MemoryDiagnoser]
+  [SimpleJob(RuntimeMoniker.Net48)]
+  [SimpleJob(RuntimeMoniker.NetCoreApp21)]
+  [HtmlExporter,MemoryDiagnoser]
   public class Benchmark
   {
     IMetaModelRepository repository;

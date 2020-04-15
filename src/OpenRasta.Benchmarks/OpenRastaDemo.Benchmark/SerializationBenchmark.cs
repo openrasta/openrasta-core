@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.IO;
-using System.Net.Http;
+﻿using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using BenchmarkDotNet.Attributes;
@@ -9,21 +7,21 @@ using BenchmarkDotNet.Validators;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
-using Newtonsoft.Json;
 using OpenRasta.Configuration;
-using OpenRasta.Web.Markup.Modules;
 using OpenRastaDemo.Shared;
 
 namespace OpenRastaDemo.Benchmark
 {
-  [CoreJob(), MemoryDiagnoser,HtmlExporter(),GcServer(),ReturnValueValidator(true)]
+  [SimpleJob(RuntimeMoniker.Net48)]
+  [SimpleJob(RuntimeMoniker.NetCoreApp21)]
+  [MemoryDiagnoser,HtmlExporter(),GcServer(),ReturnValueValidator(true)]
   public class SerializationBenchmark
   {
     HttpClient client;
     TestServer server;
 
     [Params(50000)] public int Items;
-    
+
     [GlobalSetup]
     public void Setup()
     {

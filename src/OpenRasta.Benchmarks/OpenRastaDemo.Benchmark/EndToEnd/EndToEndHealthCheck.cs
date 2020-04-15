@@ -1,5 +1,4 @@
 using System;
-using System.IO;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,13 +8,12 @@ using OpenRasta.Hosting.InMemory;
 using BenchmarkDotNet.Attributes;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using OpenRasta.Concordia;
 using OpenRasta.DI;
 using OpenRasta.DI.Windsor;
 using OpenRasta.Hosting.AspNetCore;
 using OpenRasta.IO;
-
+using BenchmarkDotNet.Jobs;
 
 namespace OpenRastaDemo.Benchmark.EndToEnd
 {
@@ -42,7 +40,9 @@ namespace OpenRastaDemo.Benchmark.EndToEnd
     public IDependencyResolver Resolver { get; } = new WindsorDependencyResolver();
   }
 
-  [HtmlExporter, InProcess, MemoryDiagnoser]
+  [SimpleJob(RuntimeMoniker.Net48)]
+  [SimpleJob(RuntimeMoniker.NetCoreApp21)]
+  [HtmlExporter,MemoryDiagnoser]
   public class SimpleHealthCheckBenchmark
   {
     InMemoryHost _memServer;
