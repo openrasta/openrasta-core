@@ -32,7 +32,7 @@ namespace Tests.Plugins.ReverseProxy.LoadBalancingHttpClientFactory
           return Task.FromResult(new HttpResponseMessage()
           {
             StatusCode = HttpStatusCode.ServiceUnavailable,
-            Headers = {RetryAfter = new RetryConditionHeaderValue(TimeSpan.FromSeconds(5))}
+            Headers = {RetryAfter = new RetryConditionHeaderValue(TimeSpan.FromSeconds(1))}
           });
         return Task.FromResult(new HttpResponseMessage()
         {
@@ -40,11 +40,12 @@ namespace Tests.Plugins.ReverseProxy.LoadBalancingHttpClientFactory
           Content = new StringContent("reactivated")
         });
       });
+      
       var handlerIndex = 0;
       var factory = new RoundRobinHttpClientFactory(2, () => handlerIndex++ *2 == 0 ? activeHandler : retryHandler, TimeSpan.FromMinutes(2));
 
       var responsesBefore = await execute();
-      await Task.Delay(TimeSpan.FromSeconds(6));
+      await Task.Delay(TimeSpan.FromSeconds(1));
       var responsesAfter = await execute();
 
       responsesBefore.Count(r => r.response.StatusCode == HttpStatusCode.ServiceUnavailable).ShouldBe(1);
@@ -89,13 +90,13 @@ namespace Tests.Plugins.ReverseProxy.LoadBalancingHttpClientFactory
         return handler;
       }
 
-      var factory = new RoundRobinHttpClientFactory(1, createHandler, TimeSpan.FromSeconds(5));
+      var factory = new RoundRobinHttpClientFactory(1, createHandler, TimeSpan.FromSeconds(1));
 
       var clients = Enumerable.Range(0, 10).Select(i => factory.GetClient()).ToList();
       clients.Count.ShouldBe(10);
       createdHandlers.Count.ShouldBe(1);
 
-      await Task.Delay(TimeSpan.FromSeconds(6));
+      await Task.Delay(TimeSpan.FromSeconds(5));
       clients = Enumerable.Range(0, 10).Select(i => factory.GetClient()).ToList();
       clients.Count.ShouldBe(10);
       createdHandlers.Count.ShouldBe(2);
