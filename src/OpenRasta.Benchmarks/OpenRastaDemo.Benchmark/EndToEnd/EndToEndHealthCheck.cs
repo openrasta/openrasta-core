@@ -11,13 +11,15 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using OpenRasta.Concordia;
+using OpenRasta.DI;
+using OpenRasta.DI.Windsor;
 using OpenRasta.Hosting.AspNetCore;
 using OpenRasta.IO;
 
 
 namespace OpenRastaDemo.Benchmark.EndToEnd
 {
-  public class HealthCheckApi : IConfigurationSource
+  public class HealthCheckApi : IConfigurationSource, IDependencyResolverAccessor
   {
     class Resource
     {
@@ -36,6 +38,8 @@ namespace OpenRastaDemo.Benchmark.EndToEnd
         .HandledBy<Handler>()
         .AsJsonNewtonsoft();
     }
+
+    public IDependencyResolver Resolver { get; } = new WindsorDependencyResolver();
   }
 
   [HtmlExporter, InProcess, MemoryDiagnoser]

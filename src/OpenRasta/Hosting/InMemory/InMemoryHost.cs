@@ -32,7 +32,7 @@ namespace OpenRasta.Hosting.InMemory
       IDependencyResolver dependencyResolver = null,
       StartupProperties startup = null)
     {
-      Resolver = dependencyResolver ?? new InternalDependencyResolver();
+      Resolver = dependencyResolver ?? (configuration as IDependencyResolverAccessor)?.Resolver ?? new InternalDependencyResolver();
       _configuration = configuration ?? new DelegateConfigurationSource(null);
       ApplicationVirtualPath = "/";
       HostManager = HostManager.RegisterHost(this);

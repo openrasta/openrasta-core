@@ -14,6 +14,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\..\OpenRasta.DI.Windsor\OpenRasta.DI.Windsor.csproj" />
       <ProjectReference Include="..\OpenRastaDemo.Shared\OpenRastaDemo.Shared.csproj" />
     </ItemGroup>
 
