@@ -45,20 +45,15 @@ namespace OpenRasta.Pipeline.Contributors
 
       var codecInstance = ResolveCodec(context);
       var writer = CreateWriter(codecInstance);
-      using (Log.Operation(this, "Generating response entity."))
-      {
-        await writer(
-          entity.Instance,
-          entity,
-          context.Request.CodecParameters.ToArray());
 
-        await entity.Stream.FlushAsync();
-        
-        if (isBuffered == true)
-        {
-          await buffered.SendResponseAsync();
-        }
-      }
+      await writer(
+        entity.Instance,
+        entity,
+        context.Request.CodecParameters.ToArray());
+
+      await entity.Stream.FlushAsync();
+
+      if (isBuffered == true) await buffered.SendResponseAsync();
 
       return PipelineContinuation.Continue;
     }
@@ -120,13 +115,13 @@ namespace OpenRasta.Pipeline.Contributors
       };
     }
 
-    async Task SendEmptyResponse(ICommunicationContext context)
+    Task SendEmptyResponse(ICommunicationContext context)
     {
       Log.WriteDebug("Writing http headers.");
       if (context.Response.StatusCode != 204)
         context.Response.Headers.ContentLength = 0;
 
-      await context.Response.Entity.Stream.FlushAsync();
+      return context.Response.Entity.Stream.FlushAsync();
     }
 
     class BufferedHttpEntity : IHttpEntity

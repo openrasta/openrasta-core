@@ -220,7 +220,7 @@ namespace OpenRasta.Web
       if (mediaTypes.Any() == false)
         throw new FormatException($"Invalid list of media types: '{contentTypeList}'");
 
-      return mediaTypes.OrderByDescending(m => m);
+      return mediaTypes.OrderByDescending(m => m).ToArray();
     }
 
     public class MediaTypeEqualityComparer : IEqualityComparer<MediaType>

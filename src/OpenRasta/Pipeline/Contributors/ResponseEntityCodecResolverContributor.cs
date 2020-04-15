@@ -39,7 +39,7 @@ namespace OpenRasta.Pipeline.Contributors
 
       try
       {
-        acceptedContentTypes = MediaType.Parse(string.IsNullOrEmpty(acceptHeader) ? "*/*" : acceptHeader);
+        acceptedContentTypes = MediaType.Parse(string.IsNullOrEmpty(acceptHeader) ? "*/*" : acceptHeader).ToList();
       }
       catch (FormatException)
       {
