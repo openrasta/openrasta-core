@@ -16,12 +16,7 @@ namespace OpenRasta.Pipeline
       return this;
     }
 
-    public Task Invoke(ICommunicationContext env)
-    {
-      return LoggingInvoke(env);
-    }
-
-    async Task LoggingInvoke(ICommunicationContext env)
+    public async Task Invoke(ICommunicationContext env)
     {
       var shouldRetry = await ShouldRetryRendering(env);
 

@@ -14,7 +14,7 @@ namespace OpenRasta.OperationModel.MethodBased
 
     protected AbstractMethodOperation(IMethod method, IObjectBinderLocator binderLocator, IDependencyResolver resolver)
     {
-      binderLocator = binderLocator ?? new DefaultObjectBinderLocator();
+      binderLocator ??= new DefaultObjectBinderLocator();
       OwnerType = (IType) method.Owner;
       Method = method;
       Binders = method.InputMembers.ToDictionary(x => x, binderLocator.GetBinder);
