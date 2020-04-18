@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using OpenRasta.Binding;
@@ -9,18 +10,24 @@ namespace OpenRasta.OperationModel.MethodBased
 {
   public abstract class AbstractMethodOperation
   {
+    readonly Dictionary<Type, object[]> _attributeCache;
     protected IType OwnerType { get; }
     protected IMethod Method { get; }
 
-    protected AbstractMethodOperation(IMethod method, IObjectBinderLocator binderLocator, IDependencyResolver resolver)
+    static readonly Dictionary<Type,object[]> _emptyCache = new Dictionary<Type, object[]>(0); 
+    protected AbstractMethodOperation(IMethod method, IObjectBinderLocator binderLocator, IDependencyResolver resolver, Dictionary<Type,object[]> attributeCache)
     {
+      _attributeCache = attributeCache ?? _emptyCache;
       binderLocator ??= new DefaultObjectBinderLocator();
       OwnerType = (IType) method.Owner;
       Method = method;
       Binders = method.InputMembers.ToDictionary(x => x, binderLocator.GetBinder);
-      Inputs = Binders.Select(x => new InputMember(x.Key, x.Value, x.Key.IsOptional));
+      Inputs = Binders
+        .Select(x => new InputMember(x.Key, x.Value, x.Key.IsOptional))
+        .ToArray();
       Resolver = resolver;
     }
+    
 
     public IEnumerable<InputMember> Inputs { get; }
     IDictionary<IParameter, IObjectBinder> Binders { get; }
@@ -28,9 +35,20 @@ namespace OpenRasta.OperationModel.MethodBased
     protected IDependencyResolver Resolver { get; set; }
 
     public IEnumerable<T> FindAttributes<T>()
-      where T : class => OwnerType.FindAttributes<T>().Concat(Method.FindAttributes<T>());
+      where T : class
+    {
+      return _attributeCache.TryGetValue(typeof(T), out var cachedAttribs)
+        ? (IEnumerable<T>)cachedAttribs
+        : OwnerType.FindAttributes<T>().Concat(Method.FindAttributes<T>());
+    }
 
-    public T FindAttribute<T>() where T : class => Method.FindAttribute<T>() ?? OwnerType.FindAttribute<T>();
+    public T FindAttribute<T>() where T : class
+    {
+      return _attributeCache.TryGetValue(typeof(T), out var cachedAttribs)
+        ? (cachedAttribs.Length > 0 ? (T)cachedAttribs[0] : null)
+        : Method.FindAttribute<T>() ?? OwnerType.FindAttribute<T>();
+    }
+
     public override string ToString() => Method.ToString();
 
     protected object[] GetParameters()

@@ -10,5 +10,6 @@ namespace OpenRasta.Configuration.MetaModel
     public string Name { get; set; }
     
     public Func<IOperationAsync> Factory { get; set; }
+    public OperationDescriptor Descriptor { get; set; }
   }
 }

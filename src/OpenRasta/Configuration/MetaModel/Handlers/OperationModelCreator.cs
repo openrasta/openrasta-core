@@ -53,7 +53,8 @@ namespace OpenRasta.Configuration.MetaModel.Handlers
         FilterMethods,
         _syncInterceptors,
         _binderLocator,
-        _resolver).ToList();
+        _resolver)
+        .ToList();
       
       foreach (var uri in resourceModel.Uris)
       foreach (var operation in operations)
@@ -71,7 +72,8 @@ namespace OpenRasta.Configuration.MetaModel.Handlers
       {
         Factory = operation.Create,
         HttpMethod = GetHttpMethodForOperation(operation),
-        Name = operation.Name
+        Name = operation.Name,
+        Descriptor = operation
       };
     }
 

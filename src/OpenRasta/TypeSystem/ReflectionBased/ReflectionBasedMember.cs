@@ -26,49 +26,34 @@ namespace OpenRasta.TypeSystem.ReflectionBased
             TargetType = targetType;
         }
 
-        public virtual bool IsEnumerable
-        {
-            get { return TargetType.IsArray || (TargetType.Implements(typeof(IEnumerable<>)) && !TargetType.Implements(typeof(IDictionary<,>))); }
-        }
+        public virtual bool IsEnumerable => TargetType.IsArray || (TargetType.Implements(typeof(IEnumerable<>)) && !TargetType.Implements(typeof(IDictionary<,>)));
 
-        public virtual string Name
-        {
-            get { return TargetType.Name; }
-        }
+        public virtual string Name => TargetType.Name;
 
-        public Type StaticType
-        {
-            get { return TargetType; }
-        }
+        public Type StaticType => TargetType;
 
-        public IPathManager PathManager { get; set; }
+        public IPathManager PathManager { get; }
 
-        public ISurrogateProvider SurrogateProvider { get; set; }
+        public ISurrogateProvider SurrogateProvider { get; }
 
-        public Type TargetType { get; set; }
+        public Type TargetType { get; }
 
         public virtual IType Type
         {
             get
             {
-                if (_memberType == null)
-                {
-                    lock (_syncRoot)
-                    {
-                        Thread.MemoryBarrier();
-                        if (_memberType == null)
-                            _memberType = TypeSystem.FromClr(TargetType);
-                    }
-                }
+              if (_memberType != null) return _memberType;
+              lock (_syncRoot)
+              {
+                Thread.MemoryBarrier();
+                _memberType ??= TypeSystem.FromClr(TargetType);
+              }
 
-                return _memberType;
+              return _memberType;
             }
         }
 
-        public virtual string TypeName
-        {
-            get { return TargetType.Name; }
-        }
+        public virtual string TypeName => TargetType.Name;
 
         public ITypeSystem TypeSystem { get; set; }
 
@@ -85,8 +70,8 @@ namespace OpenRasta.TypeSystem.ReflectionBased
         public virtual bool CanSetValue(object value)
         {
             return
-                (TargetType.IsValueType && value != null && TargetType.IsAssignableFrom(value.GetType()))
-                || (!TargetType.IsValueType && (value == null || TargetType.IsAssignableFrom(value.GetType())));
+                TargetType.IsValueType && value != null && TargetType.IsInstanceOfType(value)
+                || TargetType.IsValueType && (value == null || TargetType.IsInstanceOfType(value));
         }
 
         public virtual IProperty GetIndexer(string indexerParameter)

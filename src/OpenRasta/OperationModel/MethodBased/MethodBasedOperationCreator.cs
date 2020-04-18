@@ -87,13 +87,28 @@ namespace OpenRasta.OperationModel.MethodBased
       IDependencyResolver resolver,
       Func<IEnumerable<IOperationInterceptorAsync>> systemInterceptors)
     {
+      var attribCache = new Dictionary<Type, object[]>(3)
+      {
+        [typeof(IOperationInterceptor)] = WarmUpAttribCache<IOperationInterceptor>(method.Owner, method),
+        [typeof(IOperationInterceptorProvider)] =
+          WarmUpAttribCache<IOperationInterceptorProvider>(method.Owner, method),
+        [typeof(HttpOperationAttribute)] = WarmUpAttribCache<HttpOperationAttribute>(method)
+      };
+
       IOperationAsync factory()
       {
-        var syncMethod = new SyncMethod(method, binderLocator, resolver);
+        var syncMethod = new SyncMethod(method, binderLocator, resolver, attribCache);
         return syncMethod.Intercept(syncInterceptorProvider).AsAsync().Intercept(systemInterceptors());
       }
 
       return new SyncOperationDescriptor(method, factory);
+    }
+
+    static T[] WarmUpAttribCache<T>(params IAttributeProvider[] elements) where T : class
+    {
+      return elements
+        .Aggregate(Enumerable.Empty<T>(), (enumerable, provider) => enumerable.Concat(provider.FindAttributes<T>()))
+        .ToArray();
     }
 
     static OperationDescriptor CreateTaskDescriptor(IMethod method,
@@ -104,7 +119,10 @@ namespace OpenRasta.OperationModel.MethodBased
       if (!method.OutputMembers.Single().StaticType.IsTask())
         return null;
 
-      IOperationAsync factory() => new AsyncMethod(method, binderLocator, resolver).Intercept(systemInterceptors());
+      var attribCache = LoadAsyncAttribCache(method);
+
+      IOperationAsync factory() =>
+        new AsyncMethod(method, binderLocator, resolver, attribCache).Intercept(systemInterceptors());
 
       return new AsyncOperationDescriptor(method, factory);
     }
@@ -117,15 +135,27 @@ namespace OpenRasta.OperationModel.MethodBased
       if (!method.OutputMembers.Single().StaticType.IsTaskOfT(out var returnType))
         return null;
 
+      var attribCache = LoadAsyncAttribCache(method);
+
       var asyncMethodType = typeof(AsyncMethod<>).MakeGenericType(returnType);
 
       IOperationAsync factory()
       {
-        return ((IOperationAsync) Activator.CreateInstance(asyncMethodType, method, binderLocator, resolver))
+        return ((IOperationAsync) Activator.CreateInstance(asyncMethodType, method, binderLocator, resolver,
+            attribCache))
           .Intercept(asyncInterceptors());
       }
 
       return new AsyncOperationDescriptor(method, factory);
+    }
+
+    static Dictionary<Type, object[]> LoadAsyncAttribCache(IMethod method)
+    {
+      return new Dictionary<Type, object[]>(3)
+      {
+        [typeof(IOperationInterceptorAsync)] = WarmUpAttribCache<IOperationInterceptorAsync>(method.Owner, method),
+        [typeof(HttpOperationAttribute)] = WarmUpAttribCache<HttpOperationAttribute>(method)
+      };
     }
 
     static IEnumerable<Func<IEnumerable<IMethod>, IEnumerable<IMethod>>> FilterMethods(IMethodFilter[] filters)

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using OpenRasta.Binding;
@@ -11,8 +12,9 @@ namespace OpenRasta.OperationModel.MethodBased
   {
     public IDictionary<string, object> ExtendedProperties { get; } = new Dictionary<string, object>();
 
-    public AsyncMethod(IMethod method, IObjectBinderLocator binderLocator = null, IDependencyResolver resolver = null)
-      : base(method, binderLocator, resolver)
+    public AsyncMethod(IMethod method, IObjectBinderLocator binderLocator = null, IDependencyResolver resolver = null,
+      Dictionary<Type, object[]> attributeCache = null)
+      : base(method, binderLocator, resolver, attributeCache)
     {
     }
 
@@ -30,8 +32,9 @@ namespace OpenRasta.OperationModel.MethodBased
   {
     public IDictionary<string, object> ExtendedProperties { get; } = new Dictionary<string, object>();
 
-    public AsyncMethod(IMethod method, IObjectBinderLocator binderLocator = null, IDependencyResolver resolver = null)
-      : base(method, binderLocator, resolver)
+    public AsyncMethod(IMethod method, IObjectBinderLocator binderLocator = null, IDependencyResolver resolver = null,
+      Dictionary<Type, object[]> attributeCache = null)
+      : base(method, binderLocator, resolver, attributeCache)
     {
     }
 
