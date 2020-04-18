@@ -445,10 +445,6 @@ namespace OpenRasta
 
       if (baseAddress == null) throw new ArgumentNullException(nameof(baseAddress));
 
-      if (ReferenceEquals(baseAddress, UriTemplateTable.DefaultBaseAddress) == false &&
-          baseAddress.GetLeftPart(UriPartial.Authority) != uri.GetLeftPart(UriPartial.Authority))
-        return null;
-
       var baseUriPathAndQuery = PathAndQuery(baseAddress);
       var requestPathAndQuery = PathAndQuery(uri);
 
