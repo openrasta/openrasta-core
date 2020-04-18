@@ -12,8 +12,7 @@ namespace OpenRasta.OperationModel.MethodBased
   public class MethodBasedOperationCreator : IOperationCreator
   {
 #pragma warning disable 618
-    readonly Func<IOperation, IEnumerable<IOperationInterceptor>> _syncInterceptorProvider =
-      op => Enumerable.Empty<IOperationInterceptor>();
+    readonly Func<IOperation, IEnumerable<IOperationInterceptor>> _syncInterceptorProvider;
 #pragma warning restore 618
 
     readonly IObjectBinderLocator _binderLocator;
@@ -42,7 +41,8 @@ namespace OpenRasta.OperationModel.MethodBased
 
     public IEnumerable<IOperationAsync> CreateOperations(IEnumerable<IType> handlers)
     {
-      return CreateOperationDescriptors(handlers, _asyncInterceptors, _filterMethod, _syncInterceptorProvider, _binderLocator, _resolver)
+      return CreateOperationDescriptors(handlers, _asyncInterceptors, _filterMethod, _syncInterceptorProvider,
+          _binderLocator, _resolver)
         .Select(o => o.Create())
         .ToArray();
     }
@@ -87,11 +87,13 @@ namespace OpenRasta.OperationModel.MethodBased
       IDependencyResolver resolver,
       Func<IEnumerable<IOperationInterceptorAsync>> systemInterceptors)
     {
-      return new SyncOperationDescriptor(method, () =>
-    {
+      IOperationAsync factory()
+      {
         var syncMethod = new SyncMethod(method, binderLocator, resolver);
         return syncMethod.Intercept(syncInterceptorProvider).AsAsync().Intercept(systemInterceptors());
-      });
+      }
+
+      return new SyncOperationDescriptor(method, factory);
     }
 
     static OperationDescriptor CreateTaskDescriptor(IMethod method,
@@ -102,8 +104,9 @@ namespace OpenRasta.OperationModel.MethodBased
       if (!method.OutputMembers.Single().StaticType.IsTask())
         return null;
 
-      return new AsyncOperationDescriptor(method, () =>
-        new AsyncMethod(method, binderLocator, resolver).Intercept(systemInterceptors()));
+      IOperationAsync factory() => new AsyncMethod(method, binderLocator, resolver).Intercept(systemInterceptors());
+
+      return new AsyncOperationDescriptor(method, factory);
     }
 
     static OperationDescriptor CreateTaskOfTDescriptor(IMethod method,
@@ -114,10 +117,15 @@ namespace OpenRasta.OperationModel.MethodBased
       if (!method.OutputMembers.Single().StaticType.IsTaskOfT(out var returnType))
         return null;
 
-      return new AsyncOperationDescriptor(method
-        , () => ((IOperationAsync) Activator.CreateInstance(
-          typeof(AsyncMethod<>).MakeGenericType(returnType),
-          method, binderLocator, resolver)).Intercept(asyncInterceptors()));
+      var asyncMethodType = typeof(AsyncMethod<>).MakeGenericType(returnType);
+
+      IOperationAsync factory()
+      {
+        return ((IOperationAsync) Activator.CreateInstance(asyncMethodType, method, binderLocator, resolver))
+          .Intercept(asyncInterceptors());
+      }
+
+      return new AsyncOperationDescriptor(method, factory);
     }
 
     static IEnumerable<Func<IEnumerable<IMethod>, IEnumerable<IMethod>>> FilterMethods(IMethodFilter[] filters)
@@ -134,7 +142,8 @@ namespace OpenRasta.OperationModel.MethodBased
 
     public IOperationAsync CreateOperation(IMethod method)
     {
-      return CreateOperationDescriptor(method, _asyncInterceptors, _syncInterceptorProvider, _binderLocator, _resolver).Create();
+      return CreateOperationDescriptor(method, _asyncInterceptors, _syncInterceptorProvider, _binderLocator, _resolver)
+        .Create();
     }
   }
 
@@ -147,10 +156,11 @@ namespace OpenRasta.OperationModel.MethodBased
     {
       _method = method;
       _factory = factory;
+      HttpOperationAttribute = _method.FindAttribute<HttpOperationAttribute>();
     }
 
     public string Name => _method.Name;
-    public HttpOperationAttribute HttpOperationAttribute => _method.FindAttribute<HttpOperationAttribute>();
+    public HttpOperationAttribute HttpOperationAttribute { get; }
 
     public IOperationAsync Create()
     {
@@ -167,8 +177,7 @@ namespace OpenRasta.OperationModel.MethodBased
 
   public class SyncOperationDescriptor : OperationDescriptor
   {
-    public SyncOperationDescriptor(
-      IMethod method, Func<IOperationAsync> factory)
+    public SyncOperationDescriptor(IMethod method, Func<IOperationAsync> factory)
       : base(method, factory)
     {
     }
