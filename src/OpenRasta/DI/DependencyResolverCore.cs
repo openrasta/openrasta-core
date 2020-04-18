@@ -45,10 +45,8 @@ namespace OpenRasta.DI
       {
         return ResolveCore(serviceType);
       }
-      catch (Exception e)
+      catch (Exception e) when (!(e is DependencyResolutionException))
       {
-        if (e is DependencyResolutionException)
-          throw;
         throw new DependencyResolutionException(
           $"An error occurred while trying to resolve type {serviceType.Name}.", e);
       }
