@@ -129,13 +129,14 @@ namespace OpenRasta.Hosting.InMemory
 
     protected virtual void RaiseIncomingRequestProcessed(ICommunicationContext context)
     {
-      IncomingRequestProcessed.Raise(this, new IncomingRequestProcessedEventArgs(context));
+      IncomingRequestProcessedEventArgs args = new IncomingRequestProcessedEventArgs(context);
+      IncomingRequestProcessed?.Invoke(this, args);
     }
 
     protected virtual Task RaiseIncomingRequestReceived(ICommunicationContext context)
     {
       var incomingRequestReceivedEventArgs = new IncomingRequestReceivedEventArgs(context);
-      IncomingRequestReceived.Raise(this, incomingRequestReceivedEventArgs);
+      IncomingRequestReceived?.Invoke(this, incomingRequestReceivedEventArgs);
       return incomingRequestReceivedEventArgs.RunTask;
     }
 
@@ -156,14 +157,14 @@ namespace OpenRasta.Hosting.InMemory
 
     void RaiseStart(StartupProperties properties)
     {
-      _legacyStart.Raise(this);
+      _legacyStart?.Invoke(this, EventArgs.Empty);
       var start = _start;
       start?.Invoke(this, properties);
     }
 
     void RaiseStop(StartupProperties startupProperties)
     {
-      Stop.Raise(this, EventArgs.Empty);
+      Stop?.Invoke(this, EventArgs.Empty);
     }
 
     void CheckNotDisposed()

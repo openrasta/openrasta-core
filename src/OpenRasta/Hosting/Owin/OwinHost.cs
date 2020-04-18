@@ -79,13 +79,14 @@ namespace OpenRasta.Hosting.Katana
     internal virtual Task RaiseIncomingRequestReceived(ICommunicationContext context)
     {
       var request = new IncomingRequestReceivedEventArgs(context);
-      IncomingRequestReceived.Raise(this, request);
+      IncomingRequestReceived?.Invoke(this, request);
       return request.RunTask;
     }
 
     internal void RaiseIncomingRequestProcessed(ICommunicationContext context)
     {
-      IncomingRequestProcessed.Raise(this, new IncomingRequestProcessedEventArgs(context));
+      IncomingRequestProcessedEventArgs args = new IncomingRequestProcessedEventArgs(context);
+      IncomingRequestProcessed?.Invoke(this, args);
     }
 
     internal virtual void RaiseStart()
@@ -95,7 +96,11 @@ namespace OpenRasta.Hosting.Katana
 
     public void RaiseStop()
     {
-      Stop?.Raise(this);
+      EventHandler tempQualifier = Stop;
+      if (tempQualifier != null)
+      {
+        tempQualifier?.Invoke(this, EventArgs.Empty);
+      }
     }
 
     public event EventHandler<StartupProperties> Start;
