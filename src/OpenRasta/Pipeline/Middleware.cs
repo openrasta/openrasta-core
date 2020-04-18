@@ -10,8 +10,10 @@ namespace OpenRasta.Pipeline
   {
     public static IPipelineMiddleware Identity { get; } = new NothingPipelineMiddleware();
 
-    public static Task<PipelineContinuation> IdentitySingleTap(ICommunicationContext context)
-      => Task.FromResult(PipelineContinuation.Continue);
+    static readonly Task<PipelineContinuation> IdentitySingleTapResult = Task.FromResult(PipelineContinuation.Continue);
+
+    public static Task<PipelineContinuation> IdentitySingleTap(ICommunicationContext context) =>
+      IdentitySingleTapResult;
 
     class NothingPipelineMiddleware : IPipelineMiddleware
     {
