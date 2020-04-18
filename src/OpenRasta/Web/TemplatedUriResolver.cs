@@ -9,7 +9,7 @@ using OpenRasta.TypeSystem;
 
 namespace OpenRasta.Web
 {
-  public class TemplatedUriResolver : IUriResolver, IUriTemplateParser
+  public class TemplatedUriResolver : IUriResolver, IUriTemplateParser, INewUriResolver
   {
     UriTemplateTable _templates = new UriTemplateTable(UriTemplateTable.DefaultBaseAddress);
     public ITypeSystem TypeSystem { get; set; }
@@ -111,11 +111,12 @@ namespace OpenRasta.Web
       return template.BindByName(baseAddress, keyValues);
     }
 
-    public UriRegistration Match(Uri uriToMatch)
+    public UriRegistration Match(Uri baseAddress, Uri uriToMatch)
     {
       if (uriToMatch == null)
         return null;
-      var tableMatches = _templates.Match(uriToMatch);
+      
+      var tableMatches = _templates.Match(uriToMatch, baseAddress);
       if (tableMatches == null || tableMatches.Count == 0)
         return null;
 
@@ -208,5 +209,7 @@ namespace OpenRasta.Web
       public UriTemplate Uri { get; set; }
       public string UriName { get; set; }
     }
+
+    public UriRegistration Match(Uri uriToMatch) => Match(null, uriToMatch);
   }
 }

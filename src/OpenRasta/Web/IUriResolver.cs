@@ -10,4 +10,9 @@ namespace OpenRasta.Web
     UriRegistration Match(Uri uriToMatch);
     Uri CreateUriFor(Uri baseAddress, object resourceKey, string uriName, NameValueCollection keyValues);
   }
+
+  public interface INewUriResolver
+  {
+    UriRegistration Match(Uri baseAddress, Uri uriToMatch);
+  }
 }

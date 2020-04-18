@@ -5,10 +5,10 @@ using System.Collections.Specialized;
 
 namespace OpenRasta.Web
 {
-  public class BaseAddressInjectingUriResolver : IUriResolver
+  public class BaseAddressInjectingUriResolver : IUriResolver, INewUriResolver
   {
     readonly Func<ICommunicationContext> _ctx;
-    readonly IUriResolver _inner;
+    readonly TemplatedUriResolver _inner;
 
     public BaseAddressInjectingUriResolver(Func<ICommunicationContext> ctx)
     {
@@ -65,6 +65,11 @@ namespace OpenRasta.Web
     public Uri CreateUriFor(Uri baseAddress, object resourceKey, string uriName, NameValueCollection keyValues)
     {
       return _inner.CreateUriFor(baseAddress ?? _ctx().ApplicationBaseUri, resourceKey, uriName, keyValues);
+    }
+
+    public UriRegistration Match(Uri baseAddress, Uri uriToMatch)
+    {
+      return _inner.Match(baseAddress, uriToMatch);
     }
   }
 }

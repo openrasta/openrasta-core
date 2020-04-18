@@ -11,7 +11,7 @@ namespace OpenRasta
     public static readonly Uri DefaultBaseAddress = new Uri("http://localhost");
     readonly List<KeyValuePair<UriTemplate, object>> _keyValuePairs;
     ReadOnlyCollection<KeyValuePair<UriTemplate, object>> _keyValuePairsReadOnly;
-    IEnumerable<KeyValuePair<UriTemplate, object>> _resolvablePairs;
+    readonly IEnumerable<KeyValuePair<UriTemplate, object>> _resolvablePairs;
 
     public UriTemplateTable(Uri baseAddress = null, IEnumerable<KeyValuePair<UriTemplate, object>> keyValuePairs = null)
     {
@@ -47,15 +47,16 @@ namespace OpenRasta
       _keyValuePairsReadOnly = _keyValuePairs.AsReadOnly();
     }
 
-    public Collection<UriTemplateMatch> Match(Uri uri)
+    public Collection<UriTemplateMatch> Match(Uri uri, Uri baseAddress = null)
     {
-      var lastMaxLiteralSegmentCount = 0;
+        var appBase = baseAddress ?? BaseAddress;
+      // var lastMaxLiteralSegmentCount = 0;
       var matches = new List<UriTemplateMatch>();
       foreach (var template in _resolvablePairs)
       {
         // TODO: discard uri templates with fragment identifiers until tests are implemented
 
-        var potentialMatch = template.Key.Match(BaseAddress, uri);
+        var potentialMatch = template.Key.Match(appBase, uri);
 
         if (potentialMatch == null) continue;
 

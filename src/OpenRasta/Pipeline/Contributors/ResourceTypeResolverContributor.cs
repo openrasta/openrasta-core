@@ -8,10 +8,12 @@ namespace OpenRasta.Pipeline.Contributors
   public class ResourceTypeResolverContributor : KnownStages.IUriMatching
   {
     readonly IUriResolver _uriRepository;
+    INewUriResolver _newUriResolver;
 
     public ResourceTypeResolverContributor(IUriResolver uriRepository)
     {
       _uriRepository = uriRepository;
+      _newUriResolver = _uriRepository as INewUriResolver;
       Log = NullLogger.Instance;
     }
 
@@ -26,8 +28,9 @@ namespace OpenRasta.Pipeline.Contributors
     {
       if (context.PipelineData.SelectedResource == null)
       {
-        var uriToMath = context.GetRequestUriRelativeToRoot();
-        var uriMatch = _uriRepository.Match(uriToMath);
+        var uriMatch = _newUriResolver == null
+          ? _uriRepository.Match(context.GetRequestUriRelativeToRoot())
+          : _newUriResolver.Match(context.ApplicationBaseUri, context.Request.Uri);
         if (uriMatch != null)
         {
           context.PipelineData.SelectedResource = uriMatch;
@@ -43,7 +46,7 @@ namespace OpenRasta.Pipeline.Contributors
       else
       {
         Log.WriteInfo(
-            $"Not resolving any resource as a resource with key {context.PipelineData.SelectedResource.ResourceKey} has already been selected.");
+          $"Not resolving any resource as a resource with key {context.PipelineData.SelectedResource.ResourceKey} has already been selected.");
       }
 
       return PipelineContinuation.Continue;
@@ -53,10 +56,10 @@ namespace OpenRasta.Pipeline.Contributors
     {
       return new OperationResult.NotFound
       {
-          Description =
-              "No registered resource could be found for "
-              + context.Request.Uri,
-          Reason = NotFoundReason.NotMapped
+        Description =
+          "No registered resource could be found for "
+          + context.Request.Uri,
+        Reason = NotFoundReason.NotMapped
       };
     }
   }
