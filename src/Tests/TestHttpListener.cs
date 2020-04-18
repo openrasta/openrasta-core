@@ -2,6 +2,7 @@
 using System.Net;
 using OpenRasta.Configuration;
 using OpenRasta.Hosting.HttpListener;
+using Xunit;
 
 namespace Tests
 {
@@ -40,6 +41,7 @@ namespace Tests
     {
       using (var webClient = new WebClient())
       {
+        path = path.StartsWith("/") ? path.Substring(1) : path;
         return webClient.DownloadString($"http://localhost:{Port}/{AppPathVDir}{path}");
       }
     }
