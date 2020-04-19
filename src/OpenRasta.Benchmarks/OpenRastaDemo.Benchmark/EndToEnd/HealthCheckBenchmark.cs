@@ -14,13 +14,13 @@ using OpenRasta.IO;
 
 namespace OpenRastaDemo.Benchmark.EndToEnd
 {
-  // [SimpleJob(RuntimeMoniker.Net48)]
-  // [SimpleJob(RuntimeMoniker.NetCoreApp21)]
-  // [SimpleJob(RuntimeMoniker.NetCoreApp31)]
-  // [HtmlExporter]
+  [SimpleJob(RuntimeMoniker.Net48)]
+  [SimpleJob(RuntimeMoniker.NetCoreApp21)]
+  [SimpleJob(RuntimeMoniker.NetCoreApp31)]
+  [HtmlExporter]
   [MemoryDiagnoser]
   // [EventPipeProfiler(EventPipeProfile.CpuSampling)]
-  [InProcess()]
+  // [InProcess()]
   public class HealthCheckBenchmark
   {
     InMemoryHost _memServer;
