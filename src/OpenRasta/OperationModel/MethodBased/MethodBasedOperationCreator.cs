@@ -157,11 +157,14 @@ namespace OpenRasta.OperationModel.MethodBased
         Expression.New(ctor, lambdaParams),
         lambdaParams).Compile();
       
+      
+      
       IOperationAsync factory() => factoryLambda(method, binderLocator, resolver,  attribCache)
         .Intercept(asyncInterceptors());
       
       return new AsyncOperationDescriptor(method, factory);
     }
+
 
     static Dictionary<Type, object[]> LoadAsyncAttribCache(IMethod method)
     {
@@ -188,42 +191,6 @@ namespace OpenRasta.OperationModel.MethodBased
     {
       return CreateOperationDescriptor(method, _asyncInterceptors, _syncInterceptorProvider, _binderLocator, _resolver)
         .Create();
-    }
-  }
-
-  public abstract class OperationDescriptor
-  {
-    readonly IMethod _method;
-    readonly Func<IOperationAsync> _factory;
-
-    protected OperationDescriptor(IMethod method, Func<IOperationAsync> factory)
-    {
-      _method = method;
-      _factory = factory;
-      HttpOperationAttribute = _method.FindAttribute<HttpOperationAttribute>();
-    }
-
-    public string Name => _method.Name;
-    public HttpOperationAttribute HttpOperationAttribute { get; }
-
-    public IOperationAsync Create()
-    {
-      return _factory();
-    }
-  }
-
-  public class AsyncOperationDescriptor : OperationDescriptor
-  {
-    public AsyncOperationDescriptor(IMethod method, Func<IOperationAsync> factory) : base(method, factory)
-    {
-    }
-  }
-
-  public class SyncOperationDescriptor : OperationDescriptor
-  {
-    public SyncOperationDescriptor(IMethod method, Func<IOperationAsync> factory)
-      : base(method, factory)
-    {
     }
   }
 }

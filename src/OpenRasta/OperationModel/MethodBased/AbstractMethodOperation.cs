@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using OpenRasta.Binding;
@@ -21,6 +20,7 @@ namespace OpenRasta.OperationModel.MethodBased
       binderLocator ??= new DefaultObjectBinderLocator();
       OwnerType = (IType) method.Owner;
       Method = method;
+      // TODO: Move the binders to operation descriptors
       Binders = method.InputMembers.ToDictionary(x => x, binderLocator.GetBinder);
       Inputs = Binders
         .Select(x => new InputMember(x.Key, x.Value, x.Key.IsOptional))
@@ -39,7 +39,7 @@ namespace OpenRasta.OperationModel.MethodBased
     {
       return _attributeCache.TryGetValue(typeof(T), out var cachedAttribs)
         ? (IEnumerable<T>)cachedAttribs
-        : OwnerType.FindAttributes<T>().Concat(Method.FindAttributes<T>());
+        : OwnerType.FindAttributes<T>().Concat(Method.FindAttributes<T>()).ToArray();
     }
 
     public T FindAttribute<T>() where T : class
