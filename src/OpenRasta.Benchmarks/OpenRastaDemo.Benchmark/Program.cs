@@ -5,7 +5,7 @@ namespace OpenRastaDemo.Benchmark
 {
   class Program
   {
-    static async Task Main(string[] args)
+    static void Main(string[] args)
     {
       //#if DEBUG
       ////      var benchMark = new JsonBenchmark();
