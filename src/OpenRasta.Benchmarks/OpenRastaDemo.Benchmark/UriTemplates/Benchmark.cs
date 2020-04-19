@@ -41,16 +41,4 @@ namespace OpenRastaDemo.Benchmark.UriTemplates
       uriResolver.CreateUriFor(LocalHost, typeof(EventMappedWithStrings), new EventMappedWithStrings(1));
     }
   }
-
-//  public class BenchmarkTests
-//  {
-//    [Fact]
-//    public void can_run_benchmarks()
-//    {
-//      var benchmark = new Benchmark();
-//      benchmark.Setup();
-//      benchmark.ParseStringUriTemplates();
-//      benchmark.GenerateStringUriTemplatesFromTypes();
-//    }
-//  }
 }

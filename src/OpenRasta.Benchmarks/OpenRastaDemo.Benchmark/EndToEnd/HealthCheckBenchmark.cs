@@ -18,7 +18,7 @@ namespace OpenRastaDemo.Benchmark.EndToEnd
   // [SimpleJob(RuntimeMoniker.NetCoreApp21)]
   // [SimpleJob(RuntimeMoniker.NetCoreApp31)]
   // [HtmlExporter]
-  // [MemoryDiagnoser]
+  [MemoryDiagnoser]
   // [EventPipeProfiler(EventPipeProfile.CpuSampling)]
   [InProcess()]
   public class HealthCheckBenchmark
