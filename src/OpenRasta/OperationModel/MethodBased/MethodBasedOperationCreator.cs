@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
+using System.Reflection;
 using OpenRasta.Binding;
 using OpenRasta.DI;
 using OpenRasta.OperationModel.Interceptors;
@@ -139,13 +141,25 @@ namespace OpenRasta.OperationModel.MethodBased
 
       var asyncMethodType = typeof(AsyncMethod<>).MakeGenericType(returnType);
 
-      IOperationAsync factory()
-      {
-        return ((IOperationAsync) Activator.CreateInstance(asyncMethodType, method, binderLocator, resolver,
-            attribCache))
-          .Intercept(asyncInterceptors());
-      }
+      var ctor = asyncMethodType.GetConstructors().Single();
 
+      var lambdaParams = ctor
+        .GetParameters()
+        .Select(info => Expression.Parameter(info.ParameterType, info.Name))
+        .ToList();
+      
+      var factoryLambda = Expression.Lambda<Func<
+        IMethod,
+        IObjectBinderLocator,
+        IDependencyResolver,
+        Dictionary<Type, object[]>,
+        IOperationAsync>>(
+        Expression.New(ctor, lambdaParams),
+        lambdaParams).Compile();
+      
+      IOperationAsync factory() => factoryLambda(method, binderLocator, resolver,  attribCache)
+        .Intercept(asyncInterceptors());
+      
       return new AsyncOperationDescriptor(method, factory);
     }
 
