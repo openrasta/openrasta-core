@@ -15,24 +15,6 @@ using OpenRasta.Web;
 
 namespace OpenRasta.DI.Windsor
 {
-  class ScopedInstanceStore
-  {
-    Dictionary<Type, object> _store = new Dictionary<Type, object>(4);
-    public ICommunicationContext Context { get; set; }
-
-    public object GetInstance(Type serviceType)
-    {
-      return _store.TryGetValue(serviceType, out var service)
-        ? service
-        : throw new ComponentNotFoundException(serviceType);
-    }
-
-    public void SetInstance(Type serviceType, object instance)
-    {
-      _store[serviceType] = instance;
-    }
-  }
-
   public class WindsorDependencyResolver :
     DependencyResolverCore,
     IDependencyResolver,
