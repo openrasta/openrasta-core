@@ -80,7 +80,6 @@ namespace OpenRasta.Hosting
 
     public void SetupCommunicationContext(ICommunicationContext context)
     {
-      Log.WriteDebug("Adding communication context data");
       Resolver.AddDependencyInstance<ICommunicationContext>(context, DependencyLifetime.PerRequest);
       Resolver.AddDependencyInstance<IRequest>(context.Request, DependencyLifetime.PerRequest);
       Resolver.AddDependencyInstance<IResponse>(context.Response, DependencyLifetime.PerRequest);
@@ -99,8 +98,6 @@ namespace OpenRasta.Hosting
     {
       Resolver = Host.ResolverAccessor?.Resolver ?? new InternalDependencyResolver();
       Log = Resolver.Resolve<IEnumerable<ILogger>>().LastOrDefault() ?? TraceSourceLogger.Instance;
-
-      Log.WriteDebug("Using dependency resolver of type {0}", Resolver.GetType());
     }
 
     void Configure(StartupProperties startupProperties)
