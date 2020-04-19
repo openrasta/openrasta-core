@@ -11,12 +11,14 @@ using System.Linq;
 using System.Linq.Expressions;
 using Castle.MicroKernel;
 using Castle.MicroKernel.Lifestyle;
+using OpenRasta.Web;
 
 namespace OpenRasta.DI.Windsor
 {
   class ScopedInstanceStore
   {
     Dictionary<Type, object> _store = new Dictionary<Type, object>(4);
+    public ICommunicationContext Context { get; set; }
 
     public object GetInstance(Type serviceType)
     {
@@ -74,6 +76,24 @@ namespace OpenRasta.DI.Windsor
         .Named(GetComponentName(typeof(ScopedInstanceStore)))
         .ImplementedBy<ScopedInstanceStore>()
         .LifestyleScoped());
+
+      _windsorContainer.Register(Component
+        .For<ICommunicationContext>()
+        .Named(GetComponentName(typeof(ICommunicationContext)))
+        .UsingFactoryMethod(kernel => kernel.Resolve<ScopedInstanceStore>().Context)
+        .LifestyleScoped());
+      
+      _windsorContainer.Register(Component
+        .For<IRequest>()
+        .Named(GetComponentName(typeof(IRequest)))
+        .UsingFactoryMethod(kernel => kernel.Resolve<ScopedInstanceStore>().Context.Request)
+        .LifestyleScoped());
+      
+      _windsorContainer.Register(Component
+        .For<IResponse>()
+        .Named(GetComponentName(typeof(IResponse)))
+        .UsingFactoryMethod(kernel => kernel.Resolve<ScopedInstanceStore>().Context.Response)
+        .LifestyleScoped());
     }
 
     public bool HasDependency(Type serviceType)
@@ -119,9 +139,19 @@ namespace OpenRasta.DI.Windsor
       }
     }
 
+    static readonly Type CommContext = typeof(ICommunicationContext);
+    static readonly Type Request = typeof(IRequest);
+    static readonly Type Response = typeof(IResponse);
+
     protected override void AddDependencyInstanceCore(Type serviceType, object instance, DependencyLifetime lifetime)
     {
-      var key = GetComponentName(serviceType);
+      if (serviceType == Request || serviceType == Response) return;
+      if (serviceType == CommContext)
+      {
+        _windsorContainer.Resolve<ScopedInstanceStore>().Context = (ICommunicationContext) instance;
+        return;
+      }
+
       lock (ContainerLock)
       {
         if (lifetime == DependencyLifetime.PerRequest)
@@ -131,7 +161,7 @@ namespace OpenRasta.DI.Windsor
             // if there's already an instance registration we update the store with the correct reg.
             _windsorContainer.Register(Component
               .For(serviceType)
-              .Named(key)
+              .Named(GetComponentName(serviceType))
               .UsingFactoryMethod(kernel => kernel.Resolve<ScopedInstanceStore>().GetInstance(serviceType))
               .LifestyleScoped());
 
@@ -142,7 +172,7 @@ namespace OpenRasta.DI.Windsor
           _windsorContainer.Register(Component
             .For(serviceType)
             .Instance(instance)
-            .Named(key)
+            .Named(GetComponentName(serviceType))
             .IsDefault()
             .LifeStyle.Is(ConvertLifestyles.ToLifestyleType(lifetime)));
         }
@@ -219,14 +249,15 @@ namespace OpenRasta.DI.Windsor
       }
     }
 
-    static Func<IKernel,T> GetResolver<T>()
+    static Func<IKernel, T> GetResolver<T>()
     {
       var serviceType = typeof(T);
       var isEnumerable = serviceType.IsGenericType && serviceType.GetGenericTypeDefinition() == typeof(IEnumerable<>);
       // todo maybe add array too?
       var itemType = isEnumerable ? serviceType.GetGenericArguments()[0] : null;
-      return kernel => isEnumerable ? (T)(object)kernel.ResolveAll(itemType) : kernel.Resolve<T>();
+      return kernel => isEnumerable ? (T) (object) kernel.ResolveAll(itemType) : kernel.Resolve<T>();
     }
+
     class FactoryRegistration<TService, TArg, TConcrete> : IRegisterFactories
       where TService : class where TConcrete : TService
     {
@@ -266,7 +297,6 @@ namespace OpenRasta.DI.Windsor
     {
       public void Register(string componentName, IWindsorContainer container, DependencyFactoryModel registration)
       {
-        
         var arg1 = GetResolver<TArg1>();
         var arg2 = GetResolver<TArg2>();
         var arg3 = GetResolver<TArg3>();
