@@ -9,12 +9,14 @@ namespace OpenRasta.TypeSystem.ReflectionBased
     {
         readonly MethodInfo _methodInfo;
         readonly object _syncRoot = new object();
+        Attribute[] _attributes = Array.Empty<Attribute>();
 
         internal ReflectionBasedMethod(IMember ownerType, MethodInfo methodInfo)
         {
             _methodInfo = methodInfo;
             Owner = ownerType;
             TypeSystem = TypeSystems.Default;
+            EnsureAttributesExist();
             EnsureInputMembersExist();
             EnsureOutputMembersExist();
         }
@@ -44,12 +46,17 @@ namespace OpenRasta.TypeSystem.ReflectionBased
 
         public IEnumerable<T> FindAttributes<T>() where T : class
         {
-            return _methodInfo.GetCustomAttributes(typeof(T), true).Cast<T>();
+            return _attributes.OfType<T>();
         }
 
         public IEnumerable<object> Invoke(object target, params object[] members)
         {
             return new[]{ _methodInfo.Invoke(target, members) };
+        }
+
+        void EnsureAttributesExist()
+        {
+            _attributes = _methodInfo.GetCustomAttributes(true).Cast<Attribute>().ToArray();
         }
 
         void EnsureInputMembersExist()
