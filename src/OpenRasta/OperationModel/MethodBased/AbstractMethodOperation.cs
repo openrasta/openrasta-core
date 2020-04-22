@@ -20,7 +20,7 @@ namespace OpenRasta.OperationModel.MethodBased
       binderLocator ??= new DefaultObjectBinderLocator();
       OwnerType = (IType) method.Owner;
       Method = method;
-      // TODO: Move the binders to operation descriptors
+      
       Binders = method.InputMembers.ToDictionary(x => x, binderLocator.GetBinder);
       Inputs = Binders
         .Select(x => new InputMember(x.Key, x.Value, x.Key.IsOptional))

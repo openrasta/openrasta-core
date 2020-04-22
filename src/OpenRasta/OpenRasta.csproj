@@ -30,4 +30,7 @@
     <None Include="Resources\error-test.htm" />
     <EmbeddedResource Include="Resources\error.css" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Plugins" />
+  </ItemGroup>
 </Project>

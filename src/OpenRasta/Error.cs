@@ -5,6 +5,7 @@ namespace OpenRasta
 {
   public class Error
   {
+    //TODO: Consider rewriting a bit what an error is
     public string Title { get; set; }
     public string Message { get; set; }
     public Exception Exception { get; set; }
