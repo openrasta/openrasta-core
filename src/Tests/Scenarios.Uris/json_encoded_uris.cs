@@ -3,13 +3,12 @@ using OpenRasta.Configuration;
 using OpenRasta.Hosting.InMemory;
 using Shouldly;
 using Tests.Scenarios.HandlerSelection;
-using Xunit;
 
 namespace Tests.Scenarios.Uris
 {
   public class json_encoded_uris
   {
-    [Fact]
+    [GitHubIssue(99)]
     public async Task are_processed_correctly()
     {
       var response = await (new InMemoryHost(() => ResourceSpace.Has
