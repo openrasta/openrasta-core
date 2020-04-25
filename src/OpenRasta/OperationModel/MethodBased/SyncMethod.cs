@@ -15,14 +15,14 @@ namespace OpenRasta.OperationModel.MethodBased
   {
     public IDictionary ExtendedProperties { get; } = new NullBehaviorDictionary<object, object>();
 
-    public SyncMethod(IMethod method, IObjectBinderLocator binderLocator = null, IDependencyResolver resolver = null,Dictionary<Type,object[]> attributeCache = null)
-      : base(method, binderLocator, resolver, attributeCache)
+    public SyncMethod(IType targetType, IMethod method, IObjectBinderLocator binderLocator = null, IDependencyResolver resolver = null,Dictionary<Type,object[]> attributeCache = null)
+      : base(targetType,method, binderLocator, resolver, attributeCache)
     {
     }
 
     public IEnumerable<OutputMember> Invoke()
     {
-      var instance = CreateInstance(OwnerType, Resolver);
+      var instance = CreateInstance(TargetType, Resolver);
       var parameters = GetParameters();
       return new[]
       {

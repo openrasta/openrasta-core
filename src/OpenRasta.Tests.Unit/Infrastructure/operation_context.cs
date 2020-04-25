@@ -29,7 +29,7 @@ namespace OpenRasta.Tests.Unit.Infrastructure
         select m).First();
       if (method.Owner != Handler)
         throw new InvalidOperationException();
-      Operation = MethodBasedOperationCreator.CreateOperationDescriptor(method).Create();
+      Operation = MethodBasedOperationCreator.CreateOperationDescriptor(Handler,method).Create();
     }
   }
 }

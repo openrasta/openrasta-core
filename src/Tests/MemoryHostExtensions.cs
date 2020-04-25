@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Text;
 using System.Threading.Tasks;
+using OpenRasta.DI;
 using OpenRasta.Hosting.InMemory;
 using OpenRasta.IO;
 using OpenRasta.Web;

@@ -28,6 +28,7 @@ namespace Tests.OperationModel.Interceptors.Support
       
       Operation = MethodBasedOperationCreator
         .CreateOperationDescriptor(
+          TypeSystems.Default.FromClr<T>(),
           TypeSystems.Default.From(mi),
           ()=>asyncInterceptors,
           syncInterceptorProvider, binderLocator: null, resolver: resolver).Create();

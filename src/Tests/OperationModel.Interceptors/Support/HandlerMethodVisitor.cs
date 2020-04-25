@@ -8,7 +8,7 @@ namespace Tests.OperationModel.Interceptors.Support
   {
     protected override Expression VisitMethodCall(MethodCallExpression node)
     {
-      if (this.Method == null)
+      if (Method == null)
         Method = node.Method;
       return base.VisitMethodCall(node);
     }

@@ -50,6 +50,7 @@ namespace UriTemplateTable_Specification
         new KeyValuePair<UriTemplate, object>(new UriTemplate("resource1"), null),
         new KeyValuePair<UriTemplate, object>(new UriTemplate("resource1?query={queryText}"), null)
       });
+      
       var match = table.Match(new Uri("http://localhost/resource1"));
 
       match.Count.ShouldBe(3);

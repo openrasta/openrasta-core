@@ -135,6 +135,7 @@ namespace OpenRasta.TypeSystem.ReflectionBased
                   BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static | BindingFlags.FlattenHierarchy)
                 where !allProperties.Any(x => x.GetGetMethod() == method || x.GetSetMethod() == method)
                 select new ReflectionBasedMethod(
+                  // this,
                   method.DeclaringType == TargetType
                     ? (IMember) this
                     : TypeSystem.FromClr(method.DeclaringType),

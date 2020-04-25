@@ -66,14 +66,22 @@ namespace OpenRasta
         // What it used to say, and it's not matching the code:
         //
         // this calculates and keep only what matches the maximum possible amount of literal segments
-        var currentLiteralSegmentCount = potentialMatch.RelativePathSegments.Count
-                              - potentialMatch.WildcardPathSegments.Count;
-
+        
+        // how many of the path segments were actually matched by a var or a literal
+        // that is all path segments less the wildcard ones
+        // example: /first/second/third/fourth, with /{a}/{b}/{*} would be the first two segments
+        var pathSegmentMatchedToLiteralsOrVars = potentialMatch.RelativePathSegments.Count
+                                                      - potentialMatch.WildcardPathSegments.Count;
+        
+        
+        var currentLiteralSegmentCount = pathSegmentMatchedToLiteralsOrVars;
+        
+        // foreach of the path segment vars, {a}=value
         for (var i = 0; i < potentialMatch.PathSegmentVariables.Count; i++)
         {
-          // I have no idea why that code does what it does. ????
+          // var name = a
           var pathSegmentVarName = potentialMatch.PathSegmentVariables.GetKey(i);
-          
+          // look for lack of query parameters OR ?something={a} missing
           if (potentialMatch.QueryParameters == null ||
               potentialMatch.QueryStringVariables[pathSegmentVarName] == null)
           {
@@ -95,7 +103,7 @@ namespace OpenRasta
           Math.Abs(potentialMatch.QueryStringVariables.Count - potentialMatch.QueryParameters.Count);
         var matchedVariables = potentialMatch.PathSegmentVariables.Count + potentialMatch.QueryStringVariables.Count;
 
-        var literalSegments = potentialMatch.RelativePathSegments.Count
+        var literalSegments = pathSegmentMatchedToLiteralsOrVars
                               - potentialMatch.PathSegmentVariables.Count
                               - potentialMatch.WildcardPathSegments.Count;
 

@@ -10,24 +10,26 @@ namespace OpenRasta.OperationModel.MethodBased
   public abstract class AbstractMethodOperation
   {
     readonly Dictionary<Type, object[]> _attributeCache;
-    protected IType OwnerType { get; }
+    protected IType TargetType { get; }
     protected IMethod Method { get; }
 
-    static readonly Dictionary<Type,object[]> _emptyCache = new Dictionary<Type, object[]>(0); 
-    protected AbstractMethodOperation(IMethod method, IObjectBinderLocator binderLocator, IDependencyResolver resolver, Dictionary<Type,object[]> attributeCache)
+    static readonly Dictionary<Type, object[]> _emptyCache = new Dictionary<Type, object[]>(0);
+
+    protected AbstractMethodOperation(IType targetType, IMethod method, IObjectBinderLocator binderLocator,
+      IDependencyResolver resolver, Dictionary<Type, object[]> attributeCache)
     {
       _attributeCache = attributeCache ?? _emptyCache;
       binderLocator ??= new DefaultObjectBinderLocator();
-      OwnerType = (IType) method.Owner;
+      TargetType = targetType;
       Method = method;
-      
+
       Binders = method.InputMembers.ToDictionary(x => x, binderLocator.GetBinder);
       Inputs = Binders
         .Select(x => new InputMember(x.Key, x.Value, x.Key.IsOptional))
         .ToArray();
       Resolver = resolver;
     }
-    
+
 
     public IEnumerable<InputMember> Inputs { get; }
     IDictionary<IParameter, IObjectBinder> Binders { get; }
@@ -38,15 +40,15 @@ namespace OpenRasta.OperationModel.MethodBased
       where T : class
     {
       return _attributeCache.TryGetValue(typeof(T), out var cachedAttribs)
-        ? (IEnumerable<T>)cachedAttribs
-        : OwnerType.FindAttributes<T>().Concat(Method.FindAttributes<T>()).ToArray();
+        ? (IEnumerable<T>) cachedAttribs
+        : TargetType.FindAttributes<T>().Concat(Method.FindAttributes<T>()).ToArray();
     }
 
     public T FindAttribute<T>() where T : class
     {
       return _attributeCache.TryGetValue(typeof(T), out var cachedAttribs)
-        ? (cachedAttribs.Length > 0 ? (T)cachedAttribs[0] : null)
-        : Method.FindAttribute<T>() ?? OwnerType.FindAttribute<T>();
+        ? (cachedAttribs.Length > 0 ? (T) cachedAttribs[0] : null)
+        : Method.FindAttribute<T>() ?? TargetType.FindAttribute<T>();
     }
 
     public override string ToString() => Method.ToString();

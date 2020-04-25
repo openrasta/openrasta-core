@@ -27,7 +27,7 @@ namespace OpenRasta.Tests.Unit.Infrastructure
           select parameter).Count()
         where parameters.Length == 0 || matchingParams == parameters.Length
         select m).First();
-      Operation = new SyncMethod(method);
+      Operation = new SyncMethod(Handler,method);
     }
   }
 }

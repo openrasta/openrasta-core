@@ -19,7 +19,7 @@ namespace Tests.Configuration.Dependencies
             (ClassWithDefaultConstructor first,
                 ClassWithDefaultConstructor second,
                 ClassWithDefaultConstructor third, ClassWithDefaultConstructor fourth) =>
-                new ClassWithArguments(first, second, third, fourth)));
+              new ClassWithArguments(first, second, third, fourth)));
       }))
       {
         resolved = host.Resolver.Resolve<ClassWithArguments>();

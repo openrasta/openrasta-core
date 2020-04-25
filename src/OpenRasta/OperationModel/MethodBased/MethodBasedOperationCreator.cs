@@ -66,24 +66,28 @@ namespace OpenRasta.OperationModel.MethodBased
 
       return from handler in handlers
         from method in filters(handler.GetMethods())
-        select CreateOperationDescriptor(method, asyncInterceptors, syncInterceptors, binderLocator, resolver);
+        select CreateOperationDescriptor(handler,method, asyncInterceptors, syncInterceptors, binderLocator, resolver);
     }
 
-    public static OperationDescriptor CreateOperationDescriptor(IMethod method,
+    public static OperationDescriptor CreateOperationDescriptor(
+      IType targetType,
+      IMethod method,
       Func<IEnumerable<IOperationInterceptorAsync>> asyncInterceptors = null,
       Func<IOperation, IEnumerable<IOperationInterceptor>> syncInterceptorProvider = null,
       IObjectBinderLocator binderLocator = null,
       IDependencyResolver resolver = null)
     {
       asyncInterceptors ??= Enumerable.Empty<IOperationInterceptorAsync>;
-      return CreateTaskDescriptor(method, binderLocator, resolver, asyncInterceptors)
-             ?? CreateTaskOfTDescriptor(method, binderLocator, resolver, asyncInterceptors)
-             ?? CreateSyncDescriptor(method,
+      return CreateTaskDescriptor(targetType, method, binderLocator, resolver, asyncInterceptors)
+             ?? CreateTaskOfTDescriptor(targetType, method, binderLocator, resolver, asyncInterceptors)
+             ?? CreateSyncDescriptor(targetType, method,
                syncInterceptorProvider ?? (op => Enumerable.Empty<IOperationInterceptor>()), binderLocator, resolver,
                asyncInterceptors);
     }
 
-    static SyncOperationDescriptor CreateSyncDescriptor(IMethod method,
+    static SyncOperationDescriptor CreateSyncDescriptor(
+      IType targetType,
+      IMethod method,
       Func<IOperation, IEnumerable<IOperationInterceptor>> syncInterceptorProvider,
       IObjectBinderLocator binderLocator,
       IDependencyResolver resolver,
@@ -99,7 +103,7 @@ namespace OpenRasta.OperationModel.MethodBased
 
       IOperationAsync factory()
       {
-        var syncMethod = new SyncMethod(method, binderLocator, resolver, attribCache);
+        var syncMethod = new SyncMethod(targetType, method, binderLocator, resolver, attribCache);
         return syncMethod.Intercept(syncInterceptorProvider).AsAsync().Intercept(systemInterceptors());
       }
 
@@ -113,7 +117,7 @@ namespace OpenRasta.OperationModel.MethodBased
         .ToArray();
     }
 
-    static OperationDescriptor CreateTaskDescriptor(IMethod method,
+    static OperationDescriptor CreateTaskDescriptor(IType declaringType, IMethod method,
       IObjectBinderLocator binderLocator,
       IDependencyResolver resolver,
       Func<IEnumerable<IOperationInterceptorAsync>> systemInterceptors)
@@ -124,12 +128,12 @@ namespace OpenRasta.OperationModel.MethodBased
       var attribCache = LoadAsyncAttribCache(method);
 
       IOperationAsync factory() =>
-        new AsyncMethod(method, binderLocator, resolver, attribCache).Intercept(systemInterceptors());
+        new AsyncMethod(declaringType, method, binderLocator, resolver, attribCache).Intercept(systemInterceptors());
 
-      return new AsyncOperationDescriptor(method, factory);
+      return new AsyncOperationDescriptor(method,factory);
     }
 
-    static OperationDescriptor CreateTaskOfTDescriptor(IMethod method,
+    static OperationDescriptor CreateTaskOfTDescriptor(IType targetType, IMethod method,
       IObjectBinderLocator binderLocator,
       IDependencyResolver resolver,
       Func<IEnumerable<IOperationInterceptorAsync>> asyncInterceptors)
@@ -147,8 +151,9 @@ namespace OpenRasta.OperationModel.MethodBased
         .GetParameters()
         .Select(info => Expression.Parameter(info.ParameterType, info.Name))
         .ToList();
-      
+
       var factoryLambda = Expression.Lambda<Func<
+        IType,
         IMethod,
         IObjectBinderLocator,
         IDependencyResolver,
@@ -156,12 +161,11 @@ namespace OpenRasta.OperationModel.MethodBased
         IOperationAsync>>(
         Expression.New(ctor, lambdaParams),
         lambdaParams).Compile();
-      
-      
-      
-      IOperationAsync factory() => factoryLambda(method, binderLocator, resolver,  attribCache)
+
+
+      IOperationAsync factory() => factoryLambda(targetType,method, binderLocator, resolver, attribCache)
         .Intercept(asyncInterceptors());
-      
+
       return new AsyncOperationDescriptor(method, factory);
     }
 
@@ -187,9 +191,9 @@ namespace OpenRasta.OperationModel.MethodBased
         yield return filter.Filter;
     }
 
-    public IOperationAsync CreateOperation(IMethod method)
+    public IOperationAsync CreateOperation(IType targetType, IMethod method)
     {
-      return CreateOperationDescriptor(method, _asyncInterceptors, _syncInterceptorProvider, _binderLocator, _resolver)
+      return CreateOperationDescriptor(targetType, method, _asyncInterceptors, _syncInterceptorProvider, _binderLocator, _resolver)
         .Create();
     }
   }

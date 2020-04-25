@@ -31,7 +31,7 @@ namespace Tests.OperationModel.Interceptors.sync_system
       Resolver.AddDependency<IMyService, Service>(DependencyLifetime.PerRequest);
 
       var value = creator
-        .CreateOperation(TypeSystems.Default.From(mi))
+        .CreateOperation(TypeSystems.Default.FromClr<Handler>(),TypeSystems.Default.From(mi))
         .InvokeAsync()
         .Result.ToList();
     }
