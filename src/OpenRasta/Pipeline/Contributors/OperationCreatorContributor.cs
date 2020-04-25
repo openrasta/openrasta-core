@@ -27,10 +27,11 @@ namespace OpenRasta.Pipeline.Contributors
 
     PipelineContinuation CreateOperations(ICommunicationContext context)
     {
-      var uriModel = context.PipelineData.SelectedResource?.UriModel?.Operations;
-      if (uriModel != null)
+      var uriBoundOperations = context.PipelineData.SelectedResource?.UriModel?.Operations;
+      
+      if (uriBoundOperations != null)
       {
-        context.PipelineData.OperationsAsync = _creator.CreateOperations(uriModel).ToList();
+        context.PipelineData.OperationsAsync = _creator.CreateOperations(uriBoundOperations).ToList();
       }
       // for compat because tests need refactoring
       else if (context.PipelineData.SelectedHandlers == null)

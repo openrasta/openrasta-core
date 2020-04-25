@@ -246,14 +246,14 @@ namespace OpenRasta.Tests.Unit.Infrastructure
     {
       Host = new InMemoryHost(startup: new StartupProperties
       {
-          OpenRasta =
+        OpenRasta =
+        {
+          Errors =
           {
-              Errors =
-              {
-                  HandleAllExceptions = false,
-                  HandleCatastrophicExceptions = false
-              }
+            HandleAllExceptions = false,
+            HandleCatastrophicExceptions = false
           }
+        }
       });
 
       Pipeline = null;

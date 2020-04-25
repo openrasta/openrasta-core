@@ -41,24 +41,39 @@ namespace OpenRasta.Configuration.MetaModel.Handlers
 
     public void PreProcess(IMetaModelRepository repository)
     {
-      foreach (var resourceModel in repository.ResourceRegistrations)
-        CreateOperationsForModel(resourceModel);
+      var operationsByResource = repository.ResourceRegistrations
+        .Select(CreateOperationsForModel)
+        .ToLookup(ops => ops.resourceKey, ops => ops.operations);
+
+      MatchOperationsWithUris(repository, operationsByResource);
     }
 
-    void CreateOperationsForModel(ResourceModel resourceModel)
+    void MatchOperationsWithUris(IMetaModelRepository repository, ILookup<object, List<OperationDescriptor>> operationsByResource)
     {
-      var operations = MethodBasedOperationCreator.CreateOperationDescriptors(
-        resourceModel.Handlers.Select(h => h.Type),
-        _asyncInterceptors,
-        FilterMethods,
-        _syncInterceptors,
-        _binderLocator,
-        _resolver)
-        .ToList();
-      
-      foreach (var uri in resourceModel.Uris)
-      foreach (var operation in operations)
-        uri.Operations.Add(ToOperationModel(operation));
+      // This is where the matching of operations and URIs (uri names, parameters, etc) will be moved to.
+      foreach (var registration in repository.ResourceRegistrations)
+      {
+        var operations = operationsByResource[registration.ResourceKey].SelectMany(_ => _).ToList();
+        foreach (var uri in registration.Uris)
+        {
+          foreach (var operation in operations)
+            uri.Operations.Add(ToOperationModel(operation));
+        }
+      }
+    }
+
+    (object resourceKey, List<OperationDescriptor> operations) CreateOperationsForModel(ResourceModel resourceModel)
+    {
+      return (
+        resourceModel.ResourceKey,
+        MethodBasedOperationCreator.CreateOperationDescriptors(
+            resourceModel.Handlers.Select(h => h.Type),
+            _asyncInterceptors,
+            FilterMethods,
+            _syncInterceptors,
+            _binderLocator,
+            _resolver)
+          .ToList());
     }
 
     IEnumerable<IMethod> FilterMethods(IEnumerable<IMethod> arg)
