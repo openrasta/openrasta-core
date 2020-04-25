@@ -50,44 +50,46 @@ namespace OpenRasta
     public Collection<UriTemplateMatch> Match(Uri uri, Uri baseAddress = null)
     {
         var appBase = baseAddress ?? BaseAddress;
-      // var lastMaxLiteralSegmentCount = 0;
+        
+      var lastMaxLiteralSegmentCount = 0;
+      
       var matches = new List<UriTemplateMatch>();
       foreach (var template in _resolvablePairs)
       {
-        // TODO: discard uri templates with fragment identifiers until tests are implemented
-
         var potentialMatch = template.Key.Match(appBase, uri);
 
         if (potentialMatch == null) continue;
 
+        
+        // var pathSegments = potentialMatch.RelativePathSegments.Count;
         // WARNING, CODE THAT MAKES NO SENSE MAKES NO SENSE AT ALL!
         // What it used to say, and it's not matching the code:
         //
         // this calculates and keep only what matches the maximum possible amount of literal segments
-        // var currentLiteralSegmentCount = potentialMatch.RelativePathSegments.Count
-        //                       - potentialMatch.WildcardPathSegments.Count;
+        var currentLiteralSegmentCount = potentialMatch.RelativePathSegments.Count
+                              - potentialMatch.WildcardPathSegments.Count;
 
-        // for (var i = 0; i < potentialMatch.PathSegmentVariables.Count; i++)
-        // {
-        //   // I have no idea why that code does what it does. ????
-        //   var pathSegmentVarName = potentialMatch.PathSegmentVariables.GetKey(i);
-        //   
-        //   if (potentialMatch.QueryParameters == null ||
-        //       potentialMatch.QueryStringVariables[pathSegmentVarName] == null)
-        //   {
-        //     currentMaxLiteralSegmentCount -= 1;
-        //   }
-        // }
+        for (var i = 0; i < potentialMatch.PathSegmentVariables.Count; i++)
+        {
+          // I have no idea why that code does what it does. ????
+          var pathSegmentVarName = potentialMatch.PathSegmentVariables.GetKey(i);
+          
+          if (potentialMatch.QueryParameters == null ||
+              potentialMatch.QueryStringVariables[pathSegmentVarName] == null)
+          {
+            currentLiteralSegmentCount -= 1;
+          }
+        }
 
-        //
-        // if (currentLiteralSegmentCount > lastMaxLiteralSegmentCount)
-        // {
-        //   lastMaxLiteralSegmentCount = currentLiteralSegmentCount;
-        // }
-        // else if (currentLiteralSegmentCount < lastMaxLiteralSegmentCount)
-        // {
-        //   continue;
-        // }
+        
+        if (currentLiteralSegmentCount > lastMaxLiteralSegmentCount)
+        {
+          lastMaxLiteralSegmentCount = currentLiteralSegmentCount;
+        }
+        else if (currentLiteralSegmentCount < lastMaxLiteralSegmentCount)
+        {
+          continue;
+        }
 
         var missingQueryStringParameters =
           Math.Abs(potentialMatch.QueryStringVariables.Count - potentialMatch.QueryParameters.Count);
