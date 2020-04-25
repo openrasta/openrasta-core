@@ -9,7 +9,7 @@ namespace Tests.Scenarios.Uris
 {
   public class json_encoded_uris
   {
-    [Fact(Skip="Issue #99")]
+    [Fact]
     public async Task are_processed_correctly()
     {
       var response = await (new InMemoryHost(() => ResourceSpace.Has
@@ -17,7 +17,7 @@ namespace Tests.Scenarios.Uris
           .AtUri("/json?data={data}")
           .HandledBy<IdentityHandler>())
         .Get("/json?data=%7B+%22Name%22+%3A+%22pete%22+%7D"));
-      response.ReadString().ShouldBe("{ \"Name\" , \"pete\" }");
+      response.ReadString().ShouldBe("{ \"Name\" : \"pete\" }");
     }
 
     public class IdentityHandler
