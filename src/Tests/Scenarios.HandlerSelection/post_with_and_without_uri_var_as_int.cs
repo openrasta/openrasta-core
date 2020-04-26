@@ -12,8 +12,8 @@ namespace Tests.Scenarios.HandlerSelection
 
     public post_with_and_without_uri_var_as_int()
     {
-      server = new InMemoryHost(() =>
-        ResourceSpace.Has
+      server = new TestHost((has,uses) =>
+        has
           .ResourcesNamed("example")
           .AtUri("/domain/new")
           .And.AtUri("/account/{account_id}/domain/new")

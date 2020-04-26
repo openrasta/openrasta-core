@@ -1,5 +1,6 @@
 using NUnit.Framework;
 using Shouldly;
+using UriTemplateTable_Specification;
 
 namespace OpenRasta.Tests.Unit.UriTemplates
 {
@@ -40,13 +41,13 @@ namespace OpenRasta.Tests.Unit.UriTemplates
       BindingUriByName("/{value}", new {value = "?query"}).ShouldAllBe(item => item == "http://localhost/%3Fquery");
     }
     
-    [Test(Description="See https://github.com/openrasta/openrasta-core/issues/180")]
+    [GitHubIssue(180)]
     public void braces_are_present_in_segments()
     {
       BindingUriByName("/{value}", new {value = "{query}"}).ShouldAllBe(item => item == "http://localhost/{query}");
     }
     
-    [Test(Description="See https://github.com/openrasta/openrasta-core/issues/180")]
+    [GitHubIssue(180)]
     public void braces_are_present_in_qs()
     {
       BindingUriByName("/?query={value}", new {value = "{query}"}).ShouldAllBe(item => item == "http://localhost/?query={query}");

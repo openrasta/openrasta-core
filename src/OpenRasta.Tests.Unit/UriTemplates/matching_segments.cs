@@ -5,6 +5,7 @@ using NUnit.Framework;
 using OpenRasta.Collections;
 using OpenRasta.Collections.Specialized;
 using Shouldly;
+using UriTemplateTable_Specification;
 
 namespace OpenRasta.Tests.Unit.UriTemplates
 {
@@ -77,14 +78,14 @@ namespace OpenRasta.Tests.Unit.UriTemplates
     }
     
     
-    [Test(Description="See https://github.com/openrasta/openrasta-core/issues/180")]
+    [GitHubIssue(180)]
     public void qs_match_includes_braces()
     {
       GivenAMatching("parties?cvrcpr={cvrcpr}&cvr_p={cvr_p}", "http://localhost/parties?cvrcpr={cvrcpr}&cvr_p={cvr_p}");
       ThenTheMatch.QueryStringVariables["CVRCPR"].ShouldBe("{cvrcpr}");
     }
     
-    [Test(Description="See https://github.com/openrasta/openrasta-core/issues/180")]
+    [GitHubIssue(180)]
     public void seg_match_includes_braces()
     {
       GivenAMatching("parties/{cvrcpr}", "http://localhost/parties/{cvrcpr}");
