@@ -23,21 +23,22 @@ namespace Tests.Scenarios.HandlerSelection.Scenarios.Codecs
       });
     }
 
-    [Fact(Skip="Issue #42")]
+    [GitHubIssue(42)]
     public async Task parses_to_the_correct_parameter_for_old_style()
     {
       var response = await _server.Put("/old/1", "{ }", contentType: "application/json");
       response.StatusCode.ShouldBe(200);
-      response.ReadString().ShouldBe("id=1;a=false;dto=dto");
+      response.ReadString().ShouldBe("old:id=1;a=False;dto=dto");
     }
     
-    [Fact(Skip="Issue #42")]
+    [GitHubIssue(42)]
     public async Task parses_to_the_correct_parameter_for_new_style()
     {
       var response = await _server.Put("/new/1", "{ }", contentType: "application/json");
       response.StatusCode.ShouldBe(200);
-      response.ReadString().ShouldBe("id=1;a=false;dto=dto");
+      response.ReadString().ShouldBe("new:id=1;a=False;dto=dto");
     }
+    
     public class Kuku
     {
     }
@@ -46,11 +47,11 @@ namespace Tests.Scenarios.HandlerSelection.Scenarios.Codecs
     {
       public string Put(int idWithNewOptional, Kuku dto, bool a = false)
       {
-        return $"id={idWithNewOptional};a={a};dto={(dto == null ? "null" : "dto")}";
+        return $"new:id={idWithNewOptional};a={a};dto={(dto == null ? "null" : "dto")}";
       }
       public string Put(int id, [Optional, DefaultParameterValue(false)] bool a, Kuku dto)
       {
-        return $"id={id};a={a};dto={(dto == null ? "null" : "dto")}";
+        return $"old:id={id};a={a};dto={(dto == null ? "null" : "dto")}";
       }
     }
   }
