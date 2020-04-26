@@ -72,7 +72,7 @@ namespace OpenRasta.Pipeline.Contributors
           negotiatedCodec.MediaType.IsWildCard
             ? acceptedContentTypes
               .OrderByDescending(c => c)
-              .Where(c => c.IsWildCard == false && c.Matches(negotiatedCodec.MediaType))
+              .Where(c => c.IsWildCard == false)
               .DefaultIfEmpty(MediaType.ApplicationOctetStream)
               .FirstOrDefault()
             : negotiatedCodec.MediaType.WithoutQuality();
