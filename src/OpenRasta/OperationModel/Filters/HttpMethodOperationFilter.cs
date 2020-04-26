@@ -29,7 +29,7 @@ namespace OpenRasta.OperationModel.Filters
       Log.WriteDebug("Found {0} operation(s) with a matching name.", operationWithMatchingName.Count);
       Log.WriteDebug("Found {0} operation(s) with matching [HttpOperation] attribute.",
         operationWithMatchingAttribute.Count);
-      return operationWithMatchingName.Union(operationWithMatchingAttribute);
+      return operationWithMatchingName.Union(operationWithMatchingAttribute).ToList();
     }
 
     IEnumerable<IOperationAsync> OperationsWithMatchingAttribute(IEnumerable<IOperationAsync> operations)
@@ -40,7 +40,7 @@ namespace OpenRasta.OperationModel.Filters
         select operation;
     }
 
-    private IEnumerable<IOperationAsync> OperationsWithMatchingName(IEnumerable<IOperationAsync> operations) =>
+    IEnumerable<IOperationAsync> OperationsWithMatchingName(IEnumerable<IOperationAsync> operations) =>
       from operation in operations
       where operation.Name.StartsWith(_request.HttpMethod, StringComparison.OrdinalIgnoreCase)
       select operation;

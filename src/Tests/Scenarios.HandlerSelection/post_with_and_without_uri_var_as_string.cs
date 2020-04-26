@@ -45,7 +45,7 @@ namespace Tests.Scenarios.HandlerSelection
         has
           .ResourcesNamed("example")
           .AtUri("/account/")
-          .And.AtUri("/account/?id={account_id")
+          .And.AtUri("/account/?id={account_id}")
           .HandledBy<CollectionHandler<string,string>>());
     }
 

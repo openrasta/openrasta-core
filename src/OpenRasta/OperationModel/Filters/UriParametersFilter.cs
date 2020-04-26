@@ -36,7 +36,7 @@ namespace OpenRasta.OperationModel.Filters
         throw new InvalidOperationException(
           $"Null resource detected when there are operations for {_context.Request.Uri}");
       
-      var selectedOperations = new List<IOperationAsync>();
+      var selectedOperations = new HashSet<IOperationAsync>();
       
       var selectedResourceUriTemplateParameters = _pipelineData.SelectedResource.UriTemplateParameters.ToList();
       foreach (var operation in operations)

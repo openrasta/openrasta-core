@@ -18,19 +18,19 @@
         <LangVersion>latest</LangVersion>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="System.ValueTuple" Version="4.5.0"/>
+        <PackageReference Include="System.ValueTuple" Version="4.5.0" />
     </ItemGroup>
     <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
-        <PackageReference Include="System.CodeDom" Version="4.5.0"/>
+        <PackageReference Include="System.CodeDom" Version="4.5.0" />
     </ItemGroup>
     <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
         <DefineConstants>$(DefineConstants);CORE</DefineConstants>
     </PropertyGroup>
     <ItemGroup>
-        <None Include="Resources\error-test.htm"/>
-        <EmbeddedResource Include="Resources\error.css"/>
+        <None Include="Resources\error-test.htm" />
+        <EmbeddedResource Include="Resources\error.css" />
     </ItemGroup>
     <ItemGroup>
-        <Folder Include="Plugins"/>
+        <Folder Include="Plugins" />
     </ItemGroup>
 </Project>
