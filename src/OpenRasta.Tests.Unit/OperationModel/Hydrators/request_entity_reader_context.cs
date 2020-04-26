@@ -15,11 +15,11 @@ using Shouldly;
 
 namespace OpenRasta.Tests.Unit.OperationModel.Hydrators
 {
-  public abstract class request_entity_reader_context : operation_context<EntityReaderHandler>
+  public abstract class request_entity_reader_context : operation_context<HandlerRequiringInputs>
   {
     protected IEnumerable<IOperationAsync> Operations { get; set; }
 
-    protected void given_filter()
+    protected void given_entity_reader()
     {
       RequestEntityReader = new RequestEntityReaderHydrator(Resolver, Request)
       {
@@ -28,39 +28,39 @@ namespace OpenRasta.Tests.Unit.OperationModel.Hydrators
       };
     }
 
-    protected void given_operations()
+    protected void given_operations_for<T>()
     {
       Operations = new MethodBasedOperationCreator(
         filters: new[] {new TypeExclusionMethodFilter<object>()},
-        resolver: Resolver).CreateOperations(new[] {TypeSystem.FromClr<EntityReaderHandler>()}).ToList();
+        resolver: Resolver).CreateOperations(new[] {TypeSystem.FromClr<T>()}).ToList();
     }
 
     protected RequestEntityReaderHydrator RequestEntityReader { get; set; }
 
     protected void given_operation_has_codec_match<TCodec>(string name, MediaType mediaType, float codecScore)
     {
-      Operations.First(x=>x.Name == name).SetRequestCodec(new CodecMatch(new CodecRegistration(typeof(TCodec),Guid.NewGuid(),mediaType), codecScore, 1));
-
+      Operations.First(x => x.Name == name)
+        .SetRequestCodec(
+          new CodecMatch(new CodecRegistration(typeof(TCodec), Guid.NewGuid(), mediaType), codecScore, 1));
     }
 
     protected void when_filtering_operations()
     {
       try
       {
-        ResultOperation = RequestEntityReader.Read(Operations).GetAwaiter().GetResult().Item2;
+        var result = RequestEntityReader.Read(Operations).GetAwaiter().GetResult();
+        ResultOperation = result.Item2;
+        ReadResult = result.Item1;
       }
       catch (Exception e)
       {
         Error = e;
       }
     }
+    
+    public RequestReadResult ReadResult { get; set; }
 
     public Exception Error { get; set; }
-
-    protected void when_entity_is_read()
-    {
-      when_filtering_operations();
-    }
 
     protected void given_operation_value(string methodName, string parameterName, object parameterValue)
     {

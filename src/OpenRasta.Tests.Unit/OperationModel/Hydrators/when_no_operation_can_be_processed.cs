@@ -1,4 +1,5 @@
 ﻿using NUnit.Framework;
+using OpenRasta.OperationModel.Hydrators;
 using Shouldly;
 
 namespace OpenRasta.Tests.Unit.OperationModel.Hydrators
@@ -8,11 +9,12 @@ namespace OpenRasta.Tests.Unit.OperationModel.Hydrators
     [Test]
     public void no_operation_gets_selected()
     {
-      given_filter();
-      given_operations();
+      given_entity_reader();
+      given_operations_for<HandlerRequiringInputs>();
 
       when_filtering_operations();
 
+      ReadResult.ShouldBe(RequestReadResult.NoneFound);
       ResultOperation.ShouldBeNull();
     }
   }

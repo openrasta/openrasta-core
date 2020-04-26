@@ -23,13 +23,13 @@ namespace OpenRasta.Tests.Unit.OperationModel.Hydrators
     [Test]
     public void multiple_equivalent_operations_throws()
     {
-      given_filter();
-      given_operations();
+      given_entity_reader();
+      given_operations_for<HandlerRequiringInputs>();
 
       given_operation_value("PostName", "frodo", new Frodo());
       given_operation_value("PostStream", "anObject", Stream.Null);
 
-      when_entity_is_read();
+      when_filtering_operations();
 
       Error.ShouldBeAssignableTo<AmbiguousRequestException>();
     }
@@ -37,15 +37,15 @@ namespace OpenRasta.Tests.Unit.OperationModel.Hydrators
     [Test]
     public void the_one_with_the_highest_number_of_satisfied_parameters_and_ready_for_invocation_is_selected()
     {
-      given_filter();
-      given_operations();
+      given_entity_reader();
+      given_operations_for<HandlerRequiringInputs>();
 
       given_operation_value("PostName", "frodo", new Frodo());
 
       given_operation_value("PostAddress", "frodo", new Frodo());
       given_operation_value("PostAddress", "address", new Address());
 
-      when_entity_is_read();
+      when_filtering_operations();
 
       ResultOperation.Name.ShouldBe( "PostAddress");
     }
