@@ -11,7 +11,7 @@ namespace Tests.Scenarios.HandlerSelection.Scenarios.Codecs
 {
   public class multipart_enumerable_with_uri_params
   {
-    [Fact(Skip="Issue #32")]
+    [GitHubIssue(32,Skip = "Fix waiting for multipart to be looked at / into")]
     public async Task should_provide_enumerable_independently()
     {
       var server = new InMemoryHost(() =>

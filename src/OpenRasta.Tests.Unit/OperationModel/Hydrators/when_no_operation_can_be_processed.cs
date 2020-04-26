@@ -4,7 +4,7 @@ using Shouldly;
 
 namespace OpenRasta.Tests.Unit.OperationModel.Hydrators
 {
-  public class when_no_operation_can_be_processed : request_entity_reader_context
+  public class no_codec_match : request_entity_reader_context
   {
     [Test]
     public void no_operation_gets_selected()
@@ -15,7 +15,7 @@ namespace OpenRasta.Tests.Unit.OperationModel.Hydrators
       when_filtering_operations();
 
       ReadResult.ShouldBe(RequestReadResult.NoneFound);
-      ResultOperation.ShouldBeNull();
+      SelectedOperation.ShouldBeNull();
     }
   }
 }

@@ -2,6 +2,7 @@
 using NUnit.Framework;
 using OpenRasta.Codecs;
 using OpenRasta.OperationModel;
+using OpenRasta.OperationModel.Hydrators;
 using OpenRasta.Web;
 using Shouldly;
 
@@ -32,8 +33,10 @@ namespace OpenRasta.Tests.Unit.OperationModel.Hydrators
 
       when_filtering_operations();
 
-      ResultOperation.GetRequestCodec().CodecRegistration.CodecType.ShouldBe(typeof(ApplicationXWwwFormUrlencodedKeyedValuesCodec));
+      SelectedOperation.GetRequestCodec().CodecRegistration.CodecType.ShouldBe(typeof(ApplicationXWwwFormUrlencodedKeyedValuesCodec));
+      ReadResult.ShouldBe(RequestReadResult.CodecFailure); // no valid data in request
     }
+    
     [Test]
     public void the_one_without_a_codec_is_not_selected()
     {
@@ -44,8 +47,9 @@ namespace OpenRasta.Tests.Unit.OperationModel.Hydrators
       given_operation_has_codec_match<ApplicationOctetStreamCodec>("PostName", MediaType.Xml, 1.0f);
 
       when_filtering_operations();
-
-      ResultOperation.GetRequestCodec().CodecRegistration.CodecType.ShouldBe(typeof(ApplicationOctetStreamCodec));
+      
+      SelectedOperation.GetRequestCodec().CodecRegistration.CodecType.ShouldBe(typeof(ApplicationOctetStreamCodec));
+      ReadResult.ShouldBe(RequestReadResult.CodecFailure); // no valid data in the request...
     }
   }
 }

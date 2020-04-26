@@ -13,7 +13,7 @@ using OpenRasta.TypeSystem;
 
 namespace OpenRasta.OperationModel.Hydrators
 {
-  // TODO: Rewrite, this is unreadable.
+  // TODO: Rewrite, this is an unreadable mess.
   public class RequestEntityReaderHydrator : IRequestEntityReader
   {
     readonly IRequest _request;
@@ -30,22 +30,31 @@ namespace OpenRasta.OperationModel.Hydrators
     public IErrorCollector ErrorCollector { get; set; }
     public ILogger<CodecLogSource> Log { get; set; }
 
-    static IOperationAsync TryGetUnreadyWithCodec(IEnumerable<IOperationAsync> operations)
-    {
-      return VerifySingleMatch((
-        from o in operations
-        let codecMatch = o.GetRequestCodec()
-        where codecMatch != null
-        orderby codecMatch descending
-        group o by new
-        {
-          codecMatch.WeightedScore,
-          codecMatch.MatchingParameterCount
-        }
-      ).FirstOrDefault());
-    }
+     (IOperationAsync o, object codec, bool isKeyValuePair) TryGetUnreadyWithCodec(IEnumerable<IOperationAsync> operations)
+     {
+       var opsWithCodec
+         = (
+         from o in operations
+         let codecMatch = o.GetRequestCodec()
+         where codecMatch != null
+         let codec= _resolver.Resolve(codecMatch.CodecRegistration.CodecType, UnregisteredAction.AddAsTransient)
+         let isKeyValuePair = codec.GetType().Implements(typeof(IKeyedValuesMediaTypeReader<>))
+         // reader's digest: here, object codecs can only be read once, while kv codecs can be called for multiple inputs...
+         where isKeyValuePair || o.Inputs.Count(input=>input.Binder.IsEmpty) == 1
+         orderby codecMatch descending
+         group (o,codec,isKeyValuePair) by new
+         {
+           codecMatch.WeightedScore,
+           codecMatch.MatchingParameterCount
+         }
+       ).FirstOrDefault()?.ToArray();
+       if (opsWithCodec == null) return default;
+       if (opsWithCodec.Length > 1) throw new AmbiguousRequestException(opsWithCodec.Select(tuple => tuple.o).ToArray());
 
-    static IOperationAsync SelectReady(IEnumerable<IOperationAsync> operations)
+       return opsWithCodec[0];
+     }
+
+    static IOperationAsync SelectMostReady(IEnumerable<IOperationAsync> operations)
     {
       return VerifySingleMatch((
         from o in operations
@@ -64,23 +73,23 @@ namespace OpenRasta.OperationModel.Hydrators
       return operations.Single();
     }
 
-    async Task<Tuple<RequestReadResult, IOperationAsync>> ReadWithCodec(IOperationAsync operation)
+    async Task<Tuple<RequestReadResult, IOperationAsync>> ReadWithCodec((IOperationAsync o, object codec, bool isKeyValuePair) operation)
     {
-      var codecInstance = CreateMediaTypeReader(operation);
+      var codecInstance = (ICodec)operation.codec;
 
       var codecType = codecInstance.GetType();
       Log.CodecLoaded(codecType);
 
-      if (codecType.Implements(typeof(IKeyedValuesMediaTypeReader<>)))
+      if (operation.isKeyValuePair)
         return Tuple.Create(
-          TryAssignKeyedValues(_request.Entity, codecInstance, codecType, operation),
-          operation);
+          TryAssignKeyedValues(_request.Entity, codecInstance, codecType, operation.o),
+          operation.o);
 
       return Tuple.Create(await TryReadPayloadAsObject(
           _request.Entity,
           GetReader(codecInstance),
-          operation),
-        operation);
+          operation.o),
+        operation.o);
     }
 
     static Func<IHttpEntity, IType, string, Task<object>> GetReader(ICodec instance)
@@ -99,14 +108,14 @@ namespace OpenRasta.OperationModel.Hydrators
       var opsAlreadyReady = operationAsyncs.Where(op => op.Inputs.AllReady()).ToArray();
       var opWithCodec = TryGetUnreadyWithCodec(operationAsyncs);
 
-      return opWithCodec == null ?
+      return opWithCodec == default ?
         Task.FromResult(ReturnTrySelectReady(operationAsyncs)) : 
         TryWithCodec(opsAlreadyReady, opWithCodec);
     }
 
     static Tuple<RequestReadResult, IOperationAsync> ReturnTrySelectReady(IOperationAsync[] operationAsyncs)
     {
-      var ready = SelectReady(operationAsyncs);
+      var ready = SelectMostReady(operationAsyncs);
       return
         ready == null
           ? Tuple.Create<RequestReadResult, IOperationAsync>(RequestReadResult.NoneFound, null)
@@ -114,14 +123,16 @@ namespace OpenRasta.OperationModel.Hydrators
     }
 
     async Task<Tuple<RequestReadResult, IOperationAsync>> TryWithCodec(IOperationAsync[] opsAlreadyReady,
-      IOperationAsync opWithCodec)
+      (IOperationAsync o, object codec, bool isKeyValuePair) opWithCodec)
     {
       var tryRead = await ReadWithCodec(opWithCodec);
       
       if (tryRead.Item1 == RequestReadResult.Success && tryRead.Item2.Inputs.AllReady())
         return tryRead;
 
-      return ReturnTrySelectReady(opsAlreadyReady);
+      var ready = SelectMostReady(opsAlreadyReady);
+      if (ready != null) return Tuple.Create(RequestReadResult.Success, ready);
+      return tryRead;
     }
 
     static ErrorFrom<RequestEntityReaderHydrator> CreateErrorForException(Exception e)
@@ -187,7 +198,7 @@ namespace OpenRasta.OperationModel.Hydrators
         }
       }
 
-      return RequestReadResult.CodecMissingValue;
+      return RequestReadResult.CodecFailure;
     }
   }
 }

@@ -49,7 +49,7 @@ namespace OpenRasta.Tests.Unit.OperationModel.Hydrators
       try
       {
         var result = RequestEntityReader.Read(Operations).GetAwaiter().GetResult();
-        ResultOperation = result.Item2;
+        SelectedOperation = result.Item2;
         ReadResult = result.Item1;
       }
       catch (Exception e)
@@ -70,6 +70,6 @@ namespace OpenRasta.Tests.Unit.OperationModel.Hydrators
         .Binder.SetInstance(parameterValue).ShouldBeTrue();
     }
 
-    protected IOperationAsync ResultOperation { get; private set; }
+    protected IOperationAsync SelectedOperation { get; private set; }
   }
 }

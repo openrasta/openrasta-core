@@ -12,12 +12,12 @@
     }
     public string Post(TId account_id, TContent content)
     {
-      return "POST:" + account_id;
+      return $"POST:{account_id}:{content}";
     }
 
     public string Post(string content)
     {
-      return "POST";
+      return $"POST:{content}";
     }
   }
 }

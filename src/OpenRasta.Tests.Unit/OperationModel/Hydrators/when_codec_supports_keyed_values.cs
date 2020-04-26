@@ -20,7 +20,7 @@ namespace OpenRasta.Tests.Unit.OperationModel.Hydrators
 
       when_filtering_operations();
 
-      ResultOperation.Inputs.Required().First().Binder.BuildObject()
+      SelectedOperation.Inputs.Required().First().Binder.BuildObject()
           .Instance.ShouldBeAssignableTo<Frodo>()
           .LastName.ShouldBe( "Baggins");
     }

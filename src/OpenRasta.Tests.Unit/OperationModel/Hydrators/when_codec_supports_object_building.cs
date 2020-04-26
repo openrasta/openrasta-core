@@ -3,6 +3,7 @@ using System.Linq;
 using NUnit.Framework;
 using OpenRasta.Codecs;
 using OpenRasta.OperationModel;
+using OpenRasta.OperationModel.Hydrators;
 using OpenRasta.Web;
 using OpenRasta.Web.Codecs;
 using Shouldly;
@@ -21,8 +22,8 @@ namespace OpenRasta.Tests.Unit.OperationModel.Hydrators
 
       when_filtering_operations();
 
-      ResultOperation.Name.ShouldBe( "PostStream");
-      ResultOperation.Inputs.Required().First().Binder.BuildObject()
+      SelectedOperation.Name.ShouldBe( "PostStream");
+      SelectedOperation.Inputs.Required().First().Binder.BuildObject()
         .Instance.ShouldBeAssignableTo<Stream>()
         .ReadByte().ShouldBe(0);
     }
@@ -37,8 +38,10 @@ namespace OpenRasta.Tests.Unit.OperationModel.Hydrators
       given_request_entity_body(new byte[] { 0 });
 
       when_filtering_operations();
+      
+      ReadResult.ShouldBe(RequestReadResult.CodecFailure);
+      SelectedOperation.Name.ShouldBe( "PostName");
       Errors.Errors.Count().ShouldBe(1);
-      // ResultOperation.Name.ShouldBe( "PostName");
     }
   }
 }

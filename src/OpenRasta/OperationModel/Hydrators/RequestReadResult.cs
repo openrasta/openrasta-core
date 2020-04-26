@@ -5,7 +5,6 @@
     BinderFailure,
     CodecFailure,
     Success,
-    NoneFound,
-    CodecMissingValue
+    NoneFound
   }
 }

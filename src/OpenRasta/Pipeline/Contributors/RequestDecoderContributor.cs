@@ -24,6 +24,7 @@ namespace OpenRasta.Pipeline.Contributors
 
     async Task<PipelineContinuation> ReadRequestEntityBody(ICommunicationContext ctx)
     {
+      // TODO: Behaviour here is a bit undefined... 
       var operation = await DecodeRequest(ctx.PipelineData.OperationsAsync);
 
       ctx.PipelineData.OperationsAsync = operation.Item1 != RequestReadResult.Success
