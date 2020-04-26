@@ -29,8 +29,12 @@ namespace OpenRasta.IO
     {
       if (baseStream == null)
         throw new ArgumentNullException("baseStream");
-      if (!baseStream.CanSeek || !baseStream.CanRead)
-        throw new ArgumentException("baseStream must be a seekable readable stream.");
+      if (!baseStream.CanRead)
+        throw new ArgumentException("baseStream must be a readable stream.");
+      
+      if (!baseStream.CanSeek)
+        baseStream = new HistoryStream(baseStream,bufferLength);
+      
       if (bufferLength < boundary.Length + 6)
         throw new ArgumentOutOfRangeException(nameof(bufferLength),
           "The buffer needs to be big enough to contain the boundary and control characters (6 bytes)");
