@@ -1,7 +1,9 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
+using System.Threading;
 using System.Threading.Tasks;
 using OpenRasta.Codecs;
 using OpenRasta.Collections;
@@ -46,15 +48,37 @@ namespace OpenRasta.Pipeline
         base[EnvironmentKeys.OPERATIONS_ASYNC] = value;
 
 #pragma warning disable 618
-        base[EnvironmentKeys.OPERATIONS] = value
+        IEnumerable<IOperation> legacyOps() => value
           .Select(op => new PretendingToBeSyncOperationForLegacyInterceptors(op))
           .Cast<IOperation>()
           .ToList();
+        
+        base[EnvironmentKeys.OPERATIONS] = new Memento<IOperation>(legacyOps);
 #pragma warning restore 618
       }
     }
 
-    /// <summary>
+    class Memento<T> : IEnumerable<T>
+    {
+      readonly Lazy<IEnumerable<T>> _lazy;
+
+      public Memento(Func<IEnumerable<T>> result)
+      {
+        _lazy = new Lazy<IEnumerable<T>>(result,LazyThreadSafetyMode.None);
+      }
+
+      public IEnumerator<T> GetEnumerator()
+      {
+        return _lazy.Value.GetEnumerator();
+      }
+
+      IEnumerator IEnumerable.GetEnumerator()
+      {
+        return GetEnumerator();
+      }
+    }
+
+  /// <summary>
     /// Gets the resource key associated with the requestURI.
     /// </summary>
     public object ResourceKey
