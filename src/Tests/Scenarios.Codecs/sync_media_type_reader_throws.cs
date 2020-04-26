@@ -12,7 +12,7 @@ namespace Tests.Scenarios.HandlerSelection.Scenarios.Codecs
 {
   public class sync_media_type_reader_throws
   {
-    [Fact(Skip="Issue #8")]
+    [GitHubIssue(8)]
     public async Task response_is_400()
     {
       var server = new InMemoryHost(() => ResourceSpace.Has
