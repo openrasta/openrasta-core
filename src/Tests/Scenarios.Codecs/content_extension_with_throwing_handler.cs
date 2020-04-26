@@ -11,7 +11,7 @@ namespace Tests.Scenarios.HandlerSelection.Scenarios.Codecs
 {
   public class content_extension_with_throwing_handler
   {
-    [Fact(Skip="Issue #15")]
+    [GitHubIssue(15)]
     public async Task content_type_in_extension_overrides_conneg()
     {
       var server = new InMemoryHost(() =>
@@ -30,7 +30,7 @@ namespace Tests.Scenarios.HandlerSelection.Scenarios.Codecs
       });
       var response = await server.Get("/stuff.xml");
       response.StatusCode.ShouldBe(500);
-      response.Entity.ContentType.ShouldBe(MediaType.Xml);
+      response.Entity.ContentType.MediaType.ShouldBe(MediaType.Xml.MediaType);
     }
 
     class MyResourceHandler

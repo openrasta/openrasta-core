@@ -29,6 +29,7 @@ namespace OpenRasta.Web.UriDecorators
         readonly IUriResolver _uris;
         UriRegistration _resourceMatch;
         CodecRegistration _selectedCodec;
+        string _selectedExtension;
 
         public ContentTypeExtensionUriDecorator(ICommunicationContext context, IUriResolver uris, ICodecRepository codecs, ITypeSystem typeSystem)
         {
@@ -46,6 +47,7 @@ namespace OpenRasta.Web.UriDecorators
 
             // TODO: Check if this still works. 
             entity.ContentType = _selectedCodec.MediaType;
+            _context.PipelineData.RequestUriFileTypeExtension = _selectedExtension;
         }
 
         public bool Parse(Uri uri, out Uri processedUri)
@@ -86,6 +88,7 @@ namespace OpenRasta.Web.UriDecorators
                 return false;
             }
 
+            _selectedExtension = potentialExtension;
             processedUri = fakeBaseUri.MakeRelativeUri(uriWithoutExtension)
                 .MakeAbsolute(appBaseUri);
 

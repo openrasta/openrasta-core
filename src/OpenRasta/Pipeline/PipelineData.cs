@@ -117,5 +117,6 @@ namespace OpenRasta.Pipeline
       set => base[EnvironmentKeys.PIPELINE_STATE] = value;
     }
 
+    public string RequestUriFileTypeExtension { get; set; }
   }
 }

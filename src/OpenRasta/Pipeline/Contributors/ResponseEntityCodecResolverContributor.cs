@@ -51,7 +51,18 @@ namespace OpenRasta.Pipeline.Contributors
       }
 
       var sortedCodecs = _codecs.FindMediaTypeWriter(responseEntityType, acceptedContentTypes).ToList();
+      
+      var ext = context.PipelineData.RequestUriFileTypeExtension;
+      if (sortedCodecs.Count > 0 && ext != null)
+      {
+        var matchingExtension =
+          sortedCodecs.Where(codec => codec.Extensions.Contains(ext, StringComparer.OrdinalIgnoreCase)).ToList();
+        if (matchingExtension.Any())
+          sortedCodecs = matchingExtension;
+      }
+      
       var codecsCount = sortedCodecs.Count;
+      
       var negotiatedCodec = sortedCodecs.FirstOrDefault();
 
       if (negotiatedCodec != null)
@@ -61,7 +72,7 @@ namespace OpenRasta.Pipeline.Contributors
           negotiatedCodec.MediaType.IsWildCard
             ? acceptedContentTypes
               .OrderByDescending(c => c)
-              .Where(c => c.IsWildCard == false)
+              .Where(c => c.IsWildCard == false && c.Matches(negotiatedCodec.MediaType))
               .DefaultIfEmpty(MediaType.ApplicationOctetStream)
               .FirstOrDefault()
             : negotiatedCodec.MediaType.WithoutQuality();
