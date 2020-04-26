@@ -11,9 +11,9 @@ namespace Tests.Scenarios.HandlerSelection.Scenarios.Codecs
     [Fact]
     public async Task should_return_400()
     {
-      var server = new InMemoryHost(() =>
+      var server = new TestHost((has,_) =>
       {
-        ResourceSpace.Has.ResourcesNamed("multipart_parser")
+        has.ResourcesNamed("multipart_parser")
           .AtUri("/multipart/")
           .HandledBy<DoNothing>();
       });
