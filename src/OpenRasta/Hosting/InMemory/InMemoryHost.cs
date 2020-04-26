@@ -5,6 +5,7 @@ using OpenRasta.Concordia;
 using OpenRasta.Configuration;
 using OpenRasta.Diagnostics;
 using OpenRasta.DI;
+using OpenRasta.Hosting.Compatibility;
 using OpenRasta.Pipeline;
 using OpenRasta.Web;
 
@@ -79,7 +80,7 @@ namespace OpenRasta.Hosting.InMemory
         ApplicationBaseUri = new Uri(
           new Uri("http://localhost/", UriKind.Absolute),
           new Uri(ApplicationVirtualPath, UriKind.Relative)),
-        Request = request,
+        Request = new InMemoryReadOnlyRequest(request),
         Response = new InMemoryResponse(),
         ServerErrors = new ServerErrorList {Log = Resolver.Resolve<ILogger>()},
       };
