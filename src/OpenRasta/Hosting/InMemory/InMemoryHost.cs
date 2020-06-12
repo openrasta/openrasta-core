@@ -101,6 +101,9 @@ namespace OpenRasta.Hosting.InMemory
         }
       }
 
+      // lowercase r ensures the use of RFC 822 formatting
+      context.Response.Headers.Add("Date", DateTime.Now.ToString("r"));
+
       if (context.Response.Entity?.Stream.CanSeek == true)
         context.Response.Entity.Stream.Position = 0;
       return context.Response;

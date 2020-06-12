@@ -21,6 +21,7 @@ namespace OpenRasta.Hosting.InMemory
         public InMemoryRequest()
         {
             Headers = new HttpHeaderDictionary();
+            Headers.Add("Host", "http://localhost/");
             Entity = new HttpEntity(Headers, new MemoryStream());
             CodecParameters = new List<string>();
         }
