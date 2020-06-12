@@ -39,6 +39,7 @@ namespace Tests.Scenarios.HandlerSelection.Plugins.Diagnostics
         using (var reader = new StreamReader(response.Entity.Stream, Encoding.UTF8))
           reader.ReadToEnd().ShouldBe(
             "TRACE /1 HTTP/1.1\r\n" +
+            "Host: http://localhost/\r\n" +
             "Accept: */*\r\n" +
             "User-Agent: stuff\r\n\r\n");
       }
