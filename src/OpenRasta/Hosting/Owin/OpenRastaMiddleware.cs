@@ -62,9 +62,12 @@ namespace OpenRasta.Hosting.Owin
       IDependencyResolverAccessor resolverAccessor = null,
       CancellationToken onDisposing = default, StartupProperties startupProperties = null)
     {
+      Options = startupProperties ?? DefaultStartupProperties;
       _host = new OwinHost(options, resolverAccessor);
-      TryInitializeHosting(onDisposing, startupProperties ?? DefaultStartupProperties);
+      TryInitializeHosting(onDisposing, Options);
     }
+
+    public StartupProperties Options { get; set; }
 
     static readonly StartupProperties DefaultStartupProperties = new StartupProperties();
 
@@ -72,16 +75,8 @@ namespace OpenRasta.Hosting.Owin
     {
       ICommunicationContext commContext;
       owinContext.Response.OnSendingHeaders(_ => this.HeadersSent = true, null);
-      try
-      {
-        commContext = await _host.ProcessRequestAsync(owinContext);
-      }
-      catch (Exception e) when (HeadersSent == false)
-      {
-        owinContext.Response.StatusCode = 500;
-        owinContext.Response.Write(e.ToString());
-        return;
-      }
+
+      commContext = await _host.ProcessRequestAsync(owinContext);
 
       if (commContext != null &&
           commContext.OperationResult is OperationResult.NotFound notFound &&
