@@ -2,13 +2,13 @@
 using System.Threading;
 using System.Threading.Tasks;
 using LibOwin;
+using OpenRasta.Concordia;
 using OpenRasta.Configuration;
-using OpenRasta.Diagnostics;
 using OpenRasta.DI;
 using OpenRasta.Web;
 using AppFunc = System.Func<System.Collections.Generic.IDictionary<string, object>, System.Threading.Tasks.Task>;
 
-namespace OpenRasta.Hosting.Katana
+namespace OpenRasta.Hosting.Owin
 {
   using MidFunc = Func<AppFunc, AppFunc>;
 
@@ -58,14 +58,15 @@ namespace OpenRasta.Hosting.Katana
     HostManager _hostManager;
     readonly OwinHost _host;
 
-    public OpenRastaMiddleware(
-      IConfigurationSource options,
-      IDependencyResolverAccessor resolverAccesor = null,
-      CancellationToken onDisposing = default(CancellationToken))
+    public OpenRastaMiddleware(IConfigurationSource options,
+      IDependencyResolverAccessor resolverAccessor = null,
+      CancellationToken onDisposing = default, StartupProperties startupProperties = null)
     {
-      _host = new OwinHost(options, resolverAccesor);
-      TryInitializeHosting(onDisposing);
+      _host = new OwinHost(options, resolverAccessor);
+      TryInitializeHosting(onDisposing, startupProperties ?? DefaultStartupProperties);
     }
+
+    static readonly StartupProperties DefaultStartupProperties = new StartupProperties();
 
     public override async Task Invoke(IOwinContext owinContext)
     {
@@ -93,7 +94,7 @@ namespace OpenRasta.Hosting.Katana
     public bool HeadersSent { get; set; }
 
 
-    void TryInitializeHosting(CancellationToken onDisposing)
+    void TryInitializeHosting(CancellationToken onDisposing, StartupProperties startup)
     {
       if (_hostManager != null) return;
       lock (SyncRoot)
@@ -109,7 +110,7 @@ namespace OpenRasta.Hosting.Katana
         _hostManager = hostManager;
         try
         {
-          _host.RaiseStart();
+          _host.RaiseStart(startup);
         }
         catch
         {

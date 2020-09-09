@@ -55,7 +55,8 @@ namespace OpenRasta.OperationModel.MethodBased
     }
 
 
-    public static IEnumerable<OperationDescriptor> CreateOperationDescriptors(IEnumerable<IType> handlers,
+    public static IEnumerable<OperationDescriptor> CreateOperationDescriptors(
+      IEnumerable<IType> handlers,
       Func<IEnumerable<IOperationInterceptorAsync>> asyncInterceptors,
       Func<IEnumerable<IMethod>, IEnumerable<IMethod>> filters = null,
       Func<IOperation, IEnumerable<IOperationInterceptor>> syncInterceptors = null,

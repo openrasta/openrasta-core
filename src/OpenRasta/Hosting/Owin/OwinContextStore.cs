@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using OpenRasta.Pipeline;
 
-namespace OpenRasta.Hosting.Katana
+namespace OpenRasta.Hosting.Owin
 {
   public class OwinContextStore : IContextStore
   {

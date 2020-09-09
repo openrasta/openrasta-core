@@ -2,9 +2,10 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http.Features.Authentication;
 using Microsoft.Extensions.DependencyInjection;
+using OpenRasta.Concordia;
 using OpenRasta.Configuration;
 using OpenRasta.DI;
-using OpenRasta.Hosting.Katana;
+using OpenRasta.Hosting.Owin;
 
 namespace OpenRasta.Hosting.AspNetCore
 {
@@ -13,7 +14,8 @@ namespace OpenRasta.Hosting.AspNetCore
     public static IApplicationBuilder UseOpenRasta(
       this IApplicationBuilder app,
       IConfigurationSource configurationSource,
-      IDependencyResolverAccessor dependencyResolver = null)
+      IDependencyResolverAccessor dependencyResolver = null,
+      StartupProperties properties = null)
     {
       return app
         .Use(async (context, next) =>
@@ -31,7 +33,7 @@ namespace OpenRasta.Hosting.AspNetCore
           builder.UseOpenRasta(
             configurationSource,
             dependencyResolver,
-            app.ApplicationServices.GetService<IApplicationLifetime>().ApplicationStopping));
+            app.ApplicationServices.GetService<IApplicationLifetime>().ApplicationStopping,properties));
     }
   }
 }

@@ -1,6 +1,6 @@
 ﻿using OpenRasta.Diagnostics;
 
-namespace OpenRasta.Hosting.Katana
+namespace OpenRasta.Hosting.Owin
 {
   [LogCategory("oppenrasta.owin")]
   public class OwinLogSource : ILogSource

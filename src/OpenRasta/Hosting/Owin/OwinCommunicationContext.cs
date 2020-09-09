@@ -7,7 +7,7 @@ using OpenRasta.Diagnostics;
 using OpenRasta.Pipeline;
 using OpenRasta.Web;
 
-namespace OpenRasta.Hosting.Katana
+namespace OpenRasta.Hosting.Owin
 {
   class OwinCommunicationContext : ICommunicationContext
   {

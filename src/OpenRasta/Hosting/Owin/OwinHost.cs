@@ -3,12 +3,12 @@ using System.Threading.Tasks;
 using LibOwin;
 using OpenRasta.Concordia;
 using OpenRasta.Configuration;
-using OpenRasta.Diagnostics;
 using OpenRasta.DI;
+using OpenRasta.Diagnostics;
 using OpenRasta.Pipeline;
 using OpenRasta.Web;
 
-namespace OpenRasta.Hosting.Katana
+namespace OpenRasta.Hosting.Owin
 {
   public class OwinHost : IHost, IHostStartWithStartupProperties
   {

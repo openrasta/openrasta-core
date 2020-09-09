@@ -2,10 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using LibOwin;
-using OpenRasta.DI;
 using OpenRasta.Web;
 
-namespace OpenRasta.Hosting.Katana
+namespace OpenRasta.Hosting.Owin
 {
   class OwinResponse : IResponse
   {

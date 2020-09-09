@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
 using OpenRasta.Hosting.Katana;
+using OpenRasta.Hosting.Owin;
 using Shouldly;
 using Tests.Infrastructure;
 using Xunit;
