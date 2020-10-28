@@ -51,7 +51,9 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization
     public static bool IsNotIgnored(this PropertyInfo pi)
     {
       return pi.CustomAttributes.Any(a =>
-               a.AttributeType.Name == "JsonIgnoreAttribute" || a.AttributeType.Name == "IgnoreDataMemberAttribute") ==
+               a.AttributeType.Name == "JsonIgnoreAttribute" 
+               || a.AttributeType.Name == "IgnoreDataMemberAttribute"
+               || a.AttributeType.Name == nameof(JsonLdIgnoreAttribute)) ==
              false;
     }
 
