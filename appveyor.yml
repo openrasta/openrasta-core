@@ -3,7 +3,7 @@ configuration: Release
 image: Visual Studio 2019
 
 install:
-  - set PATH=C:\Ruby23\bin;%PATH%
+  - set PATH=C:\Ruby27\bin;%PATH%
   - ps: $AllProtocols = [System.Net.SecurityProtocolType]'Ssl3,Tls,Tls11,Tls12'
   - ps: "[System.Net.ServicePointManager]::SecurityProtocol = $AllProtocols"
   - ps: mkdir c:\ca; iwr https://curl.haxx.se/ca/cacert.pem -outfile C:\ca\cacert.pem
