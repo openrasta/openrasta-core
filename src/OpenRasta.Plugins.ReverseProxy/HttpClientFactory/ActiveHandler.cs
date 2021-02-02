@@ -48,13 +48,12 @@ namespace OpenRasta.Plugins.ReverseProxy.HttpClientFactory
       try
       {
         var response = await base.SendAsync(request, cancellationToken);
-        if (response.StatusCode == HttpStatusCode.ServiceUnavailable)
+        if (response.StatusCode == HttpStatusCode.ServiceUnavailable && response.Headers.RetryAfter != null)
         {
           var delay =
             response.Headers.RetryAfter.Delta
-            ?? (response.Headers.RetryAfter.Date - (response.Headers.Date ?? DateTimeOffset.UtcNow))
-            ?? TimeSpan.FromSeconds(5);
-          _activationTime = DateTimeOffset.UtcNow.Ticks + delay.Ticks;
+            ?? (response.Headers.RetryAfter.Date - (response.Headers.Date ?? DateTimeOffset.UtcNow));
+          _activationTime = DateTimeOffset.UtcNow.Ticks + delay?.Ticks ?? 0;
         }
 
         return response;
