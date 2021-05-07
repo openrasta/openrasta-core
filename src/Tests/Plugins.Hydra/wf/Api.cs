@@ -18,7 +18,17 @@ namespace Tests.Plugins.Hydra.wf
         .Vocabulary(Ontologies.WhenFreshApi)
         .AtUri("/schema")
         .HandledBy<SchemaHandler>();
+      
+      ResourceSpace.Has
+        .ResourcesOfType<Collection<Collection>>()
+        .Vocabulary(Ontologies.WhenFreshApi)
+        .AtUri("/sitemap/test")
+        .HandledBy<SitemapHandler>();
 
+      ResourceSpace.Has
+        .ResourcesOfType<Collection<Variable>>()
+        .Vocabulary(Ontologies.WhenFreshApi);
+      
       ResourceSpace.Has
         .ResourcesOfType<Ontology>()
         .Vocabulary(Ontologies.WhenFreshApi)
