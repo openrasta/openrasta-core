@@ -20,7 +20,7 @@ namespace Tests.Plugins.Hydra.wf
         .HandledBy<SchemaHandler>();
       
       ResourceSpace.Has
-        .ResourcesOfType<Collection<Collection>>()
+        .ResourcesOfType<SiteMap>()
         .Vocabulary(Ontologies.WhenFreshApi)
         .AtUri("/sitemap/test")
         .HandledBy<SitemapHandler>();

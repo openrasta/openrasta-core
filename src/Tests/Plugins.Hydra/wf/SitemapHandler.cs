@@ -6,24 +6,19 @@ namespace Tests.Plugins.Hydra.wf
   // ReSharper disable once ClassNeverInstantiated.Global
   public class SitemapHandler
   {
-    public Task<Collection<Collection>> Get()
+    public SiteMap Get()
     {
-      return Task.FromResult(
-        new Collection<Collection>("Geography", 
-          new List<Collection<Variable>>
+      return new SiteMap("Geography",
+        new Collection<Variable>("Address",
+          new Variable
           {
-            new Collection<Variable>("Address", 
-              new List<Variable> 
-              {
-                new Variable
-                {
-                  Scheme = "Royal Mail",
-                  Taxonomy = "Postal Address File",
-                  Classification = "Postal Address",
-                  Provider = "CLS",
-                  Source = "Titles", Name = "Property Address Key"
-                }
-              })}));
+            Scheme = "Royal Mail",
+            Taxonomy = "Postal Address File",
+            Classification = "Postal Address",
+            Provider = "CLS",
+            Source = "Titles", Name = "Property Address Key"
+          }
+        ));
     }
   }
 }
