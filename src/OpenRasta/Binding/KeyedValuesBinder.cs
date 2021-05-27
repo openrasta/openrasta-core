@@ -10,6 +10,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using OpenRasta.TypeSystem;
 
 namespace OpenRasta.Binding
@@ -38,14 +39,11 @@ namespace OpenRasta.Binding
             PathManager = new PathManager();
         }
 
-        public bool IsEmpty
-        {
-            get { return !Builder.HasValue; }
-        }
+        public bool IsEmpty => !Builder.HasValue;
 
-        public ICollection<string> Prefixes { get; private set; }
+        public ICollection<string> Prefixes { get; }
 
-        protected ITypeBuilder Builder { get; private set; }
+        protected ITypeBuilder Builder { get; }
         protected IPathManager PathManager { get; set; }
 
         public virtual BindingResult BuildObject()
@@ -76,13 +74,13 @@ namespace OpenRasta.Binding
             var keyType = PathManager.GetPathType(Prefixes, key);
             bool success;
 
-            if (keyType.Type == PathComponentType.Constructor)
-                success = SetConstructorValue(values, converter);
-            else
-                success = SetPropertyValue(key, keyType.ParsedValue, values, converter);
+            success = keyType.Type == PathComponentType.Constructor
+              ? SetConstructorValue(values, converter)
+              : SetPropertyValue(key, keyType.ParsedValue, values, converter);
 
             if (!success)
                 success = SetPropertyValue(key, key, values, converter);
+            
             return success;
         }
 

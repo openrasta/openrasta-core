@@ -1,4 +1,5 @@
 ﻿#region License
+
 /* Authors:
  *      Sebastien Lambla (seb@serialseb.com)
  * Copyright:
@@ -6,6 +7,7 @@
  * License:
  *      This file is distributed under the terms of the MIT License found at the end of this file.
  */
+
 #endregion
 
 using System;
@@ -15,48 +17,53 @@ using OpenRasta.TypeSystem;
 
 namespace OpenRasta.Binding
 {
-    public class DefaultObjectBinderLocator : IObjectBinderLocator
+  public class DefaultObjectBinderLocator : IObjectBinderLocator
+  {
+    public DefaultObjectBinderLocator()
     {
-        public DefaultObjectBinderLocator()
-        {
-            Logger = NullLogger.Instance;
-            TypeSystem = TypeSystems.Default;
-        }
-
-        public ILogger Logger { get; set; }
-        public ITypeSystem TypeSystem { get; set; }
-
-        public IObjectBinder GetBinder(IMember member)
-        {
-            var abstractObjectBinderAttribute = member.FindAttribute<BinderAttribute>() ?? member.Type.FindAttribute<BinderAttribute>();
-
-            if (abstractObjectBinderAttribute != null)
-                return abstractObjectBinderAttribute.GetBinder(member);
-
-            IMethod binderMethod = member.GetMethod("GetBinder");
-            if (binderMethod != null)
-            {
-                try
-                {
-                    return binderMethod.Invoke(null, TypeSystem, member).OfType<IObjectBinder>().Single();
-                }
-                catch (Exception e)
-                {
-                    LogGetBinderMethodCouldntBeRun(e);
-                }
-            }
-            return new KeyedValuesBinder(member.Type, member.Name);
-        }
-
-        void LogGetBinderMethodCouldntBeRun(Exception exception)
-        {
-            Logger.WriteWarning("Method GetBinder couldn't be processed. See the exception for more details.");
-            Logger.WriteException(exception);
-        }
+      Logger = NullLogger.Instance;
+      TypeSystem = TypeSystems.Default;
     }
+
+    public ILogger Logger { get; set; }
+    public ITypeSystem TypeSystem { get; set; }
+
+    public IObjectBinder GetBinder(IMember member)
+    {
+      var abstractObjectBinderAttribute =
+        member.FindAttribute<BinderAttribute>() ?? member.Type.FindAttribute<BinderAttribute>();
+
+      if (abstractObjectBinderAttribute != null)
+        return abstractObjectBinderAttribute.GetBinder(member);
+      
+      
+
+      IMethod binderMethod = member.GetMethod("GetBinder");
+      if (binderMethod != null)
+      {
+        try
+        {
+          return binderMethod.Invoke(null, TypeSystem, member).OfType<IObjectBinder>().Single();
+        }
+        catch (Exception e)
+        {
+          LogGetBinderMethodCouldntBeRun(e);
+        }
+      }
+
+      return new KeyedValuesBinder(member.Type, member.Name);
+    }
+
+    void LogGetBinderMethodCouldntBeRun(Exception exception)
+    {
+      Logger.WriteWarning("Method GetBinder couldn't be processed. See the exception for more details.");
+      Logger.WriteException(exception);
+    }
+  }
 }
 
 #region Full license
+
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
 // "Software"), to deal in the Software without restriction, including
@@ -73,4 +80,5 @@ namespace OpenRasta.Binding
 // LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
 #endregion
