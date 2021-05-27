@@ -101,11 +101,11 @@ namespace OpenRasta.TypeSystem.ReflectionBased
     {
       if (type == typeof(bool) && propertyValues == null) return true;
       // identity conversion
-      if (type == propertyValues.GetType())
+      if (type == propertyValues?.GetType())
         return propertyValues;
 
       // arrays
-      var propertyValuesAsArray = propertyValues.ToArray();
+      var propertyValuesAsArray = propertyValues?.ToArray() ?? Array.Empty<T>();
       if (type.IsArray)
       {
         var elementType = type.GetElementType();
@@ -154,7 +154,7 @@ namespace OpenRasta.TypeSystem.ReflectionBased
       {
         var list = (IList) Activator.CreateInstance(type);
 
-        foreach (var item in propertyValues)
+        foreach (var item in propertyValuesAsArray)
         {
           list.Add(item);
         }
@@ -412,13 +412,13 @@ namespace OpenRasta.TypeSystem.ReflectionBased
 
     static object CreateInstanceFromString(this Type type, string propertyValue, Stack<Type> recursionDefender)
     {
-      if (type == null || propertyValue == null) return null;
+      if (type == null) return null;
       if (type == typeof(string))
         return propertyValue;
 
       if (type == typeof(bool))
       {
-        switch (propertyValue.ToLowerInvariant())
+        switch (propertyValue?.ToLowerInvariant())
         {
           case "0":
           case "-0":
@@ -428,6 +428,7 @@ namespace OpenRasta.TypeSystem.ReflectionBased
           case "nan":
           case "undefined":
           case "":
+          case null:
             return false;
           default:
             return true;
