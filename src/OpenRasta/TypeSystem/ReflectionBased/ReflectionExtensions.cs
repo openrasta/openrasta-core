@@ -99,6 +99,7 @@ namespace OpenRasta.TypeSystem.ReflectionBased
       IEnumerable<T> propertyValues,
       ValueConverter<T> converter)
     {
+      if (type == typeof(bool) && propertyValues == null) return true;
       // identity conversion
       if (type == propertyValues.GetType())
         return propertyValues;
