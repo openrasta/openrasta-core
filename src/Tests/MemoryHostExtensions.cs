@@ -32,7 +32,7 @@ namespace Tests
     static Task<IResponse> ExecuteMethod(InMemoryHost host, string uri, string method, string content = null,
       string contentType = null, Action<HttpHeaderDictionary> headers = null)
     {
-      if (uri.StartsWith('/') == false) uri = "/" + uri;
+      if (uri.StartsWith("/") == false) uri = "/" + uri;
 
       var request = new InMemoryRequest
       {
