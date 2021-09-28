@@ -1,0 +1,53 @@
+<Project>
+    <PropertyGroup>
+        <Company>Caffeine IT- naughtyProd Limited</Company>
+        <Authors>Sebastien Lambla</Authors>
+        <Copyright>Copyright 2007</Copyright>
+
+        <PackageProjectUrl>https://github.com/openrasta/openrasta-core</PackageProjectUrl>
+        <PackageReleaseNotes>https://github.com/openrasta/openrasta-core/blob/master/CHANGELOG.md</PackageReleaseNotes>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <PackageIcon>packageicon.png</PackageIcon>
+
+        <LangVersion>latest</LangVersion>
+
+        <!-- Optional: Declare that the Repository URL can be published to NuSpec -->
+        <PublishRepositoryUrl>true</PublishRepositoryUrl>
+        <!-- Optional: Embed source files that are not tracked by the source control manager to the PDB -->
+        <!-- This is useful if you generate files during the build -->
+        <EmbedUntrackedSources>true</EmbedUntrackedSources>
+        <!-- including PDB files in NuGet for source link because symbolsource.org does not support portable PDBs -->
+        <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
+
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+
+        <!-- Version numbers have to be included at the same level as source link otherwise versions are reset to 1.0.0 -->
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <FileVersion>2.6.0</FileVersion>
+        <InformationalVersion>2.6.0</InformationalVersion>
+        <Version>2.6.0</Version>
+    </PropertyGroup>
+
+
+    <PropertyGroup>
+        <VSTestLogger>trx%3bLogFileName=$(MSBuildProjectName).$(TargetFramework).trx</VSTestLogger>
+        <VSTestResultsDirectory>$(MSBuildThisFileDirectory)/TestResults/$(TargetFramework)</VSTestResultsDirectory>
+    </PropertyGroup>
+
+    <ItemGroup Label="Package References">
+        <PackageReference Include="MinVer" PrivateAssets="All" Version="2.5.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="..\..\images\OpenRastaLogo-nuget-32x32.png" Pack="true" PackagePath="packageicon.png"/>
+    </ItemGroup>
+
+
+</Project>
