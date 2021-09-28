@@ -1,7 +1,7 @@
 name: 'Test Report'
 on:
   workflow_run:
-    workflows: ['dotnet']                     # runs after CI workflow
+    workflows: ['.NET']                     # runs after CI workflow
     types:
       - completed
 jobs:
