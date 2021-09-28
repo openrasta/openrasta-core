@@ -48,6 +48,4 @@
     <ItemGroup>
         <None Include="..\..\images\OpenRastaLogo-nuget-32x32.png" Pack="true" PackagePath="packageicon.png"/>
     </ItemGroup>
-
-
 </Project>

@@ -2,8 +2,19 @@
 
     <PropertyGroup>
         <OutputType>Exe</OutputType>
-        <TargetFrameworks>netcoreapp2.1;net48</TargetFrameworks>
+        <TargetFrameworks>net5.0;net48</TargetFrameworks>
+      <IsPackable>false</IsPackable>
     </PropertyGroup>
+
+    <ItemGroup>
+      <None Remove="large.json" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Include="large.json">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+    </ItemGroup>
 
     <ItemGroup>
         <PackageReference Include="Microsoft.AspNetCore.Server.Kestrel" Version="2.1.1" />

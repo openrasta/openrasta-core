@@ -1,21 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
+    <TargetFramework>net461</TargetFramework>
     <PackageId>openrasta-hosting-aspnet</PackageId>
-    <Authors>Sebastien Lambla</Authors>
-    <PackageProjectUrl>https://github.com/openrasta/openrasta-hosting-aspnet</PackageProjectUrl>
-    <PackageLicenseUrl>http://openrasta.org/</PackageLicenseUrl>
-    <PackageIconUrl>http://openrasta.org/openRastaLogo-32x32.png</PackageIconUrl>
     <Description>Support for IIS / asp.net hosting of OpenRasta.</Description>
     <PackageTags>OpenRasta AspNet Hosting</PackageTags>
-    <Copyright>Copyright 2007-2018</Copyright>
-    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <Company>Caffeine IT- naughtyProd Limited</Company>
-    <AssemblyVersion>2.0.0.0</AssemblyVersion>
-    <FileVersion>2.6.0</FileVersion>
-    <InformationalVersion>2.6.0</InformationalVersion>
-    <Version>2.6.0</Version>
-    <TargetFramework>net461</TargetFramework>
-    <LangVersion>7.1</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\OpenRasta\OpenRasta.csproj" />

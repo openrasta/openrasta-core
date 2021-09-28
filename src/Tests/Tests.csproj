@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <LangVersion>7.1</LangVersion>
-    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <TargetFrameworks>net5.0;net461</TargetFrameworks>
+    <IsPackable>false</IsPackable>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\OpenRasta.Hosting.AspNet\OpenRasta.Hosting.AspNet.csproj" Condition="'$(TargetFramework)' == 'net461'" />

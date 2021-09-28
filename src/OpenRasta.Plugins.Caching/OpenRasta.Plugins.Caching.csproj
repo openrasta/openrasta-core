@@ -1,21 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Authors>Sebastien Lambla</Authors>
-    <PackageProjectUrl>https://github.com/openrasta/openrasta-core</PackageProjectUrl>
-    <PackageLicenseUrl>http://openrasta.org/</PackageLicenseUrl>
-    <PackageIconUrl>http://openrasta.org/openRastaLogo-32x32.png</PackageIconUrl>
+    <TargetFrameworks>netstandard2.0;net461</TargetFrameworks>
     <Description>Extensions allowing caching and conditional requests</Description>
     <PackageTags>OpenRasta REST HTTP XML JSON API Caching</PackageTags>
-    <Version>2.6.0</Version>
-    <Copyright>Copyright 2007-2018</Copyright>
     <PackageId>OpenRasta.Plugins.Caching</PackageId>
-    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <Company>Videndel</Company>
-    <InformationalVersion>2.6.0</InformationalVersion>
-    <FileVersion>2.6.0</FileVersion>
-    <AssemblyVersion>2.0.0.0</AssemblyVersion>
-    <TargetFrameworks>netstandard2.0;net461</TargetFrameworks>
-    <LangVersion>7.1</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
