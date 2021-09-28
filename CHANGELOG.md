@@ -3,7 +3,22 @@ All notable changes to OpenRasta will be documented in this file.
 OpenRasta adheres to [Semantic Versioning](http://semver.org/).
 
 
-## [2.6.0-preview.2] [Unreleased]
+## [2.6.0-preview.3] [Unreleased]
+
+### Known issues
+  - Previously a POST with `void Return`, returned a 200 now it returns a 204. 
+  - The internal container will failure under load.
+
+### Added
+
+### Changed
+
+### Deprecated
+
+### Removed
+
+
+## [2.6.0-preview.2] 
 
 ### Known issues
   - Previously a POST with `void Return`, returned a 200 now it returns a 204. 
