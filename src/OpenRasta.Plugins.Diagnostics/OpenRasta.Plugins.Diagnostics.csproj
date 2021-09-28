@@ -1,21 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <Authors>Sebastien Lambla</Authors>
-    <PackageProjectUrl>https://github.com/openrasta/openrasta-core</PackageProjectUrl>
-    <PackageLicenseUrl>http://openrasta.org/</PackageLicenseUrl>
-    <PackageIconUrl>http://openrasta.org/openRastaLogo-32x32.png</PackageIconUrl>
     <Description>Diagnostics for OpenRasta applications.</Description>
     <PackageTags>OpenRasta REST HTTP JSON API Proxy</PackageTags>
-    <Version>2.6.0</Version>
-    <Copyright>Copyright 2007-2018</Copyright>
     <PackageId>OpenRasta.Plugins.Diagnostics</PackageId>
-    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <Company>Videndel</Company>
-    <InformationalVersion>2.6.0</InformationalVersion>
-    <FileVersion>2.6.0</FileVersion>
-    <AssemblyVersion>2.0.0.0</AssemblyVersion>
-    <LangVersion>7.1</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\OpenRasta\OpenRasta.csproj" />

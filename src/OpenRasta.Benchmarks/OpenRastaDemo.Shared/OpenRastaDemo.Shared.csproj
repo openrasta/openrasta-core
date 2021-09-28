@@ -1,14 +1,15 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-    <PropertyGroup>
-        <TargetFrameworks>netcoreapp2.1;net48</TargetFrameworks>
-    </PropertyGroup>
+  <PropertyGroup>
+    <TargetFrameworks>netcoreapp2.1;net48</TargetFrameworks>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
 
-    <ItemGroup>
-      <ProjectReference Include="..\..\OpenRasta.Codecs.Newtonsoft.Json\OpenRasta.Codecs.Newtonsoft.Json.csproj" />
-      <ProjectReference Include="..\..\OpenRasta.Hosting.AspNetCore\OpenRasta.Hosting.AspNetCore.csproj" />
-      <ProjectReference Include="..\..\OpenRasta.Plugins.Hydra\OpenRasta.Plugins.Hydra.csproj" />
-      <ProjectReference Include="..\..\OpenRasta.Plugins.ReverseProxy\OpenRasta.Plugins.ReverseProxy.csproj" />
-    </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\OpenRasta.Codecs.Newtonsoft.Json\OpenRasta.Codecs.Newtonsoft.Json.csproj" />
+    <ProjectReference Include="..\..\OpenRasta.Hosting.AspNetCore\OpenRasta.Hosting.AspNetCore.csproj" />
+    <ProjectReference Include="..\..\OpenRasta.Plugins.Hydra\OpenRasta.Plugins.Hydra.csproj" />
+    <ProjectReference Include="..\..\OpenRasta.Plugins.ReverseProxy\OpenRasta.Plugins.ReverseProxy.csproj" />
+  </ItemGroup>
 
 </Project>

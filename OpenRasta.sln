@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27004.2002
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31702.278
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenRasta", "src\OpenRasta\OpenRasta.csproj", "{3D251617-2581-4D9C-A639-5CFB0BB09420}"
 EndProject
@@ -11,6 +11,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		appveyor.yml = appveyor.yml
 		CHANGELOG.md = CHANGELOG.md
+		src\Directory.Build.props = src\Directory.Build.props
 		README.md = README.md
 		VERSION = VERSION
 	EndProjectSection
@@ -37,15 +38,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenRasta.DI.Windsor.Tests.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenRasta.Hosting.AspNet.Tests.Integration", "src\OpenRasta.Hosting.AspNet.Tests.Integration\OpenRasta.Hosting.AspNet.Tests.Integration.csproj", "{088478E0-A0CB-40E1-88C6-A89B50330C6B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenRasta.Plugins.Hydra", "src\OpenRasta.Plugins.Hydra\OpenRasta.Plugins.Hydra.csproj", "{05AD6BA1-C771-41DC-94B5-5D4CA2C8DB2F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenRasta.Plugins.Hydra", "src\OpenRasta.Plugins.Hydra\OpenRasta.Plugins.Hydra.csproj", "{05AD6BA1-C771-41DC-94B5-5D4CA2C8DB2F}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Benchmarks", "Benchmarks", "{F29C9EB9-4B9A-4D8D-A776-6A849CA73DA6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenRastaDemo", "src\OpenRasta.Benchmarks\OpenRastaDemo\OpenRastaDemo.csproj", "{B262A705-C1B2-4C1A-AE34-3B15119F609E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenRastaDemo", "src\OpenRasta.Benchmarks\OpenRastaDemo\OpenRastaDemo.csproj", "{B262A705-C1B2-4C1A-AE34-3B15119F609E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenRastaDemo.Benchmark", "src\OpenRasta.Benchmarks\OpenRastaDemo.Benchmark\OpenRastaDemo.Benchmark.csproj", "{D5566579-4803-4CF6-AC60-25D7EC075F6C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenRastaDemo.Benchmark", "src\OpenRasta.Benchmarks\OpenRastaDemo.Benchmark\OpenRastaDemo.Benchmark.csproj", "{D5566579-4803-4CF6-AC60-25D7EC075F6C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenRastaDemo.Shared", "src\OpenRasta.Benchmarks\OpenRastaDemo.Shared\OpenRastaDemo.Shared.csproj", "{D0389498-4624-4D02-93C5-69F02E678273}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenRastaDemo.Shared", "src\OpenRasta.Benchmarks\OpenRastaDemo.Shared\OpenRastaDemo.Shared.csproj", "{D0389498-4624-4D02-93C5-69F02E678273}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -125,12 +126,12 @@ Global
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
-	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {E66BC41B-A020-4673-8A3F-1986A41479AD}
-	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{B262A705-C1B2-4C1A-AE34-3B15119F609E} = {F29C9EB9-4B9A-4D8D-A776-6A849CA73DA6}
 		{D5566579-4803-4CF6-AC60-25D7EC075F6C} = {F29C9EB9-4B9A-4D8D-A776-6A849CA73DA6}
 		{D0389498-4624-4D02-93C5-69F02E678273} = {F29C9EB9-4B9A-4D8D-A776-6A849CA73DA6}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E66BC41B-A020-4673-8A3F-1986A41479AD}
 	EndGlobalSection
 EndGlobal

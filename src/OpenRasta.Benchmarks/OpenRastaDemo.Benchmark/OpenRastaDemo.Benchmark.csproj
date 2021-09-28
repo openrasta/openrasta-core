@@ -1,28 +1,28 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-    <PropertyGroup>
-        <OutputType>Exe</OutputType>
-        <TargetFrameworks>netcoreapp2.1;netcoreapp3.1;net48</TargetFrameworks>
-        <LangVersion>8</LangVersion>
-    </PropertyGroup>
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFrameworks>netcoreapp2.1;netcoreapp3.1;net5.0;net48</TargetFrameworks>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
 
-    <ItemGroup>
-      <PackageReference Include="BenchmarkDotNet" Version="0.12.1" />
-      <PackageReference Include="Microsoft.AspNetCore.Hosting" Version="2.2.7" />
-      <PackageReference Include="Microsoft.AspNetCore.TestHost" Version="2.2.0" />
-      <PackageReference Include="System.Net.Http" Version="4.3.4" />
-      <PackageReference Include="xunit.extensibility.core" Version="2.4.1" />
-    </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="BenchmarkDotNet" Version="0.12.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Hosting" Version="2.2.7" />
+    <PackageReference Include="Microsoft.AspNetCore.TestHost" Version="2.2.0" />
+    <PackageReference Include="System.Net.Http" Version="4.3.4" />
+    <PackageReference Include="xunit.extensibility.core" Version="2.4.1" />
+  </ItemGroup>
 
-    <ItemGroup>
-      <ProjectReference Include="..\..\OpenRasta.DI.Windsor\OpenRasta.DI.Windsor.csproj" />
-      <ProjectReference Include="..\OpenRastaDemo.Shared\OpenRastaDemo.Shared.csproj" />
-    </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\OpenRasta.DI.Windsor\OpenRasta.DI.Windsor.csproj" />
+    <ProjectReference Include="..\OpenRastaDemo.Shared\OpenRastaDemo.Shared.csproj" />
+  </ItemGroup>
 
-    <ItemGroup>
-      <None Update="large.json">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </None>
-    </ItemGroup>
+  <ItemGroup>
+    <None Update="large.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 
 </Project>
