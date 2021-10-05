@@ -11,21 +11,28 @@
 
         <LangVersion>latest</LangVersion>
 
-        <!-- Optional: Declare that the Repository URL can be published to NuSpec -->
+
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <!-- Optional: Publish the repository URL in the built .nupkg (in the NuSpec <Repository> element) -->
         <PublishRepositoryUrl>true</PublishRepositoryUrl>
         <!-- Optional: Embed source files that are not tracked by the source control manager to the PDB -->
         <!-- This is useful if you generate files during the build -->
         <EmbedUntrackedSources>true</EmbedUntrackedSources>
-        <!-- including PDB files in NuGet for source link because symbolsource.org does not support portable PDBs -->
-        <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
+        <!-- Recommended: Embed symbols containing Source Link in the main file (exe/dll) -->
+        <DebugType>embedded</DebugType>
 
-        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 
         <!-- Version numbers have to be included at the same level as source link otherwise versions are reset to 1.0.0 -->
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <FileVersion>2.6.0</FileVersion>
         <InformationalVersion>2.6.0</InformationalVersion>
         <Version>2.6.0</Version>
+    </PropertyGroup>
+
+    <!-- Deterministic builds ensure that the same binary is produced regardless of the machine building it -->
+    <!-- This setting is set on the build server to normalize stored file paths, should not be set for local dev -->
+    <PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
+        <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
     </PropertyGroup>
 
 
@@ -46,6 +53,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <!-- TODO: image can be 128x128 and transparent background (PNG) -->
         <None Include="..\..\images\OpenRastaLogo-nuget-32x32.png" Pack="true" PackagePath="packageicon.png"/>
     </ItemGroup>
 </Project>
