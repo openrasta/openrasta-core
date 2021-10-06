@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net461</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;net472</TargetFrameworks>
     <Company>Videndel</Company>
     <Description>Allows using Newtonsoft.Json to transcode JSON</Description>
     <PackageTags>OpenRasta REST HTTP XML JSON API Newtonsoft</PackageTags>

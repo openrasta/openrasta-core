@@ -6,7 +6,7 @@ using Xunit;
 
 namespace Tests.Plugins.ReverseProxy.errors
 {
-#if NETCOREAPP2_0
+#if NET5_0_OR_GREATER
   public class unknown_dns
   {
     [Fact]

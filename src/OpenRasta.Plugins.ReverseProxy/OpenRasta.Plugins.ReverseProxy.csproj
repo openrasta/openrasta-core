@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net461</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;net472</TargetFrameworks>
     <Description>Reverse-proxy requests asynchronously to other HTTP APIs.</Description>
     <PackageTags>OpenRasta REST HTTP JSON API Proxy</PackageTags>
     <PackageId>OpenRasta.Plugins.ReverseProxy</PackageId>
@@ -10,7 +10,7 @@
     <ProjectReference Include="..\OpenRasta.Codecs.Newtonsoft.Json\OpenRasta.Codecs.Newtonsoft.Json.csproj" />
     <ProjectReference Include="..\OpenRasta\OpenRasta.csproj" />
   </ItemGroup>
-  <ItemGroup Condition="'$(TargetFramework)' == 'net461'">
+  <ItemGroup Condition="'$(TargetFramework)' == 'net472'">
     <Reference Include="System.Net.Http" />
   </ItemGroup>
 </Project>

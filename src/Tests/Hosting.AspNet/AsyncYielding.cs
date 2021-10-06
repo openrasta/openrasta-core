@@ -1,4 +1,4 @@
-﻿#if NET461
+﻿#if NET472_OR_GREATER
 using System;
 using System.Threading.Tasks;
 using OpenRasta.Hosting.AspNet;

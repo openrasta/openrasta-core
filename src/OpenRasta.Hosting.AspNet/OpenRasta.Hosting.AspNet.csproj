@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net461</TargetFramework>
+    <TargetFramework>net472</TargetFramework>
     <PackageId>openrasta-hosting-aspnet</PackageId>
     <Description>Support for IIS / asp.net hosting of OpenRasta.</Description>
     <PackageTags>OpenRasta AspNet Hosting</PackageTags>

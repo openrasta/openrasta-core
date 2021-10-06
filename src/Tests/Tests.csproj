@@ -1,10 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net5.0;net461</TargetFrameworks>
+    <TargetFrameworks>net5.0;net472</TargetFrameworks>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\OpenRasta.Hosting.AspNet\OpenRasta.Hosting.AspNet.csproj" Condition="'$(TargetFramework)' == 'net461'" />
+    <ProjectReference Include="..\OpenRasta.Hosting.AspNet\OpenRasta.Hosting.AspNet.csproj" Condition="'$(TargetFramework)' == 'net472'" />
     <ProjectReference Include="..\OpenRasta.Plugins.Caching\OpenRasta.Plugins.Caching.csproj" />
     <ProjectReference Include="..\OpenRasta.Plugins.Diagnostics\OpenRasta.Plugins.Diagnostics.csproj" />
     <ProjectReference Include="..\OpenRasta.Plugins.Hydra\OpenRasta.Plugins.Hydra.csproj" />

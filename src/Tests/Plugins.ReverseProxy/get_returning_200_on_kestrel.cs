@@ -6,7 +6,7 @@ using Xunit;
 
 namespace Tests.Plugins.ReverseProxy
 {
-#if NETCOREAPP2_0
+#if NET5_0_OR_GREATER
   public class get_returning_200_on_kestrel
   {
     [Fact]
