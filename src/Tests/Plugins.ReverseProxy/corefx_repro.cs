@@ -10,7 +10,7 @@ using Xunit;
 
 namespace Tests.Plugins.ReverseProxy
 {
-#if NETCOREAPP2_0
+#if NET5_0_OR_GREATER
   public class corefx_repro
   {
     [Fact(Skip = "#136 – fails, disable until https://github.com/dotnet/corefx/issues/28156 is resolved")]

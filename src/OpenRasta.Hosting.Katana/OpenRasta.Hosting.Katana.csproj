@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net461</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;net472</TargetFrameworks>
     <Authors>Sebastien Lambla, Just-Eat</Authors>
     <Description>Hosting of OpenRasta on Microsoft's Katana OWIN implementation</Description>
     <PackageTags>OpenRasta REST HTTP XML JSON API</PackageTags>

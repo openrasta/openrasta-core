@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net461</TargetFrameworks>
+    <TargetFrameworks>net5.0;netstandard2.0;net472</TargetFrameworks>
     <Description>Hosting of OpenRasta on asp.net Core</Description>
     <PackageTags>OpenRasta REST HTTP XML JSON API</PackageTags>
     <PackageId>OpenRasta.Hosting.AspNetCore</PackageId>

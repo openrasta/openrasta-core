@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net461</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;net472</TargetFrameworks>
     <Description>Open Rasta dependence injection using Castle Windsor</Description>
     <PackageTags>OpenRasta CastleWindsor DI</PackageTags>
     <PackageId>openrasta-di-castle-windsor</PackageId>

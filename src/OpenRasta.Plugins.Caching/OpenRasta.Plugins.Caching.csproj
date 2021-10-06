@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net461</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;net472</TargetFrameworks>
     <Description>Extensions allowing caching and conditional requests</Description>
     <PackageTags>OpenRasta REST HTTP XML JSON API Caching</PackageTags>
     <PackageId>OpenRasta.Plugins.Caching</PackageId>
