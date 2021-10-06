@@ -40,10 +40,7 @@ jobs:
         name: nuget packages
         path: "**/*.nupkg"
     - name: Push to GitHub Feed
-      run: dotnet nuget push **/*.nupkg --source https://nuget.pkg.github.com/${REPOSITORY_OWNER}/index.json --api-key ${GITHUB_TOKEN} --skip-duplicate
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        REPOSITORY_OWNER: ${{ github.repository_owner }}
+      run: dotnet nuget push **/*.nupkg --source https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json --api-key ${{ secrets.GITHUB_TOKEN }} --skip-duplicate
     - name: Push to AppVeyor Feed
       run: dotnet nuget push **/*.nupkg --source https://ci.appveyor.com/nuget/openrasta/api/v2/package --api-key ${APPVEYOR_TOKEN} --skip-duplicate
       env:
