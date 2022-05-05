@@ -9,19 +9,23 @@ on:
   pull_request:
     branches: [ master ]
 
+env:
+  MINVERBUILDMETADATA: 
+
+
 jobs:
   build:
 
     runs-on: windows-latest
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
       with:
         fetch-depth: 0
     - name: Setup .NET
-      uses: actions/setup-dotnet@v1
+      uses: actions/setup-dotnet@v2
       with:
-        dotnet-version: 5.0.x
+        dotnet-version: 6.0.x
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
@@ -30,18 +34,17 @@ jobs:
       run: dotnet test --no-build --configuration Release --verbosity normal 
     - name: Upload test results
       if: always()
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: test-results
         path: "**/*.trx"
     - name: Upload packages as artifacts
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: nuget packages
         path: "**/*.nupkg"
     - name: Push to GitHub Feed
       run: dotnet nuget push **/*.nupkg --source https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json --api-key ${{ secrets.GITHUB_TOKEN }} --skip-duplicate
     - name: Push to AppVeyor Feed
-      run: dotnet nuget push **/*.nupkg --source https://ci.appveyor.com/nuget/openrasta/api/v2/package --api-key ${APPVEYOR_TOKEN} --skip-duplicate
-      env:
-        APPVEYOR_TOKEN: ${{ secrets.APPVEYOR_TOKEN }}
+      run: dotnet nuget push **/*.nupkg --source https://ci.appveyor.com/nuget/openrasta/api/v2/package --api-key ${{ secrets.APPVEYOR_TOKEN }} --skip-duplicate
+
