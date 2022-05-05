@@ -6,7 +6,7 @@
         <PackageTags>OpenRasta REST HTTP XML JSON API</PackageTags>
     </PropertyGroup>
     <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
-        <PackageReference Include="System.CodeDom" Version="4.5.0" />
+        <PackageReference Include="System.CodeDom" Version="6.0.0" />
     </ItemGroup>
     <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
         <DefineConstants>$(DefineConstants);CORE</DefineConstants>

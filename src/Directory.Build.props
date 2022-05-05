@@ -11,7 +11,6 @@
 
         <LangVersion>latest</LangVersion>
 
-
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
         <!-- Optional: Publish the repository URL in the built .nupkg (in the NuSpec <Repository> element) -->
         <PublishRepositoryUrl>true</PublishRepositoryUrl>
@@ -20,7 +19,6 @@
         <EmbedUntrackedSources>true</EmbedUntrackedSources>
         <!-- Recommended: Embed symbols containing Source Link in the main file (exe/dll) -->
         <DebugType>embedded</DebugType>
-
 
         <!-- Version numbers have to be included at the same level as source link otherwise versions are reset to 1.0.0 -->
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -42,11 +40,11 @@
     </PropertyGroup>
 
     <ItemGroup Label="Package References">
-        <PackageReference Include="MinVer" PrivateAssets="All" Version="2.5.0" />
+        <PackageReference Include="MinVer" PrivateAssets="All" Version="3.1.0" />
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0">
+        <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>

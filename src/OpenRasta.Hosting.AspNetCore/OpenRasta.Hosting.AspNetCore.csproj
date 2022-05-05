@@ -6,7 +6,7 @@
     <PackageId>OpenRasta.Hosting.AspNetCore</PackageId>
   </PropertyGroup>
   <ItemGroup Condition=" '$(TargetFramework)' == 'net6.0' ">
-    <PackageReference Include="Microsoft.AspNetCore.Owin" Version="6.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Owin" Version="6.0.4" />
   </ItemGroup>
   <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
     <PackageReference Include="Microsoft.AspNetCore.Owin" Version="2.2.0" />
