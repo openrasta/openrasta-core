@@ -10,7 +10,7 @@ using Xunit;
 
 namespace Tests.Hosting.Owin
 {
-#if NET5_0_OR_GREATER
+#if NET6_0_OR_GREATER
   public class hosting_on_kestrel : IDisposable
   {
     readonly HttpClient client;

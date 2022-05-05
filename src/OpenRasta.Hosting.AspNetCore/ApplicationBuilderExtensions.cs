@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http.Features.Authentication;
 using Microsoft.Extensions.DependencyInjection;
-#if NET5_0_OR_GREATER
+#if NET6_0_OR_GREATER
 using Microsoft.Extensions.Hosting;
 #endif
 #if NETSTANDARD2_0
@@ -37,7 +37,7 @@ namespace OpenRasta.Hosting.AspNetCore
         })
         .UseOwin(builder =>
         {
-#if NET5_0_OR_GREATER
+#if NET6_0_OR_GREATER
           var onAppDisposing = app.ApplicationServices.GetService<IHostApplicationLifetime>().ApplicationStopping;
 #endif
 #if NETSTANDARD2_0
