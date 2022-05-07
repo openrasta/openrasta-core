@@ -46,7 +46,8 @@ namespace OpenRasta.Codecs
         NewLineOnAttributes = true,
         OmitXmlDeclaration = false,
         CloseOutput = true,
-        CheckCharacters = false
+        CheckCharacters = false,
+        Async = true
       };
       if (response.Headers.ContentType == null)
         response.Headers.ContentType = new MediaType("application/xml;charset=utf-8");
