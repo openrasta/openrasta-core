@@ -32,7 +32,7 @@ namespace OpenRasta.Hosting.Compatibility
     {
       return _innerStream.Read(buffer, offset, count);
     }
-
+    
     public override IAsyncResult BeginRead(byte[] buffer, int offset, int count, AsyncCallback callback, object state)
     {
       return _innerStream.BeginRead(buffer, offset, count, callback, state);
@@ -110,13 +110,13 @@ namespace OpenRasta.Hosting.Compatibility
     public override void Flush()
     {
       EnsureHeadersSent();
-      _innerStream.Flush();
+      _innerStream.FlushAsync();
     }
 
     public override void Write(byte[] buffer, int offset, int count)
     {
       EnsureHeadersSent();
-      _innerStream.Write(buffer, offset, count);
+      _innerStream.WriteAsync(buffer, offset, count);
     }
 
     public override IAsyncResult BeginWrite(byte[] buffer, int offset, int count, AsyncCallback callback, object state)
