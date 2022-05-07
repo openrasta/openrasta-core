@@ -11,7 +11,7 @@ using OpenRastaDemo.Shared;
 namespace OpenRastaDemo.Benchmark
 {
   [SimpleJob(RuntimeMoniker.Net48)]
-  [SimpleJob(RuntimeMoniker.NetCoreApp21)]
+  [SimpleJob(RuntimeMoniker.Net60)]
   public class ReverseProxyBenchmark
   {
     HttpClient client;

@@ -6,7 +6,7 @@ using OpenRasta.Web;
 namespace OpenRastaDemo.Benchmark.Uris
 {
   [SimpleJob(RuntimeMoniker.Net48)]
-  [SimpleJob(RuntimeMoniker.NetCoreApp21)]
+  [SimpleJob(RuntimeMoniker.Net60)]
   [HtmlExporter,MemoryDiagnoser]
   public class Matching
   {
