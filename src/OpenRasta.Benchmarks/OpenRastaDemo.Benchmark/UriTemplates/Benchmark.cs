@@ -8,7 +8,7 @@ using OpenRasta.Web;
 namespace OpenRastaDemo.Benchmark.UriTemplates
 {
   [SimpleJob(RuntimeMoniker.Net48)]
-  [SimpleJob(RuntimeMoniker.NetCoreApp21)]
+  [SimpleJob(RuntimeMoniker.Net60)]
   [HtmlExporter,MemoryDiagnoser]
   public class Benchmark
   {

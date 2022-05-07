@@ -14,8 +14,7 @@ using OpenRasta.IO;
 namespace OpenRastaDemo.Benchmark.EndToEnd
 {
   [SimpleJob(RuntimeMoniker.Net48)]
-  [SimpleJob(RuntimeMoniker.NetCoreApp21)]
-  [SimpleJob(RuntimeMoniker.NetCoreApp31)]
+  [SimpleJob(RuntimeMoniker.Net60)]
   [HtmlExporter]
   [MemoryDiagnoser]
   // [InProcess()]

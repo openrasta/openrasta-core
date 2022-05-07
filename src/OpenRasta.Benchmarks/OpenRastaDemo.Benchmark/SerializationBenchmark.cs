@@ -13,7 +13,7 @@ using OpenRastaDemo.Shared;
 namespace OpenRastaDemo.Benchmark
 {
   [SimpleJob(RuntimeMoniker.Net48)]
-  [SimpleJob(RuntimeMoniker.NetCoreApp21)]
+  [SimpleJob(RuntimeMoniker.Net60)]
   [MemoryDiagnoser,HtmlExporter(),GcServer(),ReturnValueValidator(true)]
   public class SerializationBenchmark
   {
