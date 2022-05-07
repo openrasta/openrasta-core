@@ -31,7 +31,14 @@ jobs:
     - name: Build
       run: dotnet build --no-restore --configuration Release
     - name: Test
-      run: dotnet test --no-build --configuration Release --verbosity normal 
+      run: dotnet test --no-build --configuration Release --verbosity normal
+    - name: Test Report
+      uses: dorny/test-reporter@v1
+      if: success() || failure()    # run this step even if previous step failed
+      with:
+        name: Tests
+        path: '**/*.trx'    
+        reporter: dotnet-trx
     - name: Upload test results
       if: always()
       uses: actions/upload-artifact@v3
@@ -47,4 +54,5 @@ jobs:
       run: dotnet nuget push **/*.nupkg --source https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json --api-key ${{ secrets.GITHUB_TOKEN }} --skip-duplicate
     - name: Push to AppVeyor Feed
       run: dotnet nuget push **/*.nupkg --source https://ci.appveyor.com/nuget/openrasta/api/v2/package --api-key ${{ secrets.APPVEYOR_TOKEN }} --skip-duplicate
+
 
