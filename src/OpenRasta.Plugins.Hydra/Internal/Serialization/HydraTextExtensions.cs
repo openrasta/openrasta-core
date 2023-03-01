@@ -75,10 +75,21 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization
     public static string GetJsonLdTypeName(this ResourceModel model)
     {
       var hydraResourceModel = model.Hydra();
+      var type = hydraResourceModel.JsonLdType ?? GetGenericToResourceTypeName(model.ResourceType);
       return (hydraResourceModel.Vocabulary?.DefaultPrefix == null
                ? String.Empty
                : $"{hydraResourceModel.Vocabulary.DefaultPrefix}:") +
-             model.ResourceType.Name;
+             type;
+    }
+
+    static string GetGenericToResourceTypeName(Type modelResourceType)
+    {
+
+      return modelResourceType.IsGenericType == false
+        ? modelResourceType.Name
+        : string.Join("Of",
+          modelResourceType.GetGenericArguments().Select(GetGenericToResourceTypeName)
+            .Prepend(modelResourceType.Name));
     }
 
     public static string GetJsonPropertyName(this PropertyInfo pi)

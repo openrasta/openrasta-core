@@ -50,7 +50,7 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization.Utf8JsonPrecompiled
       var hydraClass = hydraModel.Class ?? (hydraModel.Class = new HydraCore.Class());
 
       var vocabPrefix = hydraModel.Vocabulary.DefaultPrefix;
-      var className = model.ResourceType.Name;
+      var className = model.GetJsonLdTypeName();
       var identifier = vocabPrefix != null ? $"{vocabPrefix}:{className}" : className;
 
 
