@@ -61,10 +61,10 @@ install:
       Set-AppveyorBuildVariable -Name "AssemblyMajor" -Value $version.Major
       Update-AppVeyorBuild -Version "$semver"
 
-  - gem install chandler --no-document
+#  - gem install chandler --no-document
   - ps: set-content ~/.netrc "machine api.github.com login $env:github_username password $env:github_password" -encoding ascii
   - ps: cp ~/.netrc ~/_netrc
-  - ps: if ($branch -eq "master" -And $isPullRequest -eq $False) {chandler push }
+#  - ps: if ($branch -eq "master" -And $isPullRequest -eq $False) {chandler push }
 
 before_build:
   - ps: dotnet restore
