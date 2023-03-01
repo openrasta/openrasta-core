@@ -13,6 +13,7 @@
 
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
         <!-- Optional: Publish the repository URL in the built .nupkg (in the NuSpec <Repository> element) -->
+        <RepositoryUrl>https://github.com/openrasta/openrasta-core</RepositoryUrl>
         <PublishRepositoryUrl>true</PublishRepositoryUrl>
         <!-- Optional: Embed source files that are not tracked by the source control manager to the PDB -->
         <!-- This is useful if you generate files during the build -->
