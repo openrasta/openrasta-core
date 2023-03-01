@@ -1,105 +1,105 @@
-configuration: Release
-#platform: Any CPU
-image: Visual Studio 2019
-
-install:
-  - set PATH=C:\Ruby27\bin;%PATH%
-  - ps: $AllProtocols = [System.Net.SecurityProtocolType]'Ssl3,Tls,Tls11,Tls12'
-  - ps: "[System.Net.ServicePointManager]::SecurityProtocol = $AllProtocols"
-  - ps: mkdir c:\ca; iwr https://curl.haxx.se/ca/cacert.pem -outfile C:\ca\cacert.pem
-  - set SSL_CERT_FILE=C:\ca\cacert.pem
-  - ps: |
-      echo @"
-      APPVEYOR_BUILD_NUMBER: $env:APPVEYOR_BUILD_NUMBER
-      APPVEYOR_REPO_BRANCH: $env:APPVEYOR_REPO_BRANCH
-      APPVEYOR_REPO_TAG: $env:APPVEYOR_REPO_TAG
-      APPVEYOR_REPO_TAG_NAME: $env:APPVEYOR_REPO_TAG_NAME
-      APPVEYOR_PULL_REQUEST_NUMBER: $env:APPVEYOR_PULL_REQUEST_NUMBER
-      "@
-
-      $build = $env:APPVEYOR_BUILD_NUMBER
-      $branch = $env:APPVEYOR_REPO_BRANCH
-      $isPullRequest = $False
-
-      if ($env:APPVEYOR_REPO_TAG -eq "true") {
-          echo "Version: Using git tag $env:APPVEYOR_REPO_TAG_NAME"
-                
-          $validTag = $env:APPVEYOR_REPO_TAG_NAME -match "^(\d+\.\d+\.\d+)"
-          $versionString = $Matches[0]
-          
-          if (-not $validTag) {
-              throw "Invalid version in tag name"
-          }
-            
-          $version = [version]$versionString
-          $semver = $env:APPVEYOR_REPO_TAG_NAME
-      }
-      else {
-          $semver = (git describe --abbrev=0 2>&1);
-          if ($LASTEXITCODE -ne 0) { $semver = "1.0.0-preview.0" };
-                
-          echo "Version: Using base semver $semver"
-                
-          $semver -match "^(\d+\.\d+\.\d+)"
-          $version = [version]$Matches[0]
-
-          $semver += ".$build"
-                
-                
-          if ($env:APPVEYOR_PULL_REQUEST_NUMBER) {
-              $semver += "+pr.$env:APPVEYOR_PULL_REQUEST_NUMBER"
-              $isPullRequest = $True
-          }
-          else {
-              $semver += "+$branch"
-          }
-      }
-
-      echo "Version: $version"
-      echo "Semver: $semver"
-
-      Set-AppveyorBuildVariable -Name "AssemblyMajor" -Value $version.Major
-      Update-AppVeyorBuild -Version "$semver"
-
-#  - gem install chandler --no-document
-  - ps: set-content ~/.netrc "machine api.github.com login $env:github_username password $env:github_password" -encoding ascii
-  - ps: cp ~/.netrc ~/_netrc
-#  - ps: if ($branch -eq "master" -And $isPullRequest -eq $False) {chandler push }
-
-before_build:
-  - ps: dotnet restore
-
-nuget:
-  project_feed: true
-  disable_publish_on_pr: true
-
-dotnet_csproj:
-  patch: true
-  file: '**\*.csproj'
-  version: '{version}'
-  assembly_version: $(AssemblyMajor).0.0.0
-  file_version: '{version}'
-  informational_version: '{version}'
-
-build:
-  project: OpenRasta.sln
-  parallel: true
-  verbosity: minimal
-  publish_nuget: true
-  publish_nuget_symbols: true
-  include_nuget_references: true
-
-environment:
-  SSL_CERT_FILE: C:\ca\cacert.pem
-  github_username: serialseb
-  github_password:
-    secure:
-      1lXaOJ0GvCAOd0O9DDvVqw2eb7TvP2jve12u3hD2g4J7RVW2c2jC5XuRFyEuduUA
-
-artifacts:
-- path: src\openrasta\bin\$(configuration)\net472\*.dll
-  name: dlls
-- path: src\openrasta\bin\$(configuration)\net472\*.pdb
-  name: pdbs
-- path: src\openrasta\bin\$(configuration)\netstandard2.0\*.dll
-- path: src\openrasta\bin\$(configuration)\netstandard2.0\*.pdb
+#configuration: Release
+##platform: Any CPU
+#image: Visual Studio 2019
+#
+#install:
+#  - set PATH=C:\Ruby27\bin;%PATH%
+#  - ps: $AllProtocols = [System.Net.SecurityProtocolType]'Ssl3,Tls,Tls11,Tls12'
+#  - ps: "[System.Net.ServicePointManager]::SecurityProtocol = $AllProtocols"
+#  - ps: mkdir c:\ca; iwr https://curl.haxx.se/ca/cacert.pem -outfile C:\ca\cacert.pem
+#  - set SSL_CERT_FILE=C:\ca\cacert.pem
+#  - ps: |
+#      echo @"
+#      APPVEYOR_BUILD_NUMBER: $env:APPVEYOR_BUILD_NUMBER
+#      APPVEYOR_REPO_BRANCH: $env:APPVEYOR_REPO_BRANCH
+#      APPVEYOR_REPO_TAG: $env:APPVEYOR_REPO_TAG
+#      APPVEYOR_REPO_TAG_NAME: $env:APPVEYOR_REPO_TAG_NAME
+#      APPVEYOR_PULL_REQUEST_NUMBER: $env:APPVEYOR_PULL_REQUEST_NUMBER
+#      "@
+#
+#      $build = $env:APPVEYOR_BUILD_NUMBER
+#      $branch = $env:APPVEYOR_REPO_BRANCH
+#      $isPullRequest = $False
+#
+#      if ($env:APPVEYOR_REPO_TAG -eq "true") {
+#          echo "Version: Using git tag $env:APPVEYOR_REPO_TAG_NAME"
+#                
+#          $validTag = $env:APPVEYOR_REPO_TAG_NAME -match "^(\d+\.\d+\.\d+)"
+#          $versionString = $Matches[0]
+#          
+#          if (-not $validTag) {
+#              throw "Invalid version in tag name"
+#          }
+#            
+#          $version = [version]$versionString
+#          $semver = $env:APPVEYOR_REPO_TAG_NAME
+#      }
+#      else {
+#          $semver = (git describe --abbrev=0 2>&1);
+#          if ($LASTEXITCODE -ne 0) { $semver = "1.0.0-preview.0" };
+#                
+#          echo "Version: Using base semver $semver"
+#                
+#          $semver -match "^(\d+\.\d+\.\d+)"
+#          $version = [version]$Matches[0]
+#
+#          $semver += ".$build"
+#                
+#                
+#          if ($env:APPVEYOR_PULL_REQUEST_NUMBER) {
+#              $semver += "+pr.$env:APPVEYOR_PULL_REQUEST_NUMBER"
+#              $isPullRequest = $True
+#          }
+#          else {
+#              $semver += "+$branch"
+#          }
+#      }
+#
+#      echo "Version: $version"
+#      echo "Semver: $semver"
+#
+#      Set-AppveyorBuildVariable -Name "AssemblyMajor" -Value $version.Major
+#      Update-AppVeyorBuild -Version "$semver"
+#
+##  - gem install chandler --no-document
+#  - ps: set-content ~/.netrc "machine api.github.com login $env:github_username password $env:github_password" -encoding ascii
+#  - ps: cp ~/.netrc ~/_netrc
+##  - ps: if ($branch -eq "master" -And $isPullRequest -eq $False) {chandler push }
+#
+#before_build:
+#  - ps: dotnet restore
+#
+#nuget:
+#  project_feed: true
+#  disable_publish_on_pr: true
+#
+#dotnet_csproj:
+#  patch: true
+#  file: '**\*.csproj'
+#  version: '{version}'
+#  assembly_version: $(AssemblyMajor).0.0.0
+#  file_version: '{version}'
+#  informational_version: '{version}'
+#
+#build:
+#  project: OpenRasta.sln
+#  parallel: true
+#  verbosity: minimal
+#  publish_nuget: true
+#  publish_nuget_symbols: true
+#  include_nuget_references: true
+#
+#environment:
+#  SSL_CERT_FILE: C:\ca\cacert.pem
+#  github_username: serialseb
+#  github_password:
+#    secure:
+#      1lXaOJ0GvCAOd0O9DDvVqw2eb7TvP2jve12u3hD2g4J7RVW2c2jC5XuRFyEuduUA
+#
+#artifacts:
+#- path: src\openrasta\bin\$(configuration)\net472\*.dll
+#  name: dlls
+#- path: src\openrasta\bin\$(configuration)\net472\*.pdb
+#  name: pdbs
+#- path: src\openrasta\bin\$(configuration)\netstandard2.0\*.dll
+#- path: src\openrasta\bin\$(configuration)\netstandard2.0\*.pdb
