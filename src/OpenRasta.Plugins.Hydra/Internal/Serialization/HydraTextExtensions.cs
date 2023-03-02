@@ -89,7 +89,7 @@ namespace OpenRasta.Plugins.Hydra.Internal.Serialization
         ? modelResourceType.Name
         : string.Join("Of",
           modelResourceType.GetGenericArguments().Select(GetGenericToResourceTypeName)
-            .Prepend(modelResourceType.Name));
+            .Prepend(modelResourceType.Name.Substring(0,modelResourceType.Name.IndexOf('`'))));
     }
 
     public static string GetJsonPropertyName(this PropertyInfo pi)
