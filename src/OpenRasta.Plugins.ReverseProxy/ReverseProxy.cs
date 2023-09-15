@@ -35,7 +35,17 @@ namespace OpenRasta.Plugins.ReverseProxy
 
     public async Task<ReverseProxyResponse> Send(ICommunicationContext context, string target)
     {
-      var proxyTargetUri = GetProxyTargetUri(context.PipelineData.SelectedResource.Results.Single(), target);
+      var resource = context.PipelineData.SelectedResource;
+
+      var matched = resource.Results.Where(uri => uri.ResourceModel.ResourceKey.Equals(resource.ResourceKey)).ToList();
+      var targetTemplate = new UriTemplate(target);
+      if (matched.Count > 1)
+      {
+        throw new InvalidOperationException("Found more than one destination URI template");
+      }
+
+      var baseUri = new Uri(new Uri(target), "/");
+      var proxyTargetUri = GetProxyTargetUri(matched[0], targetTemplate, baseUri);
 
       var requestMessage = new HttpRequestMessage(new HttpMethod(context.Request.HttpMethod), proxyTargetUri)
       {
@@ -48,14 +58,13 @@ namespace OpenRasta.Plugins.ReverseProxy
       var viaIdentifier = AppendViaHeaderToRequest(context, requestMessage);
 
 
-      
       var cts = new CancellationTokenSource();
       cts.CancelAfter(_timeout);
       var timeoutToken = cts.Token;
 
 
       ReverseProxyResponse reverseProxyResponse;
-      
+
       try
       {
         _onSend?.Invoke(context, requestMessage);
@@ -75,7 +84,7 @@ namespace OpenRasta.Plugins.ReverseProxy
       }
       catch (HttpRequestException e)
       {
-        context.ServerErrors.Add(new Error {Exception = e, Title = $"Reverse Proxy failed to connect."});
+        context.ServerErrors.Add(new Error { Exception = e, Title = $"Reverse Proxy failed to connect." });
         reverseProxyResponse = new ReverseProxyResponse(requestMessage, via: null, error: e, statusCode: 502);
       }
 
@@ -162,15 +171,14 @@ namespace OpenRasta.Plugins.ReverseProxy
       request.Headers.Add("forwarded", CurrentForwarded(context));
     }
 
-    static Uri GetProxyTargetUri(TemplatedUriMatch requestUriMatch, string target,
+    static Uri GetProxyTargetUri(TemplatedUriMatch requestUriMatch, UriTemplate targetTemplate,
+      Uri baseUri,
       Action<UriBuilder> overrideUri = null)
     {
-      var destinationBaseUri = new Uri(new Uri(target), "/");
-      var targetTemplate = new UriTemplate(target);
       var requestQs = requestUriMatch;
 
       var targetUri = targetTemplate.BindByName(
-        destinationBaseUri,
+        baseUri,
         new NameValueCollection
         {
           requestQs.Match.PathSegmentVariables,
